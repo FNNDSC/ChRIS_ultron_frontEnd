@@ -1,0 +1,42 @@
+<script>
+    FeedsBehavior = {
+
+      prepareFeeds: function(what){
+
+        switch(what){
+          case 'url':
+            // fetch dummy json!
+            var url = "../../data/feeds.json";
+            return url;
+          case 'params':
+            return this.params;
+          case 'body':
+            return this.body;
+          default:
+            break;
+          }
+        return false;
+      },
+      handleFeeds: function(){
+        // transform contacts to feed:
+        var feeds = [];
+
+        for(var i=0; i<this.response.length; i++){
+          var feed = {
+            id: this.response[i].index,
+            name: this.response[i].name,
+            image: this.response[i].image,
+            opened: false,//this.response[i].expanded,
+            color: this.response[i].color,
+            favorite: this.response[i].integer > 50 ? true : false,
+            // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
+            description: this.response[i].shortText,
+            date: this.response[i].date
+          }
+          feeds.push(feed);
+        }
+
+        return feeds;
+      },
+    };
+</script>

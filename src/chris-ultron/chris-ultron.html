@@ -1,0 +1,149 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- IRON -->
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+
+<!-- PAPER <3 -->
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<!-- APP LAYOUT -->
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<link rel="import" href="../../bower_components/app-layout/demo/sample-content.html">
+
+<!-- NON POLYMER TEAM PROVIDED -->
+<!-- <link rel="import" href="../../bower_components/paper-fab-transition/paper-fab-speed-dial.html"> -->
+
+<!-- CHRIS -->
+<link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../chris-feed/chris-feed.html">
+
+<dom-module id="chris-ultron">
+
+  <template>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      app-header {
+        background-color: #00897B;
+        color: #fff;
+      }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+/*      app-toolbar {
+        background-color: var(--google-green-700);
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3);
+        font-weight: bold;
+        color: white;
+        z-index: 1;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+      }*/
+
+      app-toolbar paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      #feeds {
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: auto;
+          margin-top: 30px;
+          margin-bottom: 60px;
+          border-bottom: 1px solid #ddd;
+        };
+      }
+
+      paper-fab {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+      }
+      @media (max-width: 460px) {
+        paper-toolbar .bottom.title {
+          font-size: 14px;
+        }
+      }
+    </style>
+
+    <chris-api id="chrisAPI" api="Feeds" url="../../data/contacts.json" response="{{items}}"></chris-api>
+
+    <app-drawer-layout>
+
+      <app-drawer>
+        <app-toolbar>Welcome, Avenger!</app-toolbar>
+      </app-drawer>
+
+      <app-header-layout>
+        <!-- reveals -->
+        <app-header fixed effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div title>ChRIS Ultron</div>
+            <paper-icon-button icon="search" alt="Search"></paper-icon-button>
+            <paper-icon-button icon="more-vert" alt="More options"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
+
+      <iron-list id="feeds" items="[[items]]" as="item" selection-enabled multi-selection>
+        <template>
+          <!--  Remove focus for now... it is for accessibility. tabindex$="[[tabIndex]]" -->
+          <chris-feed feed="[[item]]" selected="[[selected]]"></chris-feed>
+        </template>
+      </iron-list>
+
+      <paper-fab icon="add" title="add"></paper-fab>
+
+      <!-- http://stackoverflow.com/questions/31114834/dynamically-creating-polymer-element-inside-another-custom-tag
+       -->
+       <!-- https://github.com/Polymer/polymer/issues/1764 -->
+       <!-- Can REST API return a file? -->
+
+      </app-header-layout>
+
+    </app-drawer-layout>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-ultron',
+        properties: {
+          items: {
+            type: Array
+          }
+        },
+        attached: function() {
+          // Use the document element
+          this.$.feeds.scrollTarget = this.ownerDocument.documentElement;
+        }
+    });
+  </script>
+</dom-module>

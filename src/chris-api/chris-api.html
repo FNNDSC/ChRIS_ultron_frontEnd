@@ -1,0 +1,90 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- IRON -->
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<!-- BEHAVIORS -->
+<link rel="import" href="behaviors/chris-api-feeds-behavior.html">
+<link rel="import" href="behaviors/chris-api-feed-details-behavior.html">
+
+<dom-module id="chris-api">
+
+  <template>
+
+    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[getBody(body, api)]]" params="[[getParams(params, api)]]" method="[[method]]" last-response="{{response}}" on-response="handleResponse" auto></iron-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-api',
+        properties: {
+          url: {
+            type: String
+          },
+          response: {
+            type: Object
+          },
+          body:{
+            type: Object
+          },
+          method:{
+            type: String
+          },
+          params:{
+            type: Object
+          },
+          api: {
+            type: String
+          }
+        },
+        behaviors: [
+          FeedsBehavior,
+          FeedDetailsBehavior
+        ],
+        generateRequest: function() {
+          this.$.ironAjax.generateRequest();
+        },
+        handleResponse: function(evt){
+          var response = this['handle' + this.api ]();
+          this._setResponse(response);
+        },
+        getUrl: function(url, api){
+
+          if(!api){
+            return;
+          }
+
+          return this['prepare' + api ]('url');
+        },
+        getBody: function(body, api){
+
+          if(!api){
+            return;
+          }
+
+          return this['prepare' + api ]('body');
+        },
+        getParams: function(params, api){
+
+          if(!api){
+            return;
+          }
+
+          return this['prepare' + api ]('params');
+        },
+        _setResponse(response){
+          this.response = response;
+          // update binding
+          this.fire('response-changed');
+          // on-return callback
+          this.fire('return');
+        }
+    });
+  </script>
+</dom-module>

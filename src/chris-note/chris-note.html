@@ -1,0 +1,79 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<dom-module id="chris-note">
+
+  <template>
+
+    <style>
+      .note{
+        @apply(--layout-vertical);
+        
+        background-color: white;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+
+      app-toolbar {
+        flex:1;
+        background-color: var(--paper-grey-100);
+      }
+
+      .primary {
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+    </style>
+
+      <div>
+        <div class="note">
+          <!-- Toolbar -->
+          <app-toolbar>
+            <div class="primary">Note</div>
+
+            <paper-icon-button icon="create"></paper-icon-button>
+
+            <paper-icon-button icon="delete"></paper-icon-button>
+
+          </app-toolbar>
+
+          <div class="content">
+          [[note]]
+          <paper-icon-button icon="delete"></paper-icon-button>
+          </div>
+        </div>
+      </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-note',
+        properties: {
+          note: {
+            type: String
+          }
+        },
+        donothing: function(evt){
+          evt.preventDefault();
+          evt.stopPropagation();
+
+          window.console.log('do nothing..');
+        }
+    });
+  </script>
+</dom-module>

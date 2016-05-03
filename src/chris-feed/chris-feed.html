@@ -1,0 +1,203 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- IRON -->
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+
+<!-- PAPER <3 -->
+<link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<!-- APP LAYOUT -->
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<!-- CHRIS -->
+<link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../chris-comment-list/chris-comment-list.html">
+<link rel="import" href="../chris-note/chris-note.html">
+<link rel="import" href="../chris-plugin-list/chris-plugin-list.html">
+
+<dom-module id="chris-feed">
+
+  <template>
+
+    <style>
+      .feed {
+        @apply(--layout-vertical);
+        padding: 20px;
+        background-color: white;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+/*
+      .icons {
+        display: none;
+      }
+
+      .feed:hover .icons{
+        display: block;
+      }*/
+
+      .avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 20px;
+        box-sizing: border-box;
+        background-color: #DDD;
+      }
+      .pad {
+        padding: 0 16px;
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+      }
+      .primary {
+        font-size: 16px;
+        font-weight: bold;
+      }
+      .description, .date {
+        font-size: 14px;
+        color: gray;
+      }
+
+      #content {
+        margin-top:20px;
+      }
+
+      app-toolbar {
+        flex:1;
+      }
+
+      #favorite {
+        color: var(--paper-pink-500);
+      }
+
+      paper-icon-button {
+        color: var(--paper-grey-500);
+      }
+
+      paper-progress {
+        padding-top: 10px;
+        width: 100%;
+        --paper-progress-height: 2px
+      }
+
+      paper-progress.running {
+        --paper-progress-active-color: var(--paper-light-blue-500);
+      }
+
+      paper-progress.success {
+        --paper-progress-active-color: var(--paper-light-green-500);
+      }
+
+      paper-progress.error {
+        --paper-progress-active-color: var(--paper-red-500);
+      }
+
+    </style>
+
+    <chris-api id="chrisAPI" api="FeedDetails" response="{{details}}" on-return="handleResponse"></chris-api>
+
+    <div>
+      <!-- <paper-progress id="status" class="[[feed.status]]" value="100"></paper-progress> -->
+
+      <div class="feed" on-tap="toggle">
+        <!-- Toolbar -->
+        <app-toolbar>
+          <iron-image class="avatar" sizing="contain" src="[[feed.image]]"></iron-image>
+          <div class="pad">
+            <div class="primary">Feed [[feed.id]] - [[feed.name]]</div>
+            <div class="description">[[feed.description]]</div>
+            <div class="date">[[feed.date]]</div>
+
+          </div>
+          <!-- <paper-badge label="3"></paper-badge> -->
+          <div class="icons">
+            <paper-icon-button icon="delete" on-tap="donothing"></paper-icon-button>
+            <paper-icon-button icon="social:share" on-tap="donothing"></paper-icon-button>
+            <paper-icon-button icon="label" on-tap="donothing"></paper-icon-button>
+            <paper-icon-button id="favorite" icon$="[[favoriteIconForFeed(feed)]]" on-tap="favoriteFeed"></paper-icon-button>
+          </div>
+
+        </app-toolbar>
+
+      <!-- Content -->
+      <iron-collapse id="content" no-animation opened="[[feed.opened]]" >
+          <div on-tap="donothing">
+            <chris-note note="[[details.note]]"></chris-note>
+            <chris-plugin-list plugins="[[details.plugins]]"></chris-plugin-list>
+            <chris-comment-list comments="[[details.comments]]"></chris-comment-list>
+          </div>
+        </iron-collapse>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-feed',
+        properties: {
+          feed: {
+            type: Object
+          },
+          details:{
+            type: Object,
+            value: null
+          },
+          selected:{
+            type: Boolean
+          }
+        },
+        favoriteIconForFeed: function(feed) {
+          return this.feed.favorite ? 'favorite-border' : 'favorite';
+        },
+        favoriteFeed: function(evt){
+          evt.preventDefault();
+          evt.stopPropagation();
+
+          this.feed.favorite = !this.feed.favorite;
+          this.$.favorite.icon = this.feed.favorite ? 'favorite-border' : 'favorite';
+        },
+        toggle: function(evt){
+          if(this.details){
+            return this.$.content.toggle();
+          }
+
+          // start progress bar
+
+          // trigger API call
+          this.$.chrisAPI.url = "";
+          this.$.chrisAPI.params = {
+            feedID: this.feed.id
+          };
+        },
+        handleResponse: function(evt){
+          // stop progress
+
+          // show content
+          this.$.content.toggle();
+        },
+        donothing: function(evt){
+          evt.preventDefault();
+          evt.stopPropagation();
+        }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,36 @@
+<script>
+    FeedDetailsBehavior = {
+
+      prepareFeedDetails: function(what){
+
+        window.console.log('prepareFeedDetails');
+
+        switch(what){
+          case 'url':
+            // var url = "../../data/Feeds.json";
+            var url = "../../data/feeds.json";
+            // fetch dummy json! 
+                         // at this url...
+            return url;
+          case 'params':
+            return this.params;
+          case 'body':
+            return this.body;
+          default:
+            break;
+          }
+        return false;
+      },
+      handleFeedDetails: function(){
+        var details = {
+          note: this.response[0].longText,
+          comments: [
+            this.response[0].mediumText,
+            this.response[0].mediumText,
+            this.response[0].mediumText,
+          ]
+        }
+        return details;
+      },
+    };
+</script>

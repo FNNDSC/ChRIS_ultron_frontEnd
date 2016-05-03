@@ -1,0 +1,96 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+
+<link rel="import" href="../chris-comment/chris-comment.html">
+
+<dom-module id="chris-comment-list">
+
+  <template>
+
+    <style>
+      .comment-list{
+        @apply(--layout-vertical);
+        
+        background-color: white;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+
+      app-toolbar {
+        flex:1;
+        background-color: var(--paper-grey-100);
+      }
+
+      .primary {
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      #comments {
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: auto;
+          margin-top: 30px;
+          margin-bottom: 60px;
+          border-bottom: none;
+        };
+      }
+
+    </style>
+
+      <div>
+        <div class="comment-list">
+          <!-- Toolbar -->
+          <app-toolbar>
+            <div class="primary">Comments</div>
+          </app-toolbar>
+
+          <paper-input label="Comment (180 characters max.)"></paper-input>
+
+          <div class="content">
+            <iron-list id="comments" items="[[comments]]" as="comment">
+              <template>
+                <!--  Remove focus for now... it is for accessibility. tabindex$="[[tabIndex]]" -->
+                <chris-comment comment="[[comment]]"></chris-comment>
+              </template>
+            </iron-list>
+<!--             <chris-comment></chris-comment>
+            <chris-comment></chris-comment>
+            <chris-comment></chris-comment>
+            <chris-comment></chris-comment>
+            <chris-comment></chris-comment> -->
+          </div>
+        </div>
+      </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-comment-list',
+        properties: {
+          comments: {
+            type: Array
+          }
+        }
+    });
+  </script>
+</dom-module>

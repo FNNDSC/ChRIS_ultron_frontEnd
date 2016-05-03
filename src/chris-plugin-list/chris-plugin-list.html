@@ -1,0 +1,39 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../chris-plugin/chris-plugin.html">
+
+<dom-module id="chris-plugin-list">
+
+  <template>
+
+    <style>
+
+    </style>
+
+    <div>
+      <chris-plugin plugin="Some plugin...."></chris-plugin>
+      <chris-plugin plugin="Some plugin...."></chris-plugin>
+      <chris-plugin plugin="Some plugin...."></chris-plugin>
+      <chris-plugin plugin="Some plugin...."></chris-plugin>
+      <chris-plugin plugin="Some plugin...."></chris-plugin>
+      <chris-plugin plugin="Some plugin...."></chris-plugin>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-plugin-list',
+        properties: {
+          plugins: {
+            type: Array
+          }
+        }
+    });
+  </script>
+</dom-module>

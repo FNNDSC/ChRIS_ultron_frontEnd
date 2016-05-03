@@ -1,0 +1,12 @@
+{
+  "name": "chris-ultron",
+  "description": "because we do not know what is going on with trimurti",
+  "devDependencies": {
+    "app-layout": "PolymerLabs/app-layout#master",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.1",
+    "polymer": "Polymer/polymer#^1.2.0",
+    "paper-fab-transitions": "GabiAxel/paper-fab-transitions#master"
+  }
+}
