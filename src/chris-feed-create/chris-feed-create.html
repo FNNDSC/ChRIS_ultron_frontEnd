@@ -1,0 +1,44 @@
+
+      <!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- CHRIS -->
+<link rel="import" href="../chris-api/chris-api.html">
+
+<dom-module id="chris-feed-create">
+
+  <template>
+
+    <style>
+      #createFeed {
+            padding-top: 64px;
+        /*display: block;*/
+    /*position: relative;*/
+/*        display:flex;
+        flex:1;*/
+        background-color: red;
+        /*height:1500px;*/
+        position:fixed;
+        width:100%;
+        height:100%;
+      }
+    </style>
+
+      <chris-api id="chrisAPI" url="../../data/pacs_pull/pacs_pull.html" api="PluginPacspull" response="{{src}}"></chris-api>
+
+      <div id="createFeed" class="layout horizontal fit"> Here we goo again</div>
+      <object type="text/html" data="{{src}}" id="page" class="page"></object>
+      </div>
+  </template>
+
+
+  <script>
+    Polymer({
+        is: 'chris-feed-create'
+  });
+  </script>
+</dom-module>

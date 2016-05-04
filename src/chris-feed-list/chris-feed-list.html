@@ -1,0 +1,53 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../chris-feed/chris-feed.html">
+
+<dom-module id="chris-feed-list">
+
+  <template>
+
+    <style>
+      iron-list {
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: auto;
+          margin-top: 60px;
+          margin-bottom: 60px;
+          border-bottom: 1px solid #ddd;
+        };
+      }
+
+    </style>
+
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection  on-size="resizeItem">
+        <template>
+          <div>
+          <chris-feed index="[[index]]" feed="[[feed]]" selected="[[selected]]"></chris-feed>
+          </div>
+        </template>
+      </iron-list>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-feed-list',
+        properties: {
+          feeds: {
+            type: Object
+          }
+        },
+        attached: function() {
+          this.$.feeds.scrollTarget = this.ownerDocument.documentElement;
+        },
+        resizeItem: function(evt){
+          this.$.feeds.updateSizeForItem(evt.detail.index);
+        },
+    });
+  </script>
+</dom-module>

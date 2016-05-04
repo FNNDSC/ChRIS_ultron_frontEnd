@@ -31,6 +31,7 @@
             favorite: this.response[i].integer > 50 ? true : false,
             // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
             description: this.response[i].shortText,
+            fulldescription: this.response[i].longText,
             date: this.response[i].date
           }
           feeds.push(feed);

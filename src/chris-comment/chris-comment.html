@@ -10,11 +10,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
+    :host {
+        display: block;
+        @apply(--paper-font-common-base);
+      }
 
     </style>
 
       <div>
         [[comment]]
+        <paper-icon-button icon="label" on-tap="donothing"></paper-icon-button>
       </div>
 
   </template>
@@ -26,6 +31,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           comment: {
             type: Object
           }
+        },
+        donothing: function(evt){
+          evt.stopPropagation();
+          evt.preventDefault();
         }
     });
   </script>

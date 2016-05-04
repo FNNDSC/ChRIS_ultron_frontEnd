@@ -1,0 +1,27 @@
+<script>
+    PluginPacspullBehavior = {
+
+      preparePluginPacspull: function(what){
+        window.console.log('prepare plugin pacs pull');
+        switch(what){
+          case 'url':
+            // fetch dummy json!
+            var url = "../../data/pacs_pull/pacs_pull.html";
+            return url;
+          case 'params':
+            return this.params;
+          case 'body':
+            return this.body;
+          default:
+            break;
+          }
+        return false;
+      },
+      handlePluginPacspull: function(){
+        window.console.log("go a response....");
+        // do not handle as JSON
+        window.console.log(this.response);
+        return this.response;
+      },
+    };
+</script>

@@ -12,14 +12,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
-      .note{
+/*      .note{
         @apply(--layout-vertical);
         
         background-color: white;
         border: 1px solid #ddd;
         cursor: pointer;
         margin-bottom: 10px;
-      }
+      }*/
 
       app-toolbar {
         flex:1;
@@ -40,20 +40,20 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </style>
 
       <div>
-        <div class="note">
+        <div class="note" on-click="donothing">
           <!-- Toolbar -->
-          <app-toolbar>
+<!--           <app-toolbar>
             <div class="primary">Note</div>
 
-            <paper-icon-button icon="create"></paper-icon-button>
+            <paper-icon-button icon="create" on-click="donothing"></paper-icon-button>
 
-            <paper-icon-button icon="delete"></paper-icon-button>
+            <paper-icon-button icon="delete" on-click="donothing"></paper-icon-button>
 
-          </app-toolbar>
+          </app-toolbar> -->
 
           <div class="content">
           [[note]]
-          <paper-icon-button icon="delete"></paper-icon-button>
+          <paper-icon-button icon="delete" on-click="donothing"></paper-icon-button>
           </div>
         </div>
       </div>

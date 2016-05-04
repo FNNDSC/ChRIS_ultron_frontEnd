@@ -16,6 +16,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <div>
         [[plugin]]
         Yo...
+        <paper-icon-button icon="delete" on-tap="donothing"></paper-icon-button>
       </div>
 
   </template>
@@ -27,6 +28,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           plugin: {
             type: String
           }
+        },
+        donothing: function(evt){
+          evt.stopPropagation();
+          evt.preventDefault();
         }
     });
   </script>

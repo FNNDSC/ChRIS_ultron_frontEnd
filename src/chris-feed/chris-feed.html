@@ -38,7 +38,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
-      .feed {
+      #feed {
         @apply(--layout-vertical);
         padding: 20px;
         background-color: white;
@@ -46,14 +46,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         cursor: pointer;
         margin-bottom: 10px;
       }
-/*
-      .icons {
-        display: none;
-      }
-
-      .feed:hover .icons{
-        display: block;
-      }*/
 
       .avatar {
         height: 40px;
@@ -78,6 +70,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       #content {
         margin-top:20px;
+        cursor: default;
       }
 
       app-toolbar {
@@ -110,44 +103,52 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         --paper-progress-active-color: var(--paper-red-500);
       }
 
+      .status, #content {
+        display: none;
+      }
+
+      .status.expanded, .feed.expanded #content {
+        display: block;
+      }
+
     </style>
 
-    <chris-api id="chrisAPI" api="FeedDetails" response="{{details}}" on-return="handleResponse"></chris-api>
+    <chris-api id="chrisAPI" api="FeedDetails" response="{{details}}" on-return="handleDetails"></chris-api>
 
-    <div>
-      <!-- <paper-progress id="status" class="[[feed.status]]" value="100"></paper-progress> -->
+      <div>
 
-      <div class="feed" on-tap="toggle">
-        <!-- Toolbar -->
-        <app-toolbar>
-          <iron-image class="avatar" sizing="contain" src="[[feed.image]]"></iron-image>
-          <div class="pad">
-            <div class="primary">Feed [[feed.id]] - [[feed.name]]</div>
-            <div class="description">[[feed.description]]</div>
-            <div class="date">[[feed.date]]</div>
+        <paper-progress id="status" class="status" value="100"></paper-progress>
 
-          </div>
-          <!-- <paper-badge label="3"></paper-badge> -->
-          <div class="icons">
-            <paper-icon-button icon="delete" on-tap="donothing"></paper-icon-button>
-            <paper-icon-button icon="social:share" on-tap="donothing"></paper-icon-button>
-            <paper-icon-button icon="label" on-tap="donothing"></paper-icon-button>
-            <paper-icon-button id="favorite" icon$="[[favoriteIconForFeed(feed)]]" on-tap="favoriteFeed"></paper-icon-button>
-          </div>
+        <div id="feed" class="feed">
 
-        </app-toolbar>
+          <!-- Toolbar -->
+          <app-toolbar>
 
-      <!-- Content -->
-      <iron-collapse id="content" no-animation opened="[[feed.opened]]" >
-          <div on-tap="donothing">
+            <iron-image class="avatar" sizing="contain" src="[[feed.image]]"></iron-image>
+            <div class="pad">
+              <div class="primary">Feed [[feed.id]] - [[feed.name]]</div>
+              <div class="description">[[feed.description]]</div>
+              <div class="date">[[feed.date]]</div>
+            </div>
+            <!-- <paper-badge label="3"></paper-badge> -->
+            <div class="icons">
+              <paper-icon-button icon="delete" on-tap="donothing"></paper-icon-button>
+              <paper-icon-button icon="social:share" on-tap="donothing"></paper-icon-button>
+              <paper-icon-button icon="label" on-tap="donothing"></paper-icon-button>
+              <paper-icon-button id="favorite" icon$="[[favoriteIconForFeed(feed)]]" on-tap="favoriteFeed"></paper-icon-button>
+            </div>
+
+          </app-toolbar>
+
+          <div id="content" on-tap="donothing">
             <chris-note note="[[details.note]]"></chris-note>
             <chris-plugin-list plugins="[[details.plugins]]"></chris-plugin-list>
             <chris-comment-list comments="[[details.comments]]"></chris-comment-list>
           </div>
-        </iron-collapse>
-      </div>
-    </div>
 
+        </div>
+
+      </div>
   </template>
 
   <script>
@@ -162,8 +163,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             value: null
           },
           selected:{
-            type: Boolean
+            type: Boolean,
+            value: false,
+            observer: '_selectedChanged'
+          },
+          index: {
+            type: Number
           }
+        },
+        iconForItem: function(item) {
+          return item ? (item.integer < 50 ? 'star-border' : 'star') : '';
+        },
+        getClassForItem: function(item, selected) {
+          return selected ? 'item expanded' : 'item';
         },
         favoriteIconForFeed: function(feed) {
           return this.feed.favorite ? 'favorite-border' : 'favorite';
@@ -175,28 +187,39 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.feed.favorite = !this.feed.favorite;
           this.$.favorite.icon = this.feed.favorite ? 'favorite-border' : 'favorite';
         },
-        toggle: function(evt){
+        _selectedChanged: function(){
+          // toggle if details available
           if(this.details){
-            return this.$.content.toggle();
+            this.selected ? this.$.feed.classList.add('expanded') : this.$.feed.classList.remove('expanded');
+            return;
           }
 
-          // start progress bar
-
           // trigger API call
-          this.$.chrisAPI.url = "";
-          this.$.chrisAPI.params = {
-            feedID: this.feed.id
-          };
-        },
-        handleResponse: function(evt){
-          // stop progress
+          if(this.feed){
+            // start progress bar
+            // this.$.status.value = 10;
+            // this.$.status.indeterminate = true;
+            // this.$.status.classList.add('expanded', 'running');
 
-          // show content
-          this.$.content.toggle();
+            this.$.chrisAPI.url = "";
+            this.$.chrisAPI.params = {
+              feedID: this.feed.index // feed.id
+            };
+          }
+        },
+        handleDetails: function(evt){
+          // stop progress
+          // this.$.status.classList.remove('expanded','running');
+
+          // toggle that we have details now
+          this._selectedChanged();
+          // let iron-list know the size of the feed changed
+          // window.console.log('details changed');
+          this.fire('size', {index: this.index});
         },
         donothing: function(evt){
-          evt.preventDefault();
           evt.stopPropagation();
+          evt.preventDefault();
         }
     });
   </script>
