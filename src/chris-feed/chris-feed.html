@@ -47,6 +47,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         margin-bottom: 10px;
       }
 
+      #feed.checked {
+        background-color: var(--paper-teal-a100);
+      }
+
       .avatar {
         height: 40px;
         width: 40px;
@@ -124,7 +128,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           <!-- Toolbar -->
           <app-toolbar>
 
-            <iron-image class="avatar" sizing="contain" src="[[feed.image]]"></iron-image>
+            <iron-image class="avatar" sizing="contain" src="[[feed.image]]" on-tap="check"></iron-image>
             <div class="pad">
               <div class="primary">Feed [[feed.id]] - [[feed.name]]</div>
               <div class="description">[[feed.description]]</div>
@@ -142,7 +146,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           <div id="content" on-tap="donothing">
             <chris-note note="[[details.note]]"></chris-note>
-            <chris-plugin-list plugins="[[details.plugins]]"></chris-plugin-list>
+            <chris-plugin-list feedindex="[[index]]" plugins="[[details.plugins]]"></chris-plugin-list>
             <chris-comment-list comments="[[details.comments]]"></chris-comment-list>
           </div>
 
@@ -166,6 +170,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             type: Boolean,
             value: false,
             observer: '_selectedChanged'
+          },
+          checked:{
+            type: Boolean,
+            value: false
           },
           index: {
             type: Number
@@ -220,6 +228,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         donothing: function(evt){
           evt.stopPropagation();
           evt.preventDefault();
+        },
+        check: function(evt){
+          // this.donothing(evt);
+          // this.checked = !this.checked;
+
+          // this.checked ? this.$.feed.classList.add('checked') : this.$.feed.classList.remove('checked');
         }
     });
   </script>

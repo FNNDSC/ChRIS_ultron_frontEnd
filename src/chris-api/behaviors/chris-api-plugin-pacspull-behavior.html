@@ -2,7 +2,8 @@
     PluginPacspullBehavior = {
 
       preparePluginPacspull: function(what){
-        window.console.log('prepare plugin pacs pull');
+        this.handleAs = 'text';
+
         switch(what){
           case 'url':
             // fetch dummy json!
@@ -17,10 +18,15 @@
           }
         return false;
       },
+
       handlePluginPacspull: function(){
         window.console.log("go a response....");
         // do not handle as JSON
         window.console.log(this.response);
+        // document.write(this.response);
+        // get pacs_pull elt
+        // var elt = this.response.querySelector('#pacs-pull');
+        // window.console.log(elt);
         return this.response;
       },
     };

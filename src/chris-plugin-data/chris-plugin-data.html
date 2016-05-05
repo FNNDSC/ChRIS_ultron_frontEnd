@@ -1,0 +1,37 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="chris-plugin-data">
+
+  <template>
+
+    <style>
+
+    </style>
+
+      <div>
+        I am the data
+        <paper-icon-button icon="delete" on-tap="donothing"></paper-icon-button>
+      </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-plugin-data',
+        properties: {
+          data: {
+            type: Array
+          }
+        },
+        donothing: function(evt){
+          evt.stopPropagation();
+          evt.preventDefault();
+        }
+    });
+  </script>
+</dom-module>

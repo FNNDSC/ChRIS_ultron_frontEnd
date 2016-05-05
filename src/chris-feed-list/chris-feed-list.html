@@ -24,7 +24,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection  on-size="resizeItem">
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection  on-size="resizeItem" on-newfeed="newFeed">
         <template>
           <div>
           <chris-feed index="[[index]]" feed="[[feed]]" selected="[[selected]]"></chris-feed>
@@ -48,6 +48,27 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         resizeItem: function(evt){
           this.$.feeds.updateSizeForItem(evt.detail.index);
         },
+        newFeed: function(evt){
+          window.console.log('got a new feed');
+          // get the feed content...
+          var feed = {
+            id: this.feeds.length + 1,
+            name: 'pacs_pull' + (this.feeds.length + 1),
+            image: 'https://s3.amazonaws.com/uifaces/faces/twitter/enda/73.jpg',
+            opened: false,//this.response[i].expanded,
+            color: 'rgb(134,91,60)',
+            favorite: (this.feeds.length % 3) ? true : false,
+            // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
+            description: "just created from plugin",
+            fulldescription: "YAYAYAYAYAYAYYA",
+            date: "Sun Aug 14 1994 03:27:03 GMT-0700 (PDT)"
+          }
+
+          this.unshift('feeds', feed);
+
+          this.$.feeds.scrollToIndex(0);
+
+        }
     });
   </script>
 </dom-module>

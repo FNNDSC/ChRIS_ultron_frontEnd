@@ -17,7 +17,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
   <template>
 
-    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[getBody(body, api)]]" params="[[getParams(params, api)]]" method="[[method]]" last-response="{{response}}" on-response="handleResponse" auto></iron-ajax>
+    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[getBody(body, api)]]" params="[[getParams(params, api)]]" method="[[method]]" last-response="{{response}}" on-response="handleResponse" handle-as="[[handleAs]]" auto></iron-ajax>
 
   </template>
 
@@ -42,6 +42,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           },
           api: {
             type: String
+          },
+          handleAs :{
+            type: String,
+            value: 'json'
           }
         },
         behaviors: [

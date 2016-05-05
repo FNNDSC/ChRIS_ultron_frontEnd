@@ -28,17 +28,43 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
     </style>
 
-      <chris-api id="chrisAPI" url="../../data/pacs_pull/pacs_pull.html" api="PluginPacspull" response="{{src}}"></chris-api>
+      <chris-api id="chrisAPI" url="../../data/pacs_pull/pacs_pull.html" api="PluginPacspull" response="{{plugin}}" on-return="handlePlugin"></chris-api>
 
       <div id="createFeed" class="layout horizontal fit"> Here we goo again</div>
-      <object type="text/html" data="{{src}}" id="page" class="page"></object>
+      <div id="pluginContainer"></div>
       </div>
   </template>
 
 
   <script>
     Polymer({
-        is: 'chris-feed-create'
+        is: 'chris-feed-create',
+        properties: {
+          plugin: {
+            type: Object
+          }
+        },
+        handlePlugin: function(){
+
+          // document.write(this.plugin);
+          // window.console.log('handle plugin...');
+          // window.console.log(this.plugin);
+          // this.plugin
+          // var plugin = document.createElement("plugin-yo");
+          // plugin.innerHTML = this.plugin;
+          // window.console.log(plugin);
+          // var node = document.importNode(plugin, true);
+
+          // document.registerElement('pacs-pulltest', this.plugin);
+          // var elt = document.createElement("plugin-yo");
+          // this.$.pluginContainer.appendChild(node);
+    //           var importElem = document.createElement('link');
+    // importElem.rel = 'import';
+    // importElem.href = '/components/my-dynamic-sub-component.html';
+    // Polymer.dom(this.root).appendChild(importElem);
+    // var app = document.createElement('component-controler');
+    // Polymer.dom(this.$.container).appendChild(app);
+        }
   });
   </script>
 </dom-module>

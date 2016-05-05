@@ -5,18 +5,32 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../chris-plugin-data/chris-plugin-data.html">
+<link rel="import" href="../chris-plugin-create/chris-plugin-create.html">
+
 <dom-module id="chris-plugin">
 
   <template>
 
     <style>
-
+      #plugin{
+        @apply(--layout-vertical);
+        
+        background-color: white;
+        border: 1px solid #ddd;
+        cursor: pointer;
+      }
     </style>
 
-      <div>
+      <div id="plugin">
+      <!-- Toolbar -->
+        <div>
         [[plugin]]
-        Yo...
-        <paper-icon-button icon="delete" on-tap="donothing"></paper-icon-button>
+        <paper-icon-button mini icon="communication:call-split" title="heart" on-tap="newFeed"></paper-icon-button>
+        <paper-icon-button mini icon="add" title="heart" on-tap="newPlugin"></paper-icon-button>
+      </div>
+
+        <chris-plugin-data></chris-plugin-data>
       </div>
 
   </template>
@@ -32,6 +46,22 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         donothing: function(evt){
           evt.stopPropagation();
           evt.preventDefault();
+        },
+        newFeed: function(evt){
+          this.donothing(evt);
+          // call API
+          // get reponse,
+          // fire the new feed
+          window.console.log('fire newfeed');
+          this.fire('newfeed');
+        },
+        newPlugin: function(evt){
+          this.donothing(evt);
+          // call API
+          // get reponse,
+          // fire the new feed
+          window.console.log('fire newPlugin');
+          this.fire('newplugin');
         }
     });
   </script>

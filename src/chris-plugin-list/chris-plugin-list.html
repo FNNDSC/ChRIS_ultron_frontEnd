@@ -12,10 +12,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
-
+      .primary {
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+        font-size: 16px;
+        font-weight: bold;
+      }
     </style>
 
-    <div>
+    <div class="primary">
+    Plugins
+    </div>
+
+    <div id="plugins" on-newplugin="newPlugin">
       <chris-plugin plugin="Some plugin...."></chris-plugin>
       <chris-plugin plugin="Some plugin...."></chris-plugin>
       <chris-plugin plugin="Some plugin...."></chris-plugin>
@@ -32,7 +41,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         properties: {
           plugins: {
             type: Array
+          },
+          feedindex:{
+            type:Number
           }
+        },
+        newPlugin: function(evt){
+          window.console.log('got a new plugin...');
+          // add new plugin
+          var plugin = document.createElement('chris-plugin');
+          plugin.plugin = 'I am new!';
+          Polymer.dom(this.$.plugins).appendChild(plugin);
+
+          this.fire('size', {index: this.feedindex});
         }
     });
   </script>

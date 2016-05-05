@@ -9,6 +9,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
@@ -68,6 +69,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         right: 16px;
       }
 
+      paper-fab#create {
+        --paper-fab-background: var(--paper-light-blue-500);
+      }
+
+      paper-fab#merge {
+        --paper-fab-background: var(--paper-light-green-500);
+        top: 80px;
+        right: 16px;
+      }
+
       @media (max-width: 460px) {
         paper-toolbar .bottom.title {
           font-size: 14px;
@@ -99,14 +110,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           <neon-animatable >
             <div id="listContainer">
               <chris-feed-list feeds="[[items]]"></chris-feed-list>
-              <paper-fab icon="add" title="add" on-tap="nextPage"></paper-fab>
+              <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab>
+              <paper-fab id="create" icon="add" title="add" on-tap="nextPage"></paper-fab>
             </div>
           </neon-animatable>
 
           <neon-animatable>
             <div class="relative">
               <chris-feed-create class="fit"></chris-feed-create>
-              <paper-fab icon="av:play-arrow" title="play-arrow" on-tap="nextPage"></paper-fab>
+              <paper-fab icon="av:play-arrow" title="play-arrow" on-tap="newFeed"></paper-fab>
           </neon-animatable>
 
         </neon-animated-pages>
@@ -116,7 +128,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </app-drawer-layout>
 
     <!-- faster with that.... -->
-    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+    <!-- <app-scrollpos-control selected="{{page}}"></app-scrollpos-control> -->
 
   </template>
 
@@ -138,8 +150,27 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
         nextPage: function(){
           this.$.pages.selectNext();
-        }
+        },
+        newFeed: function(){
+          // call API to get feed
+          // the create plugin should return it to us...
+          var feed = {
+            id: this.items.length + 1,
+            name: 'pacs_pull' + (this.items.length + 1),
+            image: 'https://s3.amazonaws.com/uifaces/faces/twitter/enda/73.jpg',
+            opened: false,//this.response[i].expanded,
+            color: 'rgb(134,91,60)',
+            favorite: (this.items.length % 3) ? true : false,
+            // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
+            description: "just created",
+            fulldescription: "YAYAYAYAYAYAYYA",
+            date: "Sun Aug 14 1994 03:27:03 GMT-0700 (PDT)"
+          }
 
+          this.unshift('items', feed);
+
+          this.nextPage();
+        }
     });
   </script>
 </dom-module>

@@ -1,0 +1,37 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="chris-plugin-create">
+
+  <template>
+
+    <style>
+
+    </style>
+
+      <div>
+        <paper-icon-button mini icon="communication:call-split" title="heart"></paper-icon-button>
+        <paper-icon-button mini icon="add" title="heart"></paper-icon-button>
+      </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-plugin-create',
+        properties: {
+          plugins: {
+            type: Array
+          }
+        },
+        donothing: function(evt){
+          evt.stopPropagation();
+          evt.preventDefault();
+        }
+    });
+  </script>
+</dom-module>
