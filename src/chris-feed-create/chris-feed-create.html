@@ -4,6 +4,7 @@
 Copyright (c) 2016 FNNDSC. All rights reserved.
 -->
 
+
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <!-- CHRIS -->
@@ -14,25 +15,35 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
-      #createFeed {
-            padding-top: 64px;
-        /*display: block;*/
-    /*position: relative;*/
-/*        display:flex;
-        flex:1;*/
-        background-color: red;
-        /*height:1500px;*/
-        position:fixed;
-        width:100%;
-        height:100%;
+    :host{
+         position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    }
+      #container {
+          position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--paper-teal-100);
+      }
+
+      #card {
+        position: relative;
+    margin: 64px 100px 0;
+    min-height: 100vh;
+    /*height: 100%;*/
+    background-color: var(--paper-grey-50);
       }
     </style>
 
       <chris-api id="chrisAPI" url="../../data/pacs_pull/pacs_pull.html" api="PluginPacspull" response="{{plugin}}" on-return="handlePlugin"></chris-api>
 
-      <div id="createFeed" class="layout horizontal fit"> Here we goo again</div>
-      <div id="pluginContainer"></div>
+      <div id="container">
       </div>
+              <div id="card">
+        </div>
   </template>
 
 
@@ -45,26 +56,25 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
         },
         handlePlugin: function(){
-
-          // document.write(this.plugin);
-          // window.console.log('handle plugin...');
-          // window.console.log(this.plugin);
-          // this.plugin
-          // var plugin = document.createElement("plugin-yo");
-          // plugin.innerHTML = this.plugin;
-          // window.console.log(plugin);
-          // var node = document.importNode(plugin, true);
-
-          // document.registerElement('pacs-pulltest', this.plugin);
-          // var elt = document.createElement("plugin-yo");
-          // this.$.pluginContainer.appendChild(node);
-    //           var importElem = document.createElement('link');
-    // importElem.rel = 'import';
-    // importElem.href = '/components/my-dynamic-sub-component.html';
-    // Polymer.dom(this.root).appendChild(importElem);
-    // var app = document.createElement('component-controler');
-    // Polymer.dom(this.$.container).appendChild(app);
-        }
+          window.console.log('handle plugin');
+          // got the url, load it now!!
+          // what if it i loaded already?
+          // if(Polymer.isIntance(this.plugin.name)){
+          //   return;
+          // }
+          var self = this;
+          Polymer.Base.importHref(
+            this.plugin.url,
+            function(evt){
+              var plugin = document.createElement(self.plugin.name);
+              Polymer.dom(self.$.card).appendChild(plugin);
+            },
+            function(evt){
+              window.console.log('oops, something went wrong...');
+              window.console.log(evt);
+            },
+            true);
+        },
   });
   </script>
 </dom-module>

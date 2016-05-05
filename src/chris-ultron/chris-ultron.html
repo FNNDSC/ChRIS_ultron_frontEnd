@@ -20,12 +20,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <!-- Neon elements -->
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
 
 <!-- PAPER <3 -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-styles/color.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
@@ -89,10 +93,36 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <chris-api id="chrisAPI" api="Feeds" url="../../data/contacts.json" response="{{items}}"></chris-api>
 
+<!-- use that? -->
+    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+
     <app-drawer-layout>
 
       <app-drawer>
         <app-toolbar>Welcome, Avenger!</app-toolbar>
+        <div class="horizontal-section">
+          GENERAL
+          <paper-menu>
+            <paper-item>All Feeds</paper-item>
+            <paper-item>Favorites</paper-item>
+            <paper-item>Selected</paper-item>
+          </paper-menu>
+        </div>
+        <div class="horizontal-section">
+          TAGS
+          <paper-menu>
+            <paper-item>pacs_pull</paper-item>
+            <paper-item>tractography</paper-item>
+            <paper-item>study X</paper-item>
+            <paper-item>pacs_pull</paper-item>
+            <paper-item>tractography</paper-item>
+            <paper-item>study X</paper-item>
+            <paper-item>pacs_pull</paper-item>
+            <paper-item>tractography</paper-item>
+            <paper-item>study X</paper-item>
+            <paper-item>pacs_pull</paper-item>
+          </paper-menu>
+        </div>
       </app-drawer>
 
       <app-header-layout>
@@ -105,20 +135,24 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           </app-toolbar>
         </app-header>
 
-        <neon-animated-pages id="pages" selected="{{page}}">
+        <neon-animated-pages id="pages" selected="{{page}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
           <neon-animatable >
-            <div id="listContainer">
-              <chris-feed-list feeds="[[items]]"></chris-feed-list>
-              <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab>
-              <paper-fab id="create" icon="add" title="add" on-tap="nextPage"></paper-fab>
+            <!-- FEEDS -->
+            <chris-feed-list id="feeds" feeds="[[items]]"></chris-feed-list>
+
+            <!-- FABS -->
+            <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab>
+            <paper-fab id="create" icon="add" title="add" on-tap="nextPage"></paper-fab>
             </div>
           </neon-animatable>
 
           <neon-animatable>
-            <div class="relative">
-              <chris-feed-create class="fit"></chris-feed-create>
-              <paper-fab icon="av:play-arrow" title="play-arrow" on-tap="newFeed"></paper-fab>
+            <!-- CREATE FEED PAGE -->
+            <chris-feed-create></chris-feed-create>
+
+            <!-- FABS? -->
+            <paper-fab icon="av:play-arrow" title="play-arrow" on-tap="newFeed"></paper-fab>
           </neon-animatable>
 
         </neon-animated-pages>

@@ -1,16 +1,46 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<!-- <link rel="import"
+      href="https://cdn.vaadin.com/vaadin-core-elements/latest/vaadin-grid/vaadin-grid.html"> -->
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
 <dom-module id="pacs-pull">
 
   <template>
 
     <style>
-
+  #simple {
+    height: 300px;
+  }
     </style>
 
+      <div> PACS PULL </div>
       <div>
-         Here we go Pacs_Pull!!!
+         <paper-checkbox>anonymous</paper-checkbox>
+         <paper-input label="Input label"></paper-input>
+         <paper-input label="Input label"></paper-input>
+         <paper-input label="Input label"></paper-input>
+         <paper-input label="Input label"></paper-input>
+         <paper-input label="Input label"></paper-input>
+         <paper-input label="Input label"></paper-input>
       </div>
+
+      <div>
+      <paper-button>Flat button</paper-button>
+      </div>
+
+<!--       <vaadin-grid id="simple">
+  <table>
+    <colgroup>
+      <col name="firstName"/>
+      <col name="lastName"/>
+      <col name="email"/>
+    </colgroup>
+  </table>
+</vaadin-grid> -->
 
   </template>
 

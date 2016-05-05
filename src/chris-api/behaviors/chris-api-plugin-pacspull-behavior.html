@@ -18,16 +18,13 @@
           }
         return false;
       },
-
       handlePluginPacspull: function(){
-        window.console.log("go a response....");
-        // do not handle as JSON
-        window.console.log(this.response);
-        // document.write(this.response);
-        // get pacs_pull elt
-        // var elt = this.response.querySelector('#pacs-pull');
-        // window.console.log(elt);
-        return this.response;
+        var plugin = {
+          // url: 'https://rawgit.com/FNNDSC/ChRIS_ultron_frontEnd/master/data/pacs_pull/pacs_pull.html',
+          url: '../../data/pacs_pull/pacs_pull.html',
+          name: 'pacs-pull'
+        }
+        return plugin;
       },
     };
 </script>

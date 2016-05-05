@@ -31,6 +31,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <chris-plugin plugin="Some plugin...."></chris-plugin>
       <chris-plugin plugin="Some plugin...."></chris-plugin>
       <chris-plugin plugin="Some plugin...."></chris-plugin>
+      <!-- use list... -->
     </div>
 
   </template>
@@ -54,6 +55,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           Polymer.dom(this.$.plugins).appendChild(plugin);
 
           this.fire('size', {index: this.feedindex});
+
+          // this.fire('scrollto', {offsetTop: plugin.offsetTop});
         }
     });
   </script>

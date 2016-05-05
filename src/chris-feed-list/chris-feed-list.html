@@ -12,6 +12,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
+        :host{
+         position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    }
+
       iron-list {
         --iron-list-items-container: {
           max-width: 800px;
@@ -24,7 +32,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection  on-size="resizeItem" on-newfeed="newFeed">
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection  on-size="resizeItem" on-newfeed="newFeed" on-scrollto="scrollto">
         <template>
           <div>
           <chris-feed index="[[index]]" feed="[[feed]]" selected="[[selected]]"></chris-feed>
@@ -67,6 +75,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.unshift('feeds', feed);
 
           this.$.feeds.scrollToIndex(0);
+
+        },
+        scrollto: function(evt){
+          window.console.log('got scrollto');
+          window.console.log(evt);
+          // this.$.feeds.scroll(evt.detail.offsetTop);
 
         }
     });
