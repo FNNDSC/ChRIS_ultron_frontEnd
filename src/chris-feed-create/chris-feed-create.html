@@ -7,42 +7,60 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<!-- CHRIS -->
-<link rel="import" href="../chris-api/chris-api.html">
+
+<!-- APP LAYOUT -->
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+
+<!-- STYLE -->
+<link rel="import" href="../chris-ultron/chris-ultron-styles.html">
 
 <dom-module id="chris-feed-create">
 
   <template>
 
+    <style include="chris-ultron-styles"></style>
     <style>
     :host{
-         position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
-      #container {
-          position: fixed;
-    height: 100vh;
-    width: 100vw;
-    background-color: var(--paper-teal-100);
-      }
+    
+    .container {
+      position: fixed;
+      height: 100vh;
+      width: 100vw;
+    }
 
-      #card {
-        position: relative;
-    margin: 64px 100px 0;
-    min-height: 100vh;
-    /*height: 100%;*/
-    background-color: var(--paper-grey-50);
-      }
+    #card {
+      position: relative;
+      margin: 64px 100px 0;
+      min-height: 100vh;
+      /*height: 100%;*/
+      background-color: var(--paper-grey-50);
+    }
+
+    .big {
+      --iron-icon-height: 48px;
+      --iron-icon-width: 48px;
+      margin-right:24px;
+    }
     </style>
 
-      <chris-api id="chrisAPI" url="../../data/pacs_pull/pacs_pull.html" api="PluginPacspull" response="{{plugin}}" on-return="handlePlugin"></chris-api>
-
-      <div id="container">
+      <div id="container" class$="light container {{plugin.color}}">
       </div>
               <div id="card">
+              <app-toolbar class$="primary {{plugin.color}}"><iron-icon class="big" icon$="{{plugin.icon}}"></iron-icon> {{plugin.label}}</app-toolbar>
+              
+              
         </div>
   </template>
 
@@ -52,21 +70,25 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         is: 'chris-feed-create',
         properties: {
           plugin: {
-            type: Object
+            type: Object,
+            observer: '_pluginChanged'
           }
         },
-        handlePlugin: function(){
-          window.console.log('handle plugin');
-          // got the url, load it now!!
-          // what if it i loaded already?
-          // if(Polymer.isIntance(this.plugin.name)){
-          //   return;
-          // }
+        _pluginChanged: function(){
+
+          // remove child if any
+          var node = Polymer.dom(this.$.card).querySelector('.plugin');
+          if(node){
+            Polymer.dom(this.$.card).removeChild(node);
+          }
+          
+          // fetch the plugin!
           var self = this;
           Polymer.Base.importHref(
             this.plugin.url,
             function(evt){
               var plugin = document.createElement(self.plugin.name);
+              plugin.classList.add('plugin');
               Polymer.dom(self.$.card).appendChild(plugin);
             },
             function(evt){
@@ -74,7 +96,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
               window.console.log(evt);
             },
             true);
-        },
+        }
   });
   </script>
 </dom-module>

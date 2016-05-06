@@ -28,11 +28,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <!-- PAPER <3 -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-styles/color.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- APP LAYOUT -->
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -46,17 +48,21 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/app-layout/demo/sample-content.html">
 
 <!-- NON POLYMER TEAM PROVIDED -->
-<!-- <link rel="import" href="../../bower_components/paper-fab-transition/paper-fab-speed-dial.html"> -->
+<link rel="import" href="../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
 
 <!-- CHRIS -->
 <link rel="import" href="../chris-api/chris-api.html">
 <link rel="import" href="../chris-feed-list/chris-feed-list.html">
 <link rel="import" href="../chris-feed-create/chris-feed-create.html">
 
+<!-- STYLE -->
+<link rel="import" href="chris-ultron-styles.html">
+
 <dom-module id="chris-ultron">
 
   <template>
 
+    <style include="chris-ultron-styles"></style>
     <style>
       app-header {
         background-color: #00897B;
@@ -67,7 +73,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         --paper-icon-button-ink-color: white;
       }
 
-      paper-fab {
+      paper-fab-speed-dial, paper-fab#gogogo {
+        z-index:10;
         position: fixed;
         bottom: 16px;
         right: 16px;
@@ -77,7 +84,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         --paper-fab-background: var(--paper-light-blue-500);
       }
 
+
       paper-fab#merge {
+        position:fixed;
         --paper-fab-background: var(--paper-light-green-500);
         top: 80px;
         right: 16px;
@@ -91,7 +100,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <chris-api id="chrisAPI" api="Feeds" url="../../data/contacts.json" response="{{items}}"></chris-api>
+    <chris-api api="Feeds" url="../../data/contacts.json" response="{{items}}"></chris-api>
+    <chris-api api="PluginsFeed" url="../../data/plugins-feed.json" response="{{plugins}}"></chris-api>
 
 <!-- use that? -->
     <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
@@ -138,21 +148,32 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <neon-animated-pages id="pages" selected="{{page}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
           <neon-animatable >
+
+            <paper-fab-speed-dial direction="top">
+              <paper-fab icon="add" class="dropdown-trigger"></paper-fab>
+              <div class="dropdown-content">
+                <template is="dom-repeat" items="{{plugins}}">
+                  <paper-fab mini id="[[item.name]]" icon="[[item.icon]]" class$="primary [[item.color]]" item="[[item]]" on-tap="nextPage"></paper-fab>
+
+                  <paper-tooltip for="[[item.name]]" position="left" animation-delay="0">[[item.label]]</paper-tooltip>
+                </template>
+              </div>
+            </paper-fab-speed-dial>
+
             <!-- FEEDS -->
             <chris-feed-list id="feeds" feeds="[[items]]"></chris-feed-list>
 
             <!-- FABS -->
             <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab>
-            <paper-fab id="create" icon="add" title="add" on-tap="nextPage"></paper-fab>
-            </div>
+
           </neon-animatable>
 
           <neon-animatable>
             <!-- CREATE FEED PAGE -->
-            <chris-feed-create></chris-feed-create>
+            <chris-feed-create id="feedCreate" plugin="{{plugin}}"></chris-feed-create>
 
             <!-- FABS? -->
-            <paper-fab icon="av:play-arrow" title="play-arrow" on-tap="newFeed"></paper-fab>
+            <paper-fab id="gogogo" icon="av:play-arrow" title="play-arrow" on-tap="newFeed"></paper-fab>
           </neon-animatable>
 
         </neon-animated-pages>
@@ -173,6 +194,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           items: {
             type: Array
           },
+          plugins:{
+            type: Array
+          },
+          plugin:{
+            type: Object
+          },
           route:{
             type: String,
             value: 'feeds'
@@ -182,7 +209,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             value: 0
           }
         },
-        nextPage: function(){
+        nextPage: function(item, more){
+
+          if(item){
+            this.set('plugin', item.model.__data__.item);
+          }
+
           this.$.pages.selectNext();
         },
         newFeed: function(){
@@ -190,10 +222,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // the create plugin should return it to us...
           var feed = {
             id: this.items.length + 1,
-            name: 'pacs_pull' + (this.items.length + 1),
+            name: this.plugin.name + ' ' + (this.items.length + 1),
             image: 'https://s3.amazonaws.com/uifaces/faces/twitter/enda/73.jpg',
             opened: false,//this.response[i].expanded,
-            color: 'rgb(134,91,60)',
+            color: this.plugin.color,
             favorite: (this.items.length % 3) ? true : false,
             // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
             description: "just created",
@@ -203,7 +235,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           this.unshift('items', feed);
 
-          this.nextPage();
+          this.nextPage(null);
         }
     });
   </script>

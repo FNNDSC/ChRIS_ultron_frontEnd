@@ -1,0 +1,23 @@
+[
+  {
+    "name": "pacs-pull-plugin",
+    "label": "Pacs Pull",
+    "color": "red",
+    "url": "../../data/pacs_pull/pacs_pull.html",
+    "icon": "icons:cloud-queue"
+  },
+  {
+    "name": "search-plugin",
+    "label": "Search",
+    "color": "green",
+    "url": "../../data/search/search.html",
+    "icon": "icons:search"
+  },
+  {
+    "name": "file-browser-plugin",
+    "label": "File Browser",
+    "color": "blue",
+    "url": "../../data/file_browser/file_browser.html",
+    "icon": "icons:folder-open"
+  }
+]
