@@ -55,13 +55,25 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     }
     </style>
 
+
+                <app-header-layout>
+        <app-header fixed effects="waterfall">
+          <app-toolbar class$="primary {{plugin.color}}"> <div title> <iron-icon class="big" icon$="{{plugin.icon}}"></iron-icon> {{plugin.label}}</div>
+
+          <paper-icon-button icon="close" alt="More options"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
+
+
+
       <div id="container" class$="light container {{plugin.color}}">
       </div>
               <div id="card">
-              <app-toolbar class$="primary {{plugin.color}}"><iron-icon class="big" icon$="{{plugin.icon}}"></iron-icon> {{plugin.label}}</app-toolbar>
+<!--               <app-toolbar class$="primary {{plugin.color}}"><iron-icon class="big" icon$="{{plugin.icon}}"></iron-icon> {{plugin.label}}</app-toolbar> -->
               
               
         </div>
+        </app-header-layout>
   </template>
 
 

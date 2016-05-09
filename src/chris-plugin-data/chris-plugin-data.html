@@ -5,17 +5,43 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="bower_components/iron-selector/iron-selector.html">
+
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+
+<!-- STYLES... -->
+<link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
 <dom-module id="chris-plugin-data">
 
   <template>
 
+    <style include="iron-flex iron-flex-alignment">
+
+      #macview{
+        flex-flow:row;
+         overflow-x: scroll;
+              }
+      #macview paper-listbox{
+        border-right: 1px solid #353535;
+        min-width: 200px;
+                overflow-y: scroll;
+        max-height: 300px;
+
+      }
     <style>
 
     </style>
 
-      <div>
-        I am the data
-        <paper-icon-button icon="delete" on-tap="donothing"></paper-icon-button>
+      <div id="macview" class="layout horizontal">
+        <paper-listbox data-depth="0" on-iron-select="selectionChanged">
+          <template is="dom-repeat" items="{{data.files}}" as="file">
+            <paper-item> <iron-icon icon="icons:folder"></iron-icon> [[file.label]]</paper-item>
+          </template>
+        </paper-listbox>
+
+        </paper-listbox>
       </div>
 
   </template>
@@ -25,12 +51,46 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         is: 'chris-plugin-data',
         properties: {
           data: {
-            type: Array
+            type: Object
+          },
+          path: {
+            type: Array,
+            value: []
           }
         },
         donothing: function(evt){
           evt.stopPropagation();
+          // evt.preventDefault();
+        },
+        selectionChanged: function(evt){
+          // evt.stopPropagation();
           evt.preventDefault();
+
+          window.console.log('selector');
+
+          window.console.log(evt);
+          window.console.log(evt.target);
+          window.console.log(evt.target.dataDepth);
+          window.console.log(evt.target.selected);
+          // find depth?
+          // update path?
+
+
+          var paperListbox = document.createElement('paper-listbox');
+          paperListbox.dataDepth = evt.target.dataDepth + 1;
+          paperListbox.onIronSelect="selectionChanged";
+
+          // create child nodes...
+          for(var i = 0; i < this.data.files[evt.target.selected].files.length; i++){
+            var paperItem = document.createElement('paper-item');
+            paperItem.innerHTML = '<iron-icon icon="icons:folder"></iron-icon> ' + this.data.files[evt.target.selected].files[i].label;
+
+            Polymer.dom(paperListbox).appendChild(paperItem);
+          }
+
+          Polymer.dom(this.$.macview).appendChild(paperListbox);
+
+          //
         }
     });
   </script>

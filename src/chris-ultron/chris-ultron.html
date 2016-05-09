@@ -103,9 +103,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <chris-api api="Feeds" url="../../data/contacts.json" response="{{items}}"></chris-api>
     <chris-api api="PluginsFeed" url="../../data/plugins-feed.json" response="{{plugins}}"></chris-api>
 
-<!-- use that? -->
-    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
-
     <app-drawer-layout>
 
       <app-drawer>
@@ -135,7 +132,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         </div>
       </app-drawer>
 
-      <app-header-layout>
+      <!-- use that? -->
+    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+
+        <neon-animated-pages id="pages" selected="{{page}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+
+          <neon-animatable >
+
+                <app-header-layout>
         <app-header fixed effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
@@ -145,9 +149,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           </app-toolbar>
         </app-header>
 
-        <neon-animated-pages id="pages" selected="{{page}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-
-          <neon-animatable >
 
             <paper-fab-speed-dial direction="top">
               <paper-fab icon="add" class="dropdown-trigger"></paper-fab>
@@ -166,6 +167,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             <!-- FABS -->
             <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab>
 
+
+
+      </app-header-layout>
+
           </neon-animatable>
 
           <neon-animatable>
@@ -177,8 +182,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           </neon-animatable>
 
         </neon-animated-pages>
-
-      </app-header-layout>
 
     </app-drawer-layout>
 

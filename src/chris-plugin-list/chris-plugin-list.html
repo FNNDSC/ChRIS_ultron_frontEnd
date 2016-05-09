@@ -25,12 +25,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </div>
 
     <div id="plugins" on-newplugin="newPlugin">
-      <chris-plugin plugin="Some plugin...."></chris-plugin>
-      <chris-plugin plugin="Some plugin...."></chris-plugin>
-      <chris-plugin plugin="Some plugin...."></chris-plugin>
-      <chris-plugin plugin="Some plugin...."></chris-plugin>
-      <chris-plugin plugin="Some plugin...."></chris-plugin>
-      <chris-plugin plugin="Some plugin...."></chris-plugin>
+      <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
+      <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
+      <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
+      <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
+      <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
+      <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
       <!-- use list... -->
     </div>
 
@@ -41,7 +41,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         is: 'chris-plugin-list',
         properties: {
           plugins: {
-            type: Array
+            type: Object // to change to array..?
           },
           feedindex:{
             type:Number

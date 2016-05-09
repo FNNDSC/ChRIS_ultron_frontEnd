@@ -25,12 +25,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <div id="plugin">
       <!-- Toolbar -->
         <div>
-        [[plugin]]
         <paper-icon-button mini icon="communication:call-split" title="heart" on-tap="newFeed"></paper-icon-button>
         <paper-icon-button mini icon="add" title="heart" on-tap="newPlugin"></paper-icon-button>
       </div>
 
-        <chris-plugin-data></chris-plugin-data>
+<!-- plugin.data -->
+        <chris-plugin-data data="[[plugin]]"></chris-plugin-data>
       </div>
 
   </template>
@@ -40,7 +40,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         is: 'chris-plugin',
         properties: {
           plugin: {
-            type: String
+            type: Object
           }
         },
         donothing: function(evt){
