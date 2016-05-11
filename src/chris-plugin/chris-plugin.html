@@ -5,6 +5,26 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+
+<!-- Neon elements -->
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+
+<link rel="import" href="../chris-dataview-columns/chris-dataview-columns.html">
+<link rel="import" href="../chris-dataview-grid/chris-dataview-grid.html">
+<link rel="import" href="../chris-dataview-rows/chris-dataview-rows.html">
+
 <link rel="import" href="../chris-plugin-data/chris-plugin-data.html">
 <link rel="import" href="../chris-plugin-create/chris-plugin-create.html">
 
@@ -14,23 +34,85 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <style>
       #plugin{
-        @apply(--layout-vertical);
+        /*@apply(--layout-vertical);*/
         
         background-color: white;
         border: 1px solid #ddd;
         cursor: pointer;
       }
+
+      .title{
+        margin-left:8px;
+      }
+
+      paper-icon-button{
+        --paper-icon-button-ink-color: var(--paper-grey-100);
+      }
+
+      paper-icon-button.views{
+        border: 1px solid var(--paper-grey-100);
+      }
+
+      .primary.red {
+        background-color: var(--paper-red-500);
+        color: var(--paper-grey-50);
+      }
+
+    .dataview{
+      display:none;
+    }
+
+    .dataview.iron-selected{
+      display: block;
+    }
+
+    .views.iron-selected{
+      background-color: var(--paper-grey-50);
+      color: var(--paper-red-500);
+    }
+
+    iron-selector#buttons {
+      display: flex;
+    }
+
     </style>
 
       <div id="plugin">
-      <!-- Toolbar -->
-        <div>
-        <paper-icon-button mini icon="communication:call-split" title="heart" on-tap="newFeed"></paper-icon-button>
-        <paper-icon-button mini icon="add" title="heart" on-tap="newPlugin"></paper-icon-button>
-      </div>
+        <!-- Toolbar -->
+        <app-toolbar class="primary red">
+          <paper-icon-button icon="icons:cloud-queue" alt="More options"></paper-icon-button>
+        
+          <div class="title" title>Pacs pull</div>
 
-<!-- plugin.data -->
-        <chris-plugin-data data="[[plugin]]"></chris-plugin-data>
+          <iron-selector id="buttons" selected="0">
+            <paper-icon-button class="views" targetView="0" icon="icons:view-week" on-tap="updatePages"></paper-icon-button>
+            <paper-icon-button class="views" targetView="1"icon="icons:view-headline" on-tap="updatePages"></paper-icon-button>
+            <paper-icon-button class="views" targetView="2" icon="icons:view-module" on-tap="updatePages"></paper-icon-button>
+            <paper-icon-button class="views" targetView="3" icon="image:remove-red-eye" on-tap="updatePages"></paper-icon-button>
+          </iron-selector>
+<!--           <paper-menu-button>
+  <paper-icon-button icon="icons:more-vert" class="dropdown-trigger"></paper-icon-button>
+  <paper-menu class="dropdown-content">
+    <paper-item>Generate Feed</paper-item>
+    <paper-item>Run plugin</paper-item>
+    <paper-item>Help</paper-item>
+  </paper-menu>
+</paper-menu-button> -->
+
+          <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
+          <paper-icon-button icon="add" alt="More options" on-tap="newPlugin"></paper-icon-button>
+        </app-toolbar>
+
+        <!-- Data view -->
+        <!-- to be loaded on data expand! -->
+        <!-- it is slow to load it like that -->
+        <!-- <iron-pages id="pages" selected="0"> -->
+        <iron-selector id="pages" selected="0">
+          <chris-dataview-columns class="dataview" data="[[plugin]]"></chris-dataview-columns>
+          <chris-dataview-rows class="dataview" data="[[plugin]]"></chris-dataview-rows>
+          <chris-dataview-grid class="dataview" data="[[plugin]]"></chris-dataview-grid>
+          <chris-dataview-columns class="dataview" data="[[plugin]]"></chris-dataview-columns>
+        </iron-selector>
       </div>
 
   </template>
@@ -62,6 +144,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // fire the new feed
           window.console.log('fire newPlugin');
           this.fire('newplugin');
+        },
+        updatePages: function(evt){
+          // window.console.log(evt);
+          // window.console.log(evt.currentTarget.attributes.targetView.nodeValue);
+          // return;
+          // window.console.log(this.$.selector.selected);
+          this.$.pages.selected = evt.currentTarget.attributes.targetView.nodeValue;
         }
     });
   </script>
