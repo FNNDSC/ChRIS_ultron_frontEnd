@@ -1,0 +1,42 @@
+<script>
+    LoginBehavior = {
+
+      prepareLogin: function(what){
+        this.handleAs = 'json';
+
+        window.console.log('in!');
+        window.console.log(this.url);
+        window.console.log(this.params);
+        window.console.log(this.body);
+
+        switch(what){
+          case 'url':
+            return this.apiRoot + this.url;
+          case 'params':
+            // create new DB if flag on (could be on the login page)
+            if(this.createDB){
+              this.params.createNewDB = 1;
+            }
+
+            // always add db path
+            this.params.DBpath = this.dbPath;
+
+            return this.params;
+          case 'body':
+            return this.body;
+          default:
+            break;
+          }
+        return false;
+      },
+      handleLogin: function(){
+        var details = this.response.return.payload.loginDetail;
+        var response = {
+          status: details.loginStatus,
+          message: details.loginMessage,
+          token: details.sessionToken
+        }
+        return response;
+      },
+    };
+</script>

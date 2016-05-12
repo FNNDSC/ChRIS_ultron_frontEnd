@@ -23,7 +23,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-left-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
 
@@ -56,6 +56,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../chris-api/chris-api.html">
 <link rel="import" href="../chris-feed-list/chris-feed-list.html">
 <link rel="import" href="../chris-feed-create/chris-feed-create.html">
+<link rel="import" href="../chris-login/chris-login.html">
 
 <!-- STYLE -->
 <link rel="import" href="chris-ultron-styles.html">
@@ -102,10 +103,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
+    <template is="dom-if" if="{{!logged}}">
+      <chris-login logged={{logged}}></chris-login>
+    </template>
+
+    <template is="dom-if" if="{{logged}}">
+
     <chris-api api="Feeds" url="../../data/contacts.json" response="{{items}}"></chris-api>
     <chris-api api="PluginsFeed" url="../../data/plugins-feed.json" response="{{plugins}}"></chris-api>
 
-    <app-drawer-layout>
+    <app-drawer-layout class="fullbleed layout vertical">
 
       <app-drawer>
         <app-toolbar>Welcome, Avenger!</app-toolbar>
@@ -137,17 +144,27 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <!-- use that? -->
     <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
 
-        <neon-animated-pages id="pages" selected="{{page}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <neon-animated-pages id="pages" selected="{{page}}" class="flex" entry-animation="slide-from-left-animation" exit-animation="fade-out-animation">
 
           <neon-animatable >
 
-                <app-header-layout>
+                <app-header-layout id="ultronheader">
         <app-header fixed effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div title>ChRIS Ultron</div>
             <paper-icon-button icon="search" alt="Search"></paper-icon-button>
-            <paper-icon-button icon="more-vert" alt="More options"></paper-icon-button>
+            <!-- <paper-icon-button icon="more-vert" alt="More options"></paper-icon-button> -->
+
+            <paper-menu-button horizontal-align="right">
+  <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+  <paper-menu class="dropdown-content">
+    <paper-item>Settings</paper-item>
+    <paper-item on-tap="logout">Logout</paper-item>
+    <paper-item>Help</paper-item>
+  </paper-menu>
+</paper-menu-button>
+
           </app-toolbar>
         </app-header>
 
@@ -187,6 +204,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </app-drawer-layout>
 
+    </template>
+
     <!-- faster with that.... -->
     <!-- <app-scrollpos-control selected="{{page}}"></app-scrollpos-control> -->
 
@@ -196,6 +215,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Polymer({
         is: 'chris-ultron',
         properties: {
+          logged:{
+            type: Boolean,
+            value: false,
+            observer: "loggedChanged"
+          },
           items: {
             type: Array
           },
@@ -212,6 +236,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           page: {
             type: Number,
             value: 0
+          }
+        },
+        attached: function(){
+          // if username and token, we are still logged in
+          if (sessionStorage.getItem("username") &&
+            sessionStorage.getItem("token")) {
+
+            this.logged = true;
+
           }
         },
         nextPage: function(item, more){
@@ -241,6 +274,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.unshift('items', feed);
 
           this.nextPage(null);
+        },
+        logout: function(){
+          sessionStorage.clear();
+
+          this.logged = false;
+        },
+        loggedChanged: function(){
+          window.console.log('logged changed');
+          if(this.$$('#ultronheader')){
+            // if not toolbar disappears
+            this.$$('#ultronheader').resetLayout();
+          }
+          
         }
     });
   </script>

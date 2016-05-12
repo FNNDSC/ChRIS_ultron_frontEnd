@@ -1,0 +1,221 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<!-- APP LAYOUT -->
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+
+<!-- CHRIS -->
+<link rel="import" href="../chris-api/chris-api.html">
+
+<dom-module id="chris-login">
+
+  <template>
+
+    <style>
+
+        * {
+        box-sizing: border-box;
+      }
+    :host {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      background-color: var(--paper-teal-300);
+
+      --paper-input-container-focus-color: var(--paper-blue-grey-500);
+      --paper-item-focused-before:{
+        opacity: 0;
+      };
+    }
+
+    .container{
+      max-width: 800px;
+      margin: auto;
+      margin-top: 60px;
+      margin-bottom: 60px;
+      position: relative;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 24px;
+      color: var(--paper-teal-500);
+      padding: 10px;
+    }
+
+    paper-item, paper-item[focus]{
+      background-color: #f9f9f9;
+      opacity:1;
+    }
+
+    paper-button {
+      margin-top: 32px;
+      background: var(--paper-teal-a700);
+      color: white;
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+          display: flex;
+    flex-direction: row;
+    }
+
+    paper-spinner {
+      margin:6px;
+      --paper-spinner-layer-1-color: white;
+      --paper-spinner-layer-2-color: white;
+      --paper-spinner-layer-3-color: white;
+      --paper-spinner-layer-4-color: white;
+    }
+
+    #spinner{
+      display: none;
+    }
+
+    </style>
+
+    <chris-api id="login" api="Login" response="{{response}}" on-return="loginReturned"></chris-api>
+
+
+  <div class="container">
+
+<paper-item>
+        <div class="horizontal-section">
+
+        <section>
+        <div class="title">
+            Welcome to ChRIS Ultron
+            </div>
+          </section>
+
+          <section> 
+            <div class="error">[[_error]]</div>
+            <div>
+              <paper-input id="username" 
+                type="username" 
+                value="{{_username::input}}" 
+                required 
+                error-message="Username is required" 
+                label="Username" 
+                onfocusout="validate()"
+                on-keypress="keypressHandler">
+              </paper-input>
+              <paper-input id="password" 
+                type="password" 
+                value="{{_password::input}}" 
+                required 
+                error-message="Password is required" 
+                label="Password"
+                onfocusout="validate()"
+                on-keypress="keypressHandler">
+              </paper-input>
+            </div>
+          </section>
+
+          <section> 
+            <paper-button on-click="login" id="button"><div id="loginButton">Log In</div> <paper-spinner active id="spinner"></paper-spinner></paper-button>
+
+          </section>
+
+          <section>
+            <div>
+              <br>
+              New to <a href="https://github.com/FNNDSC">ChRIS</a>? <a href="https://github.com/FNNDSC">Register</a> for an account.
+            </div>
+          </section>
+        </div>
+      </paper-item>
+  </div>
+
+  </div>
+
+<paper-toast id="toast" text="Hello world!"></paper-toast>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-login',
+        properties: {
+          logged:{
+            type: Boolean,
+            notify: true
+          },
+          _error: String,
+          _username: {
+            type: String,
+            value: ''
+          },
+          _password: {
+            type: String,
+            value: ''
+          },
+          response: {
+            type: Object
+          }
+        },
+        keypressHandler: function(evt){
+          if(evt.charCode === 13){
+            // try to log in
+            this.login();
+          }
+        },
+        login: function(){
+            // validate inputs
+            this.$.username.validate();
+            this.$.password.validate();
+
+            if(!this.$.username.invalid &&
+              !this.$.password.invalid &&
+              !this.$.button.disabled){
+              window.console.log('both valid!');
+              this.$.button.disabled = true;
+              this.$.loginButton.style.display = 'none';
+              this.$.spinner.style.display = 'block';
+              // call API
+              // set params first
+              this.$.login.params = {
+                auth: 'user=' + this._username + ',passwd=' + this._password
+              };
+
+              // url update triggers a new AJAX call
+              this.$.login.url = 'login';
+            }
+
+        },
+        loginReturned: function(){
+
+          this.$.button.disabled = false;
+          this.$.loginButton.style.display = 'block';
+          this.$.spinner.style.display = 'none';
+
+          if(this.response.status){
+            sessionStorage.setItem('username', this._username);
+            sessionStorage.setItem('token', this.response.token);
+            this.logged = this.response.status;
+            return;
+          }
+
+          // show error message
+          this.$.toast.text = this.response.message;
+          this.$.toast.open();
+        }
+    });
+  </script>
+</dom-module>
