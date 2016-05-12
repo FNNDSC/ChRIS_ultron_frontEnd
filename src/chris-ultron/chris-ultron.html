@@ -24,6 +24,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-up-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
 
@@ -144,7 +146,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <!-- use that? -->
     <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
 
-        <neon-animated-pages id="pages" selected="{{page}}" class="flex" entry-animation="slide-from-left-animation" exit-animation="fade-out-animation">
+        <neon-animated-pages id="pages" selected="{{page}}" class="flex" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
           <neon-animatable >
 
@@ -253,7 +255,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             this.set('plugin', item.model.__data__.item);
           }
 
-          this.$.pages.selectNext();
+          this.$$('#pages').selectNext();
         },
         newFeed: function(){
           // call API to get feed
