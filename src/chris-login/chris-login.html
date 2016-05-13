@@ -66,14 +66,14 @@
       opacity:1;
     }
 
-    paper-button {
+    paper-button#button {
       margin-top: 32px;
       background: var(--paper-teal-a700);
       color: white;
       @apply(--layout-vertical);
       @apply(--layout-center-center);
-          display: flex;
-    flex-direction: row;
+      display: flex;
+      flex-direction: row;
     }
 
     paper-spinner {
@@ -88,14 +88,19 @@
       display: none;
     }
 
+    .yellow-button {
+      text-transform: none;
+      color: #eeff41;
+    }
+
     </style>
 
-    <chris-api id="login" api="Login" response="{{response}}" on-return="loginReturned"></chris-api>
+    <chris-api id="login" api="Login" response="{{response}}" on-response="handleResponse" error="{{error}}" on-error="handleError"></chris-api>
 
 
-  <div class="container">
+    <div class="container">
 
-<paper-item>
+      <paper-item>
         <div class="horizontal-section">
 
         <section>
@@ -105,7 +110,6 @@
           </section>
 
           <section> 
-            <div class="error">[[_error]]</div>
             <div>
               <paper-input id="username" 
                 type="username" 
@@ -141,57 +145,76 @@
           </section>
         </div>
       </paper-item>
-  </div>
+    </div>
 
-  </div>
 
-<paper-toast id="toast" text="Hello world!"></paper-toast>
+    <paper-toast id="loginError" text=""></paper-toast>
+
+    <paper-toast id="serverError" duration="0" text="An error occured while connecting to the server. Please contact dev@babymri.org.">
+      <paper-button onclick="serverError.toggle()" class="yellow-button">Close now!</paper-button>
+    </paper-toast>
 
   </template>
 
   <script>
     Polymer({
         is: 'chris-login',
+
         properties: {
+
           logged:{
             type: Boolean,
             notify: true
           },
-          _error: String,
+
           _username: {
             type: String,
             value: ''
           },
+
           _password: {
             type: String,
             value: ''
           },
+
           response: {
+            type: Object
+          },
+          
+          error: {
             type: Object
           }
         },
-        keypressHandler: function(evt){
-          if(evt.charCode === 13){
+
+        keypressHandler: function( evt ){
+
+          if( evt.charCode === 13 ){
+
             // try to log in
             this.login();
+
           }
         },
-        login: function(){
+
+        login: function( ){
+
             // validate inputs
             this.$.username.validate();
             this.$.password.validate();
 
-            if(!this.$.username.invalid &&
+            if( !this.$.username.invalid &&
               !this.$.password.invalid &&
-              !this.$.button.disabled){
-              window.console.log('both valid!');
+              !this.$.button.disabled ){
+
               this.$.button.disabled = true;
               this.$.loginButton.style.display = 'none';
               this.$.spinner.style.display = 'block';
               // call API
               // set params first
               this.$.login.params = {
-                auth: 'user=' + this._username + ',passwd=' + this._password
+                auth: 'user=' + this._username + ',passwd=' + this._password,
+                username: this._username,
+                password: this._password
               };
 
               // url update triggers a new AJAX call
@@ -199,22 +222,38 @@
             }
 
         },
-        loginReturned: function(){
+
+        handleResponse: function( ){
 
           this.$.button.disabled = false;
           this.$.loginButton.style.display = 'block';
           this.$.spinner.style.display = 'none';
 
-          if(this.response.status){
+          if( this.response.status ){
+
             sessionStorage.setItem('username', this._username);
             sessionStorage.setItem('token', this.response.token);
             this.logged = this.response.status;
             return;
+
           }
 
           // show error message
-          this.$.toast.text = this.response.message;
-          this.$.toast.open();
+          this.$.loginError.text = this.response.message;
+          this.$.loginError.open();
+        },
+
+        handleError: function( ){
+
+          this.$.button.disabled = false;
+          this.$.loginButton.style.display = 'block';
+          this.$.spinner.style.display = 'none';
+
+          // show error message
+          this.$.serverError.open( );
+          
+          // log info
+          window.console.log( this.error );
         }
     });
   </script>

@@ -1,42 +1,78 @@
 <script>
     LoginBehavior = {
 
-      prepareLogin: function(what){
+      prepareLogin: function( what ){
+
         this.handleAs = 'json';
 
-        window.console.log('in!');
-        window.console.log(this.url);
-        window.console.log(this.params);
-        window.console.log(this.body);
+        switch( what ){
 
-        switch(what){
           case 'url':
-            return this.apiRoot + this.url;
+
+            var url = '';
+            if( this.chrisAPI ){
+
+              url = this.apiRoot + this.url;
+
+            }
+            return url;
+
           case 'params':
+
             // create new DB if flag on (could be on the login page)
-            if(this.createDB){
+            if( this.createDB ){
+
               this.params.createNewDB = 1;
+
             }
 
             // always add db path
             this.params.DBpath = this.dbPath;
 
             return this.params;
+
           case 'body':
+
             return this.body;
+
           default:
+
             break;
+
           }
         return false;
       },
-      handleLogin: function(){
-        var details = this.response.return.payload.loginDetail;
-        var response = {
-          status: details.loginStatus,
-          message: details.loginMessage,
-          token: details.sessionToken
+
+      handleLogin: function( ){
+
+        var response = {};
+
+        if( this.chrisAPI ){
+
+          var details = this.response.return.payload.loginDetail;
+          response = {
+            status: details.loginStatus,
+            message: details.loginMessage,
+            token: details.sessionToken
+          };
+
+        } else {
+
+          var match = this.params.username === this.params.password;
+          response = {
+            status: match,
+            message: match? "Successful login." : "Username and password do not match.",
+            token: 'ABCDEFGH'
+          };
+
         }
+
         return response;
       },
+
+      handleErrorLogin: function( ){
+
+        return this.error;
+      }
     };
 </script>

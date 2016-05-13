@@ -19,7 +19,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
   <template>
 
-    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[getBody(body, api)]]" params="[[getParams(params, api)]]" method="[[method]]" last-response="{{response}}" on-response="handleResponse" handle-as="[[handleAs]]" auto></iron-ajax>
+    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[getBody(body, api)]]" params="[[getParams(params, api)]]" method="[[method]]" last-response="{{response}}" on-response="handleResponse" last-error="{{error}}" on-error="handleError" handle-as="[[handleAs]]" auto></iron-ajax>
 
   </template>
 
@@ -31,7 +31,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             type: String
           },
           response: {
-            type: Object
+            type: Object,
+            notify: true
+          },
+          error: {
+            type: Object,
+            notify: true
           },
           body:{
             type: Object
@@ -50,6 +55,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             value: 'json'
           },
           // ChRIS API SPECIFIC VARS
+          chrisAPI:{
+            type: Boolean,
+            value: false
+          },
           apiRoot:{
             type: String,
             value: 'http://127.0.0.1:5555/v1/'
@@ -77,6 +86,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           var response = this['handle' + this.api ]();
           this._setResponse(response);
         },
+        handleError: function(evt){
+          var error = this['handleError' + this.api ]();
+          this._setError(error);
+        },
         getUrl: function(url, api){
 
           if(!api){
@@ -102,11 +115,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           return this['prepare' + api ]('params');
         },
         _setResponse(response){
+          // update value
           this.response = response;
-          // update binding
-          this.fire('response-changed');
-          // on-return callback
-          this.fire('return');
+          // trigger parent callback
+          this.fire('response');
+        },
+        _setError(error){
+          // update value
+          this.error = error;
+          // trigger parent callback
+          this.fire('error');
         }
     });
   </script>
