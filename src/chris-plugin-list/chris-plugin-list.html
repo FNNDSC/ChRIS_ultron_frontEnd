@@ -24,7 +24,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Plugins
     </div>
 
-    <div id="plugins" on-newplugin="newPlugin" on-size="handleSize">
+    <div id="plugins" on-newplugin="newPlugin" on-modified="handleSize">
       <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
       <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
       <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
@@ -48,7 +48,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
         },
         newPlugin: function(evt){
-          window.console.log('got a new plugin...');
           // add new plugin
           var plugin = document.createElement('chris-plugin');
           plugin.plugin = 'I am new!';
@@ -60,8 +59,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         handleSize: function( evt ){
-
-          window.console.log('size Changed');
 
           this.fire('size', {index: this.feedindex});
 

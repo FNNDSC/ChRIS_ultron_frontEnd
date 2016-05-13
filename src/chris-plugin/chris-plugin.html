@@ -78,8 +78,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <div id="plugin">
         <!-- Toolbar -->
+        <div on-tap="toggleView">
         <app-toolbar class="primary red">
-          <paper-icon-button icon="icons:cloud-queue" alt="More options" on-click="toggleView"></paper-icon-button>
+          <paper-icon-button icon="icons:cloud-queue" alt="More options"></paper-icon-button>
         
           <div class="title" title>Pacs pull</div>
 
@@ -107,6 +108,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
           <paper-icon-button icon="add" alt="More options" on-tap="newPlugin"></paper-icon-button>
         </app-toolbar>
+        </div>
 
         <!-- Data view -->
         <!-- to be loaded on data expand! -->
@@ -139,10 +141,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         toggleView: function( evt ){
-          window.console.log('toggleview');
+
+
+          this.donothing(evt);
+
           this.selected = !this.selected;
           // need to resize the list
-          this.fire('resize');
+          this.fire('modified');
         },
 
         donothing: function( evt ){
@@ -158,7 +163,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // call API
           // get reponse,
           // fire the new feed
-          window.console.log('fire newfeed');
           this.fire('newfeed');
 
         },
@@ -175,10 +179,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         updateView: function( evt ){
 
-          // window.console.log(evt);
-          // window.console.log(evt.currentTarget.attributes.targetView.nodeValue);
-          // return;
-          // window.console.log(this.$.selector.selected);
+          this.donothing(evt);
+          // this.$$('#buttons').selected = evt.currentTarget.attributes.targetView.nodeValue;
           this.$$('#views').selected = evt.currentTarget.attributes.targetView.nodeValue;
 
         }
