@@ -111,13 +111,20 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         display: none;
       }
 
+      .feed.expanded {
+        /*should get with from iron list container*/
+/*        width: 120%;
+        margin-left: -10%;*/
+      }
       .status.expanded, .feed.expanded #content {
         display: block;
       }
 
     </style>
 
-    <chris-api id="chrisAPI" api="FeedDetails" response="{{details}}" on-return="handleDetails"></chris-api>
+<!-- need error handler -->
+<!-- on selected only! -->
+    <chris-api id="chrisAPI" api="FeedDetails" response="{{details}}" on-response="handleDetails"></chris-api>
 
       <div on-focus="donothing">
 

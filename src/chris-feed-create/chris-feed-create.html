@@ -53,6 +53,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       --iron-icon-width: 48px;
       margin-right:24px;
     }
+
+    paper-fab#gogogo {
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+      }
     </style>
 
 
@@ -73,6 +80,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
               
               
         </div>
+
+
+            <!-- FABS? -->
+            <!-- should be in the plugin page -->
+            <paper-fab id="gogogo" icon="av:play-arrow" title="play-arrow" on-tap="gogogo"></paper-fab>
+
         </app-header-layout>
   </template>
 
@@ -84,6 +97,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           plugin: {
             type: Object,
             observer: '_pluginChanged'
+          },
+          feed:{
+            type: Object
           }
         },
         _pluginChanged: function(){
@@ -108,6 +124,26 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
               window.console.log(evt);
             },
             true);
+        },
+        gogogo: function(){
+          // feed created
+          // ask for feed ID # through API...
+          // call API to get feed
+          // the create plugin should return it to us...
+          this.feed = {
+            id: 0,
+            name: this.plugin.name,
+            image: 'https://s3.amazonaws.com/uifaces/faces/twitter/enda/73.jpg',
+            opened: false,//this.response[i].expanded,
+            color: this.plugin.color,
+            favorite: Math.round(Math.random() * 100) % 3 ? true : false,
+            // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
+            description: "just created",
+            fulldescription: "YAYAYAYAYAYAYYA",
+            date: "Sun Aug 14 1994 03:27:03 GMT-0700 (PDT)"
+          }
+
+          this.fire('done');
         }
   });
   </script>

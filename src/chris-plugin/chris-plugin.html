@@ -28,10 +28,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../chris-plugin-data/chris-plugin-data.html">
 <link rel="import" href="../chris-plugin-create/chris-plugin-create.html">
 
+<!-- STYLE -->
+<link rel="import" href="../chris-ultron/chris-ultron-styles.html">
+
 <dom-module id="chris-plugin">
 
   <template>
 
+    <style include="chris-ultron-styles"></style>
     <style>
       #plugin{
         /*@apply(--layout-vertical);*/
@@ -51,11 +55,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       paper-icon-button.views{
         border: 1px solid var(--paper-grey-100);
-      }
-
-      .primary.red {
-        background-color: var(--paper-red-500);
-        color: var(--paper-grey-50);
       }
 
     .dataview{
@@ -80,16 +79,22 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <div id="plugin">
         <!-- Toolbar -->
         <app-toolbar class="primary red">
-          <paper-icon-button icon="icons:cloud-queue" alt="More options"></paper-icon-button>
+          <paper-icon-button icon="icons:cloud-queue" alt="More options" on-click="toggleView"></paper-icon-button>
         
           <div class="title" title>Pacs pull</div>
 
-          <iron-selector id="buttons" selected="0">
-            <paper-icon-button class="views" targetView="0" icon="icons:view-week" on-tap="updatePages"></paper-icon-button>
-            <paper-icon-button class="views" targetView="1"icon="icons:view-headline" on-tap="updatePages"></paper-icon-button>
-            <paper-icon-button class="views" targetView="2" icon="icons:view-module" on-tap="updatePages"></paper-icon-button>
-            <paper-icon-button class="views" targetView="3" icon="image:remove-red-eye" on-tap="updatePages"></paper-icon-button>
-          </iron-selector>
+
+          <template is="dom-if" if="{{selected}}">
+            <iron-selector id="buttons" selected="0">
+              <paper-icon-button class="views" targetView="0" icon="icons:view-week" on-tap="updateView"></paper-icon-button>
+              <paper-icon-button class="views" targetView="1"icon="icons:view-headline" on-tap="updateView"></paper-icon-button>
+              <paper-icon-button class="views" targetView="2" icon="icons:view-module" on-tap="updateView"></paper-icon-button>
+              <paper-icon-button class="views" targetView="3" icon="image:remove-red-eye" on-tap="updateView"></paper-icon-button>
+            </iron-selector>
+          </template>
+
+
+<!-- jummping around... -->
 <!--           <paper-menu-button>
   <paper-icon-button icon="icons:more-vert" class="dropdown-trigger"></paper-icon-button>
   <paper-menu class="dropdown-content">
@@ -107,12 +112,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <!-- to be loaded on data expand! -->
         <!-- it is slow to load it like that -->
         <!-- <iron-pages id="pages" selected="0"> -->
-        <iron-selector id="pages" selected="0">
-          <chris-dataview-columns class="dataview" data="[[plugin]]"></chris-dataview-columns>
-          <chris-dataview-rows class="dataview" data="[[plugin]]"></chris-dataview-rows>
-          <chris-dataview-grid class="dataview" data="[[plugin]]"></chris-dataview-grid>
-          <chris-dataview-columns class="dataview" data="[[plugin]]"></chris-dataview-columns>
-        </iron-selector>
+        <template is="dom-if" if="{{selected}}">
+          <iron-selector id="views" selected="0">
+            <chris-dataview-columns class="dataview" data="[[plugin]]"></chris-dataview-columns>
+            <chris-dataview-rows class="dataview" data="[[plugin]]"></chris-dataview-rows>
+            <chris-dataview-grid class="dataview" data="[[plugin]]"></chris-dataview-grid>
+            <chris-dataview-columns class="dataview" data="[[plugin]]"></chris-dataview-columns>
+          </iron-selector>
+        </template>
       </div>
 
   </template>
@@ -124,34 +131,56 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           plugin: {
             type: Object
           },
+          selected: {
+            type: Boolean,
+            value: false
+          }
           // path to be shared between views to stay at the same location
         },
-        donothing: function(evt){
+
+        toggleView: function( evt ){
+          window.console.log('toggleview');
+          this.selected = !this.selected;
+          // need to resize the list
+          this.fire('resize');
+        },
+
+        donothing: function( evt ){
+
           evt.stopPropagation();
           evt.preventDefault();
+
         },
-        newFeed: function(evt){
+
+        newFeed: function( evt ){
+
           this.donothing(evt);
           // call API
           // get reponse,
           // fire the new feed
           window.console.log('fire newfeed');
           this.fire('newfeed');
+
         },
-        newPlugin: function(evt){
+
+        newPlugin: function( evt ){
+
           this.donothing(evt);
           // call API
           // get reponse,
           // fire the new feed
-          window.console.log('fire newPlugin');
           this.fire('newplugin');
+
         },
-        updatePages: function(evt){
+
+        updateView: function( evt ){
+
           // window.console.log(evt);
           // window.console.log(evt.currentTarget.attributes.targetView.nodeValue);
           // return;
           // window.console.log(this.$.selector.selected);
-          this.$.pages.selected = evt.currentTarget.attributes.targetView.nodeValue;
+          this.$$('#views').selected = evt.currentTarget.attributes.targetView.nodeValue;
+
         }
     });
   </script>

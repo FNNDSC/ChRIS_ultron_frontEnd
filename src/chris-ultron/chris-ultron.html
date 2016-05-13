@@ -7,6 +7,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <!-- IRON -->
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
@@ -35,6 +36,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-styles/color.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
@@ -78,7 +80,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         --paper-icon-button-ink-color: white;
       }
 
-      paper-fab-speed-dial, paper-fab#gogogo {
+      paper-fab-speed-dial{
         z-index:10;
         position: fixed;
         bottom: 16px;
@@ -97,6 +99,35 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         right: 16px;
       }
 
+      .separator{
+        font-size: 14px;
+        font-weight: 500;
+        color: rgb(170, 170, 170);
+        padding: 16px;
+        border-top: 1px solid rgb(224, 224, 224);
+      }
+
+      #navheader {
+  font-size: inherit;
+  color: white;
+  flex-shrink: 0;
+}
+
+#navheader {
+  background-color: #999;
+  align-items: center;
+}
+
+#username {
+  font-size: small;
+  opacity: 0.8;
+}
+
+app-toolbar.tall{
+        height: calc(var(--paper-toolbar-height, 64px) * 3);
+
+}
+
       @media (max-width: 460px) {
         paper-toolbar .bottom.title {
           font-size: 14px;
@@ -105,101 +136,125 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <template is="dom-if" if="{{!logged}}">
+    <template is="dom-if" if="{{!logged}}" restamp>
       <chris-login logged={{logged}}></chris-login>
     </template>
 
-    <template is="dom-if" if="{{logged}}">
+    <template is="dom-if" if="{{logged}}" restamp>
 
-    <chris-api api="Feeds" url="../../data/contacts.json" response="{{items}}"></chris-api>
-    <chris-api api="PluginsFeed" url="../../data/plugins-feed.json" response="{{plugins}}"></chris-api>
+      <chris-api api="Feeds" url="../../data/contacts.json" response="{{items}}"></chris-api>
+      <chris-api api="PluginsFeed" url="../../data/plugins-feed.json" response="{{plugins}}"></chris-api>
+      <chris-api api="Labels" url="../../data/contacts.json" response="{{labels}}"></chris-api>
 
-    <app-drawer-layout class="fullbleed layout vertical">
+      <app-drawer-layout class="fullbleed layout vertical">
 
-      <app-drawer>
-        <app-toolbar>Welcome, Avenger!</app-toolbar>
-        <div class="horizontal-section">
-          GENERAL
-          <paper-menu>
-            <paper-item>All Feeds</paper-item>
-            <paper-item>Favorites</paper-item>
-            <paper-item>Selected</paper-item>
-          </paper-menu>
-        </div>
-        <div class="horizontal-section">
-          TAGS
-          <paper-menu>
-            <paper-item>pacs_pull</paper-item>
-            <paper-item>tractography</paper-item>
-            <paper-item>study X</paper-item>
-            <paper-item>pacs_pull</paper-item>
-            <paper-item>tractography</paper-item>
-            <paper-item>study X</paper-item>
-            <paper-item>pacs_pull</paper-item>
-            <paper-item>tractography</paper-item>
-            <paper-item>study X</paper-item>
-            <paper-item>pacs_pull</paper-item>
-          </paper-menu>
-        </div>
-      </app-drawer>
+        <app-drawer>
+          <div style="height: 100%; overflow: auto;" on-scroll="donothing">
 
-      <!-- use that? -->
-    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+            <app-toolbar id="navheader" class="tall layout horizontal">
+              <div>
+                <div>Welcome to ChRIS Ultron</div>
+                <span id="username">nicolas.rannou</span>
+              </div>
+            </app-toolbar>
+
+            <paper-menu>
+
+              <div class="separator">Categories</div>
+
+              <paper-icon-item role="menuitem">
+                <iron-icon icon="icons:view-headline" item-icon></iron-icon>All
+              </paper-icon-item>
+              <paper-icon-item role="menuitem">
+                <iron-icon icon="icons:favorite" item-icon></iron-icon>Favorite
+              </paper-icon-item>
+              <paper-icon-item role="menuitem">
+                <iron-icon icon="icons:refresh" item-icon></iron-icon>Running
+              </paper-icon-item>
+              <paper-icon-item role="menuitem">
+                <iron-icon icon="icons:done" item-icon></iron-icon>Done
+              </paper-icon-item>
+              <paper-icon-item role="menuitem">
+                <iron-icon icon="icons:clear" item-icon></iron-icon>Error
+              </paper-icon-item>
+   <!--            <paper-icon-item role="menuitem">
+                <iron-icon icon="social:people" item-icon></iron-icon>Shared
+              </paper-icon-item>
+              <paper-icon-item role="menuitem">
+                <iron-icon icon="icons:visibility-off" item-icon></iron-icon>Hidden
+              </paper-icon-item> -->
+
+              <div class="separator">Labels</div>
+
+              <template is="dom-repeat" items="{{labels}}">
+                <paper-icon-item>
+                  <iron-icon icon="label" item-icon class$="primary {{item.color}} invert"></iron-icon><span>{{item.last}}</span>
+                </paper-icon-item>
+              </template>
+
+            </paper-menu>
+
+            <div class="version">@VERSION@</div>
+          </div>
+          </app-drawer>
+        </app-drawer>
+
+        <!-- use that? -->
+        <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
 
         <neon-animated-pages id="pages" selected="{{page}}" class="flex" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-
           <neon-animatable >
 
-                <app-header-layout id="ultronheader">
-        <app-header fixed effects="waterfall">
-          <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div title>ChRIS Ultron</div>
-            <paper-icon-button icon="search" alt="Search"></paper-icon-button>
-            <!-- <paper-icon-button icon="more-vert" alt="More options"></paper-icon-button> -->
+            <app-header-layout id="ultronheader">
 
-            <paper-menu-button horizontal-align="right">
-  <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
-  <paper-menu class="dropdown-content">
-    <paper-item>Settings</paper-item>
-    <paper-item on-tap="logout">Logout</paper-item>
-    <paper-item>Help</paper-item>
-  </paper-menu>
-</paper-menu-button>
+              <!-- HEADER -->
+              <app-header fixed effects="waterfall">
 
-          </app-toolbar>
-        </app-header>
+                <app-toolbar>
+                  <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+                  <div title>ChRIS Ultron</div>
+                  <paper-icon-button icon="search" alt="Search"></paper-icon-button>
+                  <paper-menu-button horizontal-align="right">
+                    <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                    <paper-menu class="dropdown-content">
+                      <paper-item>Settings</paper-item>
+                      <paper-item on-tap="logout">Logout</paper-item>
+                      <paper-item>Help</paper-item>
+                    </paper-menu>
+                  </paper-menu-button>
+                </app-toolbar>
 
-
-            <paper-fab-speed-dial direction="top">
-              <paper-fab icon="add" class="dropdown-trigger"></paper-fab>
-              <div class="dropdown-content">
-                <template is="dom-repeat" items="{{plugins}}">
-                  <paper-fab mini id="[[item.name]]" icon="[[item.icon]]" class$="primary [[item.color]]" item="[[item]]" on-tap="nextPage"></paper-fab>
-
-                  <paper-tooltip for="[[item.name]]" position="left" animation-delay="0">[[item.label]]</paper-tooltip>
-                </template>
-              </div>
-            </paper-fab-speed-dial>
-
-            <!-- FEEDS -->
-            <chris-feed-list id="feeds" feeds="[[items]]"></chris-feed-list>
-
-            <!-- FABS -->
-            <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab>
+              </app-header>
 
 
+              <!-- CONTENT -->
 
-      </app-header-layout>
+              <!-- Menu to select plugins to CREATE feeds -->
+              <paper-fab-speed-dial direction="top">
+                <paper-fab icon="add" class="dropdown-trigger"></paper-fab>
+                <div class="dropdown-content">
+                  <template is="dom-repeat" items="{{plugins}}">
+                    <paper-fab mini id="[[item.name]]" icon="[[item.icon]]" class$="primary [[item.color]]" item="[[item]]" on-tap="nextPage"></paper-fab>
+                    <paper-tooltip for="[[item.name]]" position="left" animation-delay="0">[[item.label]]</paper-tooltip>
+                  </template>
+                </div>
+              </paper-fab-speed-dial>
+
+              <!-- fabs to merge data -->
+              <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab>
+
+              <!-- All feeds -->
+              <chris-feed-list id="feeds" feeds="[[items]]"></chris-feed-list>
+
+            </app-header-layout>
 
           </neon-animatable>
 
           <neon-animatable>
-            <!-- CREATE FEED PAGE -->
-            <chris-feed-create id="feedCreate" plugin="{{plugin}}"></chris-feed-create>
 
-            <!-- FABS? -->
-            <paper-fab id="gogogo" icon="av:play-arrow" title="play-arrow" on-tap="newFeed"></paper-fab>
+            <!-- CREATE FEED PAGE -->
+            <chris-feed-create id="feedCreate" plugin="{{plugin}}" on-done="addFeedToList"></chris-feed-create>
+
           </neon-animatable>
 
         </neon-animated-pages>
@@ -219,14 +274,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         properties: {
           logged:{
             type: Boolean,
-            value: false,
-            observer: "loggedChanged"
+            value: false
           },
           items: {
             type: Array
           },
           plugins:{
             type: Array
+          },
+          labels: {
+            type: Array,
           },
           plugin:{
             type: Object
@@ -240,55 +297,55 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             value: 0
           }
         },
-        attached: function(){
+
+        attached: function( ){
+
           // if username and token, we are still logged in
-          if (sessionStorage.getItem("username") &&
-            sessionStorage.getItem("token")) {
+          if ( sessionStorage.getItem( 'username' ) &&
+            sessionStorage.getItem( 'token' ) ) {
 
             this.logged = true;
 
           }
         },
-        nextPage: function(item, more){
 
-          if(item){
-            this.set('plugin', item.model.__data__.item);
+        nextPage: function( item, more ){
+
+          if( item ){
+            this.set( 'plugin', item.model.__data__.item );
           }
 
-          this.$$('#pages').selectNext();
-        },
-        newFeed: function(){
-          // call API to get feed
-          // the create plugin should return it to us...
-          var feed = {
-            id: this.items.length + 1,
-            name: this.plugin.name + ' ' + (this.items.length + 1),
-            image: 'https://s3.amazonaws.com/uifaces/faces/twitter/enda/73.jpg',
-            opened: false,//this.response[i].expanded,
-            color: this.plugin.color,
-            favorite: (this.items.length % 3) ? true : false,
-            // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
-            description: "just created",
-            fulldescription: "YAYAYAYAYAYAYYA",
-            date: "Sun Aug 14 1994 03:27:03 GMT-0700 (PDT)"
-          }
+          this.$$( '#pages' ).selectNext();
 
-          this.unshift('items', feed);
-
-          this.nextPage(null);
         },
-        logout: function(){
-          sessionStorage.clear();
+
+        addFeedToList: function( ){
+
+          // get the shell of the feed
+          var feed = this.$$( '#feedCreate' ).feed;
+          feed.id = this.items.length + 1;
+          feed.name = this.plugin.name;
+
+          this.unshift( 'items', feed );
+
+          this.nextPage( null );
+
+        },
+
+        logout: function( ){
+
+          sessionStorage.clear( );
 
           this.logged = false;
+
         },
-        loggedChanged: function(){
-          window.console.log('logged changed');
-          if(this.$$('#ultronheader')){
-            // if not toolbar disappears
-            this.$$('#ultronheader').resetLayout();
-          }
-          
+
+        donothing: function(evt){
+
+          // not blocking the scroling... :/
+          evt.stopPropagation();
+          evt.preventDefault();
+
         }
     });
   </script>

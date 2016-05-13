@@ -1,0 +1,30 @@
+<script>
+    Labels = {
+
+      prepareLabels: function(what){
+        this.handleAs = 'json';
+
+        switch(what){
+          case 'url':
+            return this.url;
+          case 'params':
+            return this.params;
+          case 'body':
+            return this.body;
+          default:
+            break;
+          }
+        return false;
+      },
+      handleLabels: function(){
+        var colors = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
+        'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow',
+        'amber', 'orange', 'deep-orange'];
+
+        for(var i = 0; i < this.response.length; i++){
+          this.response[i].color = colors[Math.floor(Math.random() * colors.length)];
+        }
+        return this.response;
+      },
+    };
+</script>

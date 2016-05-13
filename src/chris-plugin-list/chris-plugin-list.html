@@ -24,13 +24,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Plugins
     </div>
 
-    <div id="plugins" on-newplugin="newPlugin">
+    <div id="plugins" on-newplugin="newPlugin" on-size="handleSize">
       <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
       <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
       <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
       <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
       <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
-      <chris-plugin plugin="[[plugins.data]]"></chris-plugin>
+      <chris-plugin plugin="[[plugins.data]]" selected="true"></chris-plugin>
       <!-- use list... -->
     </div>
 
@@ -54,9 +54,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           plugin.plugin = 'I am new!';
           Polymer.dom(this.$.plugins).appendChild(plugin);
 
-          this.fire('size', {index: this.feedindex});
+          this.handleSize(null);
 
           // this.fire('scrollto', {offsetTop: plugin.offsetTop});
+        },
+
+        handleSize: function( evt ){
+
+          window.console.log('size Changed');
+
+          this.fire('size', {index: this.feedindex});
+
         }
     });
   </script>

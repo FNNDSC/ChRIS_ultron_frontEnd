@@ -11,6 +11,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <!-- BEHAVIORS -->
 <link rel="import" href="behaviors/chris-api-feeds-behavior.html">
 <link rel="import" href="behaviors/chris-api-feed-details-behavior.html">
+<link rel="import" href="behaviors/chris-api-labels-behavior.html">
 <link rel="import" href="behaviors/chris-api-login-behavior.html">
 <link rel="import" href="behaviors/chris-api-plugin-pacspull-behavior.html">
 <link rel="import" href="behaviors/chris-api-plugins-feed-behavior.html">
@@ -73,11 +74,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
         },
         behaviors: [
-          FeedsBehavior,
-          FeedDetailsBehavior,
-          LoginBehavior,
-          PluginPacspullBehavior,
-          PluginsFeedBehavior
+          Feeds,
+          FeedDetails,
+          Labels,
+          Login,
+          PluginPacspull,
+          PluginsFeed
         ],
         generateRequest: function() {
           this.$.ironAjax.generateRequest();
