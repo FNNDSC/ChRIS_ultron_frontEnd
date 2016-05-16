@@ -9,6 +9,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
@@ -67,32 +68,41 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     .views.iron-selected{
       background-color: var(--paper-grey-50);
-      color: var(--paper-red-500);
+      color: var(--paper-pink-a200);
     }
 
     iron-selector#buttons {
       display: flex;
     }
 
+    .plugin-toolbar {
+        height: 48px;
+      }
+
+      .plugin-toolbar .primary.invert {
+        background-color: #FFFFFF;
+      }
+
     </style>
 
       <div id="plugin">
         <!-- Toolbar -->
         <div on-tap="toggleView">
-        <app-toolbar class="primary red">
-          <paper-icon-button icon="icons:cloud-queue" alt="More options"></paper-icon-button>
+        <app-toolbar class="plugin-toolbar">
+          <paper-icon-button icon="icons:cloud-queue" class="primary red invert" alt="More options"></paper-icon-button>
         
           <div class="title" title>Pacs pull</div>
 
-
+          <div on-tap="updateView">
           <template is="dom-if" if="{{selected}}">
-            <iron-selector id="buttons" selected="0">
-              <paper-icon-button class="views" targetView="0" icon="icons:view-week" on-tap="updateView"></paper-icon-button>
-              <paper-icon-button class="views" targetView="1"icon="icons:view-headline" on-tap="updateView"></paper-icon-button>
-              <paper-icon-button class="views" targetView="2" icon="icons:view-module" on-tap="updateView"></paper-icon-button>
-              <paper-icon-button class="views" targetView="3" icon="image:remove-red-eye" on-tap="updateView"></paper-icon-button>
+              <iron-selector id="buttons" selected="0">
+              <paper-icon-button class="views" targetView="0" icon="icons:view-week"></paper-icon-button>
+              <paper-icon-button class="views" targetView="1" icon="icons:view-headline"></paper-icon-button>
+              <paper-icon-button class="views" targetView="2" icon="icons:view-module"></paper-icon-button>
+              <paper-icon-button class="views" targetView="3" icon="image:remove-red-eye"></paper-icon-button>
             </iron-selector>
           </template>
+          </div>
 
 
 <!-- jummping around... -->
@@ -180,8 +190,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         updateView: function( evt ){
 
           this.donothing(evt);
-          // this.$$('#buttons').selected = evt.currentTarget.attributes.targetView.nodeValue;
-          this.$$('#views').selected = evt.currentTarget.attributes.targetView.nodeValue;
+          this.$$('#views').selected = this.$$('#buttons').selected;//evt.currentTarget.attributes.targetView.nodeValue;
 
         }
     });

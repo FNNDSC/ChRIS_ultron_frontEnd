@@ -17,6 +17,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <!-- PAPER <3 -->
 <link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
@@ -42,7 +43,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         @apply(--layout-vertical);
         padding: 20px;
         background-color: white;
-        border: 1px solid #ddd;
+        /*border: 1px solid #ddd;*/
         cursor: pointer;
         margin-bottom: 10px;
       }
@@ -130,7 +131,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         <paper-progress id="status" class="status" value="100"></paper-progress>
 
-        <div id="feed" class="feed">
+        <paper-material id="feed" class="feed" elevation=1>
 
           <!-- Toolbar -->
           <app-toolbar>
@@ -157,7 +158,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             <chris-comment-list comments="[[details.comments]]"></chris-comment-list>
           </div>
 
-        </div>
+        </paper-material>
 
       </div>
   </template>
@@ -206,6 +207,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // toggle if details available
           if(this.details){
             this.selected ? this.$.feed.classList.add('expanded') : this.$.feed.classList.remove('expanded');
+            this.selected ? this.$.feed.elevation = 5 : this.$.feed.elevation = 1;
             return;
           }
 

@@ -30,17 +30,19 @@
         box-sizing: border-box;
       }
     :host {
+      display: flex;
       position: absolute;
       top: 0;
       right: 0;
       left: 0;
       bottom: 0;
-      background-color: var(--paper-teal-300);
+      background-color: var(--paper-grey-50);
 
-      --paper-input-container-focus-color: var(--paper-blue-grey-500);
-      --paper-item-focused-before:{
-        opacity: 0;
-      };
+      --paper-input-container-focus-color: var(--paper-pink-a200);
+    }
+
+    .spacer {
+      flex: 1;
     }
 
     .container{
@@ -50,6 +52,7 @@
       margin-bottom: 60px;
       position: relative;
       display:flex;
+      flex-direction:column;
       align-items: center;
       justify-content: center;
     }
@@ -61,14 +64,15 @@
       padding: 10px;
     }
 
-    paper-item, paper-item[focus]{
-      background-color: #f9f9f9;
+    paper-material{
+      padding:20px;
+      background-color: var(--paper-grey-200);
       opacity:1;
     }
 
     paper-button#button {
       margin-top: 32px;
-      background: var(--paper-teal-a700);
+      background: var(--paper-pink-a200);
       color: white;
       @apply(--layout-vertical);
       @apply(--layout-center-center);
@@ -93,6 +97,10 @@
       color: #eeff41;
     }
 
+    a {
+      color: var(--paper-pink-a200);
+    }
+
     </style>
 
     <chris-api id="login" api="Login" response="{{response}}" on-response="handleResponse" error="{{error}}" on-error="handleError"></chris-api>
@@ -100,7 +108,7 @@
 
     <div class="container">
 
-      <paper-item>
+      <paper-material elevation=5>
         <div class="horizontal-section">
 
         <section>
@@ -144,7 +152,12 @@
             </div>
           </section>
         </div>
-      </paper-item>
+
+              </paper-material>
+
+        <div class="spacer">
+        </div>
+        <div>© FNNDSC 2016</div>
     </div>
 
 
