@@ -72,7 +72,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <style include="chris-ultron-styles"></style>
     <style>
       app-header {
-        background-color: #00897B;
+        background-color: var(--paper-blue-500);
         color: #fff;
       }
 
@@ -88,13 +88,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       paper-fab#create {
-        --paper-fab-background: var(--paper-light-blue-500);
+        --paper-fab-background: var(--paper-pink-a200);
       }
 
 
       paper-fab#merge {
         position:fixed;
-        --paper-fab-background: var(--paper-light-green-500);
+        --paper-fab-background: var(--paper-green-a200);
         top: 80px;
         right: 16px;
       }
@@ -231,7 +231,7 @@ app-toolbar.tall{
 
               <!-- Menu to select plugins to CREATE feeds -->
               <paper-fab-speed-dial direction="top">
-                <paper-fab icon="add" class="dropdown-trigger"></paper-fab>
+                <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
                 <div class="dropdown-content">
                   <template is="dom-repeat" items="{{plugins}}">
                     <paper-fab mini id="[[item.name]]" icon="[[item.icon]]" class$="primary [[item.color]]" item="[[item]]" on-tap="nextPage"></paper-fab>

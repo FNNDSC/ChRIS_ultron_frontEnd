@@ -22,7 +22,11 @@
       },
 
       handleFeedDetails: function(){
-        var data = this.generateFakePluginData();
+        // var data = this.generateFakePluginData();
+        //var plugins = this.generateFakePlugins( 3 );
+        var pluginsFlatten = this.generateFakeFlatPlugins( 3 );
+        window.console.log(pluginsFlatten);
+
         var details = {
           note: this.response[0].longText,
           comments: [
@@ -30,11 +34,163 @@
             this.response[0].mediumText,
             this.response[0].mediumText,
           ],
-          plugins: {
-            data: data
-          }
+          plugins: pluginsFlatten
         }
         return details;
+      },
+
+      generateFakeFlatPlugins: function( maxDepth ){
+
+        var plugins = [];
+        plugins.push( this.generatePlugin( null, 0, 0 ) );
+
+        var leaves = this.rGenerateFlatPlugins( plugins[0], 1, maxDepth );
+        plugins.push.apply( plugins, leaves );
+
+        return plugins;
+
+      },
+
+      rGenerateFlatPlugins: function( parent, depth, maxDepth ){
+
+        // random number of leaves between 0 and 3
+        var nbLeaves = Math.floor( Math.random( ) * 3 );
+        if(!nbLeaves){
+          return;
+        }
+
+        var leaves = [];
+
+
+        for( var i = 0; i<nbLeaves; i++ ){
+
+          // generate leave
+          var leave = this.generatePlugin( parent, i, depth );
+          leaves.push( leave );
+
+          if( depth <= maxDepth ){
+            var child = this.rGenerateFlatPlugins( leave, depth + 1, maxDepth );
+            leaves.push.apply( leaves, child );
+          }
+
+        }
+
+        return leaves;
+
+      },
+
+      generateFakePlugins: function( maxDepth ){
+
+        var rootLeave = this.generatePlugin( '0', 0, 0 );
+        rootLeave.leaves = this.rGeneratePlugins( 0, 1, maxDepth );
+
+        return rootLeave;
+
+      },
+
+      rGeneratePlugins: function( parentID, depth, maxDepth ){
+
+        // random number of leaves between 0 and 3
+        var nbLeaves = Math.floor( Math.random( ) * 3 );
+        var leaves = [];
+
+        for( var i = 0; i<nbLeaves; i++ ){
+
+          // generate leave
+          var leave = this.generatePlugin( parentID, i, depth );
+
+          if( depth <= maxDepth ){
+
+            leave.leaves = this.rGeneratePlugins( leave.id, depth + 1, maxDepth );
+
+          }
+
+          leaves.push(leave);
+
+        }
+
+        return leaves;
+
+      },
+      
+      generatePlugin: function( parent, index, depth){
+
+        var plugins = [
+        {
+          name: "file-browser-plugin",
+          label: "File Browser",
+          color: "light-blue",
+          icon: "icons:folder-open"
+        },
+        {
+          name: "pacs-pull-plugin",
+          label: "Pacs Pull",
+          color: "red",
+          icon: "icons:cloud-queue"
+        },
+        {
+          name: "search-plugin",
+          label: "Search",
+          color: "light-green",
+          icon: "icons:search"
+        },
+        {
+          name: "mri-convert-plugin",
+          label: "Convert",
+          color: "yellow",
+          icon: "icons:redo"
+        },
+        {
+          name: "tractography-plugin",
+          label: "Tractography",
+          color: "orange",
+          icon: "icons:gesture"
+        },
+        {
+          name: "recon-all-plugin",
+          label: "Reconstruction",
+          color: "pink",
+          icon: "icons:donut-small"
+        },
+        {
+          name: "connectome-plugin",
+          label: "Connectome",
+          color: "purple",
+          icon: "icons:settings-input-component"
+        }];
+
+        var plugin = plugins[Math.floor(Math.random() * plugins.length)];
+
+        var parentID = 0;
+        var workflow = [];
+        var id = index;
+        if( parent ){
+
+          parentID = parent.id;
+          id = parentID + '-' + index;
+          workflow = parent.workflow.slice(0);
+
+        }
+
+        workflow.push({
+          label: plugin.label,
+          color: plugin.color,
+          icon: plugin.icon
+        });
+
+        return {
+          parentID: parentID,
+          id: id,
+          depth: depth,
+          data: this.generateFakePluginData(),
+          name: plugin.name,
+          label: plugin.label,
+          color: plugin.color,
+          icon: plugin.icon,
+          available: [],
+          leaves: [],
+          workflow: workflow
+        }
       },
 
       generateFakePluginData: function(){

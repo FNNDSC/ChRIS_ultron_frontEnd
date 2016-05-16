@@ -38,7 +38,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <style include="chris-ultron-styles"></style>
     <style>
-      #plugin{
+      .plugin{
         /*@apply(--layout-vertical);*/
         
         background-color: white;
@@ -76,6 +76,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     }
 
     .plugin-toolbar {
+        border-bottom: 1px solid #ddd;
         height: 48px;
       }
 
@@ -85,13 +86,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-      <div id="plugin">
+      <div id$="[[plugin.id]]" class="plugin">
         <!-- Toolbar -->
         <div on-tap="toggleView">
         <app-toolbar class="plugin-toolbar">
-          <paper-icon-button icon="icons:cloud-queue" class="primary red invert" alt="More options"></paper-icon-button>
+          <template is="dom-repeat" items="{{plugin.workflow}}">
+            <paper-icon-button icon="[[item.icon]]" class$="primary [[item.color]] invert" alt="More options"></paper-icon-button>
+          </template>
         
-          <div class="title" title>Pacs pull</div>
+          <div class="title" title>[[plugin.label]]</div>
 
           <div on-tap="updateView">
           <template is="dom-if" if="{{selected}}">
@@ -126,10 +129,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <!-- <iron-pages id="pages" selected="0"> -->
         <template is="dom-if" if="{{selected}}">
           <iron-selector id="views" selected="0">
-            <chris-dataview-columns class="dataview" data="[[plugin]]"></chris-dataview-columns>
-            <chris-dataview-rows class="dataview" data="[[plugin]]"></chris-dataview-rows>
-            <chris-dataview-grid class="dataview" data="[[plugin]]"></chris-dataview-grid>
-            <chris-dataview-columns class="dataview" data="[[plugin]]"></chris-dataview-columns>
+            <chris-dataview-columns class="dataview" data="[[plugin.data]]"></chris-dataview-columns>
+            <chris-dataview-rows class="dataview" data="[[plugin.data]]"></chris-dataview-rows>
+            <chris-dataview-grid class="dataview" data="[[plugin.data]]"></chris-dataview-grid>
+            <chris-dataview-columns class="dataview" data="[[plugin.data]]"></chris-dataview-columns>
           </iron-selector>
         </template>
       </div>
