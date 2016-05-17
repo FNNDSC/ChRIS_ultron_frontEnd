@@ -36,7 +36,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <template>
         <div>
         <!-- tabindex$="[[tabIndex]]" -->
-          <chris-feed index="[[index]]" feed="[[feed]]" selected="[[selected]]"></chris-feed>
+          <chris-feed index="[[index]]" feed="[[feed]]" opened="[[selected]]"></chris-feed>
           </div>
         </template>
       </iron-list>
@@ -67,13 +67,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             opened: false,//this.response[i].expanded,
             color: 'rgb(134,91,60)',
             favorite: (this.feeds.length % 3) ? true : false,
+            selected: false,
+            details: null,
+            color: 'blue',
+            letter: 'R',
             // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
             description: "just created from plugin",
             fulldescription: "YAYAYAYAYAYAYYA",
             date: "Sun Aug 14 1994 03:27:03 GMT-0700 (PDT)"
           }
 
-          this.unshift('feeds', feed);
+          this.splice('feeds', 0, 0, feed);
 
           this.$.feeds.scrollToIndex(0);
 

@@ -34,10 +34,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../chris-note/chris-note.html">
 <link rel="import" href="../chris-plugin-list/chris-plugin-list.html">
 
+<!-- STYLE -->
+<link rel="import" href="../chris-ultron/chris-ultron-styles.html">
+
 <dom-module id="chris-feed">
 
   <template>
 
+    <style include="chris-ultron-styles"></style>
     <style>
       #feed {
         @apply(--layout-vertical);
@@ -48,8 +52,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         margin-bottom: 10px;
       }
 
-      #feed.checked {
-        background-color: var(--paper-teal-a100);
+      #feed[opened] {
+        background-color: var(--paper-pink-a100);
       }
 
       .avatar {
@@ -58,13 +62,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         border-radius: 20px;
         box-sizing: border-box;
         background-color: #DDD;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .pad {
         padding: 0 16px;
         @apply(--layout-flex);
         @apply(--layout-vertical);
       }
-      .primary {
+      .title {
         font-size: 16px;
         font-weight: bold;
       }
@@ -124,21 +131,21 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </style>
 
 <!-- need error handler -->
-<!-- on selected only! -->
-    <chris-api id="chrisAPI" api="FeedDetails" response="{{details}}" on-response="handleDetails"></chris-api>
+<!-- on opened only! -->
+    <chris-api id="chrisAPI" api="FeedDetails" response="{{feed.details}}" on-response="handleDetails"></chris-api>
 
       <div on-focus="donothing">
 
         <paper-progress id="status" class="status" value="100"></paper-progress>
 
-        <paper-material id="feed" class="feed" elevation=1>
+        <paper-material id="feed" opened$="[[feed.opened]]" class="feed" elevation=1>
 
           <!-- Toolbar -->
           <app-toolbar>
 
-            <iron-image class="avatar" sizing="contain" src="[[feed.image]]" on-tap="check"></iron-image>
+            <div class$="avatar primary [[feed.color]]" on-tap="select"><div>[[feed.letter]]</div></div>
             <div class="pad">
-              <div class="primary">Feed [[feed.id]] - [[feed.name]]</div>
+              <div class="title">Feed [[feed.id]] - [[feed.name]]</div>
               <div class="description">[[feed.description]]</div>
               <div class="date">[[feed.date]]</div>
             </div>
@@ -155,9 +162,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           </app-toolbar>
 
           <div id="content" on-tap="donothing">
-            <chris-note note="[[details.note]]"></chris-note>
-            <chris-plugin-list feedindex="[[index]]" plugins="[[details.plugins]]"></chris-plugin-list>
-            <chris-comment-list comments="[[details.comments]]"></chris-comment-list>
+            <chris-note note="[[feed.details.note]]"></chris-note>
+            <chris-plugin-list feedindex="[[index]]" plugins="[[feed.details.plugins]]"></chris-plugin-list>
+            <chris-comment-list comments="[[feed.details.comments]]"></chris-comment-list>
           </div>
 
         </paper-material>
@@ -169,52 +176,62 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Polymer({
         is: 'chris-feed',
         properties: {
+
           feed: {
             type: Object
           },
-          details:{
-            type: Object,
-            value: null
-          },
-          selected:{
+
+          opened:{
             type: Boolean,
             value: false,
-            observer: '_selectedChanged'
+            observer: '_openedChanged'
           },
-          checked:{
-            type: Boolean,
-            value: false
-          },
+
           index: {
             type: Number
           }
         },
-        iconForItem: function(item) {
-          return item ? (item.integer < 50 ? 'star-border' : 'star') : '';
+
+        iconForItem: function( item ) {
+
+          return item ? ( item.integer < 50 ? 'star-border' : 'star' ) : '';
+
         },
-        getClassForItem: function(item, selected) {
-          return selected ? 'item expanded' : 'item';
+        getClassForItem: function( item, opened ) {
+
+          return opened ? 'item expanded' : 'item';
+
         },
-        favoriteIconForFeed: function(feed) {
+        favoriteIconForFeed: function( feed ) {
+
           return this.feed.favorite ? 'favorite-border' : 'favorite';
+
         },
-        favoriteFeed: function(evt){
-          evt.preventDefault();
-          evt.stopPropagation();
+
+        favoriteFeed: function( evt ){
+
+          evt.preventDefault( );
+          evt.stopPropagation( );
 
           this.feed.favorite = !this.feed.favorite;
           this.$.favorite.icon = this.feed.favorite ? 'favorite-border' : 'favorite';
+
         },
-        _selectedChanged: function(){
+
+        _openedChanged: function( ){
           // toggle if details available
-          if(this.details){
-            this.selected ? this.$.feed.classList.add('expanded') : this.$.feed.classList.remove('expanded');
-            this.selected ? this.$.feed.elevation = 5 : this.$.feed.elevation = 1;
+          if( this.feed && this.feed.details ){
+
+            this.opened ? this.$.feed.classList.add('expanded') : this.$.feed.classList.remove('expanded');
+            this.opened ? this.$.feed.elevation = 5 : this.$.feed.elevation = 1;
+
             return;
+
           }
 
           // trigger API call
-          if(this.feed){
+          if( this.feed ){
+
             // start progress bar
             // this.$.status.value = 10;
             // this.$.status.indeterminate = true;
@@ -224,28 +241,38 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             this.$.chrisAPI.params = {
               feedID: this.feed.index // feed.id
             };
+
           }
+
         },
-        handleDetails: function(evt){
+
+        handleDetails: function( evt ){
+
           // stop progress
           // this.$.status.classList.remove('expanded','running');
 
           // toggle that we have details now
-          this._selectedChanged();
+          this._openedChanged( );
           // let iron-list know the size of the feed changed
           // window.console.log('details changed');
-          this.fire('size', {index: this.index});
-        },
-        donothing: function(evt){
-          evt.stopPropagation();
-          evt.preventDefault();
-        },
-        check: function(evt){
-          // this.donothing(evt);
-          // this.checked = !this.checked;
+          this.fire( 'size', {index: this.index} );
 
-          // this.checked ? this.$.feed.classList.add('checked') : this.$.feed.classList.remove('checked');
+        },
+
+        donothing: function( evt ){
+
+          evt.stopPropagation( );
+          evt.preventDefault( );
+
+        },
+
+        select: function( evt ){
+
+          this.donothing( evt );
+          this.set( 'feed.opened', !this.feed.opened);
+
         }
+
     });
   </script>
 </dom-module>
