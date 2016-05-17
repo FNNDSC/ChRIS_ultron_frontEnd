@@ -94,36 +94,46 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Polymer({
         is: 'chris-feed-create',
         properties: {
+
           plugin: {
             type: Object,
             observer: '_pluginChanged'
           },
+
           feed:{
             type: Object
           }
+
         },
-        _pluginChanged: function(){
+        _pluginChanged: function( ){
 
           // remove child if any
-          var node = Polymer.dom(this.$.card).querySelector('.plugin');
-          if(node){
-            Polymer.dom(this.$.card).removeChild(node);
+          var node = Polymer.dom(this.$.card).querySelector( '.plugin' );
+          if( node ){
+
+            Polymer.dom( this.$.card ).removeChild( node );
+
           }
           
           // fetch the plugin!
           var self = this;
           Polymer.Base.importHref(
             this.plugin.url,
-            function(evt){
-              var plugin = document.createElement(self.plugin.name);
-              plugin.classList.add('plugin');
-              Polymer.dom(self.$.card).appendChild(plugin);
+            function( evt ){
+
+              var plugin = document.createElement( self.plugin.name );
+              plugin.classList.add( 'plugin' );
+              Polymer.dom( self.$.card ).appendChild( plugin );
+
             },
-            function(evt){
-              window.console.log('oops, something went wrong...');
-              window.console.log(evt);
+
+            function( evt ){
+
+              window.console.log( 'oops, something went wrong...' );
+              window.console.log( evt );
+
             },
-            true);
+            true );
         },
         gogogo: function(){
           // feed created

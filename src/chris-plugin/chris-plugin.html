@@ -206,6 +206,34 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         select: function( evt ){
 
+          // load plugin view...
+          // remove child if any
+          // var node = Polymer.dom(this.$.card).querySelector( '.plugin' );
+          // if( node ){
+
+          //   Polymer.dom( this.$.card ).removeChild( node );
+
+          // }
+          
+          // // fetch the plugin!
+          // var self = this;
+          // Polymer.Base.importHref(
+          //   this.plugin.url,
+          //   function( evt ){
+
+          //     var plugin = document.createElement( self.plugin.name );
+          //     plugin.classList.add( 'plugin' );
+          //     Polymer.dom( self.$.card ).appendChild( plugin );
+
+          //   },
+          //   function( evt ){
+
+          //     window.console.log( 'oops, something went wrong...' );
+          //     window.console.log( evt );
+
+          //   },
+          //   true );
+
           evt.detail.item.selected = true;
 
         }
