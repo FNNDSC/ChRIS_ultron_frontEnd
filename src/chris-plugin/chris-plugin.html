@@ -25,6 +25,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../chris-dataview-columns/chris-dataview-columns.html">
 <link rel="import" href="../chris-dataview-grid/chris-dataview-grid.html">
 <link rel="import" href="../chris-dataview-rows/chris-dataview-rows.html">
+<!-- external view - should be loaded on the fly -->
+<link rel="import" href="../../data/pacs_pull/pacs_pull-view.html">
 
 <link rel="import" href="../chris-plugin-data/chris-plugin-data.html">
 <link rel="import" href="../chris-plugin-create/chris-plugin-create.html">
@@ -128,11 +130,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <!-- it is slow to load it like that -->
         <!-- <iron-pages id="pages" selected="0"> -->
         <template is="dom-if" if="{{selected}}">
-          <iron-selector id="views" selected="0">
+          <iron-selector id="views" selected="0" on-iron-deselect="deselect" on-iron-select="select">
             <chris-dataview-columns class="dataview" data="[[plugin.data]]"></chris-dataview-columns>
             <chris-dataview-rows class="dataview" data="[[plugin.data]]"></chris-dataview-rows>
             <chris-dataview-grid class="dataview" data="[[plugin.data]]"></chris-dataview-grid>
-            <chris-dataview-columns class="dataview" data="[[plugin.data]]"></chris-dataview-columns>
+            <pacs-pull-plugin-view class="dataview" data="[[plugin.data]]"></pacs-pull-plugin-view>
           </iron-selector>
         </template>
       </div>
@@ -193,7 +195,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         updateView: function( evt ){
 
           this.donothing(evt);
-          this.$$('#views').selected = this.$$('#buttons').selected;//evt.currentTarget.attributes.targetView.nodeValue;
+          this.$$('#views').selected = this.$$('#buttons').selected;
+        },
+
+        deselect: function( evt ){
+
+          evt.detail.item.selected = false;
+
+        },
+
+        select: function( evt ){
+
+          evt.detail.item.selected = true;
 
         }
     });
