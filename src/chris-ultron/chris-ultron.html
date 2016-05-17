@@ -100,6 +100,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         right: 16px;
       }
 
+      #mergeBadge{
+        z-index:10;
+      }
+
       .separator{
         font-size: 14px;
         font-weight: 500;
@@ -243,6 +247,7 @@ app-toolbar.tall{
 
               <!-- fabs to merge data -->
               <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab>
+              <paper-badge id="mergeBadge" for="merge" label="0"></paper-badge>
 
               <!-- All feeds -->
               <chris-feed-list id="feeds" feeds="[[items]]"></chris-feed-list>
