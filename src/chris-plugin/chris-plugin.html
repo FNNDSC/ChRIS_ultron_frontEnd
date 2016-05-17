@@ -112,9 +112,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <!--           <paper-menu-button>
   <paper-icon-button icon="icons:more-vert" class="dropdown-trigger"></paper-icon-button>
   <paper-menu class="dropdown-content">
-    <paper-item>Generate Feed</paper-item>
-    <paper-item>Run plugin</paper-item>
-    <paper-item>Help</paper-item>
+    <paper-item>Run</paper-item>
+    <paper-item>Fork</paper-item>
+    <paper-item>Merge</paper-item>
   </paper-menu>
 </paper-menu-button> -->
 
@@ -186,7 +186,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // call API
           // get reponse,
           // fire the new feed
-          this.fire('newplugin');
+          this.fire('newplugin', {plugin: this.plugin});
 
         },
 

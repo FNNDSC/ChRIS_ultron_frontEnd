@@ -5,6 +5,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<!-- CHRIS -->
+<link rel="import" href="../chris-api/chris-api.html">
 <link rel="import" href="../chris-plugin/chris-plugin.html">
 
 <dom-module id="chris-plugin-list">
@@ -19,6 +21,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         font-weight: bold;
       }
     </style>
+
+    <chris-api id="plugin" api="PluginCreate" response="{{response}}" on-response="handleResponse" error="{{error}}" on-error="handleError"></chris-api>
 
     <div class="primary">
     Plugins
@@ -35,28 +39,115 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <script>
     Polymer({
         is: 'chris-plugin-list',
+
         properties: {
+
           plugins: {
-            type: Object // to change to array..?
+            type: Array // to change to array..?
           },
+
           feedindex:{
             type:Number
+          },
+
+
+          response: {
+            type: Object
+          },
+          
+          error: {
+            type: Object
           }
+
         },
-        newPlugin: function(evt){
-          // add new plugin
-          var plugin = document.createElement('chris-plugin');
-          plugin.plugin = 'I am new!';
-          Polymer.dom(this.$.plugins).appendChild(plugin);
 
-          this.handleSize(null);
+        newPlugin: function( evt ){
 
-          // this.fire('scrollto', {offsetTop: plugin.offsetTop});
+          // Call API
+          this.$.plugin.params = {
+            auth: 'user=' + sessionStorage.getItem( 'username' ) + ',token=' + sessionStorage.getItem( 'token' ),
+            plugin: evt.detail.plugin
+          };
+
+          // url update triggers a new AJAX call
+          this.$.plugin.url = 'createPlugin'
+
+        },
+
+        handleResponse: function( ){
+
+          var plugin = this.response;
+
+          //  find how many plugins have the same parent to generate ID
+          var sameParentID = this.plugins.filter(
+
+            this.filterByParentID.bind( this, plugin.parentID )
+
+          );
+          plugin.id = plugin.parentID + '-' + sameParentID.length;
+
+
+          // find parent location to insert plugin in DOM
+          var parentIndex = this.plugins.findIndex(
+
+            this.findIndexByID.bind( this, plugin.parentID )
+
+          );
+          if( parentIndex >= 0){
+            parentIndex += 1;
+          }
+          else{
+            parentIndex = 1;
+          }
+          this.splice( 'plugins', parentIndex, 0, plugin );
+
+          // let iron-list know that the feed size changed
+          this.handleSize( null );
+
+        },
+
+        filterByParentID: function(value, obj, index, array) {
+
+          if ( 'parentID' in obj &&
+            typeof( obj.parentID ) === 'string' &&
+            value === obj.parentID ) {
+
+            obj.currentIndex = index;
+            return true;
+
+          } else {
+
+            return false;
+
+          }
+
+        },
+
+        findIndexByID: function( value, obj, index, array){
+
+          if ( 'id' in obj &&
+            typeof( obj.id ) === 'string' &&
+            value === obj.id ) {
+
+            return true;
+
+          } else {
+
+            return false;
+
+          }
+
+        },
+
+        handleError: function( ){
+
+          window.console.log( this.error );
+          
         },
 
         handleSize: function( evt ){
 
-          this.fire('size', {index: this.feedindex});
+          this.fire( 'size', {index: this.feedindex} );
 
         }
     });
