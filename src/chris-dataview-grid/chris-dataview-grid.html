@@ -18,7 +18,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style include="iron-flex iron-flex-alignment">
-:host {
+      :host {
         display: flex;
         flex:1;
       }
@@ -30,7 +30,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       #macview paper-listbox{
         display: flex;
         flex-wrap: wrap;
-        border-right: 1px solid var(--paper-red-100);
         overflow-y: scroll;
         min-height: 300px;
         max-height: 300px;
@@ -42,7 +41,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       paper-item[type="folder"] iron-icon{
-        --iron-icon-stroke-color: var(--paper-blue-500);
+        --iron-icon-stroke-color: var(--primary-color);
         --iron-icon-fill-color: var(--paper-grey-100);
       }
 
@@ -56,14 +55,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       paper-item[type="file"] iron-icon{
-        --iron-icon-stroke-color: var(--paper-pink-a200);
+        --iron-icon-stroke-color: var(--accent-color);
         --iron-icon-fill-color: var(--paper-grey-100);
       }
 
-
-            #macview paper-item {
-                      min-width: 164px;
-                      width:164px;
+      #macview paper-item {
+        min-width: 164px;
+        width:164px;
         max-width: 164px;
         min-height:32px;
         overflow: hidden;
@@ -71,9 +69,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         text-overflow: ellipsis;
         display:block;
         --paper-item-selected: {
-          color: var(--paper-blue-500);
+          color: var(--primary-color);
         };
-
 
       }
     <style>

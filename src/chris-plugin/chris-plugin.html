@@ -24,9 +24,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../chris-dataview-columns/chris-dataview-columns.html">
 <link rel="import" href="../chris-dataview-grid/chris-dataview-grid.html">
+<link rel="import" href="../chris-dataview-plugin/chris-dataview-plugin.html">
 <link rel="import" href="../chris-dataview-rows/chris-dataview-rows.html">
-<!-- external view - should be loaded on the fly -->
-<link rel="import" href="../../data/pacs_pull/pacs_pull-view.html">
 
 <link rel="import" href="../chris-plugin-data/chris-plugin-data.html">
 <link rel="import" href="../chris-plugin-create/chris-plugin-create.html">
@@ -110,15 +109,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           </div>
 
 
-<!-- jummping around... -->
-<!--           <paper-menu-button>
-  <paper-icon-button icon="icons:more-vert" class="dropdown-trigger"></paper-icon-button>
-  <paper-menu class="dropdown-content">
-    <paper-item>Run</paper-item>
-    <paper-item>Fork</paper-item>
-    <paper-item>Merge</paper-item>
-  </paper-menu>
-</paper-menu-button> -->
+          <!-- jummping around... -->
+          <!--           <paper-menu-button>
+            <paper-icon-button icon="icons:more-vert" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu class="dropdown-content">
+              <paper-item>Run</paper-item>
+              <paper-item>Fork</paper-item>
+              <paper-item>Merge</paper-item>
+            </paper-menu>
+          </paper-menu-button> -->
 
           <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
           <paper-icon-button icon="add" alt="More options" on-tap="newPlugin"></paper-icon-button>
@@ -134,7 +133,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             <chris-dataview-columns class="dataview" data="[[plugin.data]]"></chris-dataview-columns>
             <chris-dataview-rows class="dataview" data="[[plugin.data]]"></chris-dataview-rows>
             <chris-dataview-grid class="dataview" data="[[plugin.data]]"></chris-dataview-grid>
-            <pacs-pull-plugin-view class="dataview" data="[[plugin.data]]"></pacs-pull-plugin-view>
+            <chris-dataview-plugin class="dataview" dataview="[[plugin.dataview]]" data="[[plugin.data]]"></chris-dataview-plugin>
           </iron-selector>
         </template>
       </div>
@@ -233,6 +232,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           //   },
           //   true );
+
+          window.console.log(this.plugin);
 
           evt.detail.item.selected = true;
 

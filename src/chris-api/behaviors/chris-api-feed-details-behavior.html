@@ -127,43 +127,71 @@
           name: "file-browser-plugin",
           label: "File Browser",
           color: "light-blue",
-          icon: "icons:folder-open"
+          icon: "icons:folder-open",
+          dataview: {
+            name: 'file-browser-plugin-view',
+            src: 'data/file_browser/file_browser-view.html'
+          }
         },
         {
           name: "pacs-pull-plugin",
           label: "Pacs Pull",
           color: "red",
-          icon: "icons:cloud-queue"
+          icon: "icons:cloud-queue",
+          dataview: {
+            name: 'pacs-pull-plugin-view',
+            src: 'data/pacs_pull/pacs_pull-view.html'
+          }
         },
         {
           name: "search-plugin",
           label: "Search",
           color: "light-green",
-          icon: "icons:search"
+          icon: "icons:search",
+          dataview: {
+            name: 'search-plugin-view',
+            src: 'data/search/search-view.html'
+          }
         },
         {
           name: "mri-convert-plugin",
           label: "Convert",
           color: "yellow",
-          icon: "icons:redo"
+          icon: "icons:redo",
+          dataview: {
+            name: 'search-plugin-view',
+            src: 'data/search/search-view.html'
+          }
         },
         {
           name: "tractography-plugin",
           label: "Tractography",
           color: "orange",
-          icon: "icons:gesture"
+          icon: "icons:gesture",
+          dataview: {
+            name: 'pacs-pull-plugin-view',
+            src: 'data/pacs_pull/pacs_pull-view.html'
+          }
         },
         {
           name: "recon-all-plugin",
           label: "Reconstruction",
           color: "pink",
-          icon: "icons:donut-small"
+          icon: "icons:donut-small",
+          dataview: {
+            name: 'file-browser-plugin-view',
+            src: 'data/file_browser/file_browser-view.html'
+          }
         },
         {
           name: "connectome-plugin",
           label: "Connectome",
           color: "purple",
-          icon: "icons:settings-input-component"
+          icon: "icons:settings-input-component",
+          dataview: {
+            name: 'pacs-pull-plugin-view',
+            src: 'data/pacs_pull/pacs_pull-view.html'
+          }
         }];
 
         var plugin = plugins[Math.floor(Math.random() * plugins.length)];
@@ -196,7 +224,8 @@
           icon: plugin.icon,
           available: [],
           leaves: [],
-          workflow: workflow
+          workflow: workflow,
+          dataview: plugin.dataview
         }
       },
 

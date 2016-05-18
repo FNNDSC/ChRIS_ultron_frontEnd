@@ -38,8 +38,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="../../bower_components/paper-styles/color.html">
-<link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- APP LAYOUT -->
@@ -63,7 +61,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../chris-login/chris-login.html">
 
 <!-- STYLE -->
-<link rel="import" href="chris-ultron-styles.html">
+<link rel="import" href="../chris-ultron/chris-ultron-styles.html">
 
 <dom-module id="chris-ultron">
 
@@ -72,7 +70,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <style include="chris-ultron-styles"></style>
     <style>
       app-header {
-        background-color: var(--paper-blue-500);
+        background-color: var(--primary-color);
         color: #fff;
       }
 
@@ -88,14 +86,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       paper-fab#create {
-        --paper-fab-background: var(--paper-pink-a200);
+        --paper-fab-background: var(--accent-color);
       }
 
 
       paper-fab#merge {
          z-index:10;
         position:fixed;
-        --paper-fab-background: var(--paper-green-a200);
+        --paper-fab-background: var(--accent-color);
         top: 80px;
         right: 16px;
       }
@@ -107,31 +105,27 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       .separator{
         font-size: 14px;
         font-weight: 500;
-        color: rgb(170, 170, 170);
+        color: var(--primary-text-color);
         padding: 16px;
         border-top: 1px solid rgb(224, 224, 224);
       }
 
       #navheader {
-  font-size: inherit;
-  color: white;
-  flex-shrink: 0;
-}
+        font-size: inherit;
+        color: white;
+        flex-shrink: 0;
+        background-color: var(--dark-primary-color);
+        align-items: center;
+      }
 
-#navheader {
-  background-color: #999;
-  align-items: center;
-}
+      #username {
+        font-size: small;
+        opacity: 0.8;
+      }
 
-#username {
-  font-size: small;
-  opacity: 0.8;
-}
-
-app-toolbar.tall{
+      app-toolbar.tall{
         height: calc(var(--paper-toolbar-height, 64px) * 3);
-
-}
+      }
 
       @media (max-width: 460px) {
         paper-toolbar .bottom.title {
@@ -219,6 +213,7 @@ app-toolbar.tall{
                   <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                   <div title>ChRIS Ultron</div>
                   <paper-icon-button icon="search" alt="Search"></paper-icon-button>
+                  <paper-icon-button icon="communication:call-merge" alt="Search"></paper-icon-button>
                   <paper-menu-button horizontal-align="right">
                     <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                     <paper-menu class="dropdown-content">
@@ -246,8 +241,8 @@ app-toolbar.tall{
               </paper-fab-speed-dial>
 
               <!-- fabs to merge data -->
-              <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab>
-              <paper-badge id="mergeBadge" for="merge" label="0"></paper-badge>
+              <!-- <paper-fab id="merge" icon="communication:call-merge" title="merge"></paper-fab> -->
+              <!-- <paper-badge id="mergeBadge" for="merge" label="0"></paper-badge> -->
 
               <!-- All feeds -->
               <chris-feed-list id="feeds" feeds="[[items]]"></chris-feed-list>
