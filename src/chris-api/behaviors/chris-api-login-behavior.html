@@ -9,12 +9,13 @@
 
           case 'url':
 
-            var url = '';
+            var url = '../../data/feeds.json';
             if( this.chrisAPI ){
 
-              url = this.apiRoot + this.url;
+              //url = this.apiRoot + this.url;
 
             }
+
             return url;
 
           case 'params':
@@ -46,23 +47,29 @@
       handleLogin: function( ){
 
         var response = {};
+        // ChRIS API login not working so dummy check
+        var match = this.params.username === this.params.password;
 
         if( this.chrisAPI ){
 
-          var details = this.response.return.payload.loginDetail;
-          response = {
-            status: details.loginStatus,
-            message: details.loginMessage,
-            token: details.sessionToken
-          };
-
-        } else {
-
-          var match = this.params.username === this.params.password;
+          //var details = this.response.return.payload.loginDetail;
+          // response = {
+          //   status: details.loginStatus,
+          //   message: details.loginMessage,
+          //   token: details.sessionToken
+          // };
           response = {
             status: match,
             message: match? "Successful login." : "Username and password do not match.",
-            token: 'ABCDEFGH'
+            token: 'ABCDEF123456789'
+          }
+
+        } else {
+
+          response = {
+            status: match,
+            message: match? "Successful login." : "Username and password do not match.",
+            token: 'ABCDEF123456789'
           };
 
         }
@@ -73,6 +80,7 @@
       handleErrorLogin: function( ){
 
         return this.error;
+
       }
     };
 </script>

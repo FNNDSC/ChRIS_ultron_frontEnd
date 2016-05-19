@@ -1,0 +1,102 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<dom-module id="chris-dataview-plugin">
+
+  <template>
+
+    <style>
+
+      #container{
+        display: flex;
+        flex-wrap: wrap;
+        width:100%;
+        min-height: 300px;
+        max-height: 300px;
+      }
+
+    </style>
+
+    <div id="container">
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-dataview-plugin',
+        properties: {
+
+          data: {
+            type: Object
+          },
+
+          dataview: {
+            type: Object
+          },
+
+          selected: {
+            type: Boolean,
+            value: false,
+            observer: '_selectedChanged'
+          }
+
+        },
+
+        _selectedChanged: function( ){
+
+          window.console.log(this.dataview);
+
+          if( this.selected ){
+
+            var imported = document.createElement( this.dataview.name );
+
+            if( Polymer.isInstance( imported ) ){
+
+              // element already imported
+              var node = Polymer.dom( this.$.container ).querySelector( '.plugin' );
+
+              if( !Polymer.isInstance( node ) ){
+
+                // add it to the dom
+                node = imported
+                node.classList.add( 'plugin' );
+                Polymer.dom( this.$.container ).appendChild( node );
+
+              }
+
+              node.selected = true;
+              return;
+
+            }
+
+            // import element then try again!
+            var self = this;
+            Polymer.Base.importHref(
+              self.dataview.src,
+              function( evt ){
+
+                self._selectedChanged();
+
+              },
+
+              function( evt ){
+
+                window.console.log( 'oops, something went wrong...' );
+                window.console.log( evt );
+
+              },
+              true );
+
+          }
+
+        }
+    });
+  </script>
+</dom-module>

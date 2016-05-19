@@ -12,13 +12,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
-        :host{
-         position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    }
+      :host{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
 
       iron-list {
         --iron-list-items-container: {
@@ -47,18 +47,26 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Polymer({
         is: 'chris-feed-list',
         properties: {
+
           feeds: {
-            type: Object
+            type: Array
           }
+
         },
-        attached: function() {
+
+        attached: function( ) {
+
           this.$.feeds.scrollTarget = this.ownerDocument.documentElement;
+
         },
-        resizeItem: function(evt){
-          this.$.feeds.updateSizeForItem(evt.detail.index);
+
+        resizeItem: function( evt ){
+
+          this.$.feeds.updateSizeForItem( evt.detail.index );
+
         },
-        newFeed: function(evt){
-          window.console.log('got a new feed');
+        newFeed: function( evt ){
+
           // get the feed content...
           var feed = {
             id: this.feeds.length + 1,
@@ -77,12 +85,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             date: "Sun Aug 14 1994 03:27:03 GMT-0700 (PDT)"
           }
 
-          this.splice('feeds', 0, 0, feed);
+          this.splice( 'feeds', 0, 0, feed );
 
-          this.$.feeds.scrollToIndex(0);
+          this.$.feeds.scrollToIndex( 0 );
 
         },
-        scrollto: function(evt){
+
+        scrollto: function( evt ){
+          
           window.console.log('got scrollto');
           window.console.log(evt);
           // this.$.feeds.scroll(evt.detail.offsetTop);

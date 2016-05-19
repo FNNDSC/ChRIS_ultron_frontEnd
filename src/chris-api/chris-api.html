@@ -28,52 +28,75 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <script>
     Polymer({
         is: 'chris-api',
+
         properties: {
+
           url: {
             type: String
           },
+
           response: {
-            type: Object,
-            notify: true
+            type: Object
+            // do not use notify true
+            // if notify true, response-changed event fired
+            // before we had change to format the response
+            // for instance:
+            // if API returns an Object and reponse expected to
+            // be an array (binded to iron-list)
+            //notify: true
           },
+
           error: {
-            type: Object,
-            notify: true
+            type: Object
+            // do not use notify true
+            // see response explanation
+            //notify: true
           },
+
           body:{
             type: Object
           },
+
           method:{
             type: String
           },
+
           params:{
             type: Object
           },
+
           api: {
             type: String
           },
+
           handleAs :{
             type: String,
             value: 'json'
           },
+
           // ChRIS API SPECIFIC VARS
           chrisAPI:{
             type: Boolean,
             value: false
           },
+
           apiRoot:{
             type: String,
             value: 'http://127.0.0.1:5555/v1/'
           },
+
           dbPath:{
             type: String,
             value: '/tmp/ChRIS_DB'
           },
+
           createDB :{
             type: Boolean,
             value: false
           }
+
         },
+
         behaviors: [
           Feeds,
           FeedDetails,
@@ -83,52 +106,78 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           PluginPacspull,
           PluginsFeed
         ],
-        generateRequest: function() {
-          this.$.ironAjax.generateRequest();
+
+        generateRequest: function( ) {
+
+          this.$.ironAjax.generateRequest( );
+
         },
-        handleResponse: function(evt){
+
+        handleResponse: function( evt ){
+
           var response = this['handle' + this.api ]();
-          this._setResponse(response);
+          this._setResponse( response );
+
         },
-        handleError: function(evt){
-          var error = this['handleError' + this.api ]();
-          this._setError(error);
+
+        handleError: function( evt ){
+
+          var error = this['handleError' + this.api ]( );
+          this._setError( error );
+
         },
-        getUrl: function(url, api){
+
+        getUrl: function( url, api ){
+
+          if( !api ){
+
+            return;
+
+          }
+          return this['prepare' + api ]( 'url' );
+
+        },
+
+        getBody: function( body, api ){
 
           if(!api){
+
             return;
+
           }
+          return this['prepare' + api ]( 'body' );
 
-          return this['prepare' + api ]('url');
         },
-        getBody: function(body, api){
 
-          if(!api){
+        getParams: function( params, api ){
+
+          if( !api ){
+
             return;
+
           }
+          return this['prepare' + api ]( 'params' );
 
-          return this['prepare' + api ]('body');
         },
-        getParams: function(params, api){
 
-          if(!api){
-            return;
-          }
+        _setResponse: function( response ){
 
-          return this['prepare' + api ]('params');
-        },
-        _setResponse(response){
           // update value
           this.response = response;
           // trigger parent callback
-          this.fire('response');
+          this.fire( 'response-changed');
+          this.fire( 'response');
+
         },
-        _setError(error){
+
+        _setError: function( error ){
+
           // update value
           this.error = error;
           // trigger parent callback
-          this.fire('error');
+          this.fire( 'error-changed' );
+          this.fire( 'error' );
+
         }
     });
   </script>

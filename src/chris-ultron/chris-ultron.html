@@ -139,11 +139,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <chris-login logged={{logged}}></chris-login>
     </template>
 
-    <template is="dom-if" if="{{logged}}" restamp>
+    <template is="dom-if" if="{{logged}}" on-dom-change="_domChange" restamp>
 
-      <chris-api api="Feeds" url="../../data/contacts.json" response="{{items}}"></chris-api>
-      <chris-api api="PluginsFeed" url="../../data/plugins-feed.json" response="{{plugins}}"></chris-api>
-      <chris-api api="Labels" url="../../data/contacts.json" response="{{labels}}"></chris-api>
+      <chris-api id="API-Feeds" api="Feeds" response="{{items}}" on-response="fetchPlugins"></chris-api>
+      <chris-api id="API-PluginsFeed" api="PluginsFeed" response="{{plugins}}" on-reponse="fetchLabels"></chris-api>
+      <chris-api id="API-Labels" api="Labels" response="{{labels}}"></chris-api>
 
       <app-drawer-layout class="fullbleed layout vertical">
 
@@ -273,30 +273,38 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Polymer({
         is: 'chris-ultron',
         properties: {
+
           logged:{
             type: Boolean,
             value: false
           },
+
           items: {
             type: Array
           },
+
           plugins:{
             type: Array
           },
+
           labels: {
             type: Array,
           },
+
           plugin:{
             type: Object
           },
+
           route:{
             type: String,
             value: 'feeds'
           },
+
           page: {
             type: Number,
             value: 0
           }
+
         },
 
         attached: function( ){
@@ -335,9 +343,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         logout: function( ){
 
-          sessionStorage.clear( );
-
           this.logged = false;
+          // logged out, clean session
+          sessionStorage.clear( );
 
         },
 
@@ -346,6 +354,39 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // not blocking the scroling... :/
           evt.stopPropagation();
           evt.preventDefault();
+
+        },
+
+        _domChange: function( ){
+
+          if( this.logged ){
+
+            // logged in, fectch the data
+            // fetch the feeds
+            var params = {
+              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+            };
+
+            this.$$( '#API-Feeds' ).params = params;
+            this.$$( '#API-Feeds' ).url = '';
+
+            // fetch the labels
+            this.$$( '#API-Labels' ).params = params;
+            this.$$( '#API-Labels' ).url = '';
+
+          }
+
+        },
+
+        fetchPlugins: function(){
+
+          var params = {
+              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          };
+
+          // fetch the plugins
+          this.$$( '#API-PluginsFeed' ).params = params;
+          this.$$( '#API-PluginsFeed' ).url = '';
 
         }
     });

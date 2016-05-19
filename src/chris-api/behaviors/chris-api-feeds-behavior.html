@@ -1,28 +1,100 @@
 <script>
     Feeds = {
 
-      prepareFeeds: function(what){
+      prepareFeeds: function( what ){
+
         this.handleAs = 'json';
 
-        switch(what){
+        switch( what ){
+
           case 'url':
-            // fetch dummy json!
+
             var url = "../../data/feeds.json";
+
+            if( this.chrisAPI ){
+
+              // generate REAL URL
+              url = this.apiRoot + 'Feeds/NAME';
+
+            }
+
             return url;
+
           case 'params':
+
+            if( this.chrisAPI ){
+
+              this.params.DBpath = this.dbPath;
+
+            }
+
             return this.params;
+
           case 'body':
             return this.body;
+
           default:
             break;
+
           }
+
         return false;
       },
-      handleFeeds: function(){
-        // transform contacts to feed:
+
+      handleFeeds: function( ){
+
         var feeds = [];
 
-        for(var i=0; i<this.response.length; i++){
+        if( this.chrisAPI ){
+          feeds = this.handleFeedsFromChrisAPI();
+        }
+        else{
+          feeds = this.handleFeedsFromMars();
+        }
+
+        window.console.log(feeds);
+
+        return feeds;
+
+      },
+
+      handleFeedsFromChrisAPI: function( ){
+
+        var feeds = [];
+        var payload = this.response.return.payload;
+
+        for( var i=0; i<payload.length; i++ ){
+
+          var feed = {
+            id: 'id: ' + payload[i],
+            name: 'name: ' + payload[i],
+            image: '',
+            opened: false,//this.response[i].expanded,
+            favorite: i%3 ? true : false,
+            selected: false,
+            details: null,
+            color: 'red',
+            letter: 'N',
+            // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
+            description: 'description for ' + payload[i],
+            fulldescription: 'full description for ' + payload[i],
+            date: Date() //this.response[i].date
+          };
+
+          feeds.push(feed);
+
+        }
+
+        return feeds;
+
+      },
+
+      handleFeedsFromMars: function(){
+
+        var feeds = [];
+
+        for( var i=0; i<this.response.length; i++ ){
+
           var feed = {
             id: this.response[i].index,
             name: this.response[i].name,
@@ -38,11 +110,20 @@
             description: this.response[i].shortText,
             fulldescription: this.response[i].longText,
             date: this.response[i].date
-          }
+          };
+
           feeds.push(feed);
+
         }
 
         return feeds;
+
       },
+
+      handleFeedsError: function( ){
+
+        return this.error;
+
+      }
     };
 </script>

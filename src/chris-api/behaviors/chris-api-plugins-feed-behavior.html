@@ -2,22 +2,116 @@
     PluginsFeed = {
 
       preparePluginsFeed: function(what){
+
         this.handleAs = 'json';
 
-        switch(what){
+        switch( what ){
+
           case 'url':
-            return this.url;
+
+            var url = "../../data/plugins-feed.json";
+
+            if( this.chrisAPI ){
+
+              // generate REAL URL
+              url = this.apiRoot + 'Feeds/NAME_Plugins';
+
+            }
+
+            return url;
+
           case 'params':
+
+            if( this.chrisAPI ){
+
+              this.params.DBpath = this.dbPath;
+
+            }
+
             return this.params;
+
           case 'body':
+
             return this.body;
+
           default:
+
             break;
+
           }
+
         return false;
+
       },
-      handlePluginsFeed: function(){
-        return this.response;
+
+      handlePluginsFeed: function( ){
+
+        var pluginsFeed = [];
+
+        window.console.log(this.response);
+
+        if( this.chrisAPI ){
+          pluginsFeed = this.handlePluginsFeedFromChrisAPI();
+        }
+        else{
+          pluginsFeed = this.response;
+        }
+
+        return pluginsFeed;
+
       },
+
+      handlePluginsFeedFromChrisAPI: function( ){
+
+        var pluginsFeed = [];
+
+        var payload = this.response.return.payload;
+
+        var pluginsAvailable = {
+          pacs_pull: {
+            "name": "pacs-pull-plugin",
+            "label": "Pacs Pull",
+            "color": "red",
+            "url": "../../data/pacs_pull/pacs_pull.html",
+            "icon": "icons:cloud-queue"
+          },
+          search: {
+            "name": "search-plugin",
+            "label": "Search",
+            "color": "green",
+            "url": "../../data/search/search.html",
+            "icon": "icons:search"
+          },
+          file_browser: {
+            "name": "file-browser-plugin",
+            "label": "File Browser",
+            "color": "blue",
+            "url": "../../data/file_browser/file_browser.html",
+            "icon": "icons:folder-open"
+          },
+          file_upload:{
+            "name": "file-browser-plugin",
+            "label": "File Upload",
+            "color": "amber",
+            "url": "../../data/file_browser/file_browser.html",
+            "icon": "icons:file-upload"
+          }
+        };
+
+        for( var i=0; i<payload.length; i++ ){
+          pluginsFeed.push(pluginsAvailable[payload[i]]);
+        }
+
+        window.console.log(pluginsFeed);
+
+        return pluginsFeed;
+
+      },
+
+      handlePluginsFeedError: function( ){
+
+        return this.error;
+
+      }
     };
 </script>
