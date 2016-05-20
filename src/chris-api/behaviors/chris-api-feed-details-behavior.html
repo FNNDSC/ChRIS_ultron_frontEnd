@@ -31,19 +31,49 @@
       handleFeedDetails: function( ){
         // var data = this.generateFakePluginData();
         //var plugins = this.generateFakePlugins( 3 );
-        var pluginsFlatten = this.generateFakeFlatPlugins( 3 );
-        window.console.log(pluginsFlatten);
+        // window.console.log(pluginsFlatten);
 
         var details = {
           note: this.response[0].longText,
-          comments: [
-            this.response[0].mediumText,
-            this.response[0].mediumText,
-            this.response[0].mediumText,
-          ],
-          plugins: pluginsFlatten
+          comments: this.generateComments(),
+          plugins: this.generateFakeFlatPlugins(3)
         }
         return details;
+      },
+
+      generateComments: function(){
+
+        var max = Math.floor(Math.random() * 10);
+
+        var fakeComments = [
+        {
+          name: "Rudolph Pienaar",
+          color: "light-blue",
+          content: "It's a beautiful day!"
+        },
+        {
+          name: "Jorge Rusiel Bernal",
+          color: "amber",
+          content: "Let's do something fun!"
+        },
+        { 
+          name: "Banu Ahtam",
+          color: "pink",
+          content: "I love MINIONS!!!"
+        },
+        {
+          name: "Nicolas Rannou",
+          color: "deep-orange",
+          content: "Life is good in BILBAO!!!"
+        }];
+
+        var comments = [];
+
+        for( var i=0; i<max; i++ ){
+          comments.push(fakeComments[Math.floor(Math.random() * fakeComments.length)]);
+        }
+
+        return comments;
       },
 
       generateFakeFlatPlugins: function( maxDepth ){

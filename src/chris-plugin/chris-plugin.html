@@ -46,32 +46,32 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       paper-icon-button{
-        --paper-icon-button-ink-color: var(--paper-grey-100);
+        --paper-icon-button-ink-color: var(--paper-grey-300);
       }
 
       paper-icon-button.views{
-        border: 1px solid var(--paper-grey-100);
+        border: 1px solid var(--paper-grey-300);
       }
 
-    .dataview{
-      display:none;
-    }
+      .dataview{
+        display:none;
+      }
 
-    .dataview.iron-selected{
-      display: block;
-    }
+      .dataview.iron-selected{
+        display: block;
+      }
 
-    .views.iron-selected{
-      background-color: var(--paper-grey-50);
-      color: var(--primary-color);
-    }
+      .views.iron-selected{
+        background-color: var(--paper-grey-50);
+        color: var(--primary-color);
+      }
 
-    iron-selector#buttons {
-      display: flex;
-    }
+      iron-selector#buttons {
+        display: flex;
+      }
 
     .plugin-toolbar {
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid var(--paper-grey-300);
         height: 48px;
       }
 
@@ -169,7 +169,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           this.selected = !this.selected;
           // need to resize the list
-          this.fire('modified');
+          this.fire('resized-content');
 
         },
 

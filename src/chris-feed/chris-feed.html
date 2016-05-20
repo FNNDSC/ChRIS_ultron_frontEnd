@@ -141,7 +141,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <!-- on opened only! -->
     <chris-api id="chrisAPI" api="FeedDetails" response="{{feed.details}}" on-response="handleDetails"></chris-api>
 
-      <div on-focus="donothing">
+      <div on-focus="donothing" on-resized-content="resizedContent">
 
         <paper-progress id="status" class="status" value="100"></paper-progress>
 
@@ -278,6 +278,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           this.donothing( evt );
           this.set( 'feed.opened', !this.feed.opened);
+
+        },
+
+        resizedContent: function( evt ){
+
+          this.fire( 'size', {index: this.index} );
 
         }
 

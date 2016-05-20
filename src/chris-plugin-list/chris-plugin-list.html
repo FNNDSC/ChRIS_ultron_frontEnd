@@ -29,7 +29,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </div>
 
     <!-- Content -->
-    <div id="plugins" on-newplugin="newPlugin" on-modified="handleSize">
+    <div id="plugins" on-newplugin="newPlugin">
       <template is="dom-repeat" items="{{plugins}}">
         <chris-plugin plugin="[[item]]"></chris-plugin>
       </template>
@@ -103,7 +103,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.splice( 'plugins', parentIndex, 0, plugin );
 
           // let iron-list know that the feed size changed
-          this.handleSize( null );
+          this.fire('resized-content');
 
         },
 
@@ -144,12 +144,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           window.console.log( this.error );
           
-        },
-
-        handleSize: function( evt ){
-
-          this.fire( 'size', {index: this.feedindex} );
-
         }
     });
   </script>

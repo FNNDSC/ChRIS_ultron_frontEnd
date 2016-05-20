@@ -6,14 +6,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <!-- POLYMER -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-
-<!-- IRON -->
-<link rel="import" href="../../bower_components/iron-list/iron-list.html">
-
-
 <!-- PAPER -->
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-
 
 <!-- CHRIS -->
 <link rel="import" href="../chris-comment/chris-comment.html">
@@ -28,6 +22,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <style include="chris-feed-styles"></style>
     <style>
 
+    paper-input {
+      var(--paper-grey-300);
+    }
+
     </style>
 
 
@@ -37,14 +35,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       </div>
 
       <div class="content">
-        
-        <paper-input label="Comment (180 characters max.)"></paper-input>
-        
-        <iron-list id="comments" items="[[comments]]" as="comment">
-          <template>
-            <chris-comment comment="[[comment]]"></chris-comment>
-          </template>
-        </iron-list>
+        <template is="dom-repeat" items="[[comments]]">
+          <chris-comment comment="[[item]]"></chris-comment>
+        </template>
+        <paper-input id="newcomment" label="Comment" on-keydown="checkForEnter" char-counter maxlength="120"></paper-input>
       </div>
 
   </template>
@@ -59,7 +53,34 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             type: Array
           }
 
-        }
+        },
+
+        checkForEnter: function ( evt ) {
+          
+          // check if 'enter' was pressed
+          if (evt.keyCode === 13) {
+
+            evt.stopPropagation();
+            evt.preventDefault();
+
+            //
+            var comment = {
+              name: "Nicolas Rannou",
+              color: "blue",
+              content: this.$.newcomment.value
+            };
+            this.$.newcomment.value = '';
+
+            this.push('comments', comment);
+
+            // let feed now that its size changed
+            this.fire('resized-content');
+            // add comment to list then push to server
+            // if server returns an error, remove comment
+
+            }
+
+          }
     });
   </script>
 </dom-module>

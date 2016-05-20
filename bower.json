@@ -7,6 +7,7 @@
     "neon-elements": "PolymerElements/neon-elements#^1.0.0",
     "paper-elements": "PolymerElements/paper-elements#^1.0.1",
     "polymer": "Polymer/polymer#^1.2.0",
+    "commonmark-editor": "duongphuhiep/commonmark-editor#master",
     "paper-fab-transitions": "GabiAxel/paper-fab-transitions#master"
   }
 }

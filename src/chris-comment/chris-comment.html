@@ -5,22 +5,54 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+
+<!-- STYLE -->
+<link rel="import" href="../chris-ultron/chris-ultron-styles.html">
+
 <dom-module id="chris-comment">
 
   <template>
-
+    <style include="chris-ultron-styles"></style>
     <style>
     :host {
-        display: block;
-        @apply(--paper-font-common-base);
-      }
+      display: block;
+      @apply(--paper-font-common-base);
+    }
+
+    .container {
+      min-height: 64px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border-bottom: 1px solid var(--paper-grey-300);
+    }
+
+    .picture {
+      min-height: 48px;
+      min-width: 48px;
+      border-radius: 50%;
+      background-color: var(--paper-green-500);
+    }
+
+    .name {
+      padding:8px;
+      /*white-space: nowrap;*/
+      font-style: bold;
+      font-size: smaller;
+
+    }
+
+    .content {
+      padding:8px;
+    }
 
     </style>
 
-      <div>
-        [[comment]]
-        <paper-icon-button icon="label" on-tap="donothing"></paper-icon-button>
-      </div>
+    <div class="container">
+      <div class$="picture primary [[comment.color]]"></div>
+      <div class="name">[[comment.name]]</div>
+      <div class="content">[[comment.content]]</div>
+    </div>
 
   </template>
 
