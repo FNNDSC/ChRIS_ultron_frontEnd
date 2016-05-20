@@ -10,17 +10,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
-
-<!-- Neon elements -->
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
 
 <link rel="import" href="../chris-dataview-columns/chris-dataview-columns.html">
 <link rel="import" href="../chris-dataview-grid/chris-dataview-grid.html">
@@ -43,8 +36,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         /*@apply(--layout-vertical);*/
         
         background-color: white;
-        border: 1px solid #ddd;
+        /*border: 1px solid #ddd;*/
         cursor: pointer;
+        margin: 10px 0;
       }
 
       .title{
@@ -69,7 +63,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     .views.iron-selected{
       background-color: var(--paper-grey-50);
-      color: var(--paper-pink-a200);
+      color: var(--primary-color);
     }
 
     iron-selector#buttons {
@@ -85,8 +79,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         background-color: #FFFFFF;
       }
 
+      paper-material {
+        @apply(--shadow-none);
+      }
+
+      paper-material:hover {
+        @apply(--shadow-elevation-2dp);
+      }
+
     </style>
 
+<paper-material elevation=1>
       <div id$="[[plugin.id]]" class="plugin">
         <!-- Toolbar -->
         <div on-tap="toggleView">
@@ -138,15 +141,20 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         </template>
       </div>
 
+      </paper-material>
+
   </template>
 
   <script>
     Polymer({
         is: 'chris-plugin',
+
         properties: {
+
           plugin: {
             type: Object
           },
+
           selected: {
             type: Boolean,
             value: false
@@ -162,6 +170,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.selected = !this.selected;
           // need to resize the list
           this.fire('modified');
+
         },
 
         donothing: function( evt ){

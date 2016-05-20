@@ -52,6 +52,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         margin-bottom: 10px;
       }
 
+      #feed:hover {
+        @apply(--shadow-elevation-8dp);
+      }
+
       #feed[opened] {
         background-color: var(--light-accent-color);
       }
@@ -66,15 +70,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         align-items: center;
         justify-content: center;
       }
+
       .pad {
         padding: 0 16px;
         @apply(--layout-flex);
         @apply(--layout-vertical);
       }
+
       .title {
         font-size: 16px;
         font-weight: bold;
       }
+
       .description, .date {
         font-size: 14px;
         color: gray;
@@ -90,7 +97,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       #favorite {
-        color: var(--accent-color);
+        color: var(--primary-color);
       }
 
       paper-icon-button {
@@ -145,7 +152,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
             <div class$="avatar primary [[feed.color]]" on-tap="select"><div>[[feed.letter]]</div></div>
             <div class="pad">
-              <div class="title">Feed [[feed.id]] - [[feed.name]]</div>
+              <div id="title" class="title">Feed [[feed.id]] - [[feed.name]]</div>
               <div class="description">[[feed.description]]</div>
               <div class="date">[[feed.date]]</div>
             </div>
@@ -219,11 +226,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         _openedChanged: function( ){
+
           // toggle if details available
           if( this.feed && this.feed.details ){
 
             this.opened ? this.$.feed.classList.add('expanded') : this.$.feed.classList.remove('expanded');
-            this.opened ? this.$.feed.elevation = 5 : this.$.feed.elevation = 1;
+            this.opened ? this.$.feed.elevation = 4 : this.$.feed.elevation = 1;
 
             return;
 

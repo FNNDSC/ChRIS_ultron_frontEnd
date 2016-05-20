@@ -9,25 +9,26 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../chris-api/chris-api.html">
 <link rel="import" href="../chris-plugin/chris-plugin.html">
 
+<!-- STYLE -->
+<link rel="import" href="../chris-feed/chris-feed-styles.html">
+
 <dom-module id="chris-plugin-list">
 
   <template>
 
+    <style include="chris-feed-styles"></style>
     <style>
-      .primary {
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
-        font-size: 16px;
-        font-weight: bold;
-      }
+
     </style>
 
     <chris-api id="plugin" api="PluginCreate" response="{{response}}" on-response="handleResponse" error="{{error}}" on-error="handleError"></chris-api>
 
-    <div class="primary">
-    Analysis
+    <!-- Toolbar -->
+    <div class="section toolbar">
+      <div class="title"> Analysis </div>
     </div>
 
+    <!-- Content -->
     <div id="plugins" on-newplugin="newPlugin" on-modified="handleSize">
       <template is="dom-repeat" items="{{plugins}}">
         <chris-plugin plugin="[[item]]"></chris-plugin>

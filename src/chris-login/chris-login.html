@@ -26,79 +26,83 @@
 
     <style>
 
-        * {
+      * {
         box-sizing: border-box;
       }
-    :host {
-      display: flex;
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      background-color: var(--paper-grey-50);
+      :host {
+        display: flex;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        background-color: var(--dark-primary-color);
+        --paper-input-container-focus-color: var(--accent-color);
+      }
 
-      --paper-input-container-focus-color: var(--paper-pink-a200);
-    }
+      .spacer {
+        flex: 1;
+      }
 
-    .spacer {
-      flex: 1;
-    }
+      .container{
+        max-width: 800px;
+        margin: auto;
+        margin-top: 60px;
+        margin-bottom: 60px;
+        position: relative;
+        display:flex;
+        flex-direction:column;
+        align-items: center;
+        justify-content: center;
+      }
 
-    .container{
-      max-width: 800px;
-      margin: auto;
-      margin-top: 60px;
-      margin-bottom: 60px;
-      position: relative;
-      display:flex;
-      flex-direction:column;
-      align-items: center;
-      justify-content: center;
-    }
+      .title {
+        text-align: center;
+        font-size: 24px;
+        color: var(--dark-primary-color);
+        padding: 10px;
+      }
 
-    .title {
-      text-align: center;
-      font-size: 24px;
-      color: var(--paper-blue-500);
-      padding: 10px;
-    }
+      paper-material{
+        background-color: var(--paper-grey-50);
+        padding:20px;
+        opacity:1;
+      }
 
-    paper-material{
-      padding:20px;#FFFFFF;
-      opacity:1;
-    }
+      paper-button#button {
+        margin-top: 32px;
+        background: var(--accent-color);
+        color: white;
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        display: flex;
+        flex-direction: row;
+      }
 
-    paper-button#button {
-      margin-top: 32px;
-      background: var(--paper-pink-a200);
-      color: white;
-      @apply(--layout-vertical);
-      @apply(--layout-center-center);
-      display: flex;
-      flex-direction: row;
-    }
+      paper-spinner {
+        margin:6px;
+        --paper-spinner-layer-1-color: white;
+        --paper-spinner-layer-2-color: white;
+        --paper-spinner-layer-3-color: white;
+        --paper-spinner-layer-4-color: white;
+      }
 
-    paper-spinner {
-      margin:6px;
-      --paper-spinner-layer-1-color: white;
-      --paper-spinner-layer-2-color: white;
-      --paper-spinner-layer-3-color: white;
-      --paper-spinner-layer-4-color: white;
-    }
+      #spinner{
+        display: none;
+      }
 
-    #spinner{
-      display: none;
-    }
+      .yellow-button {
+        text-transform: none;
+        color: #eeff41;
+      }
 
-    .yellow-button {
-      text-transform: none;
-      color: #eeff41;
-    }
+      a {
+        color: var(--accent-color);
+      }
 
-    a {
-      color: var(--paper-pink-a200);
-    }
+      .footer{
+        color: #FFFFFF;
+      }
 
     </style>
 
@@ -156,7 +160,7 @@
 
         <div class="spacer">
         </div>
-        <div>© FNNDSC 2016</div>
+        <div class="footer">© FNNDSC 2016</div>
     </div>
 
 

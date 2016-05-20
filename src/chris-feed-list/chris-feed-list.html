@@ -33,13 +33,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </style>
 
     <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection  on-size="resizeItem" on-newfeed="newFeed" on-scrollto="scrollto">
-        <template>
+      <template>
         <div>
-        <!-- tabindex$="[[tabIndex]]" -->
           <chris-feed index="[[index]]" feed="[[feed]]" opened="[[selected]]"></chris-feed>
-          </div>
-        </template>
-      </iron-list>
+        </div>
+      </template>
+    </iron-list>
 
   </template>
 

@@ -5,10 +5,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<!-- STYLE -->
+<link rel="import" href="../chris-feed/chris-feed-styles.html">
 <dom-module id="chris-note">
 
   <template>
 
+    <style include="chris-feed-styles"></style>
     <style>
 /*      .note{
         @apply(--layout-vertical);
@@ -24,36 +27,25 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         background-color: var(--paper-grey-100);
       }
 
-      .primary {
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
-        font-size: 16px;
-        font-weight: bold;
-      }
-
       .content {
         padding: 20px;
       }
 
     </style>
 
-      <div>
-        <div class="note" on-click="donothing">
-          <!-- Toolbar -->
-          <div>
-            <div class="primary">Note</div>
+      <!-- Toolbar -->
+      <div class="section toolbar">
+        <div class="title">Note</div>
 <!-- 
             <paper-icon-button icon="create" on-click="donothing"></paper-icon-button>
 
             <paper-icon-button icon="delete" on-click="donothing"></paper-icon-button> -->
 
-          </div>
+      </div>
 
-          <div class="content">
-          [[note]]
-          <paper-icon-button icon="delete" on-click="donothing"></paper-icon-button>
-          </div>
-        </div>
+      <div class="content">
+        [[note]]
+        <paper-icon-button icon="delete" on-click="donothing"></paper-icon-button>
       </div>
 
   </template>
@@ -61,16 +53,20 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <script>
     Polymer({
         is: 'chris-note',
+
         properties: {
+
           note: {
             type: String
           }
-        },
-        donothing: function(evt){
-          evt.preventDefault();
-          evt.stopPropagation();
 
-          window.console.log('do nothing..');
+        },
+
+        donothing: function( evt ){
+          evt.preventDefault( );
+          evt.stopPropagation( );
+
+          window.console.log( 'do nothing..' );
         }
     });
   </script>
