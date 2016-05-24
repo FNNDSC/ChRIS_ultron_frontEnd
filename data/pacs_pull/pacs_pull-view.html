@@ -8,9 +8,13 @@
 
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
-<!-- <link rel="import"
-      href="https://cdn.vaadin.com/vaadin-core-elements/latest/vaadin-grid/vaadin-grid.html"> -->
+<link rel="import" href="../../bower_components/ami-viewer/ami-viewer.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
@@ -26,12 +30,75 @@
         height:100%;
       }
 
-      #container {
+      .container {
+        display: flex;
         height: 300px;
       }
+
+      ami-viewer{
+        flex:2;
+        min-width: 200px;
+      }
+
+      .controls{
+        /*height: 100;*/
+        border-bottom: 1px solid var(--paper-grey-300);
+        border-right: 1px solid var(--paper-grey-300);
+        flex:1;
+        min-width: 100px;
+        padding: 8px;
+        overflow-y: auto;
+      }
+      
+      paper-dropdown-menu, paper-slider {
+        width:100%;
+      }
+
     </style>
 
-    <div id="container"></div>
+    <div class="container">
+      <ami-viewer id="viewer"
+        data="[[data]]"
+        index="{{index}}"
+        orientation="{{orientation}}"
+        flip-rows="{{flipRows}}"
+        flip-columns="{{flipColumns}}"
+        index-max="{{indexMax}}"
+        border-color="[[fBorderColor]]"></ami-viewer>
+        
+      <div class="controls">
+
+<!--         <div>Border Color</div>
+        <paper-swatch-picker column-count=5 color="{{borderColor}}" color-list='["#65a5f2", "#83be54", "#f0d551", "#e5943c", "#a96ddb"]'></paper-swatch-picker> -->
+        
+        <paper-dropdown-menu label="Series">
+          <paper-listbox class="dropdown-content" selected="{{seriesidx}}">
+            <paper-item>DTI image</paper-item>
+            <paper-item>T1 image</paper-item>
+            <paper-item>T2 image</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <paper-dropdown-menu label="Orientation">
+          <paper-listbox class="dropdown-content" selected="{{orientation}}">
+            <paper-item>Acquisition</paper-item>
+            <paper-item>Next</paper-item>
+            <paper-item>Last</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        
+        <div>Slice Index</div>
+        <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable></paper-slider>
+<!--         
+        <div>Rotation</div>
+        <paper-slider id="rotation" step="90" min="0" max="360" immediate-value="{{rotation}}" editable></paper-slider> -->
+        
+        <paper-checkbox checked="{{flipRows}}">Flip Rows</paper-checkbox>
+        <paper-checkbox checked="{{flipColumns}}">Flip Columns</paper-checkbox>
+
+      </div>
+    </div>
+        
 
   </template>
 
@@ -40,30 +107,6 @@
         is: 'pacs-pull-plugin-view',
 
         properties: {
-
-          scene: {
-            type: Object
-          },
-
-          camera: {
-            type: Object
-          },
-
-          renderer: {
-            type: Object
-          },
-
-          geometry: {
-            type: Object
-          },
-
-          material: {
-            type: Object
-          },
-
-          mesh: {
-            type: Object
-          },
 
           selected: {
             type: Boolean,
@@ -78,6 +121,51 @@
 
           animationFrameID: {
             type: Number
+          },
+
+          data: {
+            type: Array,
+            value: []
+          },
+          
+          index: {
+            type: Number,
+            value: 0
+          },
+          
+         indexMax: {
+            type: Number,
+            value: 0
+          },
+          
+          orientation: {
+            type:Number,
+            value: 0
+          },
+          
+          rotation: {
+            type:Number,
+            value: 0
+          },
+          
+          flipRows: {
+            type: Boolean,
+            value: false
+          },
+          
+          flipColumns: {
+            type: Boolean,
+            value: false
+          },
+          
+          borderColor: {
+            type: String,
+            value: '#65a5f2',
+            observer: '_colorChanged'
+          },
+          
+          fBoderColor:{
+            type: String
           }
 
         },
@@ -112,32 +200,28 @@
         },
 
         init: function( ){
-          this.scene = new THREE.Scene();
+          
+          // load the data...
+          var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
+          this.data = t2.map(function(v) {
+            return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
+          });
 
-          this.camera = new THREE.PerspectiveCamera( 75, this.$.container.clientWidth / this.$.container.clientHeight, 1, 10000 );
-          this.camera.position.z = 1000;
+        },
 
-          this.geometry = new THREE.BoxGeometry( 200, 200, 200 );
-          this.material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-
-          this.mesh = new THREE.Mesh( this.geometry, this.material );
-          this.scene.add( this.mesh );
-
-          this.renderer = new THREE.WebGLRenderer();
-          this.renderer.setSize( this.$.container.clientWidth, this.$.container.clientHeight );
-
-          this.$.container.appendChild( this.renderer.domElement );
-
+        // HACK FOR NOW, AMI SHOULD TAKE CARE OF IT
+        _colorChanged: function(){
+          this.fBorderColor = this.borderColor.replace('#','0x');
         },
 
         animate: function( ){
 
-          this.animationFrameID = window.requestAnimationFrame( this.animate.bind(this) );
+          // this.animationFrameID = window.requestAnimationFrame( this.animate.bind(this) );
 
-          this.mesh.rotation.x += 0.01;
-          this.mesh.rotation.y += 0.02;
+          // this.mesh.rotation.x += 0.01;
+          // this.mesh.rotation.y += 0.02;
 
-          this.renderer.render( this.scene, this.camera );
+          // this.renderer.render( this.scene, this.camera );
 
         }
     });

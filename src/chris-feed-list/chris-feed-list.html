@@ -37,7 +37,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection  on-size="resizeItem" on-newfeed="newFeed" on-scrollto="scrollto">
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection  on-size="resizeItem" on-newfeed="newFeed">
       <template>
         <div>
           <chris-feed index="[[index]]" feed="[[feed]]" opened="[[selected]]"></chris-feed>
@@ -54,6 +54,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           feeds: {
             type: Array
+          },
+
+          first: {
+            type: Number,
+            observer: 'sticky'
+          },
+
+          last: {
+            type: Number,
+            observer: 'sticky'
           }
 
         },
@@ -100,6 +110,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           window.console.log('got scrollto');
           window.console.log(evt);
           // this.$.feeds.scroll(evt.detail.offsetTop);
+
+        },
+
+        sticky: function( evt ){
+
+          window.console.log('sticky...');
+          window.console.log(this.$.feeds.firstVisibleItem);
+          window.console.log(this.$.feeds.lastVisibleItem);
 
         }
     });
