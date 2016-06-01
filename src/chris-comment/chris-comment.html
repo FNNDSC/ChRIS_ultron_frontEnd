@@ -12,6 +12,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <dom-module id="chris-comment">
 
   <template>
+
     <style include="chris-ultron-styles"></style>
     <style>
     :host {
@@ -59,14 +60,20 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <script>
     Polymer({
         is: 'chris-comment',
+
         properties: {
+
           comment: {
             type: Object
           }
+
         },
+
         donothing: function(evt){
+
           evt.stopPropagation();
           evt.preventDefault();
+          
         }
     });
   </script>
