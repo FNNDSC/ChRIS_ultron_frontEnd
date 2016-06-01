@@ -1,0 +1,6 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/chris-ultron/chris-ultron.html",
+  "fragments": [
+  ]
+}

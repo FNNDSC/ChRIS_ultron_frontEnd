@@ -1,45 +1,66 @@
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <!doctype html>
+
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>ChRIS Ultron</title>
+  <title>chris-ultron</title>
 
-  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="manifest" href="/manifest.json">
+  <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 
-  <link rel="import" href="src/chris-ultron/chris-ultron-theme.html">
-  <link rel="import" href="src/chris-ultron/chris-ultron.html">
+  <link rel="import" href="/src/chris-ultron/chris-ultron.html" async>
 
   <style>
-    * {
-        box-sizing: border-box;
-      }
 
     body {
       margin: 0;
       font-family: 'Roboto', 'Noto', sans-serif;
-      background-color: #eee;
-      /*to bypass iron dropdown issue*/
-      overflow-y: scroll !important;
-
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
     }
+
+    /* styling for render while resources are loading */
+    chris-ultron[unresolved] {
+      display: block;
+      min-height: 101vh;
+      line-height: 68px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      color: #202020;
+      padding: 0 16px;
+      overflow: visible;
+    }
+
   </style>
 
 </head>
-<body unresolved>
+<body>
 
-  <chris-ultron></chris-ultron>
+  <chris-ultron unresolved></chris-ultron>
+
+  <script>
+    window.performance && performance.mark && performance.mark('index.html');
+
+    Polymer = {lazyRegister: true, dom: 'shadow'};
+
+    (function() {
+      if ('registerElement' in document
+          && 'import' in document.createElement('link')
+          && 'content' in document.createElement('template')) {
+        // platform is good!
+      } else {
+        // polyfill the platform!
+        var e = document.createElement('script');
+        e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+        document.body.appendChild(e);
+      }
+    })();
+  </script>
 
 </body>
 </html>

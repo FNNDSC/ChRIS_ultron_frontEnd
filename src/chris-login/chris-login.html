@@ -1,21 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-
-<!-- APP LAYOUT -->
-<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
-
+<!-- POLYMER / PAPER -->
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <!-- CHRIS -->
 <link rel="import" href="../chris-api/chris-api.html">
@@ -26,10 +16,8 @@
 
     <style>
 
-      * {
-        box-sizing: border-box;
-      }
       :host {
+
         display: flex;
         position: absolute;
         top: 0;
@@ -38,13 +26,17 @@
         bottom: 0;
         background-color: var(--dark-primary-color);
         --paper-input-container-focus-color: var(--accent-color);
+
       }
 
       .spacer {
+
         flex: 1;
+
       }
 
       .container{
+
         max-width: 800px;
         margin: auto;
         margin-top: 60px;
@@ -54,22 +46,28 @@
         flex-direction:column;
         align-items: center;
         justify-content: center;
+
       }
 
       .title {
+
         text-align: center;
         font-size: 24px;
         color: var(--dark-primary-color);
         padding: 10px;
+
       }
 
       paper-material{
+
         background-color: var(--paper-grey-50);
         padding:20px;
         opacity:1;
+
       }
 
-      paper-button#button {
+      paper-button#login {
+
         margin-top: 32px;
         background: var(--accent-color);
         color: white;
@@ -77,27 +75,29 @@
         @apply(--layout-center-center);
         display: flex;
         flex-direction: row;
+
       }
 
       paper-spinner {
+
         margin:6px;
         --paper-spinner-layer-1-color: white;
         --paper-spinner-layer-2-color: white;
         --paper-spinner-layer-3-color: white;
         --paper-spinner-layer-4-color: white;
+
       }
 
-      #spinner{
+      #loginSpinner{
+
         display: none;
-      }
 
-      .yellow-button {
-        text-transform: none;
-        color: #eeff41;
       }
 
       a {
+
         color: var(--accent-color);
+
       }
 
       .footer{
@@ -106,7 +106,13 @@
 
     </style>
 
-    <chris-api id="login" api="Login" response="{{response}}" on-response="handleResponse" error="{{error}}" on-error="handleError"></chris-api>
+    <chris-api id="api"
+      api="Login"
+      response="{{response}}"
+      on-response="handleResponse"
+      error="{{error}}"
+      on-error="handleError">
+    </chris-api>
 
 
     <div class="container">
@@ -114,8 +120,9 @@
       <paper-material elevation=5>
         <div class="horizontal-section">
 
-        <section>
-        <div class="title">
+          <section>
+
+            <div class="title">
             Welcome to ChRIS Ultron
             </div>
           </section>
@@ -124,7 +131,7 @@
             <div>
               <paper-input id="username" 
                 type="username" 
-                value="{{_username::input}}" 
+                value="{{_username}}" 
                 required 
                 error-message="Username is required" 
                 label="Username" 
@@ -133,7 +140,7 @@
               </paper-input>
               <paper-input id="password" 
                 type="password" 
-                value="{{_password::input}}" 
+                value="{{_password}}" 
                 required 
                 error-message="Password is required" 
                 label="Password"
@@ -144,7 +151,7 @@
           </section>
 
           <section> 
-            <paper-button on-click="login" id="button"><div id="loginButton">Log In</div> <paper-spinner active id="spinner"></paper-spinner></paper-button>
+            <paper-button id="login" on-click="login"><div id="loginLabel">Log In</div> <paper-spinner active id="loginSpinner"></paper-spinner></paper-button>
 
           </section>
 
@@ -154,15 +161,15 @@
               New to <a href="https://github.com/FNNDSC">ChRIS</a>? <a href="https://github.com/FNNDSC">Register</a> for an account.
             </div>
           </section>
+
         </div>
 
-              </paper-material>
+      </paper-material>
 
-        <div class="spacer">
-        </div>
-        <div class="footer">© FNNDSC 2016</div>
+      <div class="spacer"></div>
+
+      <div class="footer">© FNNDSC 2016</div>
     </div>
-
 
     <paper-toast id="loginError" text=""></paper-toast>
 
@@ -220,30 +227,30 @@
 
             if( !this.$.username.invalid &&
               !this.$.password.invalid &&
-              !this.$.button.disabled ){
+              !this.$.login.disabled ){
 
-              this.$.button.disabled = true;
-              this.$.loginButton.style.display = 'none';
-              this.$.spinner.style.display = 'block';
+              this.$.login.disabled = true;
+              this.$.loginLabel.style.display = 'none';
+              this.$.loginSpinner.style.display = 'block';
               // call API
               // set params first
-              this.$.login.params = {
+              this.$.api.params = {
                 auth: 'user=' + this._username + ',passwd=' + this._password,
                 username: this._username,
                 password: this._password
               };
 
               // url update triggers a new AJAX call
-              this.$.login.url = 'login';
+              this.$.api.url = 'login';
             }
 
         },
 
         handleResponse: function( ){
 
-          this.$.button.disabled = false;
-          this.$.loginButton.style.display = 'block';
-          this.$.spinner.style.display = 'none';
+          this.$.login.disabled = false;
+          this.$.loginLabel.style.display = 'block';
+          this.$.loginSpinner.style.display = 'none';
 
           if( this.response.status ){
 
@@ -254,6 +261,8 @@
 
           }
 
+          //
+          this.logged = false;
           // show error message
           this.$.loginError.text = this.response.message;
           this.$.loginError.open();
@@ -261,15 +270,15 @@
 
         handleError: function( ){
 
-          this.$.button.disabled = false;
-          this.$.loginButton.style.display = 'block';
-          this.$.spinner.style.display = 'none';
+          this.$.login.disabled = false;
+          this.$.loginLabel.style.display = 'block';
+          this.$.loginSpinner.style.display = 'none';
 
           // show error message
           this.$.serverError.open( );
           
           // log info
-          window.console.log( this.error );
+          Polymer.Base._error( this.error );
         }
     });
   </script>

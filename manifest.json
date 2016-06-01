@@ -1,0 +1,7 @@
+{
+  "name": "chris-ultron",
+  "short_name": "chris",
+  "description": "Web Front End for ChRIS Ultron",
+  "start_url": "/",
+  "display": "standalone"
+}

@@ -1,0 +1,82 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>chris-login test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/chris-login/chris-login.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-login></chris-login>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite( '<chris-login>', function() {
+
+        test('instantiating the element', function() {
+
+          let element = fixture( 'basic' );
+          assert.equal( element.is, 'chris-login' );
+
+        });
+
+        test('valid login sets log to true', function( done ) {
+
+          let element = fixture( 'basic' );
+          element.addEventListener( 'logged-changed', loggedChanged );
+
+          element.$.username.value = 'chris';
+          element.$.password.value = 'chris';
+
+          //
+          element.$.login.click();
+
+          function loggedChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.logged, true );
+            done();
+            element.removeEventListener( 'logged-changed', loggedChanged );
+
+          }
+
+        });
+
+        test('invalid login set logged to false and toast visible', function( done ) {
+
+          let element = fixture( 'basic' );
+          element.addEventListener( 'iron-overlay-opened', loggedChanged );
+
+          element.$.username.value = 'chris';
+          element.$.password.value = 'ultron';
+
+          //
+          element.$.login.click();
+
+          function loggedChanged( event ) {
+
+            // not logged in
+            assert.equal( element.logged, false );
+            // toast open
+            assert.isTrue(element.$.loginError.opened, '`opened` is true');
+            done();
+            element.removeEventListener( 'iron-overlay-opened', loggedChanged );
+
+          }
+
+        });
+
+
+      } );
+    </script>
+
+  </body>
+</html>

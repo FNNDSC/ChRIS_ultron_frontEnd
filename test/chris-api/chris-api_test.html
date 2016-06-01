@@ -1,0 +1,160 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>chris-api test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/chris-api/chris-api.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-api></chris-api>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite( '<chris-api>', function() {
+
+        test('instantiating the element', function() {
+
+          let element = fixture( 'basic' );
+          assert.equal( element.is, 'chris-api' );
+
+        });
+
+        test('invalid API returns error', function( done ) {
+
+          let element = fixture('basic');
+          element.addEventListener( 'error-changed', errorChanged );
+          element.api = 'InvalidAPI';
+
+          function errorChanged( event ){
+
+            assert.equal( element.error, 'InvalidAPI is not valid. ( Missing  prepareInvalidAPI handleInvalidAPI handleErrorInvalidAPI )' );
+            done();
+            element.removeEventListener( 'error-changed', errorChanged );
+
+          }
+
+        });
+
+        //
+        //
+        // LOGIN BEHAVIOR
+        //
+        //
+        test('Login has a valid API', function() {
+
+          let element = fixture('basic');
+          element.api = 'Login';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'Login');
+
+        } );
+
+        test('Login with no parameters returns false', function( done ) {
+
+          let element = fixture('basic');
+          element.api = 'Login';
+          element.addEventListener( 'response-changed', responseChanged );
+          //update url with anything to initiate fetch
+          element.url = 'Login';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.response.status, false );
+            done();
+            element.removeEventListener( 'response-changed', responseChanged );
+
+          }
+
+        } );
+
+        test('Login with valid parameters returns true', function( done ) {
+
+          let element = fixture('basic');
+          element.api = 'Login';
+          element.addEventListener( 'response-changed', responseChanged );
+          element.params = { username: 'chris', password: 'chris'};
+          //update url with anything to initiate fetch
+          element.url = 'Login';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.response.status, true );
+            done();
+            element.removeEventListener( 'response-changed', responseChanged );
+
+          }
+
+        } );
+
+        test('Login with invalid parameters returns false', function( done ) {
+
+          let element = fixture('basic');
+          element.api = 'Login';
+          element.addEventListener( 'response-changed', responseChanged );
+          element.params = { username: 'chris', password: 'ultron'};
+          //update url with anything to initiate fetch
+          element.url = 'Login';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.response.status, false );
+            done();
+            element.removeEventListener( 'response-changed', responseChanged );
+
+          }
+
+        } );
+
+        //
+        //
+        // LABELS BEHAVIOR
+        //
+        //
+        test('Labels has a valid API', function() {
+
+          let element = fixture('basic');
+          element.api = 'Labels';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'Labels');
+
+        } );
+
+        test('Labels returns an array of labels', function( done ) {
+
+          let element = fixture('basic');
+          element.api = 'Labels';
+          element.addEventListener( 'response-changed', responseChanged );
+          //update url with anything to initiate fetch
+          element.url = 'Labels';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.length ).to.be.at.least(1);
+            expect( element.response[0].color ).to.be.a('string');
+            done();
+            element.removeEventListener( 'response-changed', responseChanged );
+
+          }
+
+        } );
+
+      } );
+    </script>
+
+  </body>
+</html>

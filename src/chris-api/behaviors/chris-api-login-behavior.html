@@ -48,7 +48,14 @@
 
         var response = {};
         // ChRIS API login not working so dummy check
-        var match = this.params.username === this.params.password;
+        // dummy test, should only rely on response!
+        var match = false;
+
+        if( this.params && this.params.username && this.params.password ){
+
+          match = ( this.params.username === this.params.password );
+
+        }
 
         if( this.chrisAPI ){
 
@@ -60,7 +67,7 @@
           // };
           response = {
             status: match,
-            message: match? "Successful login." : "Username and password do not match.",
+            message: match? 'Successful login.' : 'Username and password do not match.',
             token: 'ABCDEF123456789'
           }
 
@@ -68,7 +75,7 @@
 
           response = {
             status: match,
-            message: match? "Successful login." : "Username and password do not match.",
+            message: match? 'Successful login.' : 'Username and password do not match.',
             token: 'ABCDEF123456789'
           };
 

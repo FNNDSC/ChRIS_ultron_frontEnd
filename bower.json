@@ -1,15 +1,14 @@
 {
   "name": "chris-ultron",
-  "description": "because we do not know what is going on with trimurti",
+  "description": "Web Front End for ChRIS Ultron",
+  "main": "index.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.5.0"
+  },
   "devDependencies": {
-    "app-layout": "PolymerLabs/app-layout#master",
-    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
-    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
-    "paper-elements": "PolymerElements/paper-elements#^1.0.1",
-    "polymer": "Polymer/polymer#^1.2.0",
-    "commonmark-editor": "duongphuhiep/commonmark-editor#master",
-    "paper-fab-transitions": "GabiAxel/paper-fab-transitions#master",
-    "paper-swatch-picker": "PolymerElements/paper-swatch-picker#master",
-    "ami-viewer": "FNNDSC/ami-viewer#master"
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   }
 }
