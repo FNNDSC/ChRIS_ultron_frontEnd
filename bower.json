@@ -3,7 +3,15 @@
   "description": "Web Front End for ChRIS Ultron",
   "main": "index.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.5.0"
+    "app-elements": "PolymerElements/app-elements#^0.9.0",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.10",
+    "marked-element": "PolymerElements/marked-element#^1.0.7",
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "polymer": "Polymer/polymer#^1.5.0",
+    "paper-fab-transitions": "GabiAxel/paper-fab-transitions#master",
+    "paper-swatch-picker": "PolymerElements/paper-swatch-picker#master",
+    "ami-viewer": "FNNDSC/ami-viewer#master"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
