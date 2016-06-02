@@ -26,6 +26,10 @@ Need at least v0.3.0
 
     polymer test --expanded
 
+### Lint
+
+   polymer lint --no-recursion
+
 ### Build
 
     polymer build
