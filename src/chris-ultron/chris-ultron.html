@@ -1,5 +1,20 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<!-- APP LAYOUT ELEMENTS -->
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<!-- CHRIS ELEMENTS -->
 <link rel="import" href="../chris-api/chris-api.html">
 <link rel="import" href="../chris-login/chris-login.html">
 
@@ -27,6 +42,27 @@
         --light-accent-color: var(--paper-pink-a100);
         --dark-accent-color: var(--paper-pink-a400);
       }
+
+      app-header {
+
+        background-color: var(--dark-primary-color);
+        color: #fff;
+
+      }
+
+      app-header paper-icon-button {
+
+        --paper-icon-button-ink-color: #ffffff;
+
+      }
+
+      #content {
+
+        background-color: var(--paper-grey-50);
+        min-height: 201vh;
+
+      }
+
     </style>
 
     <div id="container">
@@ -49,15 +85,38 @@
 
           <chris-api id="PluginsFeedAPI"
             api="PluginsFeed"
-            response="{{plugins}}" on-reponse="fetchLabels">
+            response="{{plugins}}">
           </chris-api>
 
           <chris-api id="LabelsAPI"
             api="Labels"
-            response="{{labels}}">
+            response="{{labels}}" on-reponse="fetchLabels">
           </chris-api>
 
-          Welcome to ChRIS Ultron!
+          <app-drawer-layout fullbleed>
+
+            <!-- Drawer content -->
+            <app-drawer>
+              <app-toolbar>Menu</app-toolbar>
+            </app-drawer>
+
+            <!-- Main content -->
+            <app-header-layout has-scrolling-region>
+
+              <app-header fixed effects="waterfall">
+                <app-toolbar>
+                  <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+                  <div title>My App</div>
+                </app-toolbar>
+              </app-header>
+
+              <div id="content">
+                Hello Chris
+              </div>
+
+            </app-header-layout>
+
+          </app-drawer-layout>
 
         </div>
 
@@ -127,6 +186,18 @@
           this.$$( '#LabelsAPI' ).url = '';
 
           }
+
+        },
+
+        fetchPlugins: function(){
+
+          console.log( 'fetchPlugins not implemented' );
+
+        },
+
+        fetchLabels: function(){
+
+          console.log( 'fetchLabels not implemented' );
 
         }
 
