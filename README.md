@@ -10,8 +10,6 @@ Install [polymer-cli](https://github.com/Polymer/polymer-cli):
 
     npm install -g polymer-cli
 
-Need at least v0.3.0
-
 ##### Setup
 
     git clone https://github.com/FNNDSC/ChRIS_ultron_frontEnd.git
@@ -28,7 +26,7 @@ Need at least v0.3.0
 
 ### Lint
 
-   polymer lint --no-recursion
+    polymer lint --no-recursion
 
 ### Build
 
