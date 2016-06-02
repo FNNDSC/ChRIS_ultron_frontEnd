@@ -1,5 +1,7 @@
 # \<chris-ultron\>
 
+[![Build Status](https://travis-ci.org/FNNDSC/ChRIS_ultron_frontEnd.svg?branch=polymer-cli)](https://travis-ci.org/FNNDSC/ChRIS_ultron_frontEnd)
+
 ### Setup
 
 ##### Prerequisites
