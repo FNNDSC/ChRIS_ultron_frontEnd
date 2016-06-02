@@ -23,6 +23,6 @@ before_script:
   - bower i
 script:
   - polymer lint --no-recursion
-  - polymer test
+  - polymer test --expanded
 notifications:
   slack: fnndsc:WtDpBdT7VxV8YVD4K0NPHnW1
