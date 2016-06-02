@@ -10,7 +10,11 @@
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]</h2>
+    
+    <template is="dom-if" if="{{!logged}}" restamp>
+      <chris-login logged={{logged}}></chris-login>
+    </template>
+
   </template>
 
   <script>
@@ -23,14 +27,16 @@
       is: 'chris-ultron',
 
       properties: {
-        prop1: {
-          type: String,
-          value: 'chris-ultron',
+
+        logged:{
+          type: Boolean,
+          value: false
         },
+
       },
 
       created: function() {
-        window.performance && performance.mark && performance.mark('shop-app.created');
+        window.performance && performance.mark && performance.mark('chris-ultron.created');
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
       },
