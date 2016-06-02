@@ -8,11 +8,51 @@
     <style>
       :host {
         display: block;
+
+        /* Define theme here for now....*/
+        /* text */
+        --primary-text-color: var(--paper-grey-900);
+        --primary-background-color: #ffffff;
+        --secondary-text-color: #737373;
+        --disabled-text-color: #9b9b9b;
+
+        --divider-color: #dbdbdb;
+
+        /* colors */
+        --primary-color: var(--paper-blue-500);
+        --light-primary-color: var(--paper-blue-100);
+        --dark-primary-color: var(--paper-blue-700);
+        
+        --accent-color: var(--paper-pink-a200);
+        --light-accent-color: var(--paper-pink-a100);
+        --dark-accent-color: var(--paper-pink-a400);
       }
     </style>
     
-    <template is="dom-if" if="{{!logged}}" restamp>
-      <chris-login logged={{logged}}></chris-login>
+    <template is="dom-if" if="{{!loggedIn}}" restamp>
+      <chris-login logged={{loggedIn}}></chris-login>
+    </template>
+
+    <template is="dom-if" if="{{loggedIn}}" on-dom-change="_domChange" restamp>
+
+      <!-- API Calls -->
+      <chris-api id="API-Feeds"
+        api="Feeds"
+        response="{{items}}" on-response="fetchPlugins">
+      </chris-api>
+
+      <chris-api id="API-PluginsFeed"
+        api="PluginsFeed"
+        response="{{plugins}}" on-reponse="fetchLabels">
+      </chris-api>
+
+      <chris-api id="API-Labels"
+        api="Labels"
+        response="{{labels}}">
+      </chris-api>
+
+      Welcome to ChRIS Ultron!
+
     </template>
 
   </template>
@@ -28,7 +68,7 @@
 
       properties: {
 
-        logged:{
+        loggedIn:{
           type: Boolean,
           value: false
         },
@@ -39,7 +79,46 @@
         window.performance && performance.mark && performance.mark('chris-ultron.created');
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
+
       },
+
+      ready: function(){
+
+        // if username and token are stored, we are still loggedIn in
+        if ( sessionStorage.getItem( 'username' ) &&
+             sessionStorage.getItem( 'token' ) ) {
+
+          this.loggedIn = true;
+
+        }
+
+      },
+
+      _domChange: function( ){
+
+        if( this.loggedIn ){
+
+          // logged in
+          // prepare parameters for API call
+          var params = {
+            auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          };
+
+          // fetch the feeds
+          this.$$( '#API-Feeds' ).params = params;
+          this.$$( '#API-Feeds' ).url = '';
+
+          // fetch the plugins that can create a feed
+          this.$$( '#API-PluginsFeed' ).params = params;
+          this.$$( '#API-PluginsFeed' ).url = '';
+
+          // fetch the labels
+          this.$$( '#API-Labels' ).params = params;
+          this.$$( '#API-Labels' ).url = '';
+
+          }
+
+        }
 
     });
   </script>

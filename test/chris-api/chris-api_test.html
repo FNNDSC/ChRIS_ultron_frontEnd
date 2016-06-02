@@ -37,6 +37,7 @@
           function errorChanged( event ){
 
             assert.equal( element.error, 'InvalidAPI is not valid. ( Missing  prepareInvalidAPI handleInvalidAPI handleErrorInvalidAPI )' );
+            
             done();
             element.removeEventListener( 'error-changed', errorChanged );
 
@@ -71,6 +72,7 @@
 
             // expect response to be false because no params provided
             assert.equal( element.response.status, false );
+
             done();
             element.removeEventListener( 'response-changed', responseChanged );
 
@@ -91,6 +93,7 @@
 
             // expect response to be false because no params provided
             assert.equal( element.response.status, true );
+
             done();
             element.removeEventListener( 'response-changed', responseChanged );
 
@@ -111,6 +114,7 @@
 
             // expect response to be false because no params provided
             assert.equal( element.response.status, false );
+
             done();
             element.removeEventListener( 'response-changed', responseChanged );
 
@@ -146,6 +150,89 @@
             // expect response to be false because no params provided
             expect( element.response.length ).to.be.at.least(1);
             expect( element.response[0].color ).to.be.a('string');
+
+            done();
+            element.removeEventListener( 'response-changed', responseChanged );
+
+          }
+
+        } );
+
+        //
+        //
+        // FEEDS BEHAVIOR
+        //
+        //
+        test('Feeds has a valid API', function() {
+
+          let element = fixture('basic');
+          element.api = 'Feeds';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'Feeds');
+
+        } );
+
+        test('Feeds returns an array of feeds', function( done ) {
+
+          let element = fixture('basic');
+          element.api = 'Feeds';
+          element.addEventListener( 'response-changed', responseChanged );
+          //update url with anything to initiate fetch
+          element.url = 'Feeds';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.length ).to.be.at.least(1);
+
+            // list properties we expect for a feed
+            expect( element.response[0].id ).to.be.a('string');
+            expect( element.response[0].name ).to.be.a('string');
+            expect( element.response[0].color ).to.be.a('string');
+            expect( element.response[0].description ).to.be.a('string');
+            expect( element.response[0].date ).to.be.a('string');
+            expect( element.response[0].favorite ).to.be.a('boolean');
+
+            done();
+            element.removeEventListener( 'response-changed', responseChanged );
+
+          }
+
+        } );
+
+        //
+        //
+        // PLUGINS FEED BEHAVIOR
+        //
+        //
+        test('PluginsFeed has a valid API', function() {
+
+          let element = fixture('basic');
+          element.api = 'PluginsFeed';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'PluginsFeed');
+
+        } );
+
+        test('PluginsFeed returns an array of plugins', function( done ) {
+
+          let element = fixture('basic');
+          element.api = 'PluginsFeed';
+          element.addEventListener( 'response-changed', responseChanged );
+          //update url with anything to initiate fetch
+          element.url = 'PluginsFeed';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.length ).to.be.at.least(1);
+            expect( element.response[0].name ).to.be.a('string');
+            expect( element.response[0].label ).to.be.a('string');
+            expect( element.response[0].color ).to.be.a('string');
+            expect( element.response[0].url ).to.be.a('string');
+
             done();
             element.removeEventListener( 'response-changed', responseChanged );
 

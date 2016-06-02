@@ -28,7 +28,7 @@
 
         });
 
-        test('valid login sets log to true', function( done ) {
+        test('valid login sets logged to true', function( done ) {
 
           let element = fixture( 'basic' );
           element.addEventListener( 'logged-changed', loggedChanged );
@@ -50,10 +50,10 @@
 
         });
 
-        test('invalid login set logged to false and toast visible', function( done ) {
+        test('invalid login sets logged to false', function( done ) {
 
           let element = fixture( 'basic' );
-          element.addEventListener( 'iron-overlay-opened', loggedChanged );
+          element.addEventListener( 'logged-changed', loggedChanged );
 
           element.$.username.value = 'chris';
           element.$.password.value = 'ultron';
@@ -65,10 +65,32 @@
 
             // not logged in
             assert.equal( element.logged, false );
-            // toast open
-            assert.isTrue(element.$.loginError.opened, '`opened` is true');
+
             done();
-            element.removeEventListener( 'iron-overlay-opened', loggedChanged );
+            element.removeEventListener( 'logged-changed', loggedChanged );
+
+          }
+
+        });
+
+        test('invalid login shows temporary toast', function( done ) {
+
+          let element = fixture( 'basic' );
+          element.addEventListener( 'iron-overlay-closed', toastClosed );
+          element.$.loginError.duration = 50;
+          element.$.username.value = 'chris';
+          element.$.password.value = 'ultron';
+
+          //
+          element.$.login.click();
+
+          function toastClosed( event ) {
+
+            // toast closed
+            assert.isFalse(element.$.loginError.opened, '`opened` is false');
+
+            done();
+            element.removeEventListener( 'iron-overlay-closed', toastClosed );
 
           }
 

@@ -97,7 +97,7 @@
         for( var i=0; i<this.response.length; i++ ){
 
           var feed = {
-            id: this.response[i].index,
+            id: 'id: ' + this.response[i].index,
             name: this.response[i].name,
             image: this.response[i].image,
             opened: false,//this.response[i].expanded,
@@ -121,7 +121,7 @@
 
       },
 
-      handleFeedsError: function( ){
+      handleErrorFeeds: function( ){
 
         return this.error;
 
