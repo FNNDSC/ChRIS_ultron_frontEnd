@@ -28,32 +28,42 @@
         --dark-accent-color: var(--paper-pink-a400);
       }
     </style>
+
+    <div id="container">
     
-    <template is="dom-if" if="{{!loggedIn}}" restamp>
-      <chris-login logged={{loggedIn}}></chris-login>
-    </template>
+      <template is="dom-if" if="{{!loggedIn}}" restamp>
 
-    <template is="dom-if" if="{{loggedIn}}" on-dom-change="_domChange" restamp>
+        <chris-login id="login" logged={{loggedIn}}></chris-login>
 
-      <!-- API Calls -->
-      <chris-api id="API-Feeds"
-        api="Feeds"
-        response="{{items}}" on-response="fetchPlugins">
-      </chris-api>
+      </template>
 
-      <chris-api id="API-PluginsFeed"
-        api="PluginsFeed"
-        response="{{plugins}}" on-reponse="fetchLabels">
-      </chris-api>
+      <template is="dom-if" if="{{loggedIn}}" on-dom-change="_domChange" restamp>
 
-      <chris-api id="API-Labels"
-        api="Labels"
-        response="{{labels}}">
-      </chris-api>
+        <div id="home">
 
-      Welcome to ChRIS Ultron!
+          <!-- API Calls -->
+          <chris-api id="FeedsAPI"
+            api="Feeds"
+            response="{{items}}" on-response="fetchPlugins">
+          </chris-api>
 
-    </template>
+          <chris-api id="PluginsFeedAPI"
+            api="PluginsFeed"
+            response="{{plugins}}" on-reponse="fetchLabels">
+          </chris-api>
+
+          <chris-api id="LabelsAPI"
+            api="Labels"
+            response="{{labels}}">
+          </chris-api>
+
+          Welcome to ChRIS Ultron!
+
+        </div>
+
+      </template>
+
+    </div>
 
   </template>
 
@@ -94,7 +104,7 @@
 
       },
 
-      _domChange: function( ){
+      _domChange: function( event ){
 
         if( this.loggedIn ){
 
@@ -105,16 +115,16 @@
           };
 
           // fetch the feeds
-          this.$$( '#API-Feeds' ).params = params;
-          this.$$( '#API-Feeds' ).url = '';
+          this.$$( '#FeedsAPI' ).params = params;
+          this.$$( '#FeedsAPI' ).url = '';
 
           // fetch the plugins that can create a feed
-          this.$$( '#API-PluginsFeed' ).params = params;
-          this.$$( '#API-PluginsFeed' ).url = '';
+          this.$$( '#PluginsFeedAPI' ).params = params;
+          this.$$( '#PluginsFeedAPI' ).url = '';
 
           // fetch the labels
-          this.$$( '#API-Labels' ).params = params;
-          this.$$( '#API-Labels' ).url = '';
+          this.$$( '#LabelsAPI' ).params = params;
+          this.$$( '#LabelsAPI' ).url = '';
 
           }
 

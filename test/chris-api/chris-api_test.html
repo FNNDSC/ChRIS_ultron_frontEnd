@@ -21,23 +21,29 @@
     <script>
       suite( '<chris-api>', function() {
 
-        test('instantiating the element', function() {
+        let element;
 
-          let element = fixture( 'basic' );
+        setup(function(){
+
+          element = fixture('basic');
+
+        });
+
+        test('instantiating the element works', function() {
+
           assert.equal( element.is, 'chris-api' );
 
         });
 
         test('invalid API returns error', function( done ) {
 
-          let element = fixture('basic');
           element.addEventListener( 'error-changed', errorChanged );
           element.api = 'InvalidAPI';
 
           function errorChanged( event ){
 
             assert.equal( element.error, 'InvalidAPI is not valid. ( Missing  prepareInvalidAPI handleInvalidAPI handleErrorInvalidAPI )' );
-            
+
             done();
             element.removeEventListener( 'error-changed', errorChanged );
 
@@ -52,7 +58,6 @@
         //
         test('Login has a valid API', function() {
 
-          let element = fixture('basic');
           element.api = 'Login';
 
           // if API not valid, api reset to ''
@@ -62,7 +67,6 @@
 
         test('Login with no parameters returns false', function( done ) {
 
-          let element = fixture('basic');
           element.api = 'Login';
           element.addEventListener( 'response-changed', responseChanged );
           //update url with anything to initiate fetch
@@ -82,7 +86,6 @@
 
         test('Login with valid parameters returns true', function( done ) {
 
-          let element = fixture('basic');
           element.api = 'Login';
           element.addEventListener( 'response-changed', responseChanged );
           element.params = { username: 'chris', password: 'chris'};
@@ -103,7 +106,6 @@
 
         test('Login with invalid parameters returns false', function( done ) {
 
-          let element = fixture('basic');
           element.api = 'Login';
           element.addEventListener( 'response-changed', responseChanged );
           element.params = { username: 'chris', password: 'ultron'};
@@ -129,7 +131,6 @@
         //
         test('Labels has a valid API', function() {
 
-          let element = fixture('basic');
           element.api = 'Labels';
 
           // if API not valid, api reset to ''
@@ -139,7 +140,6 @@
 
         test('Labels returns an array of labels', function( done ) {
 
-          let element = fixture('basic');
           element.api = 'Labels';
           element.addEventListener( 'response-changed', responseChanged );
           //update url with anything to initiate fetch
@@ -165,7 +165,6 @@
         //
         test('Feeds has a valid API', function() {
 
-          let element = fixture('basic');
           element.api = 'Feeds';
 
           // if API not valid, api reset to ''
@@ -175,7 +174,6 @@
 
         test('Feeds returns an array of feeds', function( done ) {
 
-          let element = fixture('basic');
           element.api = 'Feeds';
           element.addEventListener( 'response-changed', responseChanged );
           //update url with anything to initiate fetch
@@ -208,7 +206,6 @@
         //
         test('PluginsFeed has a valid API', function() {
 
-          let element = fixture('basic');
           element.api = 'PluginsFeed';
 
           // if API not valid, api reset to ''
@@ -218,7 +215,6 @@
 
         test('PluginsFeed returns an array of plugins', function( done ) {
 
-          let element = fixture('basic');
           element.api = 'PluginsFeed';
           element.addEventListener( 'response-changed', responseChanged );
           //update url with anything to initiate fetch

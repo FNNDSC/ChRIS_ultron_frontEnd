@@ -21,9 +21,56 @@
     <script>
       suite('chris-ultron', function() {
 
+        let element, templates;
+
+        setup(function(){
+
+          element = fixture('basic');
+          templates = element.$.container.querySelectorAll('template');
+
+        });
+
         test('instantiating the element works', function() {
-          let element = fixture('basic');
+
           assert.equal(element.is, 'chris-ultron');
+
+        });
+
+        // Log out
+        test('show <login> page if logged out', function( done ) {
+
+          let loginTemplate = templates[0];
+          loginTemplate.addEventListener('dom-change', domChanged);
+          element.loggedIn = false;
+
+          function domChanged( event ){
+
+            // login is visible
+            assert.notEqual( element.$.container.querySelector('#login'), null );
+            assert.equal( element.$.container.querySelector('#home'), null );
+
+            done();
+            loginTemplate.removeEventListener('dom-change', domChanged);
+          }
+
+        });
+
+        // Log in
+        test('show <ultron> page if logged in', function( done ) {
+
+          let homeTemplate = templates[1];
+          homeTemplate.addEventListener('dom-change', domChanged);
+          element.loggedIn = true;
+
+          function domChanged( event ){
+
+          assert.notEqual(element.$.container.querySelector('#home'), null );
+          assert.equal( element.$.container.querySelector('#login'), null );
+
+            done();
+            homeTemplate.removeEventListener('dom-change', domChanged);
+          }
+
         });
 
       });
