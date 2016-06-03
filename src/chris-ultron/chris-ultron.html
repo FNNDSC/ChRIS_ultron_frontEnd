@@ -16,10 +16,12 @@
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../chris-label-list/chris-label-list.html">
 <link rel="import" href="../chris-login/chris-login.html">
 
 <dom-module id="chris-ultron">
   <template>
+
     <style>
       :host {
         display: block;
@@ -56,7 +58,14 @@
 
       }
 
-      #content {
+      .drawer.content {
+
+        height: 100%;
+        overflow: auto;
+
+      }
+
+      .main.content {
 
         background-color: var(--paper-grey-50);
         min-height: 201vh;
@@ -80,24 +89,34 @@
           <!-- API Calls -->
           <chris-api id="FeedsAPI"
             api="Feeds"
-            response="{{items}}" on-response="fetchPlugins">
+            response="{{feeds}}"
+            error="{{error}}" on-error="errorToConsole">
           </chris-api>
 
           <chris-api id="PluginsFeedAPI"
             api="PluginsFeed"
-            response="{{plugins}}">
+            response="{{plugins}}" on-response="fetchPlugins"
+            error="{{error}}" on-error="errorToConsole">
           </chris-api>
 
           <chris-api id="LabelsAPI"
             api="Labels"
-            response="{{labels}}" on-reponse="fetchLabels">
+            response="{{labels}}"
+            error="{{error}}" on-error="errorToConsole">
           </chris-api>
 
           <app-drawer-layout fullbleed>
 
             <!-- Drawer content -->
             <app-drawer>
-              <app-toolbar>Menu</app-toolbar>
+
+              <div class="drawer content">
+
+                <app-toolbar>Menu</app-toolbar>
+                <chris-label-list labels="{{labels}}"></chris-label-list>
+
+              </div>
+
             </app-drawer>
 
             <!-- Main content -->
@@ -110,7 +129,7 @@
                 </app-toolbar>
               </app-header>
 
-              <div id="content">
+              <div class="main content">
                 Hello Chris
               </div>
 
@@ -141,6 +160,22 @@
           type: Boolean,
           value: false
         },
+
+        feeds: {
+          type: Array
+        },
+
+        plugins: {
+          type: Array
+        },
+
+        labels: {
+          type: Array
+        },
+
+        error: {
+          type: Object
+        } 
 
       },
 
@@ -195,9 +230,9 @@
 
         },
 
-        fetchLabels: function(){
+        errorToConsole: function(){
 
-          console.log( 'fetchLabels not implemented' );
+          console.error( this.error );
 
         }
 
