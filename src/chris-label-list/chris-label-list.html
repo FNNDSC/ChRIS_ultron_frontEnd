@@ -39,7 +39,7 @@
     <!--  Default labels -->
     <div class="separator">Categories</div>
 
-    <paper-menu id="chrisLabels" class="layout vertical" attr-for-selected="value" on-iron-select="updateFilterChris" on-iron-deselect="updateFilter" multi>
+    <paper-menu id="labels" class="layout vertical" attr-for-selected="value" on-iron-select="handleSelect" on-iron-deselect="updateFilter" multi>
 
       <paper-icon-item value="all" role="menuitem">
         <iron-icon icon="icons:view-headline" item-icon></iron-icon>All
@@ -75,12 +75,17 @@
         <iron-icon icon="icons:clear" item-icon></iron-icon>Create label
       </paper-icon-item> -->
 
-    <paper-menu id="userLabels" class="layout vertical" multi on-iron-select="updateFilter">
+    <paper-menu id="customLabels" class="layout vertical" attr-for-selected="value" multi on-iron-select="updateCustomFilter" on-iron-deselect="updateCustomFilter">
 
-      <template is="dom-repeat" items="{{labels}}">
+<!-- 
+        <paper-icon-item id="custom-redLabel" value="redLabel" role="menuitem">
+          <iron-icon icon="label" item-icon style$="{{_setStyle(red)}}" invert"></iron-icon><span>redLabel</span>
+        </paper-icon-item> -->
 
-        <paper-icon-item role="menuitem">
-          <iron-icon icon="label" item-icon class$="primary {{item.color}} invert"></iron-icon><span>{{item.last}}</span>
+      <template is="dom-repeat" items="{{customLabels}}">
+
+        <paper-icon-item id="custom-{{item.value}}" value$="{{item.value}}" role="menuitem">
+          <iron-icon icon="label" item-icon style$="{{_setStyle(item.color)}}" invert"></iron-icon><span>{{item.value}}</span>
         </paper-icon-item>
 
       </template>
@@ -96,7 +101,7 @@
 
         properties: {
 
-          labels: {
+          customLabels: {
             type: Array
           },
 
@@ -104,19 +109,24 @@
             type: Array,
             value: []
             // we do not use notify true, we do it manually after updating filter
+          },
+
+          customFilter: {
+            type: Array,
+            value: []
           }
 
         },
 
-        updateFilterChris: function( event ){
+        handleSelect: function( event ){
 
           var value = event.detail.item.getAttribute( 'value' );
-          var selection = this.$.chrisLabels.selectedValues;
+          var selection = this.$.labels.selectedValues;
 
 
-          if( value === 'all' || this.$.chrisLabels.selectedValues.length === 0){
+          if( value === 'all' || this.$.labels.selectedValues.length === 0){
 
-            this.$.chrisLabels.selectedValues = ['all'];
+            this.$.labels.selectedValues = ['all'];
 
           }
           else{
@@ -154,7 +164,7 @@
             }
 
             // .slice(0) to make a deep copy and update UI!
-            this.$.chrisLabels.selectedValues = selection.slice(0);
+            this.$.labels.selectedValues = selection.slice(0);
 
           }
           
@@ -164,12 +174,25 @@
 
         updateFilter: function(){
 
-          if( this.$.chrisLabels.selectedValues.length === 0 ){
-            this.$.chrisLabels.selectedValues = ['all']
+          if( this.$.labels.selectedValues.length === 0 ){
+            this.$.labels.selectedValues = ['all']
           }
 
-          this.filter = this.$.chrisLabels.selectedValues;
+          this.filter = this.$.labels.selectedValues;
           this.fire( 'filter-changed');
+
+        },
+
+        updateCustomFilter: function(){
+
+          this.customFilter = this.$.customLabels.selectedValues;
+          this.fire( 'custom-filter-changed');
+
+        },
+
+        _setStyle: function( color ){
+
+          return "color: " + color;
 
         }
 

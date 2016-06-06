@@ -45,21 +45,24 @@
 
       },
 
-      handleLabels: function( ){
+      handleLabels: function(){
 
         var colors = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
         'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow',
         'amber', 'orange', 'deep-orange'];
 
         for( var i = 0; i < this.response.length; i++ ){
+
           this.response[i].color = colors[Math.floor(Math.random() * colors.length)];
+          this.response[i].value = this.response[i].last;
+
         }
         
         return this.response;
 
       },
 
-      handleErrorLabels: function( ){
+      handleErrorLabels: function(){
 
         return this.error;
 

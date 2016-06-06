@@ -41,7 +41,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="all"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="all"]').click();
 
           function filterChanged( event ) {
 
@@ -58,11 +58,11 @@
 
         test('selects all when select all and something selected', function( done ){
 
-          element.$.chrisLabels.selectedValues = ['favorite', 'running'];
+          element.$.labels.selectedValues = ['favorite', 'running'];
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="all"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="all"]').click();
 
           function filterChanged( event ) {
 
@@ -79,11 +79,11 @@
 
         test('deselect all when select favorite', function( done ){
 
-          element.$.chrisLabels.selectedValues = ['all'];
+          element.$.labels.selectedValues = ['all'];
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="favorite"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="favorite"]').click();
 
           function filterChanged( event ) {
 
@@ -100,11 +100,11 @@
 
         test('deselect favorite and select all when deselect favorite', function( done ){
 
-          element.$.chrisLabels.selectedValues = ['favorite'];
+          element.$.labels.selectedValues = ['favorite'];
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="favorite"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="favorite"]').click();
 
           function filterChanged( event ) {
 
@@ -121,11 +121,11 @@
 
         test('deselect all when select running', function( done ){
 
-          element.$.chrisLabels.selectedValues = ['all'];
+          element.$.labels.selectedValues = ['all'];
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="running"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="running"]').click();
 
           function filterChanged( event ) {
 
@@ -142,11 +142,11 @@
 
         test('do not deselect favorite when select running', function( done ){
 
-          element.$.chrisLabels.selectedValues = ['favorite'];
+          element.$.labels.selectedValues = ['favorite'];
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="running"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="running"]').click();
 
           function filterChanged( event ) {
 
@@ -164,11 +164,11 @@
 
         test('do not deselect running when deselect favorite', function( done ){
 
-          element.$.chrisLabels.selectedValues = ['favorite', 'running'];
+          element.$.labels.selectedValues = ['favorite', 'running'];
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="favorite"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="favorite"]').click();
 
           function filterChanged( event ) {
 
@@ -185,11 +185,11 @@
 
         test('deselect running when select done', function( done ){
 
-          element.$.chrisLabels.selectedValues = ['running'];
+          element.$.labels.selectedValues = ['running'];
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="done"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="done"]').click();
 
           function filterChanged( event ) {
 
@@ -206,11 +206,11 @@
 
         test('deselect done when select error', function( done ){
 
-          element.$.chrisLabels.selectedValues = ['done'];
+          element.$.labels.selectedValues = ['done'];
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="error"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="error"]').click();
 
           function filterChanged( event ) {
 
@@ -222,17 +222,17 @@
             element.removeEventListener( 'filter-changed', filterChanged );
 
           }
-          
+
         });
 
 
         test('deselect error when select running', function( done ){
 
-          element.$.chrisLabels.selectedValues = ['error'];
+          element.$.labels.selectedValues = ['error'];
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.chrisLabels.querySelector('paper-icon-item[value="running"]').click();
+          element.$.labels.querySelector('paper-icon-item[value="running"]').click();
 
           function filterChanged( event ) {
 
@@ -247,8 +247,31 @@
 
         });
 
-
         // CUSTOM LABELS
+        // test('select custom label', function( done ){
+
+        //   element.customLabels = [{
+        //     color: 'red',
+        //     value: 'red'
+        //   }];
+
+        //   element.addEventListener( 'custom-filter-changed', customFilterChanged );
+
+        //   // select all
+        //   element.$.customLabels.querySelector('#custom-red').click();
+
+        //   function customFilterChanged( event ) {
+
+        //     // not logged in
+        //     assert.equal( element.customFilter.length, 1 );
+        //     assert.equal( element.customFilter[0], 'red' );
+
+        //     done();
+        //     element.removeEventListener( 'custom-filter-changed', customFilterChanged );
+
+        //   }
+
+        // });
 
       } );
     </script>
