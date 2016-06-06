@@ -103,6 +103,7 @@
           filter: {
             type: Array,
             value: []
+            // we do not use notify true, we do it manually after updating filter
           }
 
         },
@@ -168,6 +169,7 @@
           }
 
           this.filter = this.$.chrisLabels.selectedValues;
+          this.fire( 'filter-changed');
 
         }
 
