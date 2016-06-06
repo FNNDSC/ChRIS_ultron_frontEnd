@@ -207,6 +207,7 @@
           error: {
             type: Object
           }
+
         },
 
         keypressHandler: function( evt ){
@@ -219,7 +220,7 @@
           }
         },
 
-        login: function( ){
+        login: function(){
 
             // validate inputs
             this.$.username.validate();
@@ -242,11 +243,12 @@
 
               // url update triggers a new AJAX call
               this.$.api.url = 'login';
+
             }
 
         },
 
-        handleResponse: function( ){
+        handleResponse: function(){
 
           this.$.login.disabled = false;
           this.$.loginLabel.style.display = 'block';
@@ -256,7 +258,7 @@
 
             sessionStorage.setItem('username', this._username);
             sessionStorage.setItem('token', this.response.token);
-            this.logged = this.response.status;
+            this.logged = true;
             return;
 
           }
@@ -266,9 +268,10 @@
           // show error message
           this.$.loginError.text = this.response.message;
           this.$.loginError.show();
+
         },
 
-        handleError: function( ){
+        handleError: function(){
 
           this.$.login.disabled = false;
           this.$.loginLabel.style.display = 'block';
@@ -276,9 +279,10 @@
 
           // show error message
           this.$.serverError.open( );
-          
-          // log info
-          window.console.log( this.error );
+
+          // log error
+          console.log( this.error );
+
         }
     });
   </script>

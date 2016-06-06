@@ -78,7 +78,7 @@
     
       <template is="dom-if" if="{{!loggedIn}}" restamp>
 
-        <chris-login id="login" logged={{loggedIn}}></chris-login>
+        <chris-login id="login" logged-in={{loggedIn}}></chris-login>
 
       </template>
 
@@ -90,19 +90,19 @@
           <chris-api id="FeedsAPI"
             api="Feeds"
             response="{{feeds}}"
-            error="{{error}}" on-error="errorToConsole">
+            error="{{error}}" on-error="handleError">
           </chris-api>
 
           <chris-api id="PluginsFeedAPI"
             api="PluginsFeed"
-            response="{{plugins}}" on-response="fetchPlugins"
-            error="{{error}}" on-error="errorToConsole">
+            response="{{plugins}}" on-response="handlePlugins"
+            error="{{error}}" on-error="handleError">
           </chris-api>
 
           <chris-api id="LabelsAPI"
             api="Labels"
             response="{{labels}}"
-            error="{{error}}" on-error="errorToConsole">
+            error="{{error}}" on-error="handleError">
           </chris-api>
 
           <app-drawer-layout fullbleed>
@@ -166,7 +166,7 @@
         },
 
         plugins: {
-          type: Array
+          type: Object
         },
 
         labels: {
@@ -214,7 +214,7 @@
 
           // fetch the plugins that can create a feed
           this.$$( '#PluginsFeedAPI' ).params = params;
-          this.$$( '#PluginsFeedAPI' ).url = '';
+          this.$$( '#PluginsFeedAPI' ).url = 'pluginsFeed';
 
           // fetch the labels
           this.$$( '#LabelsAPI' ).params = params;
@@ -224,13 +224,14 @@
 
         },
 
-        fetchPlugins: function(){
+        handlePlugins: function(){
 
-          console.log( 'fetchPlugins not implemented' );
+          console.log( 'handlePlugins not implemented' );
+          // console.log( this.plugins );
 
         },
 
-        errorToConsole: function(){
+        handleError: function(){
 
           console.error( this.error );
 

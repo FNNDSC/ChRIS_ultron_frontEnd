@@ -24,6 +24,12 @@ Install [polymer-cli](https://github.com/Polymer/polymer-cli):
 
     polymer test --expanded
 
+For interactive testings
+
+    polymer serve
+
+then go to: http://localhost:8080/components/chris-ultron/test/
+
 ### Lint
 
     polymer lint --no-recursion

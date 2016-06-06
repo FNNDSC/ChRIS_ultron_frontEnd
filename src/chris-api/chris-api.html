@@ -115,14 +115,22 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        handleResponse: function( evt ){
+        handleResponse: function( event ){
+
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
 
           var response = this['handle' + this.api ]();
           this._setResponse( response );
 
         },
 
-        handleError: function( evt ){
+        handleError: function( event ){
+
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
 
           var error = this['handleError' + this.api ]( );
           this._setError( error );
@@ -169,8 +177,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // update value
           this.response = response;
-          // trigger parent callback
+          // trigger auto-binding
+          // i.e. notify: true
           this.fire( 'response-changed');
+          // trigger parent callback
+          this.fire( 'response');
 
         },
 
@@ -178,8 +189,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // update value
           this.error = error;
+          // trigger auto-binding
+          // i.e. notify: true
+          this.fire( 'error-changed');
           // trigger parent callback
-          this.fire( 'error-changed' );
+          this.fire( 'error');
 
         },
 

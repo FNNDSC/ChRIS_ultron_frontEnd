@@ -37,7 +37,7 @@
 
         test('invalid API returns error', function( done ) {
 
-          element.addEventListener( 'error-changed', errorChanged );
+          element.addEventListener( 'error', errorChanged );
           element.api = 'InvalidAPI';
 
           function errorChanged( event ){
@@ -45,7 +45,7 @@
             assert.equal( element.error, 'InvalidAPI is not valid. ( Missing  prepareInvalidAPI handleInvalidAPI handleErrorInvalidAPI )' );
 
             done();
-            element.removeEventListener( 'error-changed', errorChanged );
+            element.removeEventListener( 'error', errorChanged );
 
           }
 
@@ -68,7 +68,7 @@
         test('Login with no parameters returns false', function( done ) {
 
           element.api = 'Login';
-          element.addEventListener( 'response-changed', responseChanged );
+          element.addEventListener( 'response', responseChanged );
           //update url with anything to initiate fetch
           element.url = 'Login';
 
@@ -78,7 +78,7 @@
             assert.equal( element.response.status, false );
 
             done();
-            element.removeEventListener( 'response-changed', responseChanged );
+            element.removeEventListener( 'response', responseChanged );
 
           }
 
@@ -87,7 +87,7 @@
         test('Login with valid parameters returns true', function( done ) {
 
           element.api = 'Login';
-          element.addEventListener( 'response-changed', responseChanged );
+          element.addEventListener( 'response', responseChanged );
           element.params = { username: 'chris', password: 'chris'};
           //update url with anything to initiate fetch
           element.url = 'Login';
@@ -98,7 +98,7 @@
             assert.equal( element.response.status, true );
 
             done();
-            element.removeEventListener( 'response-changed', responseChanged );
+            element.removeEventListener( 'response', responseChanged );
 
           }
 
@@ -107,7 +107,7 @@
         test('Login with invalid parameters returns false', function( done ) {
 
           element.api = 'Login';
-          element.addEventListener( 'response-changed', responseChanged );
+          element.addEventListener( 'response', responseChanged );
           element.params = { username: 'chris', password: 'ultron'};
           //update url with anything to initiate fetch
           element.url = 'Login';
@@ -118,7 +118,7 @@
             assert.equal( element.response.status, false );
 
             done();
-            element.removeEventListener( 'response-changed', responseChanged );
+            element.removeEventListener( 'response', responseChanged );
 
           }
 
@@ -141,7 +141,7 @@
         test('Labels returns an array of labels', function( done ) {
 
           element.api = 'Labels';
-          element.addEventListener( 'response-changed', responseChanged );
+          element.addEventListener( 'response', responseChanged );
           //update url with anything to initiate fetch
           element.url = 'Labels';
 
@@ -152,7 +152,7 @@
             expect( element.response[0].color ).to.be.a('string');
 
             done();
-            element.removeEventListener( 'response-changed', responseChanged );
+            element.removeEventListener( 'response', responseChanged );
 
           }
 
@@ -175,7 +175,7 @@
         test('Feeds returns an array of feeds', function( done ) {
 
           element.api = 'Feeds';
-          element.addEventListener( 'response-changed', responseChanged );
+          element.addEventListener( 'response', responseChanged );
           //update url with anything to initiate fetch
           element.url = 'Feeds';
 
@@ -193,7 +193,7 @@
             expect( element.response[0].favorite ).to.be.a('boolean');
 
             done();
-            element.removeEventListener( 'response-changed', responseChanged );
+            element.removeEventListener( 'response', responseChanged );
 
           }
 
@@ -216,7 +216,7 @@
         test('PluginsFeed returns an array of plugins', function( done ) {
 
           element.api = 'PluginsFeed';
-          element.addEventListener( 'response-changed', responseChanged );
+          element.addEventListener( 'response', responseChanged );
           //update url with anything to initiate fetch
           element.url = 'PluginsFeed';
 
@@ -230,7 +230,7 @@
             expect( element.response[0].url ).to.be.a('string');
 
             done();
-            element.removeEventListener( 'response-changed', responseChanged );
+            element.removeEventListener( 'response', responseChanged );
 
           }
 
