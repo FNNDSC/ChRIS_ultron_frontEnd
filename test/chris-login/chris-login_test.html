@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../../web-component-tester/browser.js"></script>
+    <script src="../../../iron-test-helpers/mock-interactions.js"></script>
 
     <link rel="import" href="../../src/chris-login/chris-login.html">
   </head>
@@ -43,7 +44,7 @@
           element.$.password.value = 'chris';
 
           //
-          element.$.login.click();
+          MockInteractions.tap( element.$.login );
 
           function loggedChanged( event ) {
 
@@ -65,7 +66,7 @@
           element.$.password.value = 'ultron';
 
           //
-          element.$.login.click();
+          MockInteractions.tap( element.$.login );
 
           function loggedChanged( event ) {
 
@@ -87,7 +88,7 @@
           element.$.password.value = 'ultron';
 
           //
-          element.$.login.click();
+          MockInteractions.tap( element.$.login );
 
           function toastClosed( event ) {
 
