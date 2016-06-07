@@ -16,6 +16,7 @@
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../chris-feed-list/chris-feed-list.html">
 <link rel="import" href="../chris-label-list/chris-label-list.html">
 <link rel="import" href="../chris-login/chris-login.html">
 
@@ -65,10 +66,10 @@
 
       }
 
-      .main.content {
+      app-header-layout {
 
-        background-color: var(--paper-grey-50);
-        min-height: 201vh;
+        background-color: var(--paper-grey-100);
+        /*min-height: 201vh;*/
 
       }
 
@@ -122,7 +123,7 @@
             <!-- Main content -->
             <app-header-layout has-scrolling-region>
 
-              <app-header fixed effects="waterfall">
+              <app-header id="appHeader" fixed effects="waterfall">
                 <app-toolbar>
                   <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                   <div title>My App</div>
@@ -130,7 +131,9 @@
               </app-header>
 
               <div class="main content">
-                Hello Chris
+
+                <chris-feed-list feeds="[[feeds]]"></chris-feed-list>
+
               </div>
 
             </app-header-layout>
@@ -219,6 +222,8 @@
           // fetch the labels
           this.$$( '#LabelsAPI' ).params = params;
           this.$$( '#LabelsAPI' ).url = '';
+
+          // this.$$('#appHeader').scrollTarget = document.querySelector("#scrollingRegion");
 
           }
 

@@ -1,0 +1,69 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+
+<!-- PAPER ELEMENTS -->
+<!-- <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html"> -->
+<!-- <link rel="import" href="../../bower_components/paper-material/paper-material.html"> -->
+
+<link rel="import" href="../chris-feed/chris-feed.html">
+
+<dom-module id="chris-feed-list">
+
+  <template>
+
+    <style>
+
+      :host {
+
+        @apply(--layout-fit);
+
+      }
+
+      iron-list {
+
+        @apply(--layout-fit);
+        padding-top: 16px;
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: auto;
+          margin-top: 30px;
+          margin-bottom: 60px;
+          border-bottom: 1px solid var(--accent-color);
+        };
+
+      }
+
+    </style>
+
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection>
+      <template>
+
+          <chris-feed index="[[index]]" feed="[[feed]]" opened="[[selected]]"></chris-feed>
+
+      </template>
+    </iron-list>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-feed-list',
+        properties: {
+
+          feeds: {
+            type: Array
+          }
+
+        }
+
+    });
+  </script>
+</dom-module>

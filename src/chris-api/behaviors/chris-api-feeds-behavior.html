@@ -62,6 +62,10 @@
         var feeds = [];
         var payload = this.response.return.payload;
 
+        var colors = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
+        'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow',
+        'amber', 'orange', 'deep-orange'];
+
         for( var i=0; i<payload.length; i++ ){
 
           var feed = {
@@ -72,7 +76,7 @@
             favorite: i%3 ? true : false,
             selected: false,
             details: null,
-            color: 'red',
+            color: colors[Math.floor(Math.random() * colors.length)],
             letter: 'N',
             // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
             description: 'description for ' + payload[i],
@@ -84,6 +88,8 @@
 
         }
 
+        console.log( feed );
+
         return feeds;
 
       },
@@ -91,6 +97,10 @@
       handleFeedsFromMars: function(){
 
         var feeds = [];
+
+        var colors = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
+        'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow',
+        'amber', 'orange', 'deep-orange'];
 
         for( var i=0; i<this.response.length; i++ ){
 
@@ -101,9 +111,10 @@
             opened: false,//this.response[i].expanded,
             color: this.response[i].color,
             favorite: this.response[i].integer > 50 ? true : false,
+            status: this._generateStatus(this.response[i].integer),
             selected: false,
             details: null,
-            color: 'red',
+            color: colors[Math.floor(Math.random() * colors.length)],
             letter: 'N',
             // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
             description: this.response[i].shortText,
@@ -122,6 +133,26 @@
       handleErrorFeeds: function( ){
 
         return this.error;
+
+      },
+
+      _generateStatus: function( value ){
+
+        if( value < 30 ){
+
+          return 'done';
+
+        }
+        else if( value < 60 ){
+
+          return 'running';
+
+        }
+        else{
+
+          return 'error';
+
+        }
 
       }
     };
