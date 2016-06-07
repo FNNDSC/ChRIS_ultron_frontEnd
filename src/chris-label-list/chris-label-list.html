@@ -77,14 +77,9 @@
 
     <paper-menu id="customLabels" class="layout vertical" attr-for-selected="value" multi on-iron-select="updateCustomFilter" on-iron-deselect="updateCustomFilter">
 
-<!-- 
-        <paper-icon-item id="custom-redLabel" value="redLabel" role="menuitem">
-          <iron-icon icon="label" item-icon style$="{{_setStyle(red)}}" invert"></iron-icon><span>redLabel</span>
-        </paper-icon-item> -->
-
       <template is="dom-repeat" items="{{customLabels}}">
 
-        <paper-icon-item id="custom-{{item.value}}" value$="{{item.value}}" role="menuitem">
+        <paper-icon-item id="{{item.value}}" value$="{{item.value}}" role="menuitem">
           <iron-icon icon="label" item-icon style$="{{_setStyle(item.color)}}" invert"></iron-icon><span>{{item.value}}</span>
         </paper-icon-item>
 
@@ -114,6 +109,7 @@
           customFilter: {
             type: Array,
             value: []
+            // we do not use notify true, we do it manually after updating filter
           }
 
         },
@@ -192,7 +188,7 @@
 
         _setStyle: function( color ){
 
-          return "color: " + color;
+          return 'color: ' + color;
 
         }
 

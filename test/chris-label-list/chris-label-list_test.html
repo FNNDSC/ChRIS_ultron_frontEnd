@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../../web-component-tester/browser.js"></script>
+    <script src="../../../iron-test-helpers/mock-interactions.js"></script>
 
     <link rel="import" href="../../src/chris-label-list/chris-label-list.html">
   </head>
@@ -41,7 +42,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="all"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="all"]' ) );
 
           function filterChanged( event ) {
 
@@ -62,7 +63,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="all"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="all"]' ) );
 
           function filterChanged( event ) {
 
@@ -83,7 +84,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="favorite"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="favorite"]' ) );
 
           function filterChanged( event ) {
 
@@ -104,7 +105,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="favorite"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="favorite"]' ) );
 
           function filterChanged( event ) {
 
@@ -125,7 +126,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="running"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="running"]' ) );
 
           function filterChanged( event ) {
 
@@ -146,7 +147,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="running"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="running"]' ) );
 
           function filterChanged( event ) {
 
@@ -168,7 +169,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="favorite"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="favorite"]' ) );
 
           function filterChanged( event ) {
 
@@ -189,7 +190,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="done"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="done"]' ) );
 
           function filterChanged( event ) {
 
@@ -210,7 +211,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="error"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="error"]' ) );
 
           function filterChanged( event ) {
 
@@ -232,7 +233,7 @@
           element.addEventListener( 'filter-changed', filterChanged );
 
           // select all
-          element.$.labels.querySelector('paper-icon-item[value="running"]').click();
+          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="running"]' ) );
 
           function filterChanged( event ) {
 
@@ -248,30 +249,81 @@
         });
 
         // CUSTOM LABELS
-        // test('select custom label', function( done ){
+        test('select custom label', function( done ){
 
-        //   element.customLabels = [{
-        //     color: 'red',
-        //     value: 'red'
-        //   }];
+          element.$.customLabels.addEventListener('dom-change', function( event ){
 
-        //   element.addEventListener( 'custom-filter-changed', customFilterChanged );
+            element.addEventListener( 'custom-filter-changed', customFilterChanged );
 
-        //   // select all
-        //   element.$.customLabels.querySelector('#custom-red').click();
 
-        //   function customFilterChanged( event ) {
+            // MockInteractions.focus( Polymer.dom( element.root ).querySelector( 'paper-icon-item[value="red"]' ) );
+            // MockInteractions.tap( Polymer.dom( element.root ).querySelector( 'paper-icon-item[value="red"]' ) );
+            element.$.customLabels.select('red');
 
-        //     // not logged in
-        //     assert.equal( element.customFilter.length, 1 );
-        //     assert.equal( element.customFilter[0], 'red' );
+            element.$.customLabels.removeEventListener( 'dom-change', customFilterChanged );
+          });
 
-        //     done();
-        //     element.removeEventListener( 'custom-filter-changed', customFilterChanged );
 
-        //   }
+          element.customLabels = [{
+            color: 'red',
+            value: 'red'
+          }];
 
-        // });
+          function customFilterChanged( event ) {
+
+            // not logged in
+            assert.equal( element.customFilter.length, 1 );
+            assert.equal( element.customFilter[0], 'red' );
+
+            done();
+            element.removeEventListener( 'custom-filter-changed', customFilterChanged );
+
+          }
+
+        });
+
+        test('deselect custom label', function( done ){
+
+          element.$.customLabels.addEventListener('dom-change', function( event ){
+
+            element.addEventListener( 'custom-filter-changed', customFilterChanged );
+            // select the item
+            // MockInteractions.tap( Polymer.dom( element.root ).querySelector( 'paper-icon-item[value="red"]' ) );
+            element.$.customLabels.select('red');
+
+            element.$.customLabels.removeEventListener( 'dom-change', customFilterChanged );
+          });
+
+
+          element.customLabels = [{
+            color: 'red',
+            value: 'red'
+          }];
+
+
+          function customFilterChanged( event ) {
+
+            //
+            if( element.customFilter.length === 0 ){
+
+              assert.equal( element.customFilter.length, 0 );
+
+              done();
+              element.removeEventListener( 'custom-filter-changed', customFilterChanged );
+
+            }
+            else{
+
+              // deselect the item
+              // MockInteractions.focus( Polymer.dom( element.root ).querySelector( 'paper-icon-item[value="red"]' ) );
+              MockInteractions.tap( Polymer.dom( element.root ).querySelector( 'paper-icon-item[value="red"]' ) );
+              // element.$.customLabels.select('red');
+
+            }
+
+          }
+
+        });
 
       } );
     </script>
