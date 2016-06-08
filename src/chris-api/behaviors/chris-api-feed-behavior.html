@@ -1,0 +1,80 @@
+<script>
+    /** @polymerBehavior Feed */
+    Feed = {
+
+      prepareFeed: function( what ){
+
+        this.handleAs = 'json';
+
+        switch( what ){
+
+          case 'url':
+
+            // http://httpbin.org/
+            var url = 'http://httpbin.org/get';
+
+            if( this.method === 'POST' ){
+
+              url = 'http://httpbin.org/post'
+
+            }
+
+            if( this.chrisAPI ){
+
+              //url = this.apiRoot + this.url;
+
+            }
+
+            return url;
+
+          case 'params':
+
+            // create new DB if flag on (could be on the login page)
+            if( this.createDB ){
+
+              this.params.createNewDB = 1;
+
+            }
+
+            // always add db path
+            this.params.DBpath = this.dbPath;
+
+            return this.params;
+
+          case 'body':
+
+            return JSON.stringify(this.body);
+
+          default:
+
+            break;
+
+          }
+        return false;
+      },
+
+      handleFeed: function( ){
+
+        if( this.method === 'POST' ){
+
+          // add updated flag
+          // this.response.json.update = {
+          //   status: false,
+          //   text: 'Ooops, we could not update the feed... :('
+          // };
+
+          // this.response.json.favorite = !this.response.json.favorite;
+
+        }
+
+        return this.response.json;
+
+      },
+
+      handleErrorFeed: function( ){
+
+        return this.error;
+
+      }
+    };
+</script>

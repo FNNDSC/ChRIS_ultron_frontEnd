@@ -9,8 +9,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <!-- BEHAVIORS -->
-<link rel="import" href="behaviors/chris-api-feeds-behavior.html">
+<link rel="import" href="behaviors/chris-api-feed-behavior.html">
 <link rel="import" href="behaviors/chris-api-feed-details-behavior.html">
+<link rel="import" href="behaviors/chris-api-feeds-behavior.html">
 <link rel="import" href="behaviors/chris-api-labels-behavior.html">
 <link rel="import" href="behaviors/chris-api-login-behavior.html">
 <link rel="import" href="behaviors/chris-api-plugin-pacspull-behavior.html">
@@ -21,7 +22,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
   <template>
 
-    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[getBody(body, api)]]" params="[[getParams(params, api)]]" method="[[method]]" last-response="{{response}}" on-response="handleResponse" last-error="{{error}}" on-error="handleError" handle-as="[[handleAs]]" auto></iron-ajax>
+    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[getBody(body, api)]]" params="[[getParams(params, api)]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" on-response="handleResponse" last-error="{{error}}" on-error="handleError" handle-as="[[handleAs]]" auto></iron-ajax>
 
   </template>
 
@@ -58,6 +59,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           },
 
           method:{
+            type: String
+          },
+
+          contentType:{
             type: String
           },
 
@@ -100,8 +105,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         behaviors: [
-          Feeds,
+          Feed,
           FeedDetails,
+          Feeds,
           Labels,
           Login,
           PluginCreate,

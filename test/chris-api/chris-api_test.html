@@ -236,6 +236,54 @@
 
         } );
 
+        //
+        //
+        // FEED BEHAVIOR
+        //
+        //
+        test('Feed has a valid API', function() {
+
+          element.api = 'Feed';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'Feed');
+
+        } );
+
+        test('Feed returns a feed', function( done ) {
+
+          element.api = 'Feed';
+          element.addEventListener( 'response', responseChanged );
+          //update url with anything to initiate fetch
+          var body = {
+            id: '1234',
+            name: 'Cool Feed Name',
+            color: 'red',
+            date: 'June 6, 2016',
+            tags: []
+          }
+
+          element.method = 'POST';
+          element.contentType="application/json",
+          element.body = body;
+          element.url = 'Feed';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.id ).to.be.a('string');
+            expect( element.response.name ).to.be.a('string');
+            expect( element.response.color ).to.be.a('string');
+            expect( element.response.date ).to.be.a('string');
+            expect( element.response.tags ).to.be.a('array');
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
       } );
     </script>
 

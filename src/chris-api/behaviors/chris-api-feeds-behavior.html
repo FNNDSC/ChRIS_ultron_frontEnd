@@ -112,6 +112,7 @@
             color: this.response[i].color,
             favorite: this.response[i].integer > 50 ? true : false,
             status: this._generateStatus(this.response[i].integer),
+            tags: this._generateTags(colors),
             selected: false,
             details: null,
             color: colors[Math.floor(Math.random() * colors.length)],
@@ -154,6 +155,27 @@
 
         }
 
+      },
+
+      _generateTags: function( available ){
+
+        var tags = [];
+        var nbTags = Math.floor(Math.random() * available.length);
+        // colors[Math.floor(Math.random() * colors.length)]
+
+        for( var i=0; i<nbTags; i++ ){
+
+          var tag = available[Math.floor(Math.random() * available.length)];
+          tags.push({
+            name: tag,
+            color: tag
+          });
+
+        }
+
+        return tags;
+
       }
+
     };
 </script>
