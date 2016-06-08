@@ -10,11 +10,14 @@
 
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<!-- <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html"> -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<!-- <link rel="import" href="../../bower_components/paper-item/paper-item.html"> -->
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- CHRIS -->
-<!-- <link rel="import" href="../chris-api/chris-api.html"> -->
+<link rel="import" href="../chris-api/chris-api.html">
 
 <dom-module id="chris-feed">
 
@@ -66,7 +69,14 @@
 
       }
 
-      .description, .date {
+      .date {
+
+        font-size: 14px;
+        color: gray;
+
+      }
+
+      .tags {
 
         font-size: 14px;
         color: gray;
@@ -88,6 +98,12 @@
       .status.expanded, .feed.expanded #content {
 
         display: block;
+
+      }
+
+      #favorite{
+
+        color: var(--paper-pink-a200);
 
       }
 
@@ -137,6 +153,15 @@
 
 <!--     <chris-api id="chrisAPI" api="FeedDetails" response="{{feed.details}}" on-response="handleDetails">
     </chris-api> -->
+    <chris-api id="FeedAPI"
+      api="Feed",
+      method="POST",
+      content-type="application/json",
+      response="{{response}}"
+      on-response="handleFeed"
+      error="{{error}}"
+      on-error="handleError">
+    </chris-api>
 
 
     <paper-material id="feed" class="feed" elevation=1>
@@ -150,11 +175,26 @@
         <div class="title">
           <div class="name">Feed [[feed.id]] - [[feed.name]]</div>
           <div class="date">[[feed.date]]</div>
+          <div class="tags">
+            <template is="dom-repeat" items="[[feed.tags]]">
+              <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
+            </template>
+          </div>
         </div>
 
         <div class="actions">
 
           <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
+
+<!--           <paper-menu-button id="tag" ignore-select on-tap="tag">
+            <paper-icon-button icon="icons:label-outline" class="dropdown-trigger" alt="multi select"></paper-icon-button>
+            <paper-menu class="dropdown-content" multi>
+              <template is="dom-repeat" items="[[feed.tags]]">
+                <paper-item>[[item.name]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-menu-button>
+ -->
           <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
           <paper-icon-button id="favorite" class="action" icon="icons:favorite-border" on-tap="favorite"></paper-icon-button>
           <paper-icon-button icon$="{{_setStatusIcon(feed.status)}}" class$="{{feed.status}}" disabled></paper-icon-button>
@@ -195,9 +235,21 @@
 
           index: {
             type: Number
+          },
+
+          reponse:{
+            type: Array
+          },
+
+          error: {
+            type: Array
           }
 
         },
+
+        observers: [
+          '_setFavoriteIcon(feed.favorite)'
+        ],
 
         _openedChanged: function( ){
 
@@ -261,6 +313,18 @@
 
         },
 
+        _setTagStyle: function( color ){
+
+          return 'color: ' + color + ';';
+
+        },
+
+        _setFavoriteIcon: function( favorite ) {
+
+          this.$.favorite.icon = this.feed.favorite ? 'favorite-border' : 'favorite';
+
+        },
+
         select: function( event ){
 
           event.preventDefault();
@@ -294,10 +358,38 @@
           event.stopPropagation();
 
           // update feed favorite
-          this.feed.favorite = !this.feed.favorite;
-          // api push
+          this.set('feed.favorite', !this.feed.favorite);
 
-          console.log( 'favorite feed' );
+          // api push
+          var params = {
+            auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          };
+
+          // fetch the feeds
+          this.$.FeedAPI.params = params;
+          this.$.FeedAPI.body = this.feed;
+          this.$.FeedAPI.url = '';
+
+        },
+
+        handleFeed: function(){
+
+          // compare reponse and the data
+          if( this.response.update && !this.response.update.status ){
+
+            // revert changes
+            this.set('feed', this.response);
+
+            // show toast message
+            this.fire( 'notification', {text: this.response.update.text});
+
+          }
+
+        },
+
+        handleError: function(){
+
+          console.log( this.error);
 
         }
 
