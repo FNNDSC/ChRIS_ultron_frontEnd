@@ -36,6 +36,98 @@
 
         });
 
+        test('valid feed sets valid to true', function( done ) {
+
+          element.addEventListener( 'valid-changed', validChanged );
+
+          element.feed = {
+            id: '1234',
+            name: 'My Analysis',
+            letter: 'N',
+            color: '#E91E63',
+            date: 'Jun 06, 2016',
+            status: 'running',
+            favorite: true,
+            tags: [{
+              name: 'HIE Study',
+              color: '#673AB7'
+            }]
+          };
+
+          function validChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.valid, true );
+            
+            done();
+            element.removeEventListener( 'valid-changed', validChanged );
+
+          }
+
+        });
+
+        test('invalid feed sets valid to false', function( done ) {
+
+          element.addEventListener( 'valid-changed', validChanged );
+
+          element.feed = {
+            id: 'String',
+            name: true,
+            letter: 'String',
+            color: 'String',
+            date: 'String',
+            status: 'String',
+            favorite: true,
+            tags: []
+          };
+
+          function validChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.valid, false );
+            assert.equal( element.error.length, 1 );
+            assert.equal( element.error[0], 'name:String' );
+            // check error message too
+            
+            done();
+            element.removeEventListener( 'valid-changed', validChanged );
+
+          }
+
+        });
+
+        test('invalid feed fires error', function( done ) {
+
+          element.addEventListener( 'error', onError );
+
+          element.feed = {
+            id: 'String',
+            name: 'String',
+            letter: 'String',
+            color: 123,
+            date: 'String',
+            status: 'String',
+            favorite: true,
+            tags: 'String'
+          };
+
+          function onError( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.valid, false );
+            assert.equal( element.error.length, 2 );
+            assert.equal( element.error[0], 'color:String' );
+            assert.equal( element.error[1], 'tags:Array' );
+            // check error message too
+            
+            done();
+            element.removeEventListener( 'error', onError );
+
+          }
+
+        });
+
+
       } );
     </script>
 

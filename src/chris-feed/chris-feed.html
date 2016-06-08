@@ -177,7 +177,7 @@
           <div class="name">Feed [[feed.id]] - [[feed.name]]</div>
           <div class="date">[[feed.date]]</div>
           <div class="tags">
-            <template is="dom-repeat" items="[[feed.tags]]">
+            <template is="dom-repeat" items="[[_validateTags(feed.tags)]]">
               <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
             </template>
           </div>
@@ -225,7 +225,8 @@
         properties: {
 
           feed: {
-            type: Object
+            type: Object,
+            observer: '_validateFeed'
           },
 
           opened:{
@@ -236,6 +237,10 @@
 
           index: {
             type: Number
+          },
+
+          valid:{
+            type: Boolean
           },
 
           response:{
@@ -256,7 +261,7 @@
 
           // toggle if details available
           //  && this.feed.details 
-          if( this.feed){
+          if( this.feed ){
 
             this.opened ? this.$.feed.classList.add('expanded') : this.$.feed.classList.remove('expanded');
             this.opened ? this.$.feed.elevation = 4 : this.$.feed.elevation = 1;
@@ -269,11 +274,6 @@
           if( this.feed ){
 
             return;
-
-            // start progress bar
-            // this.$.status.value = 10;
-            // this.$.status.indeterminate = true;
-            // this.$.status.classList.add('expanded', 'running');
 
             this.$.chrisAPI.url = "";
             this.$.chrisAPI.params = {
@@ -373,24 +373,137 @@
 
         },
 
-        handleFeed: function(){
+        handleFeed: function( event ){
+
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
 
           // compare reponse and the data
           if( this.response.update && !this.response.update.status ){
 
             // revert changes
-            this.set('feed', this.response);
+            this.set( 'feed', this.response );
 
             // show toast message
-            this.fire( 'notification', {text: this.response.update.text});
+            this.fire( 'notification', {text: this.response.update.text} );
 
           }
 
         },
 
-        handleError: function(){
+        handleError: function( event ){
 
-          console.log( this.error);
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
+          console.log( this.error );
+
+        },
+
+        _validateFeed: function(){
+
+          if( !this.feed ){
+
+            return;
+
+          }
+
+          var error = [];
+
+          // need id
+          if( !( typeof this.feed.id === 'string' ) ){
+
+            error.push( 'id:String' );
+
+          }
+
+          // need name
+          if( !( typeof this.feed.name === 'string' ) ){
+
+            error.push( 'name:String' );
+
+          }
+
+          // need letter
+          if( !( typeof this.feed.letter === 'string' ) ){
+
+            error.push( 'letter:String' );
+
+          }
+
+          // need color
+          if( !( typeof this.feed.color === 'string' ) ){
+
+            error.push( 'color:String' );
+
+          }
+
+          // need date
+          if( !( typeof this.feed.date === 'string' ) ){
+
+            error.push( 'date:String' );
+
+          }
+
+          // need status
+          if( !( typeof this.feed.status === 'string' ) ){
+
+            error.push( 'status:String' );
+
+          }
+
+          // need favorite
+          if( !( typeof this.feed.favorite === 'boolean' ) ){
+
+            error.push( 'favorite:Boolean' );
+
+          }
+
+          // need tags array
+          if( !( this.feed.tags && this.feed.tags.constructor === Array ) ){
+
+            // should we "fix" it or hide the feed and show error
+            // just show error "feed"
+            // if invalid: red and can not do anything
+            this.set('feed.tags', []);
+            error.push( 'tags:Array' );
+
+          }
+
+          if( error.length > 0){
+
+            // got an error
+            this.error = error;
+            this.fire( 'error-changed' );
+            // triggers error on Firefox for some reason...
+            // this.fire( 'error' );
+
+            // make it invalid
+            this.valid = false;
+            this.fire( 'valid-changed' );
+
+            // fire error here because firefox complains if we do it before...?
+            this.fire( 'error' );
+
+            return;
+
+          }
+
+          this.valid = true;
+          this.fire( 'valid-changed');
+
+        },
+
+        _validateTags: function( tags ){
+
+          if( !( tags && tags.constructor === Array ) ){
+
+            return [];
+
+          }
+
+          return tags;
 
         }
 
