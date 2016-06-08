@@ -1,0 +1,43 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>chris-feed test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+    <script src="../../../iron-test-helpers/mock-interactions.js"></script>
+
+    <link rel="import" href="../../src/chris-feed/chris-feed.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-feed></chris-feed>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite( '<chris-feed>', function() {
+
+        let element;
+
+        setup(function(){
+
+          element = fixture('basic');
+
+        });
+
+        test('instantiating the element works', function() {
+
+          assert.equal( element.is, 'chris-feed' );
+
+        });
+
+      } );
+    </script>
+
+  </body>
+</html>
