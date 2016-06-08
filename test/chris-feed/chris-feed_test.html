@@ -66,6 +66,70 @@
 
         });
 
+        test('set favorite when select favorite', function( done ) {
+
+          element.addEventListener( 'feed-changed', feedChanged );
+
+          element.feed = {
+            id: '1234',
+            name: 'My Analysis',
+            letter: 'N',
+            color: '#E91E63',
+            date: 'Jun 06, 2016',
+            status: 'running',
+            favorite: true,
+            tags: [{
+              name: 'HIE Study',
+              color: '#673AB7'
+            }]
+          };
+
+          MockInteractions.tap( element.$.favorite );
+
+          function feedChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.feed.favorite, false );
+            
+            done();
+            element.removeEventListener( 'feed-changed', feedChanged );
+
+          }
+
+        });
+
+        test('unset favorite when deselect favorite', function( done ) {
+
+          element.addEventListener( 'feed-changed', feedChanged );
+
+          element.feed = {
+            id: '1234',
+            name: 'My Analysis',
+            letter: 'N',
+            color: '#E91E63',
+            date: 'Jun 06, 2016',
+            status: 'running',
+            favorite: false,
+            tags: [{
+              name: 'HIE Study',
+              color: '#673AB7'
+            }]
+          };
+
+          MockInteractions.tap( element.$.favorite );
+
+          function feedChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.feed.favorite, true );
+            
+            done();
+            element.removeEventListener( 'feed-changed', feedChanged );
+
+          }
+
+        });
+
         test('invalid feed sets valid to false', function( done ) {
 
           element.addEventListener( 'valid-changed', validChanged );

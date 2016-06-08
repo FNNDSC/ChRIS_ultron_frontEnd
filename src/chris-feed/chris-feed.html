@@ -150,6 +150,22 @@
 
       }
 
+       paper-icon-button.big {
+
+        width: 48px;
+        height: 48px;
+
+      }
+
+
+      #invalid {
+
+        color: var(--paper-red-500);
+        cursor: pointer;
+        padding: 0;
+
+      }
+
     </style>
 
 <!--     <chris-api id="chrisAPI" api="FeedDetails" response="{{feed.details}}" on-response="handleDetails">
@@ -170,8 +186,23 @@
       <!-- Toolbar -->
       <app-toolbar>
 
-        <div id="select" class="letter" style$="{{_setStyle(feed.color)}}" on-tap="select">[[feed.letter]]</div>
-        <paper-tooltip for="select" offset="0">Select</paper-tooltip>
+        <template is="dom-if" if="{{!valid}}">
+
+          <div>
+            <div>
+              <paper-icon-button id="invalid" class="big" icon="social:mood-bad" disabled></paper-icon-button>
+            </div>
+            <div>
+              Invalid
+            </div>
+          </div>
+
+        </template>
+
+        <template is="dom-if" if="{{valid}}">
+          <div id="select" class="letter" style$="{{_setStyle(feed.color)}}" on-tap="select">[[feed.letter]]</div>
+          <paper-tooltip for="select" offset="0">Select</paper-tooltip>
+        </template>
 
         <div class="title">
           <div class="name">Feed [[feed.id]] - [[feed.name]]</div>
@@ -259,6 +290,12 @@
 
         _openedChanged: function( ){
 
+          if( !this.valid ){
+
+            return;
+
+          }
+
           // toggle if details available
           //  && this.feed.details 
           if( this.feed ){
@@ -331,6 +368,12 @@
           event.preventDefault();
           event.stopPropagation();
 
+          if( !this.valid ){
+
+            return;
+
+          }
+
           console.log( 'select feed' );
 
         },
@@ -339,6 +382,12 @@
 
           event.preventDefault();
           event.stopPropagation();
+
+          if( !this.valid ){
+
+            return;
+
+          }
 
           console.log( 'share feed' );
 
@@ -349,6 +398,12 @@
           event.preventDefault();
           event.stopPropagation();
 
+          if( !this.valid ){
+
+            return;
+
+          }
+
           console.log( 'tag feed' );
 
         },
@@ -357,6 +412,12 @@
 
           event.preventDefault();
           event.stopPropagation();
+
+          if( !this.valid ){
+
+            return;
+
+          }
 
           // update feed favorite
           this.set('feed.favorite', !this.feed.favorite);
@@ -466,7 +527,6 @@
             // should we "fix" it or hide the feed and show error
             // just show error "feed"
             // if invalid: red and can not do anything
-            this.set('feed.tags', []);
             error.push( 'tags:Array' );
 
           }
