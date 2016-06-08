@@ -13,6 +13,7 @@
 
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../chris-api/chris-api.html">
@@ -79,7 +80,7 @@
     
       <template is="dom-if" if="{{!loggedIn}}" restamp>
 
-        <chris-login id="login" logged-in={{loggedIn}}></chris-login>
+        <chris-login id="login" logged={{loggedIn}}></chris-login>
 
       </template>
 
@@ -132,9 +133,12 @@
 
               <div class="main content">
 
-                <chris-feed-list feeds="[[feeds]]"></chris-feed-list>
+                <chris-feed-list feeds="[[feeds]]" on-notification="_showNotification"></chris-feed-list>
+                <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
 
               </div>
+
+
 
             </app-header-layout>
 
@@ -223,7 +227,8 @@
           this.$$( '#LabelsAPI' ).params = params;
           this.$$( '#LabelsAPI' ).url = '';
 
-          // this.$$('#appHeader').scrollTarget = document.querySelector("#scrollingRegion");
+          // anchor toast to the chris-feed-list
+          this.$$( '#notification' ).fitInto = this.$$( 'chris-feed-list' );
 
           }
 
@@ -239,6 +244,16 @@
         handleError: function(){
 
           console.error( this.error );
+
+        },
+
+        _showNotification: function( event ){
+
+          // update text
+          this.$$( '#notification' ).text = event.detail.text;
+
+          // show notification
+          this.$$( '#notification' ).show();
 
         }
 
