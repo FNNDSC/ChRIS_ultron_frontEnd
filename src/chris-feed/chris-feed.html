@@ -1,19 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<!-- APP ELEMENTS -->
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-
 <!-- IRON ELEMENTS -->
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 
 <!-- PAPER ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<!-- <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html"> -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<!-- <link rel="import" href="../../bower_components/paper-item/paper-item.html"> -->
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- CHRIS -->
@@ -23,6 +18,7 @@
 
   <template>
 
+    <style include="iron-flex iron-flex-alignment">
     <style>
 
       :host{
@@ -30,31 +26,115 @@
 
       }
 
-      #feed {
+      /* Feed style */
+
+      .feed {
 
         @apply(--layout-flex);
         @apply(--layout-vertical);
         padding: 20px;
         background-color: white;
-        /*border: 1px solid #ddd;*/
         margin-bottom: 10px;
 
       }
 
-      #feed:hover {
+      .feed:hover {
 
         @apply(--shadow-elevation-8dp);
 
       }
 
-      #feed[opened] {
+       .feed.checked {
 
-        background-color: var(--light-accent-color);
+        background-color: var(--paper-grey-200);
+        border-left: 4px solid var(--accent-color);
 
       }
 
-      
-      .title {
+      /* Toolbar style */
+
+      .toolbar {
+
+        min-height: 64px;
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+
+      }
+
+      /* Toolbar > Check area */
+
+      .check-area {
+
+        height: 48px;
+        width: 48px;
+        border-radius: 24px;
+        box-sizing: border-box;
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+
+      }
+
+      .check-area .invalid {
+
+        color: var(--paper-red-500);
+        border-color: var(--paper-red-500)!important;
+        background-color: #ffffff;
+        border-radius: 26px;
+        cursor: pointer;
+        padding: 0;
+        width: 52px;
+        height: 52px;
+
+      }
+
+      .check-area:hover .invalid {
+
+        background-color: var(--paper-red-500);
+        color: #ffffff;
+
+      }
+
+      .check-area:hover, .checked .check-area {
+
+        background-color: var(--accent-color);
+        border-color: var(--accent-color)!important;
+
+      }
+
+      /* Toolbar > Check area > Letter */
+
+      .check-area:hover .letter, .checked .letter {
+
+        display:none;
+
+      }
+
+      /* Toolbar > Check area > Checkbox */
+
+      .checkbox {
+
+        display: none;
+
+        --paper-checkbox-checked-color: var(--accent-color);
+        --paper-checkbox-checked-ink-color: var(--accent-color);
+        --paper-checkbox-unchecked-color: #ffffff;
+        --paper-checkbox-unchecked-ink-color: var(--dark-accent-color);
+        --paper-checkbox-size: 24px;
+        --paper-checkbox-label-spacing: 0px;
+
+      }
+
+      .check-area:hover .checkbox, .checked .checkbox {
+
+        display:block;
+
+      }
+
+
+      /* Toolbar > Title area */
+
+      .title-area {
 
         padding: 0 16px;
         @apply(--layout-flex);
@@ -66,103 +146,97 @@
 
         font-size: 16px;
         font-weight: bold;
+        color: var(--primary-text-color);
 
       }
 
-      .date {
+      .date, .tags {
 
         font-size: 14px;
-        color: gray;
+        color: var(--secondary-text-color);
 
       }
 
-      .tags {
+      /* Toolbar > Action area */
 
-        font-size: 14px;
-        color: gray;
+      #favorite[icon="icons:favorite"]{
 
-      }
-
-      app-toolbar {
-
-        flex:1;
+        color: var(--accent-color);
 
       }
 
-      .status, #content {
-
-        display: none;
-
-      }
-
-      .status.expanded, .feed.expanded #content {
-
-        display: block;
-
-      }
-
-      #favorite{
-
-        color: var(--paper-pink-a200);
-
-      }
-
-      paper-icon-button.done{
+      .done{
 
         color: var(--paper-light-green-500);
 
       }
 
-      paper-icon-button.running{
+      .running{
 
         color: var(--paper-light-blue-500);
 
       }
 
-      paper-icon-button.error{
+      .error{
 
         color: var(--paper-red-500);
 
       }
 
-      .letter{
-        height: 48px;
-        width: 48px;
-        border-radius: 24px;
-        box-sizing: border-box;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      paper-icon-button.action:hover{
+      .action:hover{
 
         color: var(--accent-color);
-        cursor: pointer;
-
-      }
-
-      .letter:hover{
-
-        color: var(--accent-color);
-        border-color: var(--accent-color)!important;
-        cursor: pointer;
-
-      }
-
-       paper-icon-button.big {
-
-        width: 48px;
-        height: 48px;
 
       }
 
 
-      #invalid {
+      /* Content */
 
-        color: var(--paper-red-500);
-        cursor: pointer;
-        padding: 0;
+      .content {
+
+        display: none;
+
+      }
+
+      .feed.opened .content {
+
+        display: block;
+
+      }
+
+
+      /* responsive layout */
+
+      @media all and (max-width: 800px) {
+
+        .toolbar {
+
+          @apply(--layout-justified);
+
+         }
+
+        .title-area { 
+
+          flex: 1 100%;
+          padding: 16px 0 0;
+
+        }
+        
+        .check-area {
+
+          order: 1;
+
+        }
+        .actions-area {
+
+          order: 2;
+
+        }
+
+        .title-area {
+
+          order: 3;
+        }
 
       }
 
@@ -184,52 +258,50 @@
     <paper-material id="feed" class="feed" elevation=1>
 
       <!-- Toolbar -->
-      <app-toolbar>
+      <div class="toolbar">
 
-        <template is="dom-if" if="{{!valid}}">
+        <!-- Check Area -->
+        <div class="check-area" style$="{{_setStyle(feed.color)}}" on-tap="_blockEvents">
 
-          <div>
-            <div>
-              <paper-icon-button id="invalid" class="big" icon="social:mood-bad" disabled></paper-icon-button>
-            </div>
-            <div>
-              Invalid
-            </div>
-          </div>
+          <template is="dom-if" if="{{!valid}}">
 
-        </template>
+            <paper-icon-button id="invalid" class="invalid" icon="icons:bug-report" disabled></paper-icon-button>
 
-        <template is="dom-if" if="{{valid}}">
-          <div id="select" class="letter" style$="{{_setStyle(feed.color)}}" on-tap="select">[[feed.letter]]</div>
-          <paper-tooltip for="select" offset="0">Select</paper-tooltip>
-        </template>
+          </template>
 
-        <div class="title">
+          <template is="dom-if" if="{{valid}}">
+
+              <span class="letter">[[feed.letter]]</span>
+              <paper-checkbox class="checkbox" checked="{{feed.checked}}"></paper-checkbox>
+
+          </template>
+
+        </div>
+
+        <!-- Title Area -->
+        <div class="title-area">
+
           <div class="name">Feed [[feed.id]] - [[feed.name]]</div>
           <div class="date">[[feed.date]]</div>
           <div class="tags">
+
             <template is="dom-repeat" items="[[_validateTags(feed.tags)]]">
+
               <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
+
             </template>
+
           </div>
+
         </div>
 
-        <div class="actions">
+        <!-- Actions Area -->
+        <div class="actions-area" on-tap="_blockEvents">
 
           <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
-
-<!--           <paper-menu-button id="tag" ignore-select on-tap="tag">
-            <paper-icon-button icon="icons:label-outline" class="dropdown-trigger" alt="multi select"></paper-icon-button>
-            <paper-menu class="dropdown-content" multi>
-              <template is="dom-repeat" items="[[feed.tags]]">
-                <paper-item>[[item.name]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-menu-button>
- -->
           <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
-          <paper-icon-button id="favorite" class="action" icon="icons:favorite-border" on-tap="favorite"></paper-icon-button>
-          <paper-icon-button icon$="{{_setStatusIcon(feed.status)}}" class$="{{feed.status}}" disabled></paper-icon-button>
+          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.favorite)]]" on-tap="favorite"></paper-icon-button>
+          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.status)]]" class$="[[feed.status]]" disabled></paper-icon-button>
 
           <paper-tooltip for="share" offset="0">Share</paper-tooltip>
           <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
@@ -237,13 +309,15 @@
 
         </div>
 
-      </app-toolbar>
+      </div>
 
-      <div id="content">
-      I am the CONTENT!
-<!--         <chris-note note="[[feed.details.note]]"></chris-note>
+      <div class="content">
+        I am the CONTENT!
+        <!-- 
+        <chris-note note="[[feed.details.note]]"></chris-note>
         <chris-plugin-list feedindex="[[index]]" plugins="[[feed.details.plugins]]"></chris-plugin-list>
-        <chris-comment-list comments="[[feed.details.comments]]"></chris-comment-list> -->
+        <chris-comment-list comments="[[feed.details.comments]]"></chris-comment-list>
+        -->
       </div>
 
     </paper-material>
@@ -285,7 +359,7 @@
         },
 
         observers: [
-          '_setFavoriteIcon(feed.favorite)'
+          '_checkedChanged(feed.checked)'
         ],
 
         _openedChanged: function( ){
@@ -300,7 +374,7 @@
           //  && this.feed.details 
           if( this.feed ){
 
-            this.opened ? this.$.feed.classList.add('expanded') : this.$.feed.classList.remove('expanded');
+            this.opened ? this.$.feed.classList.add('opened') : this.$.feed.classList.remove('opened');
             this.opened ? this.$.feed.elevation = 4 : this.$.feed.elevation = 1;
 
             return;
@@ -351,30 +425,16 @@
 
         },
 
-        _setTagStyle: function( color ){
+        _checkedChanged: function(){
 
-          return 'color: ' + color + ';';
+          // add/remove class
+          if( this.feed ){
 
-        },
-
-        _setFavoriteIcon: function( favorite ) {
-
-          this.$.favorite.icon = this.feed.favorite ? 'favorite-border' : 'favorite';
-
-        },
-
-        select: function( event ){
-
-          event.preventDefault();
-          event.stopPropagation();
-
-          if( !this.valid ){
+            this.feed.checked ? this.$.feed.classList.add('checked') : this.$.feed.classList.remove('checked');
 
             return;
 
           }
-
-          console.log( 'select feed' );
 
         },
 
@@ -408,6 +468,12 @@
 
         },
 
+        _setTagStyle: function( color ){
+
+          return 'color: ' + color + ';';
+
+        },
+
         favorite: function( event ){
 
           event.preventDefault();
@@ -431,6 +497,12 @@
           this.$.FeedAPI.params = params;
           this.$.FeedAPI.body = this.feed;
           this.$.FeedAPI.url = '';
+
+        },
+
+        _setFavoriteIcon: function( favorite ) {
+
+          return this.feed.favorite ? 'icons:favorite-border' : 'icons:favorite';
 
         },
 
@@ -521,6 +593,13 @@
 
           }
 
+          // need checked
+          if( !( typeof this.feed.checked === 'boolean' ) ){
+
+            error.push( 'checked:Boolean' );
+
+          }
+
           // need tags array
           if( !( this.feed.tags && this.feed.tags.constructor === Array ) ){
 
@@ -564,6 +643,13 @@
           }
 
           return tags;
+
+        },
+
+        _blockEvents: function( event ){
+
+          event.preventDefault();
+          event.stopPropagation();
 
         }
 
