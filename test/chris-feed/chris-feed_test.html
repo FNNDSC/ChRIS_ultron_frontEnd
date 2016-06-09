@@ -22,11 +22,26 @@
     <script>
       suite( '<chris-feed>', function() {
 
-        let element;
+        let element, validFeed;
 
         setup(function(){
 
           element = fixture('basic');
+          
+          validFeed = {
+            id: '1234',
+            name: 'My Analysis',
+            letter: 'N',
+            color: '#E91E63',
+            date: 'Jun 06, 2016',
+            status: 'running',
+            favorite: true,
+            checked: false,
+            tags: [{
+              name: 'HIE Study',
+              color: '#673AB7'
+            }]
+          };
 
         });
 
@@ -40,19 +55,7 @@
 
           element.addEventListener( 'valid-changed', validChanged );
 
-          element.feed = {
-            id: '1234',
-            name: 'My Analysis',
-            letter: 'N',
-            color: '#E91E63',
-            date: 'Jun 06, 2016',
-            status: 'running',
-            favorite: true,
-            tags: [{
-              name: 'HIE Study',
-              color: '#673AB7'
-            }]
-          };
+          element.feed = validFeed;
 
           function validChanged( event ) {
 
@@ -70,19 +73,7 @@
 
           element.addEventListener( 'feed-changed', feedChanged );
 
-          element.feed = {
-            id: '1234',
-            name: 'My Analysis',
-            letter: 'N',
-            color: '#E91E63',
-            date: 'Jun 06, 2016',
-            status: 'running',
-            favorite: true,
-            tags: [{
-              name: 'HIE Study',
-              color: '#673AB7'
-            }]
-          };
+          element.feed = validFeed;
 
           MockInteractions.tap( element.$.favorite );
 
@@ -102,19 +93,8 @@
 
           element.addEventListener( 'feed-changed', feedChanged );
 
-          element.feed = {
-            id: '1234',
-            name: 'My Analysis',
-            letter: 'N',
-            color: '#E91E63',
-            date: 'Jun 06, 2016',
-            status: 'running',
-            favorite: false,
-            tags: [{
-              name: 'HIE Study',
-              color: '#673AB7'
-            }]
-          };
+          validFeed.favorite = false;
+          element.feed = validFeed;
 
           MockInteractions.tap( element.$.favorite );
 
@@ -134,23 +114,18 @@
 
           element.addEventListener( 'valid-changed', validChanged );
 
-          element.feed = {
-            id: 'String',
-            name: true,
-            letter: 'String',
-            color: 'String',
-            date: 'String',
-            status: 'String',
-            favorite: true,
-            tags: []
-          };
+          var invalidFeed = validFeed;
+          invalidFeed.name = true;
+          invalidFeed.checked = 'String';
+          element.feed = invalidFeed;
 
           function validChanged( event ) {
 
             // expect response to be false because no params provided
             assert.equal( element.valid, false );
-            assert.equal( element.error.length, 1 );
+            assert.equal( element.error.length, 2 );
             assert.equal( element.error[0], 'name:String' );
+            assert.equal( element.error[1], 'checked:Boolean' );
             // check error message too
             
             done();
@@ -164,16 +139,10 @@
 
           element.addEventListener( 'error', onError );
 
-          element.feed = {
-            id: 'String',
-            name: 'String',
-            letter: 'String',
-            color: 123,
-            date: 'String',
-            status: 'String',
-            favorite: true,
-            tags: 'String'
-          };
+          var invalidFeed = validFeed;
+          invalidFeed.color = true;
+          invalidFeed.tags = 'String';
+          element.feed = invalidFeed;
 
           function onError( event ) {
 
@@ -188,6 +157,34 @@
             element.removeEventListener( 'error', onError );
 
           }
+
+        });
+
+        test('open feed is false', function() {
+
+          assert.equal( element.open , false );
+
+        });
+
+
+        test('open feed shows content', function() {
+
+          element.feed = validFeed;
+          element.open = true;
+
+          assert.equal( element.$.feed.classList.contains('open') , true );
+          assert.equal( getComputedStyle(element.$.content).display , 'block' );
+
+        });
+
+        test('close feed hides content', function() {
+
+          element.feed = validFeed;
+          element.open = true;
+          element.open = false;
+
+          assert.equal( element.$.feed.classList.contains('open') , false );
+          assert.equal( getComputedStyle(element.$.content).display , 'none' );
 
         });
 

@@ -207,7 +207,7 @@
 
       }
 
-      .feed.opened .content {
+      .feed.open .content {
 
         display: block;
 
@@ -312,14 +312,14 @@
           <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.favorite)]]" on-tap="favorite"></paper-icon-button>
           <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.status)]]" class$="[[feed.status]]" disabled></paper-icon-button>
 <!--           <div class="horizontal-section">
-          <paper-menu-button ignore-select>
-            <paper-icon-button icon="menu" class="dropdown-trigger" alt="multi select"></paper-icon-button>
-            <paper-menu class="dropdown-content" multi>
-              <template is="dom-repeat" items="[[_validateTags(feed.tags)]]" as="tag">
-                <paper-item>[[tag.name]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-menu-button>
+            <paper-menu-button ignore-select>
+              <paper-icon-button icon="menu" class="dropdown-trigger" alt="multi select"></paper-icon-button>
+              <paper-menu class="dropdown-content" multi>
+                <template is="dom-repeat" items="[[_validateTags(feed.tags)]]" as="tag">
+                  <paper-item>[[tag.name]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-menu-button>
         </div> -->
 
           <paper-tooltip for="share" offset="0">Share</paper-tooltip>
@@ -330,7 +330,7 @@
 
       </div>
 
-      <div class="content">
+      <div id="content" class="content">
         I am the CONTENT!
         <!-- 
         <chris-note note="[[feed.details.note]]"></chris-note>
@@ -353,10 +353,10 @@
             observer: '_validateFeed'
           },
 
-          opened:{
+          open:{
             type: Boolean,
             value: false,
-            observer: '_openedChanged'
+            observer: '_openChanged'
           },
 
           index: {
@@ -381,7 +381,7 @@
           '_checkedChanged(feed.checked)'
         ],
 
-        _openedChanged: function( ){
+        _openChanged: function( ){
 
           if( !this.valid ){
 
@@ -393,8 +393,8 @@
           //  && this.feed.details 
           if( this.feed ){
 
-            this.opened ? this.$.feed.classList.add('opened') : this.$.feed.classList.remove('opened');
-            this.opened ? this.$.feed.elevation = 4 : this.$.feed.elevation = 1;
+            this.open ? this.$.feed.classList.add('open') : this.$.feed.classList.remove('open');
+            this.open ? this.$.feed.elevation = 4 : this.$.feed.elevation = 1;
 
             return;
 
