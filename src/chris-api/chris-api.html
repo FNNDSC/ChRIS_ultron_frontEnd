@@ -14,6 +14,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="behaviors/chris-api-feeds-behavior.html">
 <link rel="import" href="behaviors/chris-api-labels-behavior.html">
 <link rel="import" href="behaviors/chris-api-login-behavior.html">
+<link rel="import" href="behaviors/chris-api-helper-behavior.html">
 <link rel="import" href="behaviors/chris-api-plugin-pacspull-behavior.html">
 <link rel="import" href="behaviors/chris-api-plugin-create-behavior.html">
 <link rel="import" href="behaviors/chris-api-plugins-feed-behavior.html">
@@ -105,6 +106,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         behaviors: [
+          Helper, // first import Helper so we can use it in next behaviors
           Feed,
           FeedDetails,
           Feeds,
