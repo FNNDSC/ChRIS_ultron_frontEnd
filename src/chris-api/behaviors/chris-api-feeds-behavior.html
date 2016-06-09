@@ -62,9 +62,7 @@
         var feeds = [];
         var payload = this.response.return.payload;
 
-        var colors = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
-        'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow',
-        'amber', 'orange', 'deep-orange'];
+        var colors = this.colors();
 
         for( var i=0; i<payload.length; i++ ){
 
@@ -76,7 +74,7 @@
             favorite: i%3 ? true : false,
             selected: false,
             details: null,
-            color: colors[Math.floor(Math.random() * colors.length)],
+            color: colors[Math.floor(Math.random() * colors.length)].value,
             letter: 'N',
             // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
             description: 'description for ' + payload[i],
@@ -125,8 +123,8 @@
 
         }
 
-        // make first feed invalid
-        feeds[0].id = true;
+        // make second feed invalid
+        feeds[1].id = true;
 
         return feeds;
 

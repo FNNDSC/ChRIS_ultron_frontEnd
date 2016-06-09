@@ -8,7 +8,10 @@
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- CHRIS -->
@@ -107,7 +110,7 @@
       .letter {
 
         font-size: 24px;
-        
+
       }
 
       .check-area:hover .letter, .checked .letter {
@@ -308,6 +311,16 @@
           <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
           <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.favorite)]]" on-tap="favorite"></paper-icon-button>
           <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.status)]]" class$="[[feed.status]]" disabled></paper-icon-button>
+<!--           <div class="horizontal-section">
+          <paper-menu-button ignore-select>
+            <paper-icon-button icon="menu" class="dropdown-trigger" alt="multi select"></paper-icon-button>
+            <paper-menu class="dropdown-content" multi>
+              <template is="dom-repeat" items="[[_validateTags(feed.tags)]]" as="tag">
+                <paper-item>[[tag.name]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-menu-button>
+        </div> -->
 
           <paper-tooltip for="share" offset="0">Share</paper-tooltip>
           <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
@@ -437,8 +450,7 @@
           if( this.feed ){
 
             this.feed.checked ? this.$.feed.classList.add('checked') : this.$.feed.classList.remove('checked');
-
-            return;
+            this.fire('checked', this.feed);
 
           }
 

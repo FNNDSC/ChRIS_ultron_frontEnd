@@ -120,28 +120,7 @@
 
         });
 
-        test('deselect all when select running', function( done ){
-
-          element.$.labels.selectedValues = ['all'];
-          element.addEventListener( 'filter-changed', filterChanged );
-
-          // select all
-          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="running"]' ) );
-
-          function filterChanged( event ) {
-
-            // not logged in
-            assert.equal( element.filter.length, 1 );
-            assert.equal( element.filter[0], 'running' );
-
-            done();
-            element.removeEventListener( 'filter-changed', filterChanged );
-
-          }
-
-        });
-
-        test('do not deselect favorite when select running', function( done ){
+        test('select favorite and running', function( done ){
 
           element.$.labels.selectedValues = ['favorite'];
           element.addEventListener( 'filter-changed', filterChanged );
@@ -153,8 +132,8 @@
 
             // not logged in
             assert.equal( element.filter.length, 2 );
-            assert.equal( element.filter[0], 'running' );
-            assert.equal( element.filter[1], 'favorite' );
+            assert.equal( element.filter[0], 'favorite' );
+            assert.equal( element.filter[1], 'running' );
 
             done();
             element.removeEventListener( 'filter-changed', filterChanged );
@@ -163,90 +142,6 @@
 
         });
 
-        test('do not deselect running when deselect favorite', function( done ){
-
-          element.$.labels.selectedValues = ['favorite', 'running'];
-          element.addEventListener( 'filter-changed', filterChanged );
-
-          // select all
-          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="favorite"]' ) );
-
-          function filterChanged( event ) {
-
-            // not logged in
-            assert.equal( element.filter.length, 1 );
-            assert.equal( element.filter[0], 'running' );
-
-            done();
-            element.removeEventListener( 'filter-changed', filterChanged );
-
-          }
-
-        });
-
-        test('deselect running when select done', function( done ){
-
-          element.$.labels.selectedValues = ['running'];
-          element.addEventListener( 'filter-changed', filterChanged );
-
-          // select all
-          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="done"]' ) );
-
-          function filterChanged( event ) {
-
-            // not logged in
-            assert.equal( element.filter.length, 1 );
-            assert.equal( element.filter[0], 'done' );
-
-            done();
-            element.removeEventListener( 'filter-changed', filterChanged );
-
-          }
-
-        });
-
-        test('deselect done when select error', function( done ){
-
-          element.$.labels.selectedValues = ['done'];
-          element.addEventListener( 'filter-changed', filterChanged );
-
-          // select all
-          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="error"]' ) );
-
-          function filterChanged( event ) {
-
-            // not logged in
-            assert.equal( element.filter.length, 1 );
-            assert.equal( element.filter[0], 'error' );
-
-            done();
-            element.removeEventListener( 'filter-changed', filterChanged );
-
-          }
-
-        });
-
-
-        test('deselect error when select running', function( done ){
-
-          element.$.labels.selectedValues = ['error'];
-          element.addEventListener( 'filter-changed', filterChanged );
-
-          // select all
-          MockInteractions.tap( element.$.labels.querySelector( 'paper-icon-item[value="running"]' ) );
-
-          function filterChanged( event ) {
-
-            // not logged in
-            assert.equal( element.filter.length, 1 );
-            assert.equal( element.filter[0], 'running' );
-
-            done();
-            element.removeEventListener( 'filter-changed', filterChanged );
-
-          }
-
-        });
 
         // CUSTOM LABELS
         test('select custom label', function( done ){
