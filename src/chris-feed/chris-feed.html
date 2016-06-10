@@ -8,15 +8,16 @@
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<!-- <link rel="import" href="../../bower_components/paper-menu/paper-menu.html"> -->
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
-<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<!-- <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html"> -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<!-- <link rel="import" href="../../bower_components/paper-item/paper-item.html"> -->
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- CHRIS -->
 <link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../chris-note/chris-note.html">
 
 <dom-module id="chris-feed">
 
@@ -356,10 +357,11 @@
 
       </div>
 
-      <div id="content" class="content" on-tap="_blockEvents">
+      <div id="content" class="content" on-tap="_blockEvents" on-resize-content="_resizeFeed">
         <paper-progress indeterminate></paper-progress>
         <div class="message">Loading details</div>
 
+        <chris-note note="[[feed.details.note]]"></chris-note>
         <!-- 
         <chris-note note="[[feed.details.note]]"></chris-note>
         <chris-plugin-list feedindex="[[index]]" plugins="[[feed.details.plugins]]"></chris-plugin-list>
@@ -584,6 +586,12 @@
 
           // attach new content
           this.set('feed.details', this.response);
+
+          this._resizeFeed();
+
+        },
+
+        _resizeFeed: function(){
 
           // fire event to let iron-its know element's size changed
           this.fire( 'resize-feed', {index: this.index} );

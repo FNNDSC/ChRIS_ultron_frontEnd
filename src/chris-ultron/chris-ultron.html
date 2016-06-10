@@ -13,6 +13,7 @@
 
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <!-- CHRIS ELEMENTS -->
@@ -74,6 +75,20 @@
 
       }
 
+      paper-progress {
+
+        width: 100%;
+        --paper-progress-active-color: var(--accent-color);
+        --paper-progress-height: 2px;
+
+      }
+
+      .loaded paper-progress {
+
+        display: none;
+
+      }
+
     </style>
 
     <div id="container">
@@ -91,7 +106,7 @@
           <!-- API Calls -->
           <chris-api id="FeedsAPI"
             api="Feeds"
-            response="{{feeds}}"
+            response="{{feeds}}" on-response="handleFeeds"
             error="{{error}}" on-error="handleError">
           </chris-api>
 
@@ -131,9 +146,12 @@
                 </app-toolbar>
               </app-header>
 
-              <div class="main content">
+              <div id="content" class="main content">
+
+                <paper-progress indeterminate></paper-progress>
 
                 <chris-feed-list feeds="[[feeds]]" on-notification="_showNotification"></chris-feed-list>
+
                 <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
 
               </div>
@@ -231,6 +249,12 @@
           this.$$( '#notification' ).fitInto = this.$$( 'chris-feed-list' );
 
           }
+
+        },
+
+        handleFeeds: function(){
+
+          this.$$( '#content' ).classList.add('loaded')
 
         },
 
