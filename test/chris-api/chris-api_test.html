@@ -284,6 +284,42 @@
 
         } );
 
+        //
+        //
+        // FEED DETAILS BEHAVIOR
+        //
+        //
+        test('Feed Details has a valid API', function() {
+
+          element.api = 'FeedDetails';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'FeedDetails');
+
+        } );
+
+        test('Feed Details returns a feed details', function( done ) {
+
+          element.api = 'FeedDetails';
+          element.addEventListener( 'response', responseChanged );
+          //update url with anything to initiate fetch
+
+          element.url = 'FeedDetails';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.note ).to.be.a('string');
+            expect( element.response.plugins ).to.be.a('array');
+            expect( element.response.comments ).to.be.a('array');
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
       } );
     </script>
 

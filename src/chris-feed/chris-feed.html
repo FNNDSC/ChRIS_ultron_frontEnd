@@ -9,6 +9,7 @@
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -203,6 +204,10 @@
 
       .content {
 
+        margin-top: 8px;
+        border-top: 1px solid var(--accent-color);
+        background-color: var(--paper-grey-50);
+        min-height: 64px;
         display: none;
 
       }
@@ -210,6 +215,18 @@
       .feed.open .content {
 
         display: block;
+
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--accent-color);
+        --paper-progress-height: 2px;
+      }
+
+      .loaded paper-progress, .loaded .message {
+
+        display: none;
 
       }
 
@@ -259,6 +276,15 @@
       content-type="application/json",
       response="{{response}}"
       on-response="handleFeed"
+      error="{{error}}"
+      on-error="handleError">
+    </chris-api>
+
+    <chris-api id="FeedDetailsAPI"
+      api="FeedDetails",
+      method="GET",
+      response="{{response}}"
+      on-response="handleFeedDetails"
       error="{{error}}"
       on-error="handleError">
     </chris-api>
@@ -330,8 +356,10 @@
 
       </div>
 
-      <div id="content" class="content">
-        I am the CONTENT!
+      <div id="content" class="content" on-tap="_blockEvents">
+        <paper-progress indeterminate></paper-progress>
+        <div class="message">Loading details</div>
+
         <!-- 
         <chris-note note="[[feed.details.note]]"></chris-note>
         <chris-plugin-list feedindex="[[index]]" plugins="[[feed.details.plugins]]"></chris-plugin-list>
@@ -396,19 +424,26 @@
             this.open ? this.$.feed.classList.add('open') : this.$.feed.classList.remove('open');
             this.open ? this.$.feed.elevation = 4 : this.$.feed.elevation = 1;
 
-            return;
-
           }
 
-          // trigger API call
-          if( this.feed ){
+          // trigger API call if no details
+          // need this.open if not iron-list recycle elements and fires unexpected
+          // fetch requests
+          if( this.open && this.feed && !this.feed.details ){
 
-            return;
-
-            this.$.chrisAPI.url = "";
-            this.$.chrisAPI.params = {
-              feedID: this.feed.index // feed.id
+            // let the ChRIS API know which will we will be calling
+            this.$.FeedDetailsAPI.targetID = {
+              feed: this.feed.id
             };
+            // should be done in API directly if possible
+            // set params
+            var params = {
+              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+            };
+            this.$.FeedDetailsAPI.params = params;
+
+            // trigger ajax call
+            this.$.FeedDetailsAPI.url = 'FeedDetails';
 
           }
 
@@ -540,6 +575,18 @@
             this.fire( 'notification', {text: this.response.update.text} );
 
           }
+
+        },
+
+        handleFeedDetails: function(){
+
+          this.$.content.classList.add('loaded');
+
+          // attach new content
+          this.set('feed.details', this.response);
+
+          // fire event to let iron-its know element's size changed
+          this.fire( 'resize-feed', {index: this.index} );
 
         },
 

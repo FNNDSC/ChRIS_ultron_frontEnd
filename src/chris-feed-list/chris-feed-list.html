@@ -43,7 +43,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection>
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection on-resize-feed="resizeFeed" >
       <template>
 
         <chris-feed index="[[index]]" feed="[[feed]]" open="[[selected]]"></chris-feed>
@@ -61,6 +61,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           feeds: {
             type: Array
           }
+
+        },
+
+        resizeFeed: function( event ){
+
+          this.$.feeds.updateSizeForItem( event.detail.index );
 
         }
 

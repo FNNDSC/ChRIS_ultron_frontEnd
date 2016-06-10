@@ -82,25 +82,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             value: 'json'
           },
 
-          // ChRIS API SPECIFIC VARS
-          chrisAPI:{
-            type: Boolean,
-            value: false
-          },
-
           apiRoot:{
             type: String,
-            value: 'http://127.0.0.1:5555/v1/'
+            value: ''
           },
 
-          dbPath:{
-            type: String,
-            value: '/tmp/ChRIS_DB'
-          },
-
-          createDB :{
-            type: Boolean,
-            value: false
+          // target IDs to help us build proper REST call
+          // feed ID
+          // comment ID
+          targetID: {
+            type: Object,
+            value: {}
           }
 
         },
