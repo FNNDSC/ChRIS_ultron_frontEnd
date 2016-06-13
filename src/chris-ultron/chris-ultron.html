@@ -1148,11 +1148,23 @@ for(n in this._instanceProps)e._addPropertyEffect(n,"function",this._createInsta
 
   <script>Polymer({is:"paper-spinner",behaviors:[Polymer.PaperSpinnerBehavior]});</script>
 </dom-module>
+<dom-module id="chris-footer" assetpath="../chris-footer/">
+
+  <template>
+
+    <style>.footer{color:#FFFFFF;}</style>
+
+      <div class="footer">© FNNDSC 2016</div>
+
+  </template>
+
+  <script>Polymer({is:"chris-footer"});</script>
+</dom-module>
 <dom-module id="chris-login" assetpath="../chris-login/">
 
   <template>
 
-    <style>:host{display:flex;position:absolute;top:0;right:0;left:0;bottom:0;background-color:var(--dark-primary-color);--paper-input-container-focus-color:var(--accent-color);}.spacer{flex:1;}.container{max-width:800px;margin:auto;margin-top:60px;margin-bottom:60px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;}.title{text-align:center;font-size:24px;color:var(--dark-primary-color);padding:10px;}paper-material{background-color:var(--paper-grey-50);padding:20px;opacity:1;}paper-button#login{margin-top:32px;background:var(--accent-color);color:white;@apply (--layout-vertical);@apply (--layout-center-center);display:flex;flex-direction:row;}.yellow-button{text-transform:none;color:#eeff41;}paper-spinner{margin:6px;--paper-spinner-layer-1-color:white;--paper-spinner-layer-2-color:white;--paper-spinner-layer-3-color:white;--paper-spinner-layer-4-color:white;}#loginSpinner{display:none;}a{color:var(--accent-color);}.footer{color:#FFFFFF;}</style>
+    <style>:host{display:flex;position:absolute;top:0;right:0;left:0;bottom:0;background-color:var(--dark-primary-color);--paper-input-container-focus-color:var(--accent-color);}.spacer{flex:1;}.container{max-width:800px;margin:auto;margin-top:60px;margin-bottom:60px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;}.title{text-align:center;font-size:24px;color:var(--dark-primary-color);padding:10px;}paper-material{background-color:var(--paper-grey-50);padding:20px;opacity:1;}paper-button#login{margin-top:32px;background:var(--accent-color);color:white;@apply (--layout-vertical);@apply (--layout-center-center);display:flex;flex-direction:row;}.yellow-button{text-transform:none;color:#eeff41;}paper-spinner{margin:6px;--paper-spinner-layer-1-color:white;--paper-spinner-layer-2-color:white;--paper-spinner-layer-3-color:white;--paper-spinner-layer-4-color:white;}#loginSpinner{display:none;}a{color:var(--accent-color);}</style>
 
     <chris-api id="api" api="Login" response="{{response}}" on-response="handleResponse" error="{{error}}" on-error="handleError">
     </chris-api>
@@ -1197,8 +1209,9 @@ for(n in this._instanceProps)e._addPropertyEffect(n,"function",this._createInsta
 
       <div class="spacer"></div>
 
-      <div class="footer">© FNNDSC 2016</div>
-    </div>
+      <chris-footer><chris-footer>
+
+    </chris-footer></chris-footer></div>
 
     <paper-toast id="loginError" text=""></paper-toast>
 
@@ -1270,8 +1283,6 @@ for(n in this._instanceProps)e._addPropertyEffect(n,"function",this._createInsta
                 <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
 
               </div>
-
-
 
             </app-header-layout>
 
