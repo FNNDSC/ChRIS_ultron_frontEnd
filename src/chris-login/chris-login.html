@@ -9,6 +9,7 @@
 
 <!-- CHRIS -->
 <link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../chris-footer/chris-footer.html">
 
 <dom-module id="chris-login">
 
@@ -107,10 +108,6 @@
 
       }
 
-      .footer{
-        color: #FFFFFF;
-      }
-
     </style>
 
     <chris-api id="api"
@@ -175,7 +172,8 @@
 
       <div class="spacer"></div>
 
-      <div class="footer">© FNNDSC 2016</div>
+      <chris-footer><chris-footer>
+
     </div>
 
     <paper-toast id="loginError" text=""></paper-toast>
