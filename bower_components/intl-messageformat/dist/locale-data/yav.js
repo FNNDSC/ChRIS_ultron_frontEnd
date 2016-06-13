@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"yav",pluralRuleFunction:function(a,e){return"other"}});

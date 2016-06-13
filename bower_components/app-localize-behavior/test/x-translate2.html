@@ -1,0 +1,11 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../app-localize-behavior.html">
+
+</head><body><dom-module id="x-translate2">
+  <template>
+    <div id="output">{{localize('intro', 'name', 'batman', 'numCats', 3)}}</div>
+  </template>
+
+  <script>Polymer({is:"x-translate2",behaviors:[Polymer.AppLocalizeBehavior],properties:{language:{value:"en",type:String},resources:{type:Object,value:function(){return{en:{intro:"my name is {name}. i have {numCats, number} cats."},fr:{intro:"je m'apelle {name}. j'ai {numCats, number} chats."}}}}}});</script>
+</dom-module>
+</body></html>

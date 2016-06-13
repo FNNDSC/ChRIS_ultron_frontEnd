@@ -1,0 +1,37 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-swatch-picker basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+
+  <link rel="import" href="../paper-swatch-picker.html">
+</head>
+<body>
+  <style is="custom-style">paper-swatch-picker.custom{--paper-swatch-picker-color-size:10px;}</style>
+
+  <test-fixture id="basic">
+    <template>
+      <paper-swatch-picker></paper-swatch-picker>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="preselected">
+    <template>
+      <paper-swatch-picker class="preselected" color="#ffcdd2"></paper-swatch-picker>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="custom">
+    <template>
+      <paper-swatch-picker class="custom" column-count="5" color-list="[&quot;#ff0000&quot;, &quot;#00ff00&quot;, &quot;#0000ff&quot;, &quot;#000&quot;, &quot;#fff&quot;]"></paper-swatch-picker>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){var e,o;setup(function(){e=fixture("basic"),o=e.$.container}),test("clicking the button opens a rendered menu",function(t){Polymer.dom.flush(),assert.equal(e.color,void 0),MockInteractions.tap(e.$.iconButton),Polymer.Base.async(function(){assert.equal(o.style.width,"360px"),assert.equal(o.style.height,"200px");var s=o.querySelector(".color");assert.equal("#ffebee",e._rgbToHex(s.style.color)),t()},1)}),test("clicking a color selects it",function(t){Polymer.dom.flush(),assert.equal(e.color,void 0),MockInteractions.tap(e.$.iconButton),Polymer.Base.async(function(){var s=o.querySelector(".color");MockInteractions.tap(s),Polymer.Base.async(function(){assert.equal("#ffebee",e.color),assert.equal("#ffebee",e._rgbToHex(e.$.iconButton.style.color)),t()},1)})})}),suite("initial selection",function(){var e,o;setup(function(){e=fixture("preselected"),o=e.$.container}),test("the picker can have an initially selected color",function(){Polymer.dom.flush(),assert.equal(e.color,"#ffcdd2"),assert.equal("#ffcdd2",e._rgbToHex(e.$.iconButton.style.color))}),test("selecting a different color updates the button color",function(t){Polymer.dom.flush(),assert.equal(e.color,"#ffcdd2"),assert.equal("#ffcdd2",e._rgbToHex(e.$.iconButton.style.color)),MockInteractions.tap(e.$.iconButton),Polymer.Base.async(function(){var s=o.querySelector(".color");MockInteractions.tap(s),Polymer.Base.async(function(){assert.equal("#ffebee",e.color),assert.equal("#ffebee",e._rgbToHex(e.$.iconButton.style.color)),t()},1)},1)})}),suite("custom color list",function(){var e,o;setup(function(){e=fixture("custom"),o=e.$.container}),test("the picker shows the right colors",function(t){Polymer.dom.flush(),assert.equal(e.colorList.length,5),MockInteractions.tap(e.$.iconButton),Polymer.Base.async(function(){assert.equal(o.style.width,"50px"),assert.equal(o.style.height,"10px");var s=o.querySelectorAll(".color");assert.equal("#ff0000",e._rgbToHex(s[0].style.color)),assert.equal("#00ff00",e._rgbToHex(s[1].style.color)),assert.equal("#0000ff",e._rgbToHex(s[2].style.color)),assert.equal("#000000",e._rgbToHex(s[3].style.color)),assert.equal("#ffffff",e._rgbToHex(s[4].style.color)),t()},1)})});</script>
+
+
+</body></html>

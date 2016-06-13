@@ -1,0 +1,9 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+
+<link rel="import" href="ami-import.html">
+
+</head><body><dom-module id="ami-loader">
+  <script>Polymer({is:"ami-loader",properties:{data:{type:Array,value:[],observer:"_dataChanged"},status:{type:Number,value:0},progress:{type:Number,value:0},loader:{type:Object,value:null},series:{type:Array,value:[]}},_loadSequence:function(e){var r=this;return Promise.resolve().then(function(){return r.loader.fetch(e)}).then(function(e){return r.loader.parse(e)}).then(function(e){r.series.push(e)})["catch"](function(e){window.console.log("oops... something went wrong..."),window.console.log(e)})},_dataChanged:function(){if(this.data&&!(this.data.length<=0)){this.loader=new AMI["default"].Loaders.Volume;var e=[],r=this;this.data.forEach(function(a){e.push(r._loadSequence(a))}),Promise.all(e).then(function(){r.loader.free(),r.loader=null,r.series=r.series[0].mergeSeries(r.series),r.fire("series-changed"),r.fire("loaded")})}}});</script>
+</dom-module>
+</body></html>

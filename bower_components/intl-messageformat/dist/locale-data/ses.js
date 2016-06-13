@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"ses",pluralRuleFunction:function(a,e){return"other"}});

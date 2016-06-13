@@ -1,0 +1,5 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="pouchdb.html">
+
+<script>!function(){"use strict";Polymer({is:"app-pouchdb-conflict-resolution",properties:{strategy:{type:String,value:"firstWriteWins"},allowAncestralResolution:{type:Boolean,value:!1}},created:function(){this._eventTarget=null},attached:function(){this._eventTarget=Polymer.dom(this).host||document,this.listen(this._eventTarget,"app-pouchdb-conflict","resolveConflict")},detached:function(){this.unlisten(this._eventTarget,"app-pouchdb-conflict","resolveConflict")},resolveConflict:function(t){return this.strategy&&this[this.strategy]?(t.detail.resolveConflict(this[this.strategy].bind(this)),void(this.allowAncestralResolution||t.stopImmediatePropagation())):Promise.reject("No resolution strategy available.")},firstWriteWins:function(t,e,i,n){return t.get(i._id).then(function(t){return{id:t._id,rev:t._rev}})},lastWriteWins:function(t,e,i,n){return t.get(i._id,{conflicts:!0}).then(function(e){return i._rev=e._rev,t.put(i)}.bind(this))}})}();</script>
+</head><body></body></html>

@@ -1,0 +1,75 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+
+<link rel="import" href="../chris-api/chris-api.html">
+
+</head><body><dom-module id="chris-login">
+
+  <template>
+
+    <style>:host{display:flex;position:absolute;top:0;right:0;left:0;bottom:0;background-color:var(--dark-primary-color);--paper-input-container-focus-color:var(--accent-color);}.spacer{flex:1;}.container{max-width:800px;margin:auto;margin-top:60px;margin-bottom:60px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;}.title{text-align:center;font-size:24px;color:var(--dark-primary-color);padding:10px;}paper-material{background-color:var(--paper-grey-50);padding:20px;opacity:1;}paper-button#login{margin-top:32px;background:var(--accent-color);color:white;@apply (--layout-vertical);@apply (--layout-center-center);display:flex;flex-direction:row;}paper-spinner{margin:6px;--paper-spinner-layer-1-color:white;--paper-spinner-layer-2-color:white;--paper-spinner-layer-3-color:white;--paper-spinner-layer-4-color:white;}#loginSpinner{display:none;}a{color:var(--accent-color);}.footer{color:#FFFFFF;}</style>
+
+    <chris-api id="api" api="Login" response="{{response}}" on-response="handleResponse" error="{{error}}" on-error="handleError">
+    </chris-api>
+
+
+    <div class="container">
+
+      <paper-material elevation="5">
+        <div class="horizontal-section">
+
+          <section>
+
+            <div class="title">
+            Welcome to ChRIS Ultron
+            </div>
+          </section>
+
+          <section> 
+            <div>
+              <paper-input id="username" type="username" value="{{_username}}" required="" error-message="Username is required" label="Username" onfocusout="validate()" on-keypress="keypressHandler">
+              </paper-input>
+              <paper-input id="password" type="password" value="{{_password}}" required="" error-message="Password is required" label="Password" onfocusout="validate()" on-keypress="keypressHandler">
+              </paper-input>
+            </div>
+          </section>
+
+          <section> 
+            <paper-button id="login" on-click="login"><div id="loginLabel">Log In</div> <paper-spinner active="" id="loginSpinner"></paper-spinner></paper-button>
+
+          </section>
+
+          <section>
+            <div>
+              <br>
+              New to <a href="https://github.com/FNNDSC">ChRIS</a>? <a href="https://github.com/FNNDSC">Register</a> for an account.
+            </div>
+          </section>
+
+        </div>
+
+      </paper-material>
+
+      <div class="spacer"></div>
+
+      <div class="footer">© FNNDSC 2016</div>
+    </div>
+
+    <paper-toast id="loginError" text=""></paper-toast>
+
+    <paper-toast id="serverError" duration="0" text="An error occured while connecting to the server. Please contact dev@babymri.org.">
+      <paper-button onclick="serverError.toggle()" class="yellow-button">Close now!</paper-button>
+    </paper-toast>
+
+  </template>
+
+  <script>Polymer({is:"chris-login",properties:{logged:{type:Boolean,notify:!0},_username:{type:String,value:""},_password:{type:String,value:""},response:{type:Object},error:{type:Object}},keypressHandler:function(s){13===s.charCode&&this.login()},login:function(){this.$.username.validate(),this.$.password.validate(),this.$.username.invalid||this.$.password.invalid||this.$.login.disabled||(this.$.login.disabled=!0,this.$.loginLabel.style.display="none",this.$.loginSpinner.style.display="block",this.$.api.params={auth:"user="+this._username+",passwd="+this._password,username:this._username,password:this._password},this.$.api.url="login")},handleResponse:function(){return this.$.login.disabled=!1,this.$.loginLabel.style.display="block",this.$.loginSpinner.style.display="none",this.response.status?(sessionStorage.setItem("username",this._username),sessionStorage.setItem("token",this.response.token),void(this.logged=!0)):(this.logged=!1,this.$.loginError.text=this.response.message,void this.$.loginError.show())},handleError:function(){this.$.login.disabled=!1,this.$.loginLabel.style.display="block",this.$.loginSpinner.style.display="none",this.$.serverError.open(),console.log(this.error)}});</script>
+</dom-module>
+</body></html>

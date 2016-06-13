@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"dua",pluralRuleFunction:function(a,e){return"other"}});

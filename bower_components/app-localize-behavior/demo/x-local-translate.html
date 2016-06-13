@@ -1,0 +1,30 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../app-localize-behavior.html">
+<link rel="import" href="common-styles.html">
+
+</head><body><dom-module id="x-local-translate">
+  <template>
+    <style include="common-styles"></style>
+
+    <div class="lang">
+      <span title="english">🇬🇧 EN</span>
+      <paper-toggle-button on-change="_toggle" id="switch"></paper-toggle-button>
+      <span title="french">FR 🇫🇷</span>
+    </div>
+
+    <h4>This demo's resources are loaded statically, not from an external file.</h4>
+
+    <div class="snippet">
+      <div class="demo">
+        <div>{{localize('greeting')}}</div>
+      </div>
+      <div class="code">
+        <code>localize('greeting')</code>
+      </div>
+    </div>
+  </template>
+
+  <script>Polymer({is:"x-local-translate",behaviors:[Polymer.AppLocalizeBehavior],properties:{language:{value:"en",type:String},formats:{type:Object,value:function(){return{number:{USD:{style:"currency",currency:"USD"}}}}},resources:{type:Object,value:function(){return{en:{greeting:"Hello!"},fr:{greeting:"Bonjour!"}}}}},_toggle:function(){this.language=this.$["switch"].checked?"fr":"en"}});</script>
+</dom-module>
+</body></html>

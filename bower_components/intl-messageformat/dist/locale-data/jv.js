@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"jv",pluralRuleFunction:function(a,e){return"other"}});

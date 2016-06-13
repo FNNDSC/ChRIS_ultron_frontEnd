@@ -1,0 +1,1 @@
+"use strict";var utils=require("./utils"),clone=utils.clone;module.exports=function(e){return e=clone(e),e.index||(e.index={}),["type","name","ddoc"].forEach(function(i){e.index[i]&&(e[i]=e.index[i],delete e.index[i])}),e.fields&&(e.index.fields=e.fields,delete e.fields),e.type||(e.type="json"),e};

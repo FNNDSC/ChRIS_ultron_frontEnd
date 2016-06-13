@@ -1,0 +1,325 @@
+<!DOCTYPE html><html><head>
+    <title>chris-api test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/chris-api/chris-api.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-api></chris-api>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite( '<chris-api>', function() {
+
+        let element;
+
+        setup(function(){
+
+          element = fixture('basic');
+
+        });
+
+        test('instantiating the element works', function() {
+
+          assert.equal( element.is, 'chris-api' );
+
+        });
+
+        test('invalid API returns error', function( done ) {
+
+          element.addEventListener( 'error', errorChanged );
+          element.api = 'InvalidAPI';
+
+          function errorChanged( event ){
+
+            assert.equal( element.error, 'InvalidAPI is not valid. ( Missing  prepareInvalidAPI handleInvalidAPI handleErrorInvalidAPI )' );
+
+            done();
+            element.removeEventListener( 'error', errorChanged );
+
+          }
+
+        });
+
+        //
+        //
+        // LOGIN BEHAVIOR
+        //
+        //
+        test('Login has a valid API', function() {
+
+          element.api = 'Login';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'Login');
+
+        } );
+
+        test('Login with no parameters returns false', function( done ) {
+
+          element.api = 'Login';
+          element.addEventListener( 'response', responseChanged );
+          //update url with anything to initiate fetch
+          element.url = 'Login';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.response.status, false );
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
+        test('Login with valid parameters returns true', function( done ) {
+
+          element.api = 'Login';
+          element.addEventListener( 'response', responseChanged );
+          element.params = { username: 'chris', password: 'chris'};
+          //update url with anything to initiate fetch
+          element.url = 'Login';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.response.status, true );
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
+        test('Login with invalid parameters returns false', function( done ) {
+
+          element.api = 'Login';
+          element.addEventListener( 'response', responseChanged );
+          element.params = { username: 'chris', password: 'ultron'};
+          //update url with anything to initiate fetch
+          element.url = 'Login';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.response.status, false );
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
+        //
+        //
+        // LABELS BEHAVIOR
+        //
+        //
+        test('Labels has a valid API', function() {
+
+          element.api = 'Labels';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'Labels');
+
+        } );
+
+        test('Labels returns an array of labels', function( done ) {
+
+          element.api = 'Labels';
+          element.addEventListener( 'response', responseChanged );
+          //update url with anything to initiate fetch
+          element.url = 'Labels';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.length ).to.be.at.least(1);
+            expect( element.response[0].color ).to.be.a('string');
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
+        //
+        //
+        // FEEDS BEHAVIOR
+        //
+        //
+        test('Feeds has a valid API', function() {
+
+          element.api = 'Feeds';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'Feeds');
+
+        } );
+
+        test('Feeds returns an array of feeds', function( done ) {
+
+          element.api = 'Feeds';
+          element.addEventListener( 'response', responseChanged );
+          //update url with anything to initiate fetch
+          element.url = 'Feeds';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.length ).to.be.at.least(1);
+
+            // list properties we expect for a feed
+            expect( element.response[0].id ).to.be.a('string');
+            expect( element.response[0].name ).to.be.a('string');
+            expect( element.response[0].color ).to.be.a('string');
+            expect( element.response[0].description ).to.be.a('string');
+            expect( element.response[0].date ).to.be.a('string');
+            expect( element.response[0].favorite ).to.be.a('boolean');
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
+        //
+        //
+        // PLUGINS FEED BEHAVIOR
+        //
+        //
+        test('PluginsFeed has a valid API', function() {
+
+          element.api = 'PluginsFeed';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'PluginsFeed');
+
+        } );
+
+        test('PluginsFeed returns an array of plugins', function( done ) {
+
+          element.api = 'PluginsFeed';
+          element.addEventListener( 'response', responseChanged );
+          //update url with anything to initiate fetch
+          element.url = 'PluginsFeed';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.length ).to.be.at.least(1);
+            expect( element.response[0].name ).to.be.a('string');
+            expect( element.response[0].label ).to.be.a('string');
+            expect( element.response[0].color ).to.be.a('string');
+            expect( element.response[0].url ).to.be.a('string');
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
+        //
+        //
+        // FEED BEHAVIOR
+        //
+        //
+        test('Feed has a valid API', function() {
+
+          element.api = 'Feed';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'Feed');
+
+        } );
+
+        test('Feed returns a feed', function( done ) {
+
+          element.api = 'Feed';
+          element.addEventListener( 'response', responseChanged );
+          //update url with anything to initiate fetch
+          var body = {
+            id: '1234',
+            name: 'Cool Feed Name',
+            color: 'red',
+            date: 'June 6, 2016',
+            tags: []
+          }
+
+          element.method = 'POST';
+          element.contentType="application/json",
+          element.body = body;
+          element.url = 'Feed';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.id ).to.be.a('string');
+            expect( element.response.name ).to.be.a('string');
+            expect( element.response.color ).to.be.a('string');
+            expect( element.response.date ).to.be.a('string');
+            expect( element.response.tags ).to.be.a('array');
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
+        //
+        //
+        // FEED DETAILS BEHAVIOR
+        //
+        //
+        test('Feed Details has a valid API', function() {
+
+          element.api = 'FeedDetails';
+
+          // if API not valid, api reset to ''
+          assert.equal(element.api, 'FeedDetails');
+
+        } );
+
+        test('Feed Details returns a feed details', function( done ) {
+
+          element.api = 'FeedDetails';
+          element.addEventListener( 'response', responseChanged );
+          //update url with anything to initiate fetch
+
+          element.url = 'FeedDetails';
+
+          function responseChanged( event ) {
+
+            // expect response to be false because no params provided
+            expect( element.response.note ).to.be.a('string');
+            expect( element.response.plugins ).to.be.a('array');
+            expect( element.response.comments ).to.be.a('array');
+
+            done();
+            element.removeEventListener( 'response', responseChanged );
+
+          }
+
+        } );
+
+      } );
+    </script>
+
+  
+
+</body></html>

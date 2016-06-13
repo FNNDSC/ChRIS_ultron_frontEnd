@@ -1,0 +1,11 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../app-localize-behavior.html">
+
+</head><body><dom-module id="x-translate">
+  <template>
+    <div id="output">{{localize('greeting')}}</div>
+  </template>
+
+  <script>Polymer({is:"x-translate",behaviors:[Polymer.AppLocalizeBehavior],properties:{language:{value:"en",type:String},resources:{type:Object,value:function(){return{en:{greeting:"hello"},fr:{greeting:"bonjour"}}}}}});</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>app-indexeddb-mirror tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../app-indexeddb-mirror/app-indexeddb-mirror.html">
+  <script src="helpers.js"></script>
+</head>
+<body>
+
+  <test-fixture id="BasicMirror">
+    <template>
+      <app-indexeddb-mirror session="test" key="basic-mirror">
+      </app-indexeddb-mirror>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="SecondMirror">
+    <template>
+      <app-indexeddb-mirror session="test" key="basic-mirror" log="">
+      </app-indexeddb-mirror>
+    </template>
+  </test-fixture>
+
+  <script>function getPersistedValue(e){return appStorageTestHelpers.getIdbObjectStoreValue("app-mirror",dbVersion,"mirrored_data",e)}function setPersistedValue(e,t){return appStorageTestHelpers.setIdbObjectStoreValue("app-mirror",dbVersion,"mirrored_data",e,t)}function expectPersistedValue(e,t){return getPersistedValue(e).then(function(e){expect(e).to.be.deep.equal(t)})}var dbVersion=2;suite("<app-indexeddb-mirror>",function(){teardown(function(){return appStorageTestHelpers.restoreNavigatorOnLine(),appStorageTestHelpers.deleteIdbDatabase("app-mirror")}),suite("basic mirroring",function(){var e;setup(function(){return e=fixture("BasicMirror"),e.transactionsComplete}),teardown(function(){return e.client.closeDb()}),suite("when online",function(){test("mirrors data into IndexedDB",function(){return e.client.supportsMirroring?(e.data={foo:"bar"},e.transactionsComplete.then(function(){return expectPersistedValue(e.key,e.data)})):void 0}),test("passes changes to persistedData through to data",function(){return e.client.supportsMirroring?(e.data={foo:"bar"},expect(e.persistedData).to.be.deep.equal(e.data),e.set("persistedData.foo","baz"),expect(e.data).to.be.deep.equal(e.persistedData),e.transactionsComplete.then(function(){return expectPersistedValue(e.key,e.data)})):void 0})}),suite("when offline",function(){test("boots up with persisted value",function(){if(e.client.supportsMirroring){var t,r={foo:"bar"};return e.data=r,e.transactionsComplete.then(function(){return appStorageTestHelpers.goOffline(),t=fixture("SecondMirror"),t.transactionsComplete}).then(function(){expect(t.persistedData).to.be.deep.equal(r)})}}),test("sets persistedData to value in IDB",function(){if(e.client.supportsMirroring){e.data={foo:"bar"};var t={foo:"baz"};return e.transactionsComplete.then(function(){return setPersistedValue(e.key,t)}).then(function(){return appStorageTestHelpers.goOffline(),e.transactionsComplete}).then(function(){expect(e.persistedData).to.be.deep.equal(t)})}})})})});</script>
+
+
+</body></html>

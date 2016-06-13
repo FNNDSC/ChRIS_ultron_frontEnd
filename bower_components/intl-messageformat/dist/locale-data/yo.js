@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"yo",pluralRuleFunction:function(a,e){return"other"}}),IntlMessageFormat.__addLocaleData({locale:"yo-BJ",parentLocale:"yo"});

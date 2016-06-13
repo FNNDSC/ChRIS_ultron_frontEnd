@@ -1,0 +1,3 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<script>!function(){"use strict";function e(){for(var e=0;e<n.length;++e)n[e].refreshNetworkStatus()}var n=[];window.addEventListener("online",e),window.addEventListener("offline",e),Polymer.AppNetworkStatusBehavior={properties:{online:{type:Boolean,readOnly:!0,notify:!0,value:function(){return window.navigator.onLine}}},attached:function(){n.push(this),this.refreshNetworkStatus()},detached:function(){var e=n.indexOf(this);0>e||n.splice(e,1)},refreshNetworkStatus:function(){this._setOnline(window.navigator.onLine)}}}();</script>
+</head><body></body></html>

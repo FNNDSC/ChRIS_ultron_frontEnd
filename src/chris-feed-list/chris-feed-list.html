@@ -1,0 +1,33 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+
+
+
+
+
+<link rel="import" href="../chris-feed/chris-feed.html">
+
+</head><body><dom-module id="chris-feed-list">
+
+  <template>
+
+    <style>:host{@apply (--layout-fit);}iron-list{@apply (--layout-fit);padding-top:16px;--iron-list-items-container:{max-width:800px;margin:auto;margin-top:30px;margin-bottom:60px;border-bottom:1px solid var(--accent-color);};}</style>
+
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled="" multi-selection="" on-resize-feed="resizeFeed">
+
+      <template>
+
+        <chris-feed index="[[index]]" feed="[[feed]]" open="[[selected]]"></chris-feed>
+
+      </template>
+      
+    </iron-list>
+
+  </template>
+
+  <script>Polymer({is:"chris-feed-list",properties:{feeds:{type:Array}},resizeFeed:function(e){this.$.feeds.updateSizeForItem(e.detail.index)}});</script>
+</dom-module>
+</body></html>

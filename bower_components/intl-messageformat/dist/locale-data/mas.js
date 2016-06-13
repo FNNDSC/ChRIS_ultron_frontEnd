@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"mas",pluralRuleFunction:function(a,e){return e?"other":1==a?"one":"other"}}),IntlMessageFormat.__addLocaleData({locale:"mas-TZ",parentLocale:"mas"});

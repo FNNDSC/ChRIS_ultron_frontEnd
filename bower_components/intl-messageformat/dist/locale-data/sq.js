@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"sq",pluralRuleFunction:function(a,e){var l=String(a).split("."),t=Number(l[0])==a,o=t&&l[0].slice(-1),n=t&&l[0].slice(-2);return e?1==a?"one":4==o&&14!=n?"many":"other":1==a?"one":"other"}}),IntlMessageFormat.__addLocaleData({locale:"sq-MK",parentLocale:"sq"}),IntlMessageFormat.__addLocaleData({locale:"sq-XK",parentLocale:"sq"});

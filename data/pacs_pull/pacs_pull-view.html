@@ -1,0 +1,64 @@
+<html><head><link rel="import" href="../../libs/threejs.html">
+
+
+
+
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/ami-viewer/ami-viewer.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+</head><body><dom-module id="pacs-pull-plugin-view">
+
+  <template>
+
+    <style>:host{width:100%;height:100%;}.container{display:flex;height:300px;}ami-viewer{flex:2;min-width:200px;}.controls{border-bottom:1px solid var(--paper-grey-300);border-right:1px solid var(--paper-grey-300);flex:1;min-width:100px;padding:8px;overflow-y:auto;}paper-dropdown-menu, paper-slider{width:100%;}</style>
+
+    <div class="container">
+      <ami-viewer id="viewer" data="[[data]]" index="{{index}}" orientation="{{orientation}}" flip-rows="{{flipRows}}" flip-columns="{{flipColumns}}" index-max="{{indexMax}}" border-color="[[fBorderColor]]"></ami-viewer>
+        
+      <div class="controls">
+
+
+        
+        <paper-dropdown-menu label="Series">
+          <paper-listbox class="dropdown-content" selected="{{seriesidx}}">
+            <paper-item>DTI image</paper-item>
+            <paper-item>T1 image</paper-item>
+            <paper-item>T2 image</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <paper-dropdown-menu label="Orientation">
+          <paper-listbox class="dropdown-content" selected="{{orientation}}">
+            <paper-item>Acquisition</paper-item>
+            <paper-item>Next</paper-item>
+            <paper-item>Last</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        
+        <div>Slice Index</div>
+        <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable=""></paper-slider>
+
+        
+        <paper-checkbox checked="{{flipRows}}">Flip Rows</paper-checkbox>
+        <paper-checkbox checked="{{flipColumns}}">Flip Columns</paper-checkbox>
+
+      </div>
+    </div>
+        
+
+  </template>
+
+  <script>Polymer({is:"pacs-pull-plugin-view",properties:{selected:{type:Boolean,value:!1,observer:"_selectedChanged"},initialized:{type:Boolean,value:!1},animationFrameID:{type:Number},data:{type:Array,value:[]},index:{type:Number,value:0},indexMax:{type:Number,value:0},orientation:{type:Number,value:0},rotation:{type:Number,value:0},flipRows:{type:Boolean,value:!1},flipColumns:{type:Boolean,value:!1},borderColor:{type:String,value:"#65a5f2",observer:"_colorChanged"},fBoderColor:{type:String}},ready:function(){},_selectedChanged:function(){window.console.log("selected pacs pull"),this.selected&&!this.initialized&&(this.init(),this.initialized=!0),this.selected?this.animate():window.cancelAnimationFrame(this.animationFrameID)},init:function(){var e=["36444280","36444294","36444308","36444322","36444336"];this.data=e.map(function(e){return"https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/"+e})},_colorChanged:function(){this.fBorderColor=this.borderColor.replace("#","0x")},animate:function(){}});</script>
+</dom-module>
+</body></html>

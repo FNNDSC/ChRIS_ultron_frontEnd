@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"ro",pluralRuleFunction:function(e,a){var o=String(e).split("."),l=!o[1],r=Number(o[0])==e,t=r&&o[0].slice(-2);return a?1==e?"one":"other":1==e&&l?"one":!l||0==e||1!=e&&t>=1&&19>=t?"few":"other"}}),IntlMessageFormat.__addLocaleData({locale:"ro-MD",parentLocale:"ro"});

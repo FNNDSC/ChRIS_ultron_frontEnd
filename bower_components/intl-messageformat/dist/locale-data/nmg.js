@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"nmg",pluralRuleFunction:function(a,e){return"other"}});

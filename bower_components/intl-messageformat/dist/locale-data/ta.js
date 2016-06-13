@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"ta",pluralRuleFunction:function(a,e){return e?"other":1==a?"one":"other"}}),IntlMessageFormat.__addLocaleData({locale:"ta-LK",parentLocale:"ta"}),IntlMessageFormat.__addLocaleData({locale:"ta-MY",parentLocale:"ta"}),IntlMessageFormat.__addLocaleData({locale:"ta-SG",parentLocale:"ta"});

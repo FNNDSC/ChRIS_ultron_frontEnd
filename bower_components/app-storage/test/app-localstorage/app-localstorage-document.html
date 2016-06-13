@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>app-localstorage tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../app-storage-compatibility-suite.html">
+  <link rel="import" href="../../app-localstorage/app-localstorage-document.html">
+</head>
+<body>
+
+  <test-fixture id="BasicStorage">
+    <template>
+      <app-localstorage-document key="app-localstorage-test" data="{}">
+      </app-localstorage-document>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="SyncingStorage">
+    <template>
+      <app-localstorage-document key="app-localstorage-test" data="{}">
+      </app-localstorage-document>
+      <app-localstorage-document key="app-localstorage-test" data="{}">
+      </app-localstorage-document>
+    </template>
+  </test-fixture>
+
+  <script>document.addEventListener("WebComponentsReady",function(){testAppStorageDocumentCompatibility({tagName:"app-localstorage-document",fetchStoredValue:function(e){var t=e.split("."),o=JSON.parse(localStorage.getItem("app-localstorage-test"));return t.shift(),Promise.resolve(Polymer.Base.get(t.join("."),o))}})});</script>
+
+
+</body></html>

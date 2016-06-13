@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"mer",pluralRuleFunction:function(a,e){return"other"}});

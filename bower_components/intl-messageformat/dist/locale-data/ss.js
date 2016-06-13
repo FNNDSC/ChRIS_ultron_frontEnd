@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"ss",pluralRuleFunction:function(e,a){return a?"other":1==e?"one":"other"}});

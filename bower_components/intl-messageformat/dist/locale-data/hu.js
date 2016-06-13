@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"hu",pluralRuleFunction:function(e,o){return o?1==e||5==e?"one":"other":1==e?"one":"other"}});

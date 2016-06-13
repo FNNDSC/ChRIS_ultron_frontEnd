@@ -1,0 +1,7 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="app-pouchdb-database-behavior.html">
+<link rel="import" href="pouchdb.html">
+<link rel="import" href="pouchdb.find.html">
+
+<script>!function(){"use strict";Polymer({is:"app-pouchdb-index",behaviors:[Polymer.AppPouchDBDatabaseBehavior],properties:{fields:{type:Array},name:{type:String,value:null},ddoc:{type:String,value:null},index:{type:Object,computed:"__computeIndex(fields.*, name, ddoc)"}},observers:["__createIndex(db, index)"],__createIndex:function(){if(null==this.index)throw new Error("Index not configured!");this.db.createIndex({index:this.index})["catch"](function(e){this._error(e)}.bind(this))},__computeIndex:function(){var e;return this.fields&&this.fields.length?(e={},e.fields=this.fields,null!=this.name&&(e.name=this.name),null!=this.ddoc&&(e.ddoc=this.ddoc),e):null}})}();</script>
+</head><body></body></html>

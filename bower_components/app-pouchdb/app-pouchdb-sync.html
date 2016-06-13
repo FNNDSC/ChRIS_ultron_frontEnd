@@ -1,0 +1,5 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="pouchdb.html">
+
+<script>!function(){"use strict";Polymer({is:"app-pouchdb-sync",properties:{src:{type:String},target:{type:String},bidirectional:{type:Boolean,value:!1},sync:{type:Object,computed:"__computeSync(src, target, bidirectional)",observer:"__syncChanged"},log:{type:Boolean,value:!1}},__computeSync:function(n,e,o){var c={live:!0,retry:!0};return o?PouchDB.sync(n,e,c):PouchDB.replicate(n,e,c)},__syncChanged:function(n,e){e&&(e.removeAllListeners(),e.cancel()),n&&(n.on("change",this.__onSyncChange.bind(this)),n.on("error",this.__onSyncError.bind(this)))},__onSyncChange:function(n){this.log&&console.log(n)},__onSyncError:function(n){console.error(n)}})}();</script>
+</head><body></body></html>

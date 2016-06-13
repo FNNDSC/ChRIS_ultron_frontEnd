@@ -1,0 +1,37 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>app-pouchdb-document tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../app-storage/test/app-storage-compatibility-suite.html">
+  <link rel="import" href="../pouchdb.html">
+  <link rel="import" href="../app-pouchdb-document.html">
+  <link rel="import" href="../app-pouchdb-conflict-resolution.html">
+</head>
+<body>
+
+  <test-fixture id="BasicStorage">
+    <template>
+      <app-pouchdb-document db-name="test-db" doc-id="test-doc" upsert="">
+      </app-pouchdb-document>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="SyncingStorage">
+    <template>
+      <app-pouchdb-document id="DOC_A" db-name="test-db" doc-id="test-doc" upsert="">
+      </app-pouchdb-document>
+      <app-pouchdb-document id="DOC_B" db-name="test-db" doc-id="test-doc" upsert="">
+      </app-pouchdb-document>
+      <app-pouchdb-conflict-resolution strategy="firstWriteWins">
+      </app-pouchdb-conflict-resolution>
+    </template>
+  </test-fixture>
+
+  <script>teardown(function(){return new PouchDB("test-db").destroy()}),testAppStorageDocumentCompatibility({tagName:"app-pouchdb-document",awaitUpdate:function(e){return new Promise(function(t){e.changes.on("change",function n(){e.changes.removeListener("change",n),Polymer.Base.async(t,1)})})},fetchStoredValue:function(e,t){return new PouchDB("test-db").get(t.docId).then(function(t){return Polymer.Base.get(e,{data:t})})},unsetValue:function(e){return e.set("data._deleted",!0),e.transactionsComplete}});</script>
+
+
+</body></html>

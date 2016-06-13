@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"rof",pluralRuleFunction:function(e,o){return o?"other":1==e?"one":"other"}});

@@ -1,0 +1,18 @@
+<html><head><link rel="import" href="../iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../neon-animation/neon-animations.html">
+<link rel="import" href="paper-square-grow-animation.html">
+
+
+
+</head><body><dom-module id="paper-fab-speed-dial">
+  <template>
+    <style>:host .vertical ::content .dropdown-content{@apply (--layout-vertical);}:host .horizontal ::content .dropdown-content{@apply (--layout-horizontal);}:host ::content .dropdown-content > *{margin:8px;@apply (--paper-fab-speed-dial-option);}</style>
+    <content id="fabContainer" select=".dropdown-trigger"></content>
+    <iron-dropdown id="dropdown" open-animation-config="[[openAnimationConfig]]" close-animation-config="[[closeAnimationConfig]]">
+      <content id="contentContainer" select=".dropdown-content"></content>
+    </iron-dropdown>
+  </template>
+</dom-module>
+<script>!function(t){t({is:"paper-fab-speed-dial",properties:{direction:{type:String,value:"bottom"},offset:{type:Number,value:66},openAnimationConfig:{type:Array,value:function(){return[{name:"fade-in-animation",timing:{delay:150,duration:50}},{name:"paper-square-grow-animation",startSize:56,timing:{delay:150,duration:200}}]}},closeAnimationConfig:{type:Array,value:function(){return[{name:"fade-out-animation",timing:{duration:200}}]}}},observers:["_updateDropdown(direction, offset)"],ready:function(){var e=t.dom(this.$.fabContainer).getDistributedNodes()[0];e.addEventListener("tap",function(){this.$.dropdown.open()}.bind(this));var i=t.dom(this.$.contentContainer).getDistributedNodes()[0];i.addEventListener("tap",function(){this.$.dropdown.close()}.bind(this))},open:function(){this.$.dropdown.open()},close:function(){this.$.dropdown.close()},_updateDropdown:function(t,e){var i=this.$.dropdown;switch(t){case"bottom":i.verticalAlign="top",i.horizontalOffset=0,i.verticalOffset=e,i.classList.add("vertical"),i.classList.remove("horizontal");break;case"top":i.verticalAlign="bottom",i.horizontalOffset=0,i.verticalOffset=e,i.classList.add("vertical"),i.classList.remove("horizontal");break;case"right":i.horizontalAlign="left",i.horizontalOffset=e,i.verticalOffset=0,i.classList.add("horizontal"),i.classList.remove("vertical");break;case"left":i.horizontalAlign="right",i.horizontalOffset=e,i.verticalOffset=0,i.classList.add("horizontal"),i.classList.remove("vertical");break;default:throw"Invalid direction. Must be one of [top, bottom, left, right]."}}})}(Polymer);</script>
+</body></html>

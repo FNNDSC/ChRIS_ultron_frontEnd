@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"sl",pluralRuleFunction:function(e,t){var l=String(e).split("."),a=l[0],o=!l[1],n=a.slice(-2);return t?"other":o&&1==n?"one":o&&2==n?"two":o&&(3==n||4==n)||!o?"few":"other"}});

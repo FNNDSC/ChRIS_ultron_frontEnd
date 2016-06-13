@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"gv",pluralRuleFunction:function(e,t){var a=String(e).split("."),l=a[0],n=!a[1],o=l.slice(-1),r=l.slice(-2);return t?"other":n&&1==o?"one":n&&2==o?"two":!n||0!=r&&20!=r&&40!=r&&60!=r&&80!=r?n?"other":"many":"few"}});

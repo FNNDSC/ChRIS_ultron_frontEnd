@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"ne",pluralRuleFunction:function(e,a){var n=String(e).split("."),t=Number(n[0])==e;return a?t&&e>=1&&4>=e?"one":"other":1==e?"one":"other"}}),IntlMessageFormat.__addLocaleData({locale:"ne-IN",parentLocale:"ne"});

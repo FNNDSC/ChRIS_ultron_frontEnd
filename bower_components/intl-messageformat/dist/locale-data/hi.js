@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"hi",pluralRuleFunction:function(e,o){return o?1==e?"one":2==e||3==e?"two":4==e?"few":6==e?"many":"other":e>=0&&1>=e?"one":"other"}});

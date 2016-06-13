@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"smn",pluralRuleFunction:function(e,o){return o?"other":1==e?"one":2==e?"two":"other"}});

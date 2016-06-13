@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"zgh",pluralRuleFunction:function(a,e){return"other"}});

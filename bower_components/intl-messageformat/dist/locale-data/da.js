@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"da",pluralRuleFunction:function(a,e){var t=String(a).split("."),l=t[0],o=Number(t[0])==a;return e?"other":1!=a&&(o||0!=l&&1!=l)?"other":"one"}}),IntlMessageFormat.__addLocaleData({locale:"da-GL",parentLocale:"da"});

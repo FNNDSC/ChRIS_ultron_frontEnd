@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"wo",pluralRuleFunction:function(a,e){return"other"}});

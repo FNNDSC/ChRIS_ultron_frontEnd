@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"pl",pluralRuleFunction:function(e,l){var a=String(e).split("."),t=a[0],n=!a[1],o=t.slice(-1),r=t.slice(-2);return l?"other":1==e&&n?"one":n&&o>=2&&4>=o&&(12>r||r>14)?"few":n&&1!=t&&(0==o||1==o)||n&&o>=5&&9>=o||n&&r>=12&&14>=r?"many":"other"}});

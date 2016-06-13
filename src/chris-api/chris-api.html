@@ -1,0 +1,27 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+
+<link rel="import" href="behaviors/chris-api-feed-behavior.html">
+<link rel="import" href="behaviors/chris-api-feed-details-behavior.html">
+<link rel="import" href="behaviors/chris-api-feeds-behavior.html">
+<link rel="import" href="behaviors/chris-api-labels-behavior.html">
+<link rel="import" href="behaviors/chris-api-login-behavior.html">
+<link rel="import" href="behaviors/chris-api-helper-behavior.html">
+<link rel="import" href="behaviors/chris-api-plugin-pacspull-behavior.html">
+<link rel="import" href="behaviors/chris-api-plugin-create-behavior.html">
+<link rel="import" href="behaviors/chris-api-plugins-feed-behavior.html">
+
+</head><body><dom-module id="chris-api">
+
+  <template>
+
+    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[getBody(body, api)]]" params="[[getParams(params, api)]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" on-response="handleResponse" last-error="{{error}}" on-error="handleError" handle-as="[[handleAs]]" auto=""></iron-ajax>
+
+  </template>
+
+  <script>Polymer({is:"chris-api",properties:{url:{type:String},response:{type:Object},error:{type:Object},body:{type:Object},method:{type:String},contentType:{type:String},params:{type:Object},api:{type:String,value:"",observer:"_validAPI"},handleAs:{type:String,value:"json"},apiRoot:{type:String,value:""},targetID:{type:Object,value:{}}},behaviors:[Helper,Feed,FeedDetails,Feeds,Labels,Login,PluginCreate,PluginPacspull,PluginsFeed],generateRequest:function(){this.$.ironAjax.generateRequest()},handleResponse:function(e){e.preventDefault(),e.stopPropagation();var t=this["handle"+this.api]();this._setResponse(t)},handleError:function(e){e.preventDefault(),e.stopPropagation();var t=this["handleError"+this.api]();this._setError(t)},getUrl:function(){return this._validAPI()?this["prepare"+this.api]("url"):void 0},getBody:function(){return this._validAPI()?this["prepare"+this.api]("body"):void 0},getParams:function(){return this._validAPI()?this["prepare"+this.api]("params"):void 0},_setResponse:function(e){this.response=e,this.fire("response-changed"),this.fire("response")},_setError:function(e){this.error=e,this.fire("error-changed"),this.fire("error")},_validAPI:function(){var e="";if(this["prepare"+this.api]||(e+=" prepare"+this.api),this["handle"+this.api]||(e+=" handle"+this.api),this["handleError"+this.api]||(e+=" handleError"+this.api),""!==e){var t=this.api+" is not valid. ( Missing "+e+" )";return this._setError(t),this.api="",!1}return!0}});</script>
+</dom-module>
+</body></html>

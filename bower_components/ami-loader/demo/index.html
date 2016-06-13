@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head>
+    <title>ami-loader demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../ami-loader.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles"></style>
+  </head>
+  <body>
+
+    <div class="vertical-section-container centered">
+      <h3>Basic ami-loader Demo</h3>
+
+      <demo-snippet>
+
+        <template is="dom-bind" id="loader">
+          <ami-loader data="[[data]]"></ami-loader>
+        </template>
+
+        <script>var t2=["36444280","36444294","36444308","36444322","36444336"],data=t2.map(function(a){return"https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/"+a});window.console.log(data);var loader=document.querySelector("#loader");loader.data=data;</script>
+
+      </demo-snippet>
+    </div>
+
+  
+
+</body></html>

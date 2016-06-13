@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"hr",pluralRuleFunction:function(e,a){var l=String(e).split("."),t=l[0],r=l[1]||"",o=!l[1],c=t.slice(-1),n=t.slice(-2),s=r.slice(-1),i=r.slice(-2);return a?"other":o&&1==c&&11!=n||1==s&&11!=i?"one":o&&c>=2&&4>=c&&(12>n||n>14)||s>=2&&4>=s&&(12>i||i>14)?"few":"other"}}),IntlMessageFormat.__addLocaleData({locale:"hr-BA",parentLocale:"hr"});

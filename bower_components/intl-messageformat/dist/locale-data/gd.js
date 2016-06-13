@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"gd",pluralRuleFunction:function(e,t){var a=String(e).split("."),o=Number(a[0])==e;return t?"other":1==e||11==e?"one":2==e||12==e?"two":o&&e>=3&&10>=e||o&&e>=13&&19>=e?"few":"other"}});

@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"naq",pluralRuleFunction:function(a,e){return e?"other":1==a?"one":2==a?"two":"other"}});

@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"kk",pluralRuleFunction:function(e,a){var t=String(e).split("."),l=Number(t[0])==e,n=l&&t[0].slice(-1);return a?6==n||9==n||l&&0==n&&0!=e?"many":"other":1==e?"one":"other"}});

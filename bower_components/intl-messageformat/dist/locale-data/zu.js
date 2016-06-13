@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"zu",pluralRuleFunction:function(e,a){return a?"other":e>=0&&1>=e?"one":"other"}});

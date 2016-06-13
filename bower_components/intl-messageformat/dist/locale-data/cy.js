@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"cy",pluralRuleFunction:function(e,o){return o?0==e||7==e||8==e||9==e?"zero":1==e?"one":2==e?"two":3==e||4==e?"few":5==e||6==e?"many":"other":0==e?"zero":1==e?"one":2==e?"two":3==e?"few":6==e?"many":"other"}});

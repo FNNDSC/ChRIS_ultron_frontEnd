@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"lu",pluralRuleFunction:function(a,l){return"other"}});

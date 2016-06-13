@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"mn",pluralRuleFunction:function(a,e){return e?"other":1==a?"one":"other"}}),IntlMessageFormat.__addLocaleData({locale:"mn-Mong",pluralRuleFunction:function(a,e){return"other"}});

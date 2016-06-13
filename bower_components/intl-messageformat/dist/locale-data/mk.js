@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"mk",pluralRuleFunction:function(e,l){var t=String(e).split("."),a=t[0],n=t[1]||"",o=!t[1],r=a.slice(-1),c=a.slice(-2),i=n.slice(-1);return l?1==r&&11!=c?"one":2==r&&12!=c?"two":7!=r&&8!=r||17==c||18==c?"other":"many":o&&1==r||1==i?"one":"other"}});

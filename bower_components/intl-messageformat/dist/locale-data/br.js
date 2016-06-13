@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"br",pluralRuleFunction:function(e,l){var t=String(e).split("."),a=Number(t[0])==e,r=a&&t[0].slice(-1),n=a&&t[0].slice(-2),o=a&&t[0].slice(-6);return l?"other":1==r&&11!=n&&71!=n&&91!=n?"one":2==r&&12!=n&&72!=n&&92!=n?"two":(3==r||4==r||9==r)&&(10>n||n>19)&&(70>n||n>79)&&(90>n||n>99)?"few":0!=e&&a&&0==o?"many":"other"}});

@@ -1,0 +1,1 @@
+var gulp=require("gulp"),liveServer=require("live-server");gulp.task("test",function(){liveServer.start({open:"/test"})}),gulp.task("default",function(){liveServer.start({open:"/demo"})});

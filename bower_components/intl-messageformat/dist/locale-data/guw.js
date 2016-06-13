@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"guw",pluralRuleFunction:function(e,a){return a?"other":0==e||1==e?"one":"other"}});

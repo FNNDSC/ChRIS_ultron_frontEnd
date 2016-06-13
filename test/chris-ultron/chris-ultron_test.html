@@ -1,0 +1,77 @@
+<!DOCTYPE html><html><head>
+    <title>chris-ultron test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/chris-ultron/chris-ultron.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-ultron></chris-ultron>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('chris-ultron', function() {
+
+        let element, templates;
+
+        setup(function(){
+
+          element = fixture('basic');
+          templates = element.$.container.querySelectorAll('template');
+
+        });
+
+        test('instantiating the element works', function() {
+
+          assert.equal(element.is, 'chris-ultron');
+
+        });
+
+        // Log out
+        test('show <login> page if logged out', function( done ) {
+
+          let loginTemplate = templates[0];
+          loginTemplate.addEventListener('dom-change', domChanged);
+          element.loggedIn = false;
+
+          function domChanged( event ){
+
+            // login is visible
+            assert.notEqual( element.$.container.querySelector('#login'), null );
+            assert.equal( element.$.container.querySelector('#home'), null );
+
+            done();
+            loginTemplate.removeEventListener('dom-change', domChanged);
+          }
+
+        });
+
+        // Log in
+        test('show <ultron> page if logged in', function( done ) {
+
+          let homeTemplate = templates[1];
+          homeTemplate.addEventListener('dom-change', domChanged);
+          element.loggedIn = true;
+
+          function domChanged( event ){
+
+          assert.notEqual(element.$.container.querySelector('#home'), null );
+          assert.equal( element.$.container.querySelector('#login'), null );
+
+            done();
+            homeTemplate.removeEventListener('dom-change', domChanged);
+          }
+
+        });
+
+      });
+    </script>
+  
+
+</body></html>

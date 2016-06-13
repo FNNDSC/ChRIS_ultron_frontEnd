@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"no",pluralRuleFunction:function(e,o){return o?"other":1==e?"one":"other"}});

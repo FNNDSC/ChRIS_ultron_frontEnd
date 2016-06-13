@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"pa",pluralRuleFunction:function(a,e){return e?"other":0==a||1==a?"one":"other"}}),IntlMessageFormat.__addLocaleData({locale:"pa-Arab",pluralRuleFunction:function(a,e){return"other"}}),IntlMessageFormat.__addLocaleData({locale:"pa-Guru",parentLocale:"pa"});

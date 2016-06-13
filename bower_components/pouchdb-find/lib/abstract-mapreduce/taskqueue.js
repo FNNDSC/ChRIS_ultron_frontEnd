@@ -1,0 +1,1 @@
+"use strict";function TaskQueue(){this.promise=new Promise(function(e){e()})}var Promise=require("./utils").Promise;TaskQueue.prototype.add=function(e){return this.promise=this.promise["catch"](function(){}).then(function(){return e()}),this.promise},TaskQueue.prototype.finish=function(){return this.promise},module.exports=TaskQueue;

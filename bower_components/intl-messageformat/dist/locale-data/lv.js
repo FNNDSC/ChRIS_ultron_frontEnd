@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"lv",pluralRuleFunction:function(e,l){var t=String(e).split("."),r=t[1]||"",a=r.length,n=Number(t[0])==e,o=n&&t[0].slice(-1),c=n&&t[0].slice(-2),i=r.slice(-2),s=r.slice(-1);return l?"other":n&&0==o||c>=11&&19>=c||2==a&&i>=11&&19>=i?"zero":1==o&&11!=c||2==a&&1==s&&11!=i||2!=a&&1==s?"one":"other"}});

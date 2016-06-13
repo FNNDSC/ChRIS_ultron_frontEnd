@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"it",pluralRuleFunction:function(a,t){var e=String(a).split("."),l=!e[1];return t?11==a||8==a||80==a||800==a?"many":"other":1==a&&l?"one":"other"}}),IntlMessageFormat.__addLocaleData({locale:"it-CH",parentLocale:"it"}),IntlMessageFormat.__addLocaleData({locale:"it-SM",parentLocale:"it"});

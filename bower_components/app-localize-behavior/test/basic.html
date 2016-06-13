@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head>
+
+  <title>app-localize-behavior tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  
+  <script src="../../intl/dist/Intl.min.js"></script>
+  <script src="../../intl/locale-data/jsonp/en.js"></script>
+
+  <link rel="import" href="x-translate.html">
+  <link rel="import" href="x-translate2.html">
+  <link rel="import" href="x-translate-only-imperative.html">
+
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <x-translate></x-translate>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="basic2">
+    <template>
+      <x-translate></x-translate>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="interpolated">
+    <template>
+      <x-translate2></x-translate2>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="only-imperative">
+    <template>
+      <x-translate-only-imperative></x-translate-only-imperative>
+    </template>
+  </test-fixture>
+
+  <script>function getRequestsCache(e){return e.constructor.prototype.__localizationCache.requests}function getStringsCache(e){return e.constructor.prototype.__localizationCache.messages}function resetRequestsCache(e){e.constructor.prototype.__localizationCache.requests={}}function resetStringsCache(e){e.constructor.prototype.__localizationCache.messages={}}suite("basic",function(){test("can translate a basic string",function(){var e=fixture("basic");assert.equal(e.language,"en"),assert.equal(e.$.output.innerHTML,"hello"),e.language="fr",assert.equal(e.language,"fr"),assert.equal(e.$.output.innerHTML,"bonjour")}),test("can translate a string with a parameter",function(){var e=fixture("interpolated");assert.equal(e.language,"en"),assert.equal(e.$.output.innerHTML,"my name is batman. i have 3 cats."),e.language="fr",assert.equal(e.language,"fr"),assert.equal(e.$.output.innerHTML,"je m'apelle batman. j'ai 3 chats.")}),test("can translate strings imperatively",function(){var e=fixture("basic"),s=fixture("interpolated");assert.equal(e.language,"en"),assert.equal(s.language,"en"),assert.equal(e.localize("greeting"),"hello"),assert.equal(s.localize("intro","name","robin","numCats",17),"my name is robin. i have 17 cats."),e.language="fr",s.language="fr",assert.equal(e.language,"fr"),assert.equal(s.language,"fr"),assert.equal(e.localize("greeting"),"bonjour"),assert.equal(s.localize("intro","name","robin","numCats",17),"je m'apelle robin. j'ai 17 chats.")})}),suite("external resources",function(){test("can translate a basic string",function(e){var s=fixture("basic");resetRequestsCache(s),s.addEventListener("app-resources-loaded",function(){assert.equal(s.language,"en"),assert.equal(s.$.output.innerHTML,"hello"),s.language="fr",assert.equal(s.language,"fr"),assert.equal(s.$.output.innerHTML,"bonjour"),e()}),s.loadResources(s.resolveUrl("locales.json"))}),test("can translate a string with a parameter",function(e){var s=fixture("interpolated");resetRequestsCache(s),s.addEventListener("app-resources-loaded",function(){assert.equal(s.language,"en"),assert.equal(s.$.output.innerHTML,"my name is batman. i have 3 cats."),s.language="fr",assert.equal(s.language,"fr"),assert.equal(s.$.output.innerHTML,"je m'apelle batman. j'ai 3 chats."),e()}),s.loadResources(s.resolveUrl("locales.json"))}),test("can translate strings imperatively",function(e){var s=fixture("basic"),t=fixture("interpolated");resetRequestsCache(s),resetRequestsCache(t),s.addEventListener("app-resources-loaded",function(){assert.equal(s.language,"en"),assert.equal(t.language,"en"),assert.equal(s.localize("greeting"),"hello"),assert.equal(t.localize("intro","name","robin","numCats",17),"my name is robin. i have 17 cats."),s.language=t.language="fr",assert.equal(s.language,"fr"),assert.equal(t.language,"fr"),assert.equal(s.localize("greeting"),"bonjour"),assert.equal(t.localize("intro","name","robin","numCats",17),"je m'apelle robin. j'ai 17 chats."),e()}),s.loadResources(s.resolveUrl("locales.json")),t.loadResources(t.resolveUrl("locales.json"))})}),suite("json loading and caching",function(){test("loads the same json only file once",function(e){var s=fixture("basic"),t=fixture("basic2"),a=fixture("interpolated"),r=s.resolveUrl("locales.json");resetRequestsCache(s),resetRequestsCache(t),resetRequestsCache(a),assert.equal(0,Object.keys(getRequestsCache(s)).length),assert.equal(0,Object.keys(getRequestsCache(t)).length),assert.equal(0,Object.keys(getRequestsCache(a)).length),s.addEventListener("app-resources-loaded",function(){assert.equal(1,Object.keys(getRequestsCache(s)).length,"there is 1 request cached in app1"),assert.equal(1,Object.keys(getRequestsCache(t)).length,"there is 1 request cached in app2"),assert.equal(1,Object.keys(getRequestsCache(a)).length,"there is 1 request cached in app3");var n=getRequestsCache(s)[r];assert.notEqual(void 0,n,"the cached request is ok"),assert.equal(s.resources.fr.greeting,"bonjour"),t.addEventListener("app-resources-loaded",function(){assert.equal(1,Object.keys(getRequestsCache(s)).length,"there is 1 request cached in app1"),assert.equal(1,Object.keys(getRequestsCache(t)).length,"there is 1 request cached in app2"),assert.equal(1,Object.keys(getRequestsCache(a)).length,"there is 1 request cached in app3"),assert.equal(n,getRequestsCache(t)[r],"the same request is cached"),expect(s.resources).eql(t.resources),assert.equal(t.resources.fr.greeting,"bonjour"),a.addEventListener("app-resources-loaded",function(){assert.equal(1,Object.keys(getRequestsCache(s)).length,"there is 1 request cached in app1"),assert.equal(1,Object.keys(getRequestsCache(t)).length,"there is 1 request cached in app2"),assert.equal(1,Object.keys(getRequestsCache(a)).length,"there is 1 request cached in app3"),assert.equal(n,getRequestsCache(a)[r],"the same request is cached"),expect(s.resources).eql(t.resources),expect(s.resources).eql(a.resources),assert.equal(t.resources.fr.greeting,"bonjour"),e()}),a.loadResources(r)}),t.loadResources(r)}),s.loadResources(r)}),test("can load different json files",function(e){var s=fixture("basic"),t=fixture("interpolated");resetRequestsCache(s),resetRequestsCache(t),assert.equal(0,Object.keys(getRequestsCache(s)).length),assert.equal(0,Object.keys(getRequestsCache(t)).length);var a=s.resolveUrl("locales.json"),r=s.resolveUrl("locales2.json");s.addEventListener("app-resources-loaded",function(){assert.equal(1,Object.keys(getRequestsCache(s)).length,"there is 1 request cached in app1"),assert.equal(1,Object.keys(getRequestsCache(t)).length,"there is 1 request cached in app2");var n=getRequestsCache(s)[a];assert.notEqual(void 0,n,"the cached request is ok"),assert.equal(s.resources.fr.greeting,"bonjour"),t.addEventListener("app-resources-loaded",function(){assert.equal(2,Object.keys(getRequestsCache(s)).length,"there are 2 requests cached in app1"),assert.equal(2,Object.keys(getRequestsCache(t)).length,"there are 2 requests cached in app2");var a=getRequestsCache(t)[r];assert.notEqual(n,a,"the cached requests are different"),expect(s.resources).to.not.eql(t.resources,"the apps don't have the same resources"),assert.equal(t.resources.fr.greeting,"bonjour!"),e()}),t.loadResources(t.resolveUrl(r))}),s.loadResources(s.resolveUrl(a))})}),suite("localized string caching",function(){test("constructs the same string only once",function(){var e=fixture("only-imperative");resetStringsCache(e),assert.equal(e.localize("greeting"),"hello"),assert.equal(1,Object.keys(getStringsCache(e)).length,"there is 1 string cached");var s=getStringsCache(e).greetinghello;assert.isNotNull(s,"cached string has an object"),assert.equal(e.localize("greeting"),"hello"),assert.equal(1,Object.keys(getStringsCache(e)).length,"there is still 1 string cached"),assert.equal(s,getStringsCache(e).greetinghello,"cached string is the same"),e.language="fr",assert.equal(0,Object.keys(getStringsCache(e)).length,"the cache is empty"),assert.equal(e.localize("greeting"),"bonjour"),assert.equal(1,Object.keys(getStringsCache(e)).length,"there is 1 string cached");var t=getStringsCache(e).greetinghello;assert.notEqual(s,t,"cached string is different than before")})});</script>
+
+
+</body></html>

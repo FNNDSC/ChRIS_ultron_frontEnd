@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-fab-speed-dial tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../../paper-fab/paper-fab.html">
+  <link rel="import" href="../paper-fab-speed-dial.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+
+</head>
+<body>
+
+  <test-fixture id="SpeedDial">
+    <template>
+      <paper-fab-speed-dial>
+        <paper-fab class="dropdown-trigger"></paper-fab>
+        <div class="dropdown-content">content</div>
+      
+    </paper-fab-speed-dial></template>
+  </test-fixture>
+
+  <script>suite("<paper-fab-speed-dial>",function(){suite("basic",function(){var e,o;setup(function(){var n=fixture("SpeedDial");e=Polymer.dom(n).querySelector(".dropdown-trigger"),o=n.querySelector("iron-dropdown")}),test("dropdown is initially closed",function(){expect(o.opened).to.be.equal(!1)}),test("tapping the trigger opens the dropdown",function(n){MockInteractions.downAndUp(e,function(){Polymer.Base.async(function(){expect(o.opened).to.be.equal(!0),n()},100)})})})});</script>
+
+
+
+</body></html>

@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"ii",pluralRuleFunction:function(a,e){return"other"}});

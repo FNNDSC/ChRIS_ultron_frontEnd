@@ -1,0 +1,108 @@
+<!DOCTYPE html><html><head>
+    <title>chris-login test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+    <script src="../../../iron-test-helpers/mock-interactions.js"></script>
+
+    <link rel="import" href="../../src/chris-login/chris-login.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-login></chris-login>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite( '<chris-login>', function() {
+
+        let element;
+
+        setup(function(){
+
+          element = fixture('basic');
+
+        });
+
+        test('instantiating the element works', function() {
+
+          assert.equal( element.is, 'chris-login' );
+
+        });
+
+        test('valid login sets logged to true', function( done ) {
+
+          element.addEventListener( 'logged-changed', loggedChanged );
+
+          element.$.username.value = 'chris';
+          element.$.password.value = 'chris';
+
+          //
+          MockInteractions.tap( element.$.login );
+
+          function loggedChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.logged, true );
+            
+            done();
+            element.removeEventListener( 'logged-changed', loggedChanged );
+
+          }
+
+        });
+
+        test('invalid login sets logged to false', function( done ) {
+
+          element.addEventListener( 'logged-changed', loggedChanged );
+
+          element.$.username.value = 'chris';
+          element.$.password.value = 'ultron';
+
+          //
+          MockInteractions.tap( element.$.login );
+
+          function loggedChanged( event ) {
+
+            // not logged in
+            assert.equal( element.logged, false );
+
+            done();
+            element.removeEventListener( 'logged-changed', loggedChanged );
+
+          }
+
+        });
+
+        test('invalid login shows temporary toast', function( done ) {
+
+          element.addEventListener( 'iron-overlay-closed', toastClosed );
+          element.$.loginError.duration = 50;
+          element.$.username.value = 'chris';
+          element.$.password.value = 'ultron';
+
+          //
+          MockInteractions.tap( element.$.login );
+
+          function toastClosed( event ) {
+
+            // toast closed
+            assert.isFalse(element.$.loginError.opened, '`opened` is false');
+
+            done();
+            element.removeEventListener( 'iron-overlay-closed', toastClosed );
+
+          }
+
+        });
+
+
+      } );
+    </script>
+
+  
+
+</body></html>

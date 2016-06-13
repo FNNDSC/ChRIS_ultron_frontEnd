@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"fil",pluralRuleFunction:function(e,l){var t=String(e).split("."),a=t[0],n=t[1]||"",o=!t[1],r=a.slice(-1),i=n.slice(-1);return l?1==e?"one":"other":o&&(1==a||2==a||3==a)||o&&4!=r&&6!=r&&9!=r||!o&&4!=i&&6!=i&&9!=i?"one":"other"}});

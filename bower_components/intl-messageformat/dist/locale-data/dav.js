@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"dav",pluralRuleFunction:function(a,e){return"other"}});

@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"nqo",pluralRuleFunction:function(a,e){return"other"}});

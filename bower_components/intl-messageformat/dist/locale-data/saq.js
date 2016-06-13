@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"saq",pluralRuleFunction:function(a,e){return e?"other":1==a?"one":"other"}});

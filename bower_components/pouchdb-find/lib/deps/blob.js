@@ -1,0 +1,1 @@
+"use strict";function createBlob(e,l){e=e||[],l=l||{};try{return new Blob(e,l)}catch(o){if("TypeError"!==o.name)throw o;for(var r=global.BlobBuilder||global.MSBlobBuilder||global.MozBlobBuilder||global.WebKitBlobBuilder,t=new r,b=0;b<e.length;b+=1)t.append(e[b]);return t.getBlob(l.type)}}module.exports=createBlob;

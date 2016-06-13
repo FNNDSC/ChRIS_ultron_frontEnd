@@ -1,0 +1,1 @@
+"undefined"==typeof Intl&&require("intl"),global.expect=require("expect.js"),global.IntlMessageFormat=require("../"),require("./index");

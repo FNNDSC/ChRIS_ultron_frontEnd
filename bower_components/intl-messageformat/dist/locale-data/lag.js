@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"lag",pluralRuleFunction:function(a,e){var t=String(a).split("."),l=t[0];return e?"other":0==a?"zero":0!=l&&1!=l||0==a?"other":"one"}});

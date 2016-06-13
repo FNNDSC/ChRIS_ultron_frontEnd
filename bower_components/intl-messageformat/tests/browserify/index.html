@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head>
+    <title>Browserify Mocha Tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="../../node_modules/mocha/mocha.css">
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="../../node_modules/mocha/mocha.js"></script>
+    <script src="../../node_modules/expect.js/index.js"></script>
+    <script src="../../node_modules/intl/Intl.complete.js"></script> 
+    <script src="../../tmp/browserify/app.js"></script>
+    <script src="../../dist/locale-data/en.js"></script>
+    <script src="../../dist/locale-data/fr.js"></script>
+    <script src="../../dist/locale-data/ar.js"></script>
+    <script src="../../dist/locale-data/pt.js"></script>
+    <script src="../../dist/locale-data/ru.js"></script>
+    <script>mocha.setup("bdd");</script>
+    <script src="../index.js"></script>
+    <script>!function(){function t(t){for(var e=[];t.parent.title;)e.push(t.parent.title),t=t.parent;return e.reverse()}var e=mocha.run(),n=[];e.on("end",function(){window.mochaResults=e.stats,window.mochaResults.reports=n}),e.on("fail",function(e,s){n.push({name:e.title,result:!1,message:s&&s.message,stack:s&&s.stack,titles:t(e)})})}();</script>
+  
+
+</body></html>

@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"bo",pluralRuleFunction:function(a,e){return"other"}}),IntlMessageFormat.__addLocaleData({locale:"bo-IN",parentLocale:"bo"});

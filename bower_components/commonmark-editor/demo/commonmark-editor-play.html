@@ -1,0 +1,14 @@
+<html><head></head><body><dom-module id="commonmark-editor-play">
+
+    <template>
+		<commonmark-editor id="editor" height="500px" changed-by-user="{{changedByUser}}" value="{{currentValue}}">foo</commonmark-editor>
+		<button id="Reset" on-tap="reset">Reset Value</button>
+		Changed by user: <span>{{changedByUser}}</span>
+		<h1>current value</h1>
+		<div>{{currentValue}}</div>
+    </template>
+
+    <script>Polymer({is:"commonmark-editor-play",reset:function(){this.$.editor.initValue("bar")}});</script>
+
+</dom-module>
+</body></html>

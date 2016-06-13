@@ -1,0 +1,70 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+
+
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+
+</head><body><dom-module id="chris-label-list">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment"><style>
+
+      :host{display:flex;position:absolute;}.separator{font-size:14px;font-weight:500;color:var(--primary-text-color);padding:16px 16px 0;border-top:1px solid rgb(224, 224, 224);}</style>
+
+    
+    <div class="separator">Categories</div>
+
+    <paper-menu id="labels" class="layout vertical" attr-for-selected="value" on-iron-select="handleSelect" on-iron-deselect="updateFilter" multi="">
+
+      <paper-icon-item value="all" role="menuitem">
+        <iron-icon icon="icons:view-headline" item-icon=""></iron-icon>All
+      </paper-icon-item>
+      <paper-icon-item value="favorite" role="menuitem">
+        <iron-icon icon="icons:favorite" item-icon=""></iron-icon>Favorite
+      </paper-icon-item>
+      <paper-icon-item value="running" role="menuitem">
+        <iron-icon icon="icons:schedule" item-icon=""></iron-icon>Running
+      </paper-icon-item>
+      <paper-icon-item value="done" role="menuitem">
+        <iron-icon icon="icons:done" item-icon=""></iron-icon>Done
+      </paper-icon-item>
+      <paper-icon-item value="error" role="menuitem">
+        <iron-icon icon="icons:clear" item-icon=""></iron-icon>Error
+      </paper-icon-item>
+
+
+    </paper-menu>
+
+
+    
+    
+    
+    <div class="separator">Labels</div>
+
+
+
+    <paper-menu id="customLabels" class="layout vertical" attr-for-selected="value" multi="" on-iron-select="updateCustomFilter" on-iron-deselect="updateCustomFilter">
+
+      <template is="dom-repeat" items="{{customLabels}}">
+
+        <paper-icon-item id="{{item.value}}" value$="{{item.value}}" role="menuitem">
+          <iron-icon icon="label" item-icon="" style$="{{_setStyle(item.color)}}" invert=""></iron-icon><span>{{item.value}}</span>
+        </paper-icon-item>
+
+      </template>
+
+    </paper-menu>
+
+
+  </template>
+
+  <script>Polymer({is:"chris-label-list",properties:{customLabels:{type:Array},filter:{type:Array,value:[]},customFilter:{type:Array,value:[]}},handleSelect:function(e){var l=e.detail.item.getAttribute("value"),t=this.$.labels.selectedValues;if("all"===l||0===this.$.labels.selectedValues.length)this.$.labels.selectedValues=["all"];else{var s=t.indexOf("all");s>-1&&t.splice(s,1),this.$.labels.selectedValues=t.slice(0)}this.updateFilter()},updateFilter:function(){0===this.$.labels.selectedValues.length&&(this.$.labels.selectedValues=["all"]),this.filter=this.$.labels.selectedValues,this.fire("filter-changed")},updateCustomFilter:function(){this.customFilter=this.$.customLabels.selectedValues,this.fire("custom-filter-changed")},_setStyle:function(e){return"color: "+e}});</script>
+</dom-module>
+</body></html>

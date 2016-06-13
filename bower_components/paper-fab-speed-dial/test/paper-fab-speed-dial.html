@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+		<title>paper-fab-speed-dial</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		
+		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+		<script src="../../web-component-tester/browser.js"></script>
+		<script src="../../test-fixture/test-fixture-mocha.js"></script>
+		
+		<link rel="import" href="../paper-fab-speed-dial.html">
+		<link rel="import" href="../../test-fixture/test-fixture.html">
+	</head>
+	<body>
+	
+		<test-fixture id="TrivialElement">
+			<template>
+				<paper-fab-speed-dial></paper-fab-speed-dial>
+			</template>
+		</test-fixture>
+	
+		<script>suite("<paper-fab-speed-dial>",function(){suite("open/close behavior",function(){var e;setup(function(){e=fixture("TrivialElement")}),test("defaults to closed",function(){expect(e.opened).to.be.eql(!1)}),test("is opened when calling open()",function(){e.open(),expect(e.opened).to.be.eql(!0)}),test("is opened when calling open()",function(){e.open(),expect(e.opened).to.be.eql(!0),e.close(),expect(e.opened).to.be.eql(!1)})})});</script>
+	
+	
+
+</body></html>

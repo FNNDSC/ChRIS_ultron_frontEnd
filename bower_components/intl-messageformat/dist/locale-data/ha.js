@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"ha",pluralRuleFunction:function(a,e){return e?"other":1==a?"one":"other"}}),IntlMessageFormat.__addLocaleData({locale:"ha-Arab",pluralRuleFunction:function(a,e){return"other"}}),IntlMessageFormat.__addLocaleData({locale:"ha-GH",parentLocale:"ha"}),IntlMessageFormat.__addLocaleData({locale:"ha-NE",parentLocale:"ha"});

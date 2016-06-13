@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"cs",pluralRuleFunction:function(a,e){var t=String(a).split("."),n=t[0],l=!t[1];return e?"other":1==a&&l?"one":n>=2&&4>=n&&l?"few":l?"other":"many"}});

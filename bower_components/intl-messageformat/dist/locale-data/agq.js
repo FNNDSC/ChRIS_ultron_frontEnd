@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"agq",pluralRuleFunction:function(a,e){return"other"}});

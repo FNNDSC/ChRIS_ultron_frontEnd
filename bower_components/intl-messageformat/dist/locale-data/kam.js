@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"kam",pluralRuleFunction:function(a,e){return"other"}});

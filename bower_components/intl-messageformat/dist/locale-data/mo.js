@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"mo",pluralRuleFunction:function(e,o){var t=String(e).split("."),a=!t[1],l=Number(t[0])==e,n=l&&t[0].slice(-2);return o?1==e?"one":"other":1==e&&a?"one":!a||0==e||1!=e&&n>=1&&19>=n?"few":"other"}});

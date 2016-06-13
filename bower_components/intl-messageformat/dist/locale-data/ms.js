@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"ms",pluralRuleFunction:function(a,e){return e&&1==a?"one":"other"}}),IntlMessageFormat.__addLocaleData({locale:"ms-Arab",pluralRuleFunction:function(a,e){return"other"}}),IntlMessageFormat.__addLocaleData({locale:"ms-BN",parentLocale:"ms"}),IntlMessageFormat.__addLocaleData({locale:"ms-SG",parentLocale:"ms"});

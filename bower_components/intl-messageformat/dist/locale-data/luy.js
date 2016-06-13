@@ -1,0 +1,1 @@
+IntlMessageFormat.__addLocaleData({locale:"luy",pluralRuleFunction:function(a,l){return"other"}});
