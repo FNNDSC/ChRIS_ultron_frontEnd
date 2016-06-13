@@ -29,7 +29,7 @@
 
 
 /* eslint-disable quotes, comma-spacing */
-var PrecacheConfig = [["/index.html","578b1464f286f20ce4be85bab9e2fb66"],["/src/chris-ultron/chris-ultron.html","4c39fd3e64a5bfdc347328c36847639e"]];
+var PrecacheConfig = [["/index.html","08a304aae0780080dcd97d74ba851a8a"],["/src/chris-ultron/chris-ultron.html","4c39fd3e64a5bfdc347328c36847639e"]];
 /* eslint-enable quotes, comma-spacing */
 var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
 
