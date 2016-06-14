@@ -24,5 +24,6 @@ before_script:
 script:
   - polymer lint --no-recursion
   - polymer test --expanded
+  - polymer build
 notifications:
   slack: fnndsc:WtDpBdT7VxV8YVD4K0NPHnW1
