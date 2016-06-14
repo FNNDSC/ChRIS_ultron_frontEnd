@@ -1,22 +1,33 @@
 <html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
+
 <link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
 
 </head><body><dom-module id="chris-note">
   <template>
-    <style include="chris-feed-styles"></style>
-    <style>app-toolbar{flex:1;background-color:var(--paper-grey-100);}.content{padding:20px;}#editor{display:none;width:inherit;}.markdown-html pre code{display:flex;padding:10px;color:#ffffff;background-color:var(--paper-grey-800);}.markdown-html code{padding:10px;background-color:var(--paper-grey-200);}.markdown-html blockquote p{background-color:var(--paper-grey-200);padding:8px;}.markdown-html table{border-collapse:collapse;}.markdown-html table, .markdown-html th, .markdown-html td{border:1px solid black;}</style>
+    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;}#editor{display:none;width:inherit;}.markdown-html pre code{display:flex;padding:10px;color:#ffffff;background-color:var(--paper-grey-800);}.markdown-html code{padding:10px;background-color:var(--paper-grey-200);}.markdown-html blockquote p{background-color:var(--paper-grey-200);padding:8px;}.markdown-html table{border-collapse:collapse;}.markdown-html table, .markdown-html th, .markdown-html td{border:1px solid black;}</style>
 
       
 
-      <div class="section toolbar">
+      <div class="toolbar">
 
-        <div class="title">Note</div>
+        <div class="name">Note</div>
 
-        <paper-icon-button icon="create" on-tap="edit"></paper-icon-button>
-        <paper-icon-button icon="delete" on-tap="delete"></paper-icon-button>
-        <paper-icon-button icon="save" on-tap="save"></paper-icon-button>
+        <div class="spacer"></div>
+
+        <template is="dom-if" if="{{!editing}}">
+          <paper-icon-button icon="create" on-tap="edit"></paper-icon-button>
+        </template>
+        <template is="dom-if" if="{{editing}}">
+          <paper-icon-button icon="save" on-tap="save"></paper-icon-button>
+          <paper-icon-button icon="close" on-tap="close"></paper-icon-button>
+        </template>
 
       </div>
 
@@ -33,6 +44,6 @@
 
   </template>
 
-  <script>Polymer({is:"chris-note",properties:{note:{type:String}},_stopEventPropagation:function(t){t.stopPropagation()},edit:function(t){this._stopEventPropagation(t),this.$.editor.style.display="block",this.fire("resize-content")},"delete":function(t){this._stopEventPropagation(t),this.note="",this._resizeContent()},save:function(t){this._stopEventPropagation(t),this.$.editor.style.display="none",this._resizeContent()},_resizeContent:function(t){this.fire("resize-content")}});</script>
+  <script>Polymer({is:"chris-note",properties:{note:{type:String},previousNote:{type:String},editing:{type:Boolean,value:!1}},_stopEventPropagation:function(t){t.stopPropagation()},edit:function(t){this._stopEventPropagation(t),this.editing=!0,this.previousNote=this.note,this.$.editor.style.display="block",this.fire("resize-content")},close:function(t){this._stopEventPropagation(t),this.editing=!1,this.note=this.previousNote,this.$.editor.style.display="none",this._resizeContent()},save:function(t){this._stopEventPropagation(t),this.editing=!1,this.$.editor.style.display="none",this._resizeContent(),this.fire("note-changed")},_resizeContent:function(t){this.fire("resize-content")}});</script>
 </dom-module>
 </body></html>

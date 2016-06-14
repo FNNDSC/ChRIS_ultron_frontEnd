@@ -25,13 +25,9 @@
 
     <style include="iron-flex iron-flex-alignment"><style>
 
-      :host{display:block;}.feed{@apply (--layout-flex);@apply (--layout-vertical);padding:20px;background-color:white;margin-bottom:10px;}.feed:hover{@apply (--shadow-elevation-8dp);}.feed.checked{background-color:var(--paper-grey-200);border-left:4px solid var(--accent-color);}.toolbar{min-height:64px;@apply (--layout-horizontal);@apply (--layout-wrap);}.check-area{height:48px;width:48px;border-radius:24px;box-sizing:border-box;@apply (--layout-vertical);@apply (--layout-center);@apply (--layout-center-justified);}.check-area .invalid{color:var(--paper-red-500);border-color:var(--paper-red-500)!important;background-color:#ffffff;border-radius:26px;cursor:pointer;padding:0;width:52px;height:52px;}.check-area:hover .invalid{background-color:var(--paper-red-500);color:#ffffff;}.check-area:hover, .checked .check-area{background-color:var(--accent-color);border-color:var(--accent-color)!important;}.letter{font-size:24px;}.check-area:hover .letter, .checked .letter{display:none;}.checkbox{display:none;--paper-checkbox-checked-color:var(--accent-color);--paper-checkbox-checked-ink-color:var(--accent-color);--paper-checkbox-unchecked-color:#ffffff;--paper-checkbox-unchecked-ink-color:var(--dark-accent-color);--paper-checkbox-size:24px;--paper-checkbox-label-spacing:0px;}.check-area:hover .checkbox, .checked .checkbox{display:block;}.title-area{padding:0 16px;@apply (--layout-flex);@apply (--layout-vertical);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.date, .tags{font-size:14px;color:var(--secondary-text-color);}#favorite[icon="icons:favorite"]{color:var(--accent-color);}.done{color:var(--paper-light-green-500);}.running{color:var(--paper-light-blue-500);}.error{color:var(--paper-red-500);}.action:hover{color:var(--accent-color);}.content{margin-top:8px;border-top:1px solid var(--accent-color);background-color:var(--paper-grey-50);min-height:64px;display:none;}.feed.open .content{display:block;}paper-progress{width:100%;--paper-progress-active-color:var(--accent-color);--paper-progress-height:2px;}.loaded paper-progress, .loaded .message{display:none;}@media all and (max-width: 800px){.toolbar{@apply (--layout-justified);}.title-area{flex:1 100%;padding:16px 0 0;}.check-area{order:1;}.actions-area{order:2;}.title-area{order:3;}}</style>
+      :host{display:block;}.feed{@apply (--layout-flex);@apply (--layout-vertical);padding:20px;background-color:white;margin-bottom:10px;}.feed:hover{@apply (--shadow-elevation-8dp);}.feed.checked{background-color:var(--paper-grey-200);border-left:4px solid var(--accent-color);}.toolbar{min-height:64px;@apply (--layout-horizontal);@apply (--layout-wrap);}.check-area{height:48px;width:48px;border-radius:24px;box-sizing:border-box;@apply (--layout-vertical);@apply (--layout-center);@apply (--layout-center-justified);}.check-area .invalid{color:var(--paper-red-500);border-color:var(--paper-red-500)!important;background-color:#ffffff;border-radius:26px;cursor:pointer;padding:0;width:52px;height:52px;}.check-area:hover .invalid{background-color:var(--paper-red-500);color:#ffffff;}.check-area:hover, .checked .check-area{background-color:var(--accent-color);border-color:var(--accent-color)!important;}.letter{font-size:24px;}.check-area:hover .letter, .checked .letter{display:none;}.checkbox{display:none;--paper-checkbox-checked-color:var(--accent-color);--paper-checkbox-checked-ink-color:var(--accent-color);--paper-checkbox-unchecked-color:#ffffff;--paper-checkbox-unchecked-ink-color:var(--dark-accent-color);--paper-checkbox-size:24px;--paper-checkbox-label-spacing:0px;}.check-area:hover .checkbox, .checked .checkbox{display:block;}.title-area{padding:0 16px;@apply (--layout-flex);@apply (--layout-vertical);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.date, .tags{font-size:14px;color:var(--secondary-text-color);}#favorite[icon="icons:favorite"]{color:var(--accent-color);}.done{color:var(--paper-light-green-500);}.running{color:var(--paper-light-blue-500);}.error{color:var(--paper-red-500);}.action:hover{color:var(--accent-color);}.content{margin-top:8px;min-height:64px;display:none;}.feed.open .content{display:block;}paper-progress{width:100%;--paper-progress-active-color:var(--accent-color);--paper-progress-height:2px;}.loaded paper-progress, .loaded .message{display:none;}@media all and (max-width: 800px){.toolbar{@apply (--layout-justified);}.title-area{flex:1 100%;padding:16px 0 0;}.check-area{order:1;}.actions-area{order:2;}.title-area{order:3;}}</style>
 
-
-    <chris-api id="FeedAPI" api="Feed" ,="" method="POST" content-type="application/json" response="{{response}}" on-response="handleFeed" error="{{error}}" on-error="handleError">
-    </chris-api>
-
-    <chris-api id="FeedDetailsAPI" api="FeedDetails" ,="" method="GET" response="{{response}}" on-response="handleFeedDetails" error="{{error}}" on-error="handleError">
+    <chris-api id="FeedDetailsAPI" api="FeedDetails" ,="" content-type="application/json" response="{{response}}" on-response="handleFeedDetails" error="{{error}}" on-error="handleError">
     </chris-api>
 
 
@@ -41,7 +37,7 @@
       <div class="toolbar">
 
         
-        <div class="check-area" style$="{{_setStyle(feed.color)}}" on-tap="_blockEvents">
+        <div class="check-area" style$="{{_setStyle(feed.details.color)}}" on-tap="_blockEvents">
 
           <template is="dom-if" if="{{!valid}}">
 
@@ -51,8 +47,8 @@
 
           <template is="dom-if" if="{{valid}}">
 
-              <span class="letter">[[feed.letter]]</span>
-              <paper-checkbox class="checkbox" checked="{{feed.checked}}"></paper-checkbox>
+              <span class="letter">[[feed.details.letter]]</span>
+              <paper-checkbox class="checkbox" checked="{{feed.details.checked}}"></paper-checkbox>
 
           </template>
 
@@ -61,11 +57,11 @@
         
         <div class="title-area">
 
-          <div class="name">Feed [[feed.id]] - [[feed.name]]</div>
-          <div class="date">[[feed.date]]</div>
+          <div class="name">Feed [[feed.details.id]] - [[feed.details.name]]</div>
+          <div class="date">[[feed.details.date]]</div>
           <div class="tags">
 
-            <template is="dom-repeat" items="[[_validateTags(feed.tags)]]">
+            <template is="dom-repeat" items="[[_validateTags(feed.details.tags)]]">
 
               <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
 
@@ -80,9 +76,8 @@
 
           <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
           <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
-          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.favorite)]]" on-tap="favorite"></paper-icon-button>
-          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.status)]]" class$="[[feed.status]]" disabled=""></paper-icon-button>
-
+          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.details.favorite)]]" on-tap="favorite"></paper-icon-button>
+          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.details.status)]]" class$="[[feed.details.status]]" disabled=""></paper-icon-button>
 
           <paper-tooltip for="share" offset="0">Share</paper-tooltip>
           <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
@@ -96,7 +91,7 @@
         <paper-progress indeterminate=""></paper-progress>
         <div class="message">Loading details</div>
 
-        <chris-note note="[[feed.details.note]]"></chris-note>
+        <chris-note note="{{feed.note}}" on-note-changed="_saveFeed"></chris-note>
         
       </div>
 
@@ -104,6 +99,6 @@
 
   </template>
 
-  <script>Polymer({is:"chris-feed",properties:{feed:{type:Object,observer:"_validateFeed"},open:{type:Boolean,value:!1,observer:"_openChanged"},index:{type:Number},valid:{type:Boolean},response:{type:Array},error:{type:Array}},observers:["_checkedChanged(feed.checked)"],_openChanged:function(){if(this.valid&&(this.feed&&(this.open?this.$.feed.classList.add("open"):this.$.feed.classList.remove("open"),this.open?this.$.feed.elevation=4:this.$.feed.elevation=1),this.open&&this.feed&&!this.feed.details)){this.$.FeedDetailsAPI.targetID={feed:this.feed.id};var e={auth:"user="+sessionStorage.getItem("username")+",hash="+sessionStorage.getItem("token")};this.$.FeedDetailsAPI.params=e,this.$.FeedDetailsAPI.url="FeedDetails"}},_setStyle:function(e){return"border: 4px solid "+e+";"},_setStatusIcon:function(e){var t="icons:";return t+="running"===e?"schedule":"error"===e?"clear":"done"},_checkedChanged:function(){this.feed&&(this.feed.checked?this.$.feed.classList.add("checked"):this.$.feed.classList.remove("checked"),this.fire("checked",this.feed))},share:function(e){e.preventDefault(),e.stopPropagation(),this.valid&&console.log("share feed")},tag:function(e){e.preventDefault(),e.stopPropagation(),this.valid&&console.log("tag feed")},_setTagStyle:function(e){return"color: "+e+";"},favorite:function(e){if(e.preventDefault(),e.stopPropagation(),this.valid){this.set("feed.favorite",!this.feed.favorite);var t={auth:"user="+sessionStorage.getItem("username")+",hash="+sessionStorage.getItem("token")};this.$.FeedAPI.params=t,this.$.FeedAPI.body=this.feed,this.$.FeedAPI.url=""}},_setFavoriteIcon:function(e){return this.feed.favorite?"icons:favorite-border":"icons:favorite"},handleFeed:function(e){e.preventDefault(),e.stopPropagation(),this.response.update&&!this.response.update.status&&(this.set("feed",this.response),this.fire("notification",{text:this.response.update.text}))},handleFeedDetails:function(){this.$.content.classList.add("loaded"),this.set("feed.details",this.response),this._resizeFeed()},_resizeFeed:function(){this.fire("resize-feed",{index:this.index})},handleError:function(e){e.preventDefault(),e.stopPropagation(),console.log(this.error)},_validateFeed:function(){if(this.feed){var e=[];if("string"!=typeof this.feed.id&&e.push("id:String"),"string"!=typeof this.feed.name&&e.push("name:String"),"string"!=typeof this.feed.letter&&e.push("letter:String"),"string"!=typeof this.feed.color&&e.push("color:String"),"string"!=typeof this.feed.date&&e.push("date:String"),"string"!=typeof this.feed.status&&e.push("status:String"),"boolean"!=typeof this.feed.favorite&&e.push("favorite:Boolean"),"boolean"!=typeof this.feed.checked&&e.push("checked:Boolean"),this.feed.tags&&this.feed.tags.constructor===Array||e.push("tags:Array"),e.length>0)return this.error=e,this.fire("error-changed"),this.valid=!1,this.fire("valid-changed"),void this.fire("error");this.valid=!0,this.fire("valid-changed")}},_validateTags:function(e){return e&&e.constructor===Array?e:[]},_blockEvents:function(e){e.preventDefault(),e.stopPropagation()}});</script>
+  <script>Polymer({is:"chris-feed",properties:{feed:{type:Object,observer:"_validateFeed"},previous:{type:Object},open:{type:Boolean,value:!1,observer:"_openChanged"},index:{type:Number},valid:{type:Boolean},response:{type:Array},error:{type:Array}},observers:["_checkedChanged(feed.details.checked)"],_openChanged:function(){this.valid&&(this.feed&&(this.open?this.$.feed.classList.add("open"):this.$.feed.classList.remove("open"),this.open?this.$.feed.elevation=4:this.$.feed.elevation=1),!(this.open&&this.feed&&this.feed.details)||this.feed.comments&&this.feed.note&&this.feed.plugins||this._getFeed())},_setStyle:function(e){return"border: 4px solid "+e+";"},_setStatusIcon:function(e){var t="icons:";return t+="running"===e?"schedule":"error"===e?"clear":"done"},_checkedChanged:function(){this.feed&&this.feed.details&&(this.feed.details.checked?this.$.feed.classList.add("checked"):this.$.feed.classList.remove("checked"),this.fire("checked",this.feed))},share:function(e){e.preventDefault(),e.stopPropagation(),this.valid&&console.log("share feed")},tag:function(e){e.preventDefault(),e.stopPropagation(),this.valid&&console.log("tag feed")},_setTagStyle:function(e){return"color: "+e+";"},favorite:function(e){e.preventDefault(),e.stopPropagation(),this.valid&&(this.previous=JSON.parse(JSON.stringify(this.feed)),this.set("feed.details.favorite",!this.feed.details.favorite),this._saveFeed())},_setFavoriteIcon:function(e){return this.feed.details.favorite?"icons:favorite":"icons:favorite-border"},handleFeedDetails:function(){return event.preventDefault(),event.stopPropagation(),this.response?(this.$.content.classList.contains("loaded")||this.$.content.classList.add("loaded"),this.response.details&&this.set("feed.details",this.response.details),this.response.comments&&this.set("feed.comments",this.response.comments),this.response.note&&this.set("feed.note",this.response.note),this.response.plugins&&this.set("feed.plugins",this.response.plugins),this.response.error&&this.response.error.value&&this.fire("notification",{text:this.response.error.text}),void this._resizeFeed()):void console.log("nothing in yet...")},_getFeed:function(){this.$.FeedDetailsAPI.targetID={feed:this.feed.details.id};var e={auth:"user="+sessionStorage.getItem("username")+",hash="+sessionStorage.getItem("token")};this.$.FeedDetailsAPI.params=e,this.$.FeedDetailsAPI.method="GET",this.$.FeedDetailsAPI.generateRequest()},_saveFeed:function(e){this.$.FeedDetailsAPI.previous=this.previous,this.$.FeedDetailsAPI.targetID={feed:this.feed.details.id};var t={auth:"user="+sessionStorage.getItem("username")+",hash="+sessionStorage.getItem("token")};this.$.FeedDetailsAPI.params=t,this.$.FeedDetailsAPI.body=this.feed,this.$.FeedDetailsAPI.method="POST",this.$.FeedDetailsAPI.generateRequest()},_resizeFeed:function(){this.fire("resize-feed",{index:this.index})},handleError:function(e){this.$.FeedDetailsAPI.url="",e.preventDefault(),e.stopPropagation(),console.log(this.error)},_validateFeed:function(){if(this.feed&&this.feed.details){var e=[];if("string"!=typeof this.feed.details.id&&e.push("id:String"),"string"!=typeof this.feed.details.name&&e.push("name:String"),"string"!=typeof this.feed.details.letter&&e.push("letter:String"),"string"!=typeof this.feed.details.color&&e.push("color:String"),"string"!=typeof this.feed.details.date&&e.push("date:String"),"string"!=typeof this.feed.details.status&&e.push("status:String"),"boolean"!=typeof this.feed.details.favorite&&e.push("favorite:Boolean"),"boolean"!=typeof this.feed.details.checked&&e.push("checked:Boolean"),this.feed.details.tags&&this.feed.details.tags.constructor===Array||e.push("tags:Array"),e.length>0)return this.error=e,this.fire("error-changed"),this.valid=!1,this.fire("valid-changed"),void this.fire("error");this.valid=!0,this.fire("valid-changed")}},_validateTags:function(e){return e&&e.constructor===Array?e:[]},_blockEvents:function(e){e.preventDefault(),e.stopPropagation()}});</script>
 </dom-module>
 </body></html>
