@@ -37,7 +37,7 @@
 
           case 'body':
 
-            return this.body;
+            return JSON.stringify(this.body);
 
           default:
 
@@ -48,16 +48,59 @@
       },
 
       handleFeedDetails: function( ){
-        // var data = this.generateFakePluginData();
-        //var plugins = this.generateFakePlugins( 3 );
-        // window.console.log(pluginsFlatten);
 
-        var details = {
-          note: this.note(),
-          comments: this.generateComments(),
-          plugins: this.generateFakeFlatPlugins(3)
+        if( !this.response ){
+
+          return;
+
         }
-        return details;
+
+        var feed = {};
+
+        //
+        // randomly fail
+        if( 4 === Math.floor(Math.random() * 5) ){
+        
+          feed.error = {
+
+            value: true,
+            text: 'Ooops - ' + this.method + ' on ' + this.api + ' failed.'
+
+          }
+
+        }
+
+        if( this.method === 'GET'){
+
+          if( !feed.error || !feed.error.value ){
+
+            // generate dummy content
+            feed.comments = this.generateComments();
+            feed.note = this.note();
+            feed.plugins = this.generateFakeFlatPlugins(3);
+
+          }
+
+        }
+        else{
+
+          if( feed.error && feed.error.value ){
+
+            feed.details = this.previous.details;
+            feed.comments = this.previous.comments;
+            feed.note = this.previous.note;
+            feed.plugins = this.previous.plugin;
+
+          }
+          else{
+
+            feed = this.response.json;
+
+          }
+
+        }
+
+        return feed;
       },
 
       generateComments: function(){

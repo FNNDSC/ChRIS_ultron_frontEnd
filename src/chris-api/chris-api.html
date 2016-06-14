@@ -23,7 +23,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
   <template>
 
-    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[getBody(body, api)]]" params="[[getParams(params, api)]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" on-response="handleResponse" last-error="{{error}}" on-error="handleError" handle-as="[[handleAs]]" auto></iron-ajax>
+    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" on-response="handleResponse" last-error="{{error}}" on-error="handleError" handle-as="[[handleAs]]" auto="[[auto]]"></iron-ajax>
 
   </template>
 
@@ -35,6 +35,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           url: {
             type: String
+          },
+
+          auto: {
+            type:Boolean
           },
 
           response: {
@@ -97,6 +101,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
+        observers: [
+         'getBody(body, body.* api)',
+         'getParams(params, params.* api)'
+        ],
+
         behaviors: [
           Helper, // first import Helper so we can use it in next behaviors
           Feed,
@@ -109,9 +118,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           PluginsFeed
         ],
 
-        generateRequest: function( ) {
+        generateRequest: function() {
 
-          this.$.ironAjax.generateRequest( );
+          this.url = this.getUrl();
+
+          this.$.ironAjax.generateRequest();
 
         },
 

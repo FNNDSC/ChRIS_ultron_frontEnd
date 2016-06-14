@@ -206,8 +206,6 @@
       .content {
 
         margin-top: 8px;
-        border-top: 1px solid var(--accent-color);
-        background-color: var(--paper-grey-50);
         min-height: 64px;
         display: none;
 
@@ -269,21 +267,9 @@
 
     </style>
 
-<!--     <chris-api id="chrisAPI" api="FeedDetails" response="{{feed.details}}" on-response="handleDetails">
-    </chris-api> -->
-    <chris-api id="FeedAPI"
-      api="Feed",
-      method="POST",
-      content-type="application/json",
-      response="{{response}}"
-      on-response="handleFeed"
-      error="{{error}}"
-      on-error="handleError">
-    </chris-api>
-
     <chris-api id="FeedDetailsAPI"
       api="FeedDetails",
-      method="GET",
+      content-type="application/json",
       response="{{response}}"
       on-response="handleFeedDetails"
       error="{{error}}"
@@ -297,7 +283,7 @@
       <div class="toolbar">
 
         <!-- Check Area -->
-        <div class="check-area" style$="{{_setStyle(feed.color)}}" on-tap="_blockEvents">
+        <div class="check-area" style$="{{_setStyle(feed.details.color)}}" on-tap="_blockEvents">
 
           <template is="dom-if" if="{{!valid}}">
 
@@ -307,8 +293,8 @@
 
           <template is="dom-if" if="{{valid}}">
 
-              <span class="letter">[[feed.letter]]</span>
-              <paper-checkbox class="checkbox" checked="{{feed.checked}}"></paper-checkbox>
+              <span class="letter">[[feed.details.letter]]</span>
+              <paper-checkbox class="checkbox" checked="{{feed.details.checked}}"></paper-checkbox>
 
           </template>
 
@@ -317,11 +303,11 @@
         <!-- Title Area -->
         <div class="title-area">
 
-          <div class="name">Feed [[feed.id]] - [[feed.name]]</div>
-          <div class="date">[[feed.date]]</div>
+          <div class="name">Feed [[feed.details.id]] - [[feed.details.name]]</div>
+          <div class="date">[[feed.details.date]]</div>
           <div class="tags">
 
-            <template is="dom-repeat" items="[[_validateTags(feed.tags)]]">
+            <template is="dom-repeat" items="[[_validateTags(feed.details.tags)]]">
 
               <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
 
@@ -336,18 +322,8 @@
 
           <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
           <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
-          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.favorite)]]" on-tap="favorite"></paper-icon-button>
-          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.status)]]" class$="[[feed.status]]" disabled></paper-icon-button>
-<!--           <div class="horizontal-section">
-            <paper-menu-button ignore-select>
-              <paper-icon-button icon="menu" class="dropdown-trigger" alt="multi select"></paper-icon-button>
-              <paper-menu class="dropdown-content" multi>
-                <template is="dom-repeat" items="[[_validateTags(feed.tags)]]" as="tag">
-                  <paper-item>[[tag.name]]</paper-item>
-                </template>
-              </paper-menu>
-            </paper-menu-button>
-        </div> -->
+          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.details.favorite)]]" on-tap="favorite"></paper-icon-button>
+          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.details.status)]]" class$="[[feed.details.status]]" disabled></paper-icon-button>
 
           <paper-tooltip for="share" offset="0">Share</paper-tooltip>
           <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
@@ -361,11 +337,10 @@
         <paper-progress indeterminate></paper-progress>
         <div class="message">Loading details</div>
 
-        <chris-note note="[[feed.details.note]]"></chris-note>
-        <!-- 
-        <chris-note note="[[feed.details.note]]"></chris-note>
-        <chris-plugin-list feedindex="[[index]]" plugins="[[feed.details.plugins]]"></chris-plugin-list>
-        <chris-comment-list comments="[[feed.details.comments]]"></chris-comment-list>
+        <chris-note note="{{feed.note}}" on-note-changed="_saveFeed"></chris-note>
+        <!--
+        <chris-plugin-list feedindex="[[index]]" plugins="[[feed.plugins]]"></chris-plugin-list>
+        <chris-comment-list comments="[[feed.comments]]"></chris-comment-list>
         -->
       </div>
 
@@ -381,6 +356,13 @@
           feed: {
             type: Object,
             observer: '_validateFeed'
+          },
+
+          // to be REMOVED
+          // WE USE IT TO RESTORE FEED AFTER FAILED POST
+          // API SHOULD RETURN THE FEED TO BE USED FOR RESTORE
+          previous: {
+            type: Object
           },
 
           open:{
@@ -408,7 +390,7 @@
         },
 
         observers: [
-          '_checkedChanged(feed.checked)'
+          '_checkedChanged(feed.details.checked)'
         ],
 
         _openChanged: function( ){
@@ -431,21 +413,10 @@
           // trigger API call if no details
           // need this.open if not iron-list recycle elements and fires unexpected
           // fetch requests
-          if( this.open && this.feed && !this.feed.details ){
+          if( this.open && this.feed && this.feed.details &&
+            (!this.feed.comments || !this.feed.note || !this.feed.plugins ) ){
 
-            // let the ChRIS API know which will we will be calling
-            this.$.FeedDetailsAPI.targetID = {
-              feed: this.feed.id
-            };
-            // should be done in API directly if possible
-            // set params
-            var params = {
-              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
-            };
-            this.$.FeedDetailsAPI.params = params;
-
-            // trigger ajax call
-            this.$.FeedDetailsAPI.url = 'FeedDetails';
+            this._getFeed();
 
           }
 
@@ -484,9 +455,9 @@
         _checkedChanged: function(){
 
           // add/remove class
-          if( this.feed ){
+          if( this.feed && this.feed.details ){
 
-            this.feed.checked ? this.$.feed.classList.add('checked') : this.$.feed.classList.remove('checked');
+            this.feed.details.checked ? this.$.feed.classList.add('checked') : this.$.feed.classList.remove('checked');
             this.fire('checked', this.feed);
 
           }
@@ -541,53 +512,119 @@
           }
 
           // update feed favorite
-          this.set('feed.favorite', !this.feed.favorite);
+          // SAVE OLD FEED FOR NOW SO WE CAN RESTORE IT IF ERROR IN _saveFeed
+          // TO BE REMOVED
+          // API CALL POST WILL RETURN THE CORRECT FEED
+          // FAKE DEEP COPY
+          this.previous = JSON.parse(JSON.stringify(this.feed));
+          this.set('feed.details.favorite', !this.feed.details.favorite);
 
-          // api push
-          var params = {
-            auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
-          };
-
-          // fetch the feeds
-          this.$.FeedAPI.params = params;
-          this.$.FeedAPI.body = this.feed;
-          this.$.FeedAPI.url = '';
-
+          this._saveFeed();
         },
 
         _setFavoriteIcon: function( favorite ) {
 
-          return this.feed.favorite ? 'icons:favorite-border' : 'icons:favorite';
-
-        },
-
-        handleFeed: function( event ){
-
-          // stop ajax propagation
-          event.preventDefault();
-          event.stopPropagation();
-
-          // compare reponse and the data
-          if( this.response.update && !this.response.update.status ){
-
-            // revert changes
-            this.set( 'feed', this.response );
-
-            // show toast message
-            this.fire( 'notification', {text: this.response.update.text} );
-
-          }
+          return this.feed.details.favorite ? 'icons:favorite' : 'icons:favorite-border';
 
         },
 
         handleFeedDetails: function(){
 
-          this.$.content.classList.add('loaded');
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
 
-          // attach new content
-          this.set('feed.details', this.response);
+          // could/should show nice reload button
+          if( !this.response ){
 
+            console.log( 'nothing in yet...' );
+
+            return;
+
+          }
+
+          // update style
+          if( !this.$.content.classList.contains( 'loaded' ) ){
+
+            this.$.content.classList.add('loaded');
+
+          }
+
+          // attach new feed content
+          if( this.response.details ){
+
+            this.set( 'feed.details', this.response.details );
+
+          }
+
+         if( this.response.comments ){
+
+            this.set( 'feed.comments', this.response.comments );
+
+          }
+
+         if( this.response.note ){
+
+            this.set( 'feed.note', this.response.note );
+
+          }
+
+         if( this.response.plugins ){
+
+            this.set( 'feed.plugins', this.response.plugins );
+
+          }
+
+          // if feed was not updated, fire notification message
+          if( this.response.error && this.response.error.value ){
+
+            // show toast message
+            this.fire( 'notification', {text: this.response.error.text} );
+
+          }
+
+          // let the iron-list know the feed's size changed (new content)
           this._resizeFeed();
+
+        },
+
+        _getFeed: function(){
+
+          // let the ChRIS API know which will we will be calling
+          this.$.FeedDetailsAPI.targetID = {
+            feed: this.feed.details.id
+          };
+
+          // should be done in API directly if possible
+          // set params
+          var params = {
+            auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          };
+          this.$.FeedDetailsAPI.params = params;
+          this.$.FeedDetailsAPI.method = 'GET';
+          this.$.FeedDetailsAPI.generateRequest();
+
+        },
+
+        _saveFeed: function( event ){
+
+          // HACK TO RESTORE FEED AFTER FAILED POST
+          // TO BE REMOVED, API SHOULD RETURN THE CURRENT FEED OBJECT
+          this.$.FeedDetailsAPI.previous = this.previous;
+          // let the ChRIS API know which will we will be calling
+          this.$.FeedDetailsAPI.targetID = {
+            feed: this.feed.details.id
+          };
+          
+          // should be done in API directly if possible
+          // set params
+          var params = {
+            auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          };
+          this.$.FeedDetailsAPI.params = params;
+          this.$.FeedDetailsAPI.body = this.feed;
+          this.$.FeedDetailsAPI.method = 'POST';
+          this.$.FeedDetailsAPI.generateRequest();
 
         },
 
@@ -600,6 +637,8 @@
 
         handleError: function( event ){
 
+          this.$.FeedDetailsAPI.url = '';
+
           // stop ajax propagation
           event.preventDefault();
           event.stopPropagation();
@@ -609,7 +648,7 @@
 
         _validateFeed: function(){
 
-          if( !this.feed ){
+          if( !this.feed || !this.feed.details ){
 
             return;
 
@@ -618,63 +657,63 @@
           var error = [];
 
           // need id
-          if( !( typeof this.feed.id === 'string' ) ){
+          if( !( typeof this.feed.details.id === 'string' ) ){
 
             error.push( 'id:String' );
 
           }
 
           // need name
-          if( !( typeof this.feed.name === 'string' ) ){
+          if( !( typeof this.feed.details.name === 'string' ) ){
 
             error.push( 'name:String' );
 
           }
 
           // need letter
-          if( !( typeof this.feed.letter === 'string' ) ){
+          if( !( typeof this.feed.details.letter === 'string' ) ){
 
             error.push( 'letter:String' );
 
           }
 
           // need color
-          if( !( typeof this.feed.color === 'string' ) ){
+          if( !( typeof this.feed.details.color === 'string' ) ){
 
             error.push( 'color:String' );
 
           }
 
           // need date
-          if( !( typeof this.feed.date === 'string' ) ){
+          if( !( typeof this.feed.details.date === 'string' ) ){
 
             error.push( 'date:String' );
 
           }
 
           // need status
-          if( !( typeof this.feed.status === 'string' ) ){
+          if( !( typeof this.feed.details.status === 'string' ) ){
 
             error.push( 'status:String' );
 
           }
 
           // need favorite
-          if( !( typeof this.feed.favorite === 'boolean' ) ){
+          if( !( typeof this.feed.details.favorite === 'boolean' ) ){
 
             error.push( 'favorite:Boolean' );
 
           }
 
           // need checked
-          if( !( typeof this.feed.checked === 'boolean' ) ){
+          if( !( typeof this.feed.details.checked === 'boolean' ) ){
 
             error.push( 'checked:Boolean' );
 
           }
 
           // need tags array
-          if( !( this.feed.tags && this.feed.tags.constructor === Array ) ){
+          if( !( this.feed.details.tags && this.feed.details.tags.constructor === Array ) ){
 
             // should we "fix" it or hide the feed and show error
             // just show error "feed"
