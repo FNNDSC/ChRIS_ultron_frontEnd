@@ -24,13 +24,37 @@
       
       }
 
-      .separator{
+      .separator {
 
         font-size: 14px;
         font-weight: 500;
         color: var(--primary-text-color);
         padding: 16px 16px 0;
         border-top: 1px solid rgb(224, 224, 224);
+
+      }
+
+      .favorite {
+
+        color: var(--accent-color);
+
+      }
+
+      .done {
+
+        color: var(--paper-light-green-500);
+
+      }
+
+      .running {
+
+        color: var(--paper-light-blue-500);
+
+      }
+
+      .error {
+
+        color: var(--paper-red-500);
 
       }
 
@@ -45,16 +69,16 @@
         <iron-icon icon="icons:view-headline" item-icon></iron-icon>All
       </paper-icon-item>
       <paper-icon-item value="favorite" role="menuitem">
-        <iron-icon icon="icons:favorite" item-icon></iron-icon>Favorite
+        <iron-icon  class="favorite" icon="icons:favorite" item-icon></iron-icon>Favorite
       </paper-icon-item>
       <paper-icon-item value="running" role="menuitem">
-        <iron-icon icon="icons:schedule" item-icon></iron-icon>Running
+        <iron-icon class="running" icon="icons:schedule" item-icon></iron-icon>Running
       </paper-icon-item>
       <paper-icon-item value="done" role="menuitem">
-        <iron-icon icon="icons:done" item-icon></iron-icon>Done
+        <iron-icon class="done" icon="icons:done" item-icon></iron-icon>Done
       </paper-icon-item>
       <paper-icon-item value="error" role="menuitem">
-        <iron-icon icon="icons:clear" item-icon></iron-icon>Error
+        <iron-icon class="error" icon="icons:clear" item-icon></iron-icon>Error
       </paper-icon-item>
 <!--            <paper-icon-item role="menuitem">
         <iron-icon icon="social:people" item-icon></iron-icon>Shared
