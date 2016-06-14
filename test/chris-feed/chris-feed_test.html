@@ -28,7 +28,8 @@
 
           element = fixture('basic');
           
-          validFeed = {
+          validFeed = {};
+          validFeed.details = {
             id: '1234',
             name: 'My Analysis',
             letter: 'N',
@@ -80,7 +81,7 @@
           function feedChanged( event ) {
 
             // expect response to be false because no params provided
-            assert.equal( element.feed.favorite, false );
+            assert.equal( element.feed.details.favorite, false );
             
             done();
             element.removeEventListener( 'feed-changed', feedChanged );
@@ -93,7 +94,7 @@
 
           element.addEventListener( 'feed-changed', feedChanged );
 
-          validFeed.favorite = false;
+          validFeed.details.favorite = false;
           element.feed = validFeed;
 
           MockInteractions.tap( element.$.favorite );
@@ -101,7 +102,7 @@
           function feedChanged( event ) {
 
             // expect response to be false because no params provided
-            assert.equal( element.feed.favorite, true );
+            assert.equal( element.feed.details.favorite, true );
             
             done();
             element.removeEventListener( 'feed-changed', feedChanged );
@@ -115,8 +116,8 @@
           element.addEventListener( 'valid-changed', validChanged );
 
           var invalidFeed = validFeed;
-          invalidFeed.name = true;
-          invalidFeed.checked = 'String';
+          invalidFeed.details.name = true;
+          invalidFeed.details.checked = 'String';
           element.feed = invalidFeed;
 
           function validChanged( event ) {
@@ -140,8 +141,8 @@
           element.addEventListener( 'error', onError );
 
           var invalidFeed = validFeed;
-          invalidFeed.color = true;
-          invalidFeed.tags = 'String';
+          invalidFeed.details.color = true;
+          invalidFeed.details.tags = 'String';
           element.feed = invalidFeed;
 
           function onError( event ) {

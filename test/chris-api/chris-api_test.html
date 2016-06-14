@@ -14,7 +14,7 @@
 
     <test-fixture id="basic">
       <template>
-        <chris-api></chris-api>
+        <chris-api auto></chris-api>
       </template>
     </test-fixture>
 
@@ -185,12 +185,12 @@
             expect( element.response.length ).to.be.at.least(1);
 
             // list properties we expect for a feed
-            expect( element.response[0].id ).to.be.a('string');
-            expect( element.response[0].name ).to.be.a('string');
-            expect( element.response[0].color ).to.be.a('string');
-            expect( element.response[0].description ).to.be.a('string');
-            expect( element.response[0].date ).to.be.a('string');
-            expect( element.response[0].favorite ).to.be.a('boolean');
+            expect( element.response[0].details.id ).to.be.a('string');
+            expect( element.response[0].details.name ).to.be.a('string');
+            expect( element.response[0].details.color ).to.be.a('string');
+            expect( element.response[0].details.description ).to.be.a('string');
+            expect( element.response[0].details.date ).to.be.a('string');
+            expect( element.response[0].details.favorite ).to.be.a('boolean');
 
             done();
             element.removeEventListener( 'response', responseChanged );
@@ -255,7 +255,8 @@
           element.api = 'Feed';
           element.addEventListener( 'response', responseChanged );
           //update url with anything to initiate fetch
-          var body = {
+          var body = {};
+          body.details = {
             id: '1234',
             name: 'Cool Feed Name',
             color: 'red',
@@ -271,11 +272,11 @@
           function responseChanged( event ) {
 
             // expect response to be false because no params provided
-            expect( element.response.id ).to.be.a('string');
-            expect( element.response.name ).to.be.a('string');
-            expect( element.response.color ).to.be.a('string');
-            expect( element.response.date ).to.be.a('string');
-            expect( element.response.tags ).to.be.a('array');
+            expect( element.response.details.id ).to.be.a('string');
+            expect( element.response.details.name ).to.be.a('string');
+            expect( element.response.details.color ).to.be.a('string');
+            expect( element.response.details.date ).to.be.a('string');
+            expect( element.response.details.tags ).to.be.a('array');
 
             done();
             element.removeEventListener( 'response', responseChanged );
@@ -301,6 +302,7 @@
         test('Feed Details returns a feed details', function( done ) {
 
           element.api = 'FeedDetails';
+          // element.method = 'GET';
           element.addEventListener( 'response', responseChanged );
           //update url with anything to initiate fetch
 
