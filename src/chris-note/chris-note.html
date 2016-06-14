@@ -5,26 +5,61 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<!-- IRON ELEMENTS -->
 <link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
 
 <dom-module id="chris-note">
   <template>
-    <style include="chris-feed-styles"></style>
     <style>
 
-      app-toolbar {
-        flex:1;
-        background-color: var(--paper-grey-100);
+
+      .toolbar {
+
+        min-height: 48px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-wrap);
+        border-bottom: 1px solid var(--accent-color);
+
+      }
+
+      .name {
+
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      paper-icon-button {
+
+        color: var(--secondary-text-color);
+
       }
 
       .content {
+
         padding: 20px;
+
       }
 
-      #editor{
+      #editor {
+
         display: none;
         width: inherit;
+
       }
 
       /* Markdown style */
@@ -68,13 +103,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <!-- Toolbar -->
 
-      <div class="section toolbar">
+      <div class="toolbar">
 
-        <div class="title">Note</div>
+        <div class="name">Note</div>
 
-        <paper-icon-button icon="create" on-tap="edit"></paper-icon-button>
-        <paper-icon-button icon="delete" on-tap="delete"></paper-icon-button>
-        <paper-icon-button icon="save" on-tap="save"></paper-icon-button>
+        <div class="spacer"></div>
+
+        <template is="dom-if" if="{{!editing}}" >
+          <paper-icon-button icon="create" on-tap="edit"></paper-icon-button>
+        </template>
+        <template is="dom-if" if="{{editing}}" >
+          <paper-icon-button icon="save" on-tap="save"></paper-icon-button>
+          <paper-icon-button icon="close" on-tap="close"></paper-icon-button>
+        </template>
 
       </div>
 
@@ -99,6 +140,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           note: {
             type: String
+          },
+
+          previousNote: {
+            type: String
+          },
+
+          editing: {
+            type: Boolean,
+            value: false
           }
 
         },
@@ -113,26 +163,40 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           this._stopEventPropagation( event );
 
+          // start editing (will show related buttons)
+          this.editing = true;
+          // save current content
+          this.previousNote = this.note;
+
           this.$.editor.style.display = 'block';
           this.fire('resize-content');
 
         },
 
-        delete: function( event ){
+        close: function( event ){
 
           this._stopEventPropagation( event );
 
-          this.note = '';
+          // stop editing
+          this.editing = false;
+          // restore previous content
+          this.note = this.previousNote;
+
+          this.$.editor.style.display = 'none';
           this._resizeContent();
 
         },
 
         save: function( event ){
 
-          this._stopEventPropagation( event ) ;
+          this._stopEventPropagation( event );
+
+          this.editing = false;
 
           this.$.editor.style.display = 'none';
           this._resizeContent();
+
+          this.fire('note-changed');
 
         },
 
