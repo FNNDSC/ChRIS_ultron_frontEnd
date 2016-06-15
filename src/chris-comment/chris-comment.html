@@ -1,0 +1,66 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="chris-comment">
+
+  <template>
+
+    <style>
+    :host {
+      display: block;
+      @apply(--paper-font-common-base);
+    }
+
+    .container {
+      min-height: 64px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border-bottom: 1px solid var(--paper-grey-300);
+    }
+
+    .name {
+      padding:8px;
+      /*white-space: nowrap;*/
+      font-style: bold;
+      font-size: smaller;
+
+    }
+
+    .content {
+      padding:8px;
+    }
+
+    </style>
+
+    <div class="container" style$="{{_setCommentStyle(comment.color)}}">
+      <div class="name">[[comment.name]]</div>
+      <div class="content">[[comment.content]]</div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-comment',
+
+        properties: {
+
+          comment: {
+            type: Object
+          }
+
+        },
+
+        _setCommentStyle: function( color ){
+
+          return 'border-left: 1px solid ' + color;
+
+        }
+    });
+  </script>
+</dom-module>

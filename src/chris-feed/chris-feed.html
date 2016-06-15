@@ -338,8 +338,8 @@
         <paper-progress indeterminate></paper-progress>
         <div class="message">Loading details</div>
 
-        <chris-note note="{{feed.note}}" on-note-changed="_saveFeed"></chris-note>
-        <chris-comment-list comments="{{feed.comments}}" on-comments-changed="_saveFeed"></chris-comment-list>
+        <chris-note note="{{feed.note}}" on-note="_saveFeed"></chris-note>
+        <chris-comment-list comments="{{feed.comments}}" on-comments="_saveFeed"></chris-comment-list>
         <!--
         <chris-plugin-list feedindex="[[index]]" plugins="[[feed.plugins]]"></chris-plugin-list>
 
@@ -622,6 +622,7 @@
             auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
           };
           this.$.FeedDetailsAPI.params = params;
+          console.log( this.feed );
           this.$.FeedDetailsAPI.body = this.feed;
           this.$.FeedDetailsAPI.method = 'POST';
           this.$.FeedDetailsAPI.generateRequest();

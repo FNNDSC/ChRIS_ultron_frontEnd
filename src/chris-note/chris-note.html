@@ -18,7 +18,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
     <style>
 
-
       .toolbar {
 
         min-height: 48px;
@@ -101,34 +100,34 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-      <!-- Toolbar -->
+    <!-- Toolbar -->
 
-      <div class="toolbar">
+    <div class="toolbar">
 
-        <div class="name">Note</div>
+      <div class="name">Note</div>
 
-        <div class="spacer"></div>
+      <div class="spacer"></div>
 
-        <template is="dom-if" if="{{!editing}}" >
-          <paper-icon-button icon="create" on-tap="edit"></paper-icon-button>
-        </template>
-        <template is="dom-if" if="{{editing}}" >
-          <paper-icon-button icon="save" on-tap="save"></paper-icon-button>
-          <paper-icon-button icon="close" on-tap="close"></paper-icon-button>
-        </template>
+      <template is="dom-if" if="{{!editing}}" >
+        <paper-icon-button icon="create" on-tap="edit"></paper-icon-button>
+      </template>
+      <template is="dom-if" if="{{editing}}" >
+        <paper-icon-button icon="save" on-tap="save"></paper-icon-button>
+        <paper-icon-button icon="close" on-tap="close"></paper-icon-button>
+      </template>
 
-      </div>
+    </div>
 
-      <!-- Content -->
+    <!-- Content -->
 
-      <div class="content">
+    <div class="content">
 
-        <iron-autogrow-textarea id="editor" on-keydown="_stopEventPropagation" on-keyup="_resizeContent" value="{{note}}"></iron-autogrow-textarea>
-        
-        <marked-element markdown="{{note}}" on-marked-render-complete="_resizeContent">
-          <div class="markdown-html"></div>
-        </marked-element>
-      </div>
+      <iron-autogrow-textarea id="editor" on-keydown="_stopEventPropagation" on-keyup="_resizeContent" value="{{note}}"></iron-autogrow-textarea>
+      
+      <marked-element markdown="{{note}}" on-marked-render-complete="_resizeContent">
+        <div class="markdown-html"></div>
+      </marked-element>
+    </div>
 
   </template>
 
@@ -197,6 +196,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this._resizeContent();
 
           this.fire('note-changed');
+          this.fire('note');
 
         },
 

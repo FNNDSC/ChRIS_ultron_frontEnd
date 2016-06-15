@@ -15,7 +15,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <!-- CHRIS -->
-<!-- <link rel="import" href="../chris-comment/chris-comment.html"> -->
+<link rel="import" href="../chris-comment/chris-comment.html">
 
 <dom-module id="chris-comment-list">
   <template>
@@ -64,8 +64,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <div class="content">
 
       <template is="dom-repeat" items="[[comments]]">
-      [[item.content]]
-        <!-- <chris-comment comment="[[item]]"></chris-comment> -->
+
+        <chris-comment comment="[[item]]"></chris-comment>
+
       </template>
 
       <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter maxlength="120">
@@ -116,11 +117,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
               this.clear();
 
-              // that also fires the "comments-change event"
               this.push('comments', comment);
-
-              // let feed now that its size changed
               this.fire('resize-content');
+
+              this.fire('comments-changed');
+              this.fire('comments');
 
             }
 
