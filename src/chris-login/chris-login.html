@@ -110,13 +110,12 @@
 
     </style>
 
-    <chris-api id="api"
+    <chris-api id="LoginAPI"
       api="Login"
       response="{{response}}"
       on-response="handleResponse"
       error="{{error}}"
-      on-error="handleError"
-      auto>
+      on-error="handleError">
     </chris-api>
 
 
@@ -180,7 +179,7 @@
     <paper-toast id="loginError" text=""></paper-toast>
 
     <paper-toast id="serverError" duration="0" text="An error occured while connecting to the server. Please contact dev@babymri.org.">
-      <paper-button onclick="serverError.toggle()" class="yellow-button">Close now!</paper-button>
+      <paper-button on-tap="_closeToast" class="yellow-button">Close now!</paper-button>
     </paper-toast>
 
   </template>
@@ -239,16 +238,15 @@
               this.$.login.disabled = true;
               this.$.loginLabel.style.display = 'none';
               this.$.loginSpinner.style.display = 'block';
+
               // call API
               // set params first
-              this.$.api.params = {
+              this.$.LoginAPI.params = {
                 auth: 'user=' + this._username + ',passwd=' + this._password,
                 username: this._username,
                 password: this._password
               };
-
-              // url update triggers a new AJAX call
-              this.$.api.url = 'login';
+              this.$.LoginAPI.generateRequest();
 
             }
 
@@ -288,6 +286,12 @@
 
           // log error
           console.log( this.error );
+
+        },
+
+        _closeToast: function(){
+
+          this.$.serverError.toggle();
 
         }
     });
