@@ -17,6 +17,7 @@
 
 <!-- CHRIS -->
 <link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../chris-comment-list/chris-comment-list.html">
 <link rel="import" href="../chris-note/chris-note.html">
 
 <dom-module id="chris-feed">
@@ -338,9 +339,10 @@
         <div class="message">Loading details</div>
 
         <chris-note note="{{feed.note}}" on-note-changed="_saveFeed"></chris-note>
+        <chris-comment-list comments="{{feed.comments}}" on-comments-changed="_saveFeed"></chris-comment-list>
         <!--
         <chris-plugin-list feedindex="[[index]]" plugins="[[feed.plugins]]"></chris-plugin-list>
-        <chris-comment-list comments="[[feed.comments]]"></chris-comment-list>
+
         -->
       </div>
 
@@ -537,8 +539,6 @@
           // could/should show nice reload button
           if( !this.response ){
 
-            console.log( 'nothing in yet...' );
-
             return;
 
           }
@@ -615,7 +615,7 @@
           this.$.FeedDetailsAPI.targetID = {
             feed: this.feed.details.id
           };
-          
+
           // should be done in API directly if possible
           // set params
           var params = {

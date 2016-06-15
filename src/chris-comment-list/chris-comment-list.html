@@ -1,0 +1,132 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<!-- POLYMER -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<!-- PAPER ELEMENTS-->
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<!-- CHRIS -->
+<!-- <link rel="import" href="../chris-comment/chris-comment.html"> -->
+
+<dom-module id="chris-comment-list">
+  <template>
+    <style>
+
+    .toolbar {
+
+        min-height: 48px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-wrap);
+        border-bottom: 1px solid var(--accent-color);
+
+      }
+
+      .name {
+
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+
+      }
+
+      paper-icon-button {
+
+        color: var(--secondary-text-color);
+
+      }
+
+      .content {
+
+        padding: 20px;
+
+      }
+
+    </style>
+
+    <!-- Toolbar -->
+
+    <div class="toolbar">
+
+      <div class="name">Comments</div>
+
+    </div>
+
+    <div class="content">
+
+      <template is="dom-repeat" items="[[comments]]">
+      [[item.content]]
+        <!-- <chris-comment comment="[[item]]"></chris-comment> -->
+      </template>
+
+      <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter maxlength="120">
+        <paper-icon-button suffix icon="icons:clear" on-tap="clear"></paper-icon-button>
+      </paper-input>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-comment-list',
+
+        properties: {
+
+          comments: {
+            type: Array
+          }
+
+        },
+
+        clear: function(){
+
+          this.$.comment.value = '';
+
+        },
+
+        save: function ( evt ) {
+          
+          // save comment only if
+          // - "enter" was pressed
+          // - comment not empty
+          if( evt.keyCode === 13 ) {
+
+            // we need to stop propagation if not the feed willl be closed bi iron-list
+            evt.stopPropagation();
+            evt.preventDefault();
+
+            if( this.$.comment.value !== '' ){
+
+              // name and color should be fetched from user's settings
+              var comment = {
+                name: "Nicolas Rannou",
+                color: "blue",
+                content: this.$.comment.value
+              };
+
+              this.clear();
+
+              // that also fires the "comments-change event"
+              this.push('comments', comment);
+
+              // let feed now that its size changed
+              this.fire('resize-content');
+
+            }
+
+          }
+
+        }
+    });
+  </script>
+</dom-module>
