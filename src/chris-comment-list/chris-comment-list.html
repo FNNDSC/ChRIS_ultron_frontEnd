@@ -1,0 +1,44 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+
+<link rel="import" href="../chris-comment/chris-comment.html">
+
+</head><body><dom-module id="chris-comment-list">
+  <template>
+    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;}</style>
+
+    
+
+    <div class="toolbar">
+
+      <div class="name">Comments</div>
+
+    </div>
+
+    <div class="content">
+
+      <template is="dom-repeat" items="[[comments]]">
+
+        <chris-comment comment="[[item]]"></chris-comment>
+
+      </template>
+
+      <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter="" maxlength="120">
+        <paper-icon-button suffix="" icon="icons:clear" on-tap="clear"></paper-icon-button>
+      </paper-input>
+
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"chris-comment-list",properties:{comments:{type:Array}},clear:function(){this.$.comment.value=""},save:function(e){if(13===e.keyCode&&(e.stopPropagation(),e.preventDefault(),""!==this.$.comment.value)){var t={name:"Nicolas Rannou",color:"blue",content:this.$.comment.value};this.clear(),this.push("comments",t),this.fire("resize-content"),this.fire("comments-changed"),this.fire("comments")}}});</script>
+</dom-module>
+</body></html>

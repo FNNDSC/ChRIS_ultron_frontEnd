@@ -4,16 +4,15 @@
 
   <template>
 
-    <style>:host{display:block;@apply (--paper-font-common-base);}.container{min-height:64px;display:flex;flex-direction:row;align-items:center;border-bottom:1px solid var(--paper-grey-300);}.picture{min-height:48px;min-width:48px;border-radius:50%;background-color:var(--paper-green-500);}.name{padding:8px;font-style:bold;font-size:smaller;}.content{padding:8px;}</style>
+    <style>:host{display:block;}.container{min-height:64px;display:flex;flex-direction:row;align-items:center;border-bottom:1px solid var(--paper-grey-300);}.name{padding:8px;font-style:bold;font-size:smaller;}.content{padding:8px;}</style>
 
-    <div class="container">
-      <div class$="picture primary [[comment.color]]"></div>
+    <div class="container" style$="{{_setCommentStyle(comment.color)}}">
       <div class="name">[[comment.name]]</div>
       <div class="content">[[comment.content]]</div>
     </div>
 
   </template>
 
-  <script>Polymer({is:"chris-comment",properties:{comment:{type:Object}}});</script>
+  <script>Polymer({is:"chris-comment",properties:{comment:{type:Object}},_setCommentStyle:function(e){return"border-left: 1px solid "+e}});</script>
 </dom-module>
 </body></html>
