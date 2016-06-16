@@ -25,11 +25,17 @@
 
     <div class="content">
 
+      
+
+
+      
       <template is="dom-repeat" items="[[comments]]">
 
         <chris-comment comment="[[item]]"></chris-comment>
 
       </template>
+
+      
 
       <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter="" maxlength="120">
         <paper-icon-button suffix="" icon="icons:clear" on-tap="clear"></paper-icon-button>
