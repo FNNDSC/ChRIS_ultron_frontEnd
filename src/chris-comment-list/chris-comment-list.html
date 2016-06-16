@@ -63,11 +63,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <div class="content">
 
+      <!-- First comment -->
+
+
+      <!-- Middle comments -->
       <template is="dom-repeat" items="[[comments]]">
 
         <chris-comment comment="[[item]]"></chris-comment>
 
       </template>
+
+      <!-- Last comment -->
 
       <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter maxlength="120">
         <paper-icon-button suffix icon="icons:clear" on-tap="clear"></paper-icon-button>
