@@ -23,14 +23,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       :host {
 
-        @apply(--layout-fit);
+        display: block;
 
       }
 
       iron-list {
 
-        @apply(--layout-fit);
         padding-top: 16px;
+        padding-bottom: 64px;
         --iron-list-items-container: {
           max-width: 800px;
           margin: auto;
@@ -43,7 +43,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection on-resize-feed="resizeFeed" >
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
 
       <template>
 
@@ -62,7 +62,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           feeds: {
             type: Array
-          }
+          },
+
+          scrollTarget: HTMLElement
 
         },
 

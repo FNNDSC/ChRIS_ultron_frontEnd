@@ -1,0 +1,229 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- APP ELEMENTS -->
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../chris-feed-list/chris-feed-list.html">
+<link rel="import" href="../chris-label-list/chris-label-list.html">
+
+<dom-module id="chris-home">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+    <style>
+
+      :host {
+
+        display: block;
+
+      }
+
+      app-header {
+
+        background-color: var(--dark-primary-color);
+        color: #ffffff;
+
+      }
+
+      app-header paper-icon-button {
+
+        --paper-icon-button-ink-color: #ffffff;
+
+      }
+
+      .drawer.content {
+
+        height: 100%;
+        overflow: auto;
+
+      }
+
+      app-header-layout {
+
+        background-color: var(--paper-grey-100);
+        /*min-height: 201vh;*/
+
+      }
+
+      paper-progress {
+
+        width: 100%;
+        --paper-progress-active-color: var(--accent-color);
+        --paper-progress-height: 2px;
+
+      }
+
+      .loaded paper-progress {
+
+        display: none;
+
+      }
+
+    </style>
+
+    <div id="home">
+
+      <!-- API Calls -->
+      <chris-api id="FeedsAPI"
+        api="Feeds"
+        response="{{feeds}}" on-response="handleFeeds"
+        error="{{error}}" on-error="handleError">
+      </chris-api>
+
+      <chris-api id="PluginsFeedAPI"
+        api="PluginsFeed"
+        response="{{plugins}}" on-response="handlePlugins"
+        error="{{error}}" on-error="handleError">
+      </chris-api>
+
+      <chris-api id="LabelsAPI"
+        api="Labels"
+        response="{{labels}}"
+        error="{{error}}" on-error="handleError">
+      </chris-api>
+
+      <app-drawer-layout fullbleed>
+
+        <!-- Drawer content -->
+        <app-drawer>
+
+          <div class="drawer content">
+
+            <app-toolbar>Menu</app-toolbar>
+            <chris-label-list custom-labels="{{labels}}"></chris-label-list>
+
+          </div>
+
+        </app-drawer>
+
+        <!-- Main content -->
+        <app-header-layout has-scrolling-region id="layout">
+
+          <app-header id="header" fixed effects="waterfall">
+            <app-toolbar>
+              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+              <div title>ChRIS 3.0 - Ultrøn</div>
+            </app-toolbar>
+          </app-header>
+
+          <div id="content" class="main content">
+
+            <paper-progress indeterminate></paper-progress>
+
+            <chris-feed-list id="feedList" feeds="[[feeds]]" on-notification="_showNotification" scroll-target="[[_getScrollTarget()]]"></chris-feed-list>
+
+            <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
+
+          </div>
+
+        </app-header-layout>
+
+      </app-drawer-layout>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'chris-home',
+      properties: {
+
+        feeds: {
+          type: Array
+        },
+
+        plugins:{
+          type: Array
+        },
+
+        labels:{
+          type: Array
+        },
+
+        error: {
+          type: Object
+        } 
+
+      },
+
+      ready: function( event ){
+
+        // logged in
+        // prepare parameters for API call
+        var params = {
+          auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+        };
+
+        // fetch the feeds
+        this.$.FeedsAPI.params = params;
+        this.$.FeedsAPI.generateRequest();
+
+        // fetch the plugins that can create a feed
+        this.$.PluginsFeedAPI.params = params;
+        this.$.PluginsFeedAPI.generateRequest();
+
+        // fetch the labels
+        this.$.LabelsAPI.params = params;
+        this.$.LabelsAPI.generateRequest();
+
+        // anchor toast to the chris-feed-list
+        this.$.notification.fitInto = this.$.feedList;
+
+      },
+
+      handleFeeds: function(){
+
+        this.$.content.classList.add('loaded')
+
+      },
+
+      handlePlugins: function(){
+
+        console.log( 'handlePlugins not implemented' );
+        // console.log( this.plugins );
+
+      },
+
+      handleError: function(){
+
+        console.error( this.error );
+
+      },
+
+      _showNotification: function( event ){
+
+        // update text
+        this.$.notification.text = event.detail.text;
+
+        // show notification
+        this.$.notification.show();
+
+      },
+
+      _getScrollTarget: function() {
+
+        return this.$.header.scrollTarget;
+        
+      }
+
+    });
+  </script>
+</dom-module>
