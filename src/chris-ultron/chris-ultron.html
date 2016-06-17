@@ -43,8 +43,12 @@
         tail="{{subroute}}"></app-route>
 
     <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-      <chris-login name="login" logged={{loggedIn}}></chris-login>
-      <chris-home name="home"></chris-login>
+
+      <chris-login name="login" logged="{{loggedIn}}"></chris-login>
+
+      <chris-home name="home" plugin-fs="{{pluginFs}}" feed="[[feed]]"></chris-home>
+      <chris-plugin-fs name="plugin-fs" plugin-fs="[[pluginFs]]" feed="{{feed}}"></chris-plugin-fs>
+
     </iron-pages>
 
   </template>
@@ -62,7 +66,6 @@
 
         loggedIn:{
           type: Boolean,
-          value: false,
           observer: '_loggedInChanged'
         },
 
@@ -71,6 +74,10 @@
           reflectToAttribute: true,
           observer: '_pageChanged'
         },
+
+        route: {
+          type: Object
+        }
 
       },
 
@@ -97,6 +104,8 @@
 
         }
 
+        this.$.location.path = this.page;
+
       },
 
       _pageChanged: function( page ) {
@@ -104,8 +113,6 @@
         // load page import on demand.
         this.importHref(
           this.resolveUrl( '../chris-' + page + '/chris-' + page + '.html' ), null, null, true );
-
-        this.$.location.path = this.page;
 
       },
 
@@ -123,6 +130,11 @@
              sessionStorage.getItem( 'token' ) ) {
 
           this.loggedIn = true;
+
+        }
+        else{
+
+          this.loggedIn = false;
 
         }
 

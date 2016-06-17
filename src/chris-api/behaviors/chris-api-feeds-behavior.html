@@ -104,20 +104,14 @@
           feed.details = {
             id: 'id: ' + this.response[i].index,
             name: this.response[i].name,
-            image: this.response[i].image,
-            opened: false,//this.response[i].expanded,
+            opened: false,
             checked: false,
-            color: this.response[i].color,
             favorite: this.response[i].integer > 50 ? true : false,
             status: this._generateStatus(this.response[i].integer),
             tags: this._generateTags(colors),
             selected: false,
-            details: null,
             color: colors[Math.floor(Math.random() * colors.length)].value,
             letter: 'N',
-            // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
-            description: this.response[i].shortText,
-            fulldescription: this.response[i].longText,
             date: this.response[i].date
           };
 

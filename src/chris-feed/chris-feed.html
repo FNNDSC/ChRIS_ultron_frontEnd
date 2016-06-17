@@ -12,7 +12,6 @@
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <!-- <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html"> -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<!-- <link rel="import" href="../../bower_components/paper-item/paper-item.html"> -->
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- CHRIS -->
@@ -285,7 +284,7 @@
       <div class="toolbar">
 
         <!-- Check Area -->
-        <div class="check-area" style$="{{_setStyle(feed.details.color)}}" on-tap="_blockEvents">
+        <div class="check-area" style$="[[_setStyle(feed.details.color)]]" on-tap="_blockEvents">
 
           <template is="dom-if" if="{{!valid}}">
 
@@ -296,7 +295,7 @@
           <template is="dom-if" if="{{valid}}">
 
               <span class="letter">[[feed.details.letter]]</span>
-              <paper-checkbox class="checkbox" checked="{{feed.details.checked}}"></paper-checkbox>
+              <paper-checkbox class="checkbox" checked="[[feed.details.checked]]"></paper-checkbox>
 
           </template>
 
@@ -492,8 +491,6 @@
             return;
 
           }
-
-          console.log( 'tag feed' );
 
         },
 
@@ -725,6 +722,9 @@
           }
 
           if( error.length > 0){
+
+
+            console.log( error );
 
             // got an error
             this.error = error;
