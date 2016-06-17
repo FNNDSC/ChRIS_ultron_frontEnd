@@ -295,7 +295,7 @@
           <template is="dom-if" if="{{valid}}">
 
               <span class="letter">[[feed.details.letter]]</span>
-              <paper-checkbox class="checkbox" checked="[[feed.details.checked]]"></paper-checkbox>
+              <paper-checkbox class="checkbox" checked="{{feed.details.checked}}"></paper-checkbox>
 
           </template>
 
@@ -419,6 +419,16 @@
             (!this.feed.comments || !this.feed.note || !this.feed.plugins ) ){
 
             this._getFeed();
+
+          }
+          else{
+
+            // update style
+            if( !this.$.content.classList.contains( 'loaded' ) ){
+
+              this.$.content.classList.add('loaded');
+
+            }
 
           }
 

@@ -2,34 +2,101 @@
 
 <!-- <link rel="import"
       href="https://cdn.vaadin.com/vaadin-core-elements/latest/vaadin-grid/vaadin-grid.html"> -->
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
 
 <dom-module id="pacs-pull-plugin">
 
   <template>
 
     <style>
-  #simple {
-    height: 300px;
-  }
+
+      host {
+
+        display: block;
+
+      }
+
+      .container {
+
+        padding: 10px;
+
+      }
+
+      paper-tabs {
+
+        --paper-tabs-selection-bar-color: var(--accent-color);
+
+      }
+
+      paper-tab {
+
+        --paper-tab-ink: var(--accent-color);
+
+      }
+
+      #vad {
+
+        display: block;
+
+        height: 300px;
+
+      }
+
     </style>
 
-      <div> PACS PULL </div>
-      <div>
-         <paper-checkbox>anonymous</paper-checkbox>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-      </div>
+      <div class="container" >
 
-      <div>
-      <paper-button>Flat button</paper-button>
+        <paper-tabs selected="{{selected}}">
+          <paper-tab>Search</paper-tab>
+          <paper-tab>Settings</paper-tab>
+          <paper-tab>Results</paper-tab>
+        </paper-tabs>
+
+        <iron-pages selected="{{selected}}">
+          <div>
+
+            <paper-input label="Patient MRN"></paper-input>
+            <paper-input label="Date"></paper-input>
+            <paper-input label="Modality"></paper-input>
+
+            <paper-checkbox>Anonymize response</paper-checkbox>
+
+          </div>
+          <div>
+            <paper-input label="PACS IP"></paper-input>
+            <paper-input label="AETITLE"></paper-input>
+          </div>
+
+          <div>
+          <div id="vad">
+          <!-- https://vaadin.com/elements/-/element/vaadin-grid -->
+          <!-- https://github.com/vaadin/vaadin-grid -->
+<!-- 
+          <vaadin-grid id="simple">
+            <table>
+              <colgroup>
+                <col name="firstName"/>
+                <col name="lastName"/>
+                <col name="email"/>
+              </colgroup>
+            </table>
+          </vaadin-grid> -->
+          </div>
+
+          </div>
+        </iron-pages>
+         
+
+
       </div>
 
 <!--       <vaadin-grid id="simple">
@@ -48,7 +115,32 @@
     Polymer({
         is: 'pacs-pull-plugin',
         properties: {
-        }
+
+          selected: {
+            type: Number,
+            value: 0
+          }
+        },
+
+        ready: function(){
+      //           var grid = this.$.simple;
+
+      // this.getJSON('https://demo.vaadin.com/demo-data/1.0/people', function(json) {
+      //   console.log(json.result);
+      //   grid.items = json.result;
+      // });
+        },
+
+        getJSON: function(url, callback) {
+      // var xhr = new XMLHttpRequest();
+      // xhr.onreadystatechange = function() {
+      //   if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+      //     callback(JSON.parse(xhr.responseText));
+      //   }
+      // };
+      // xhr.open('GET', url, true);
+      // xhr.send();
+    }
     });
   </script>
 </dom-module>

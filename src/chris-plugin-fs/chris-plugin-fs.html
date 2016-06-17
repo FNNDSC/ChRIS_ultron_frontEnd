@@ -108,7 +108,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       </app-header>
       <div class="content">
         <div id="card">
-        Hello [[pluginFs.name]]
         </div>
 
         <a href="/home">
@@ -191,9 +190,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             letter: this.pluginFs.name.charAt(0).toUpperCase(),
             date: ( new Date() ).toString()
           }
-          // this.feeds.plugins = [
-          //   //
-          // ];
+          this.feed.plugins = [];
+          this.feed.comments = [];
 
           this.feed.note = '\
 ### Note about ' + this.pluginFs.name + '\n\

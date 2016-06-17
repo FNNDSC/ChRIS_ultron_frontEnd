@@ -280,9 +280,9 @@
       },
 
       _feedChanged: function(){
-        
+
           // get the shell of the feed
-          this.feed.id = ( this.feeds.length + 1 ).toString();
+          this.feed.id = this.feed.details.id = ( this.feeds.length + 1 ).toString();
           this.unshift( 'feeds', this.feed );
 
       }
