@@ -3,21 +3,21 @@
     "name": "pacs-pull-plugin",
     "label": "Pacs Pull",
     "color": "#3F51B5",
-    "url": "../../data/pacs_pull/pacs_pull.html",
+    "url": "/data/pacs_pull/pacs_pull.html",
     "icon": "icons:cloud-queue"
   },
   {
     "name": "search-plugin",
     "label": "Search",
     "color": "#009688",
-    "url": "../../data/search/search.html",
+    "url": "/data/search/search.html",
     "icon": "icons:search"
   },
   {
     "name": "file-browser-plugin",
     "label": "File Browser",
     "color": "#9C27B0",
-    "url": "../../data/file_browser/file_browser.html",
+    "url": "/data/file_browser/file_browser.html",
     "icon": "icons:folder-open"
   }
 ]

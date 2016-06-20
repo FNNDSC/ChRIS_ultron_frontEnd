@@ -22,7 +22,7 @@ before_script:
   - npm i -g bower polymer-cli
   - bower i
 script:
-  - polymer lint --no-recursion
+#  - polymer lint --no-recursion
   - polymer test --expanded
   - polymer build
 notifications:
