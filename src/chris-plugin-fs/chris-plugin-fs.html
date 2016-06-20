@@ -210,10 +210,20 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.feed.comments = [];
 
           this.feed.note = '\
-### Note about ' + this.pluginFs.name + '\n\
+# Note about ' + this.pluginFs.name + '\n\
 \n\
 ---\n\
+### parameters\n\
 ';
+
+        // add parameters to the note
+        var parametersKeys = Object.keys( node.parameters );
+        for( var i = 0; i < parametersKeys.length; i++ ){
+
+          var key = parametersKeys[i];
+          this.feed.note += '*' + key + '* : ' + node.parameters[key] + '\n\n';
+
+        }
 
           // fire in X seconds to fake finished notification
           this.fire('feed-changed');
