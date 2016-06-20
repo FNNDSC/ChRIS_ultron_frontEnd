@@ -1,10 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<!-- <link rel="import"
-      href="https://cdn.vaadin.com/vaadin-core-elements/latest/vaadin-grid/vaadin-grid.html"> -->
-
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<!-- PAPER ELEMENTS -->
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <dom-module id="search-plugin">
@@ -12,35 +8,29 @@
   <template>
 
     <style>
-  #simple {
-    height: 300px;
-  }
+
+      host {
+
+        display: block;
+
+      }
+
+      .container {
+
+        padding: 10px;
+        height: 1000px;
+
+      }
+
     </style>
 
-      <div> Search PLUGIN!! </div>
-      <div>
-         <paper-checkbox>anonymous</paper-checkbox>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-         <paper-input label="Input label"></paper-input>
-      </div>
+      <div class="container">
 
-      <div>
-      <paper-button>Flat button</paper-button>
-      </div>
+        <paper-input label="Patient MRN"></paper-input>
+        <paper-input label="Date"></paper-input>
+        <paper-input label="Modality"></paper-input>
 
-<!--       <vaadin-grid id="simple">
-  <table>
-    <colgroup>
-      <col name="firstName"/>
-      <col name="lastName"/>
-      <col name="email"/>
-    </colgroup>
-  </table>
-</vaadin-grid> -->
+      </div>
 
   </template>
 
@@ -48,6 +38,24 @@
     Polymer({
         is: 'search-plugin',
         properties: {
+
+          parameters: {
+            type: Object
+          }
+        },
+
+        generateParameters: function(){
+
+          // get parameters
+          //
+          this.parameters = {
+            hello: 'from',
+            the: 'search'
+          }
+
+          // let plugin-fs know the parameters are ready
+          this.fire( 'parameters-changed' );
+
         }
     });
   </script>

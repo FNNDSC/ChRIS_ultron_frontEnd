@@ -11,7 +11,8 @@
     "polymer": "Polymer/polymer#^1.5.0",
     "paper-fab-transitions": "GabiAxel/paper-fab-transitions#master",
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#master",
-    "ami-viewer": "FNNDSC/ami-viewer#master"
+    "ami-viewer": "FNNDSC/ami-viewer#master",
+    "vaadin-grid": "vaadin/vaadin-grid#master"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

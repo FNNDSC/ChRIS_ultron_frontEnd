@@ -1,0 +1,252 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- APP ELEMENTS -->
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<dom-module id="chris-plugin-fs">
+
+  <template>
+
+    <style>
+    :host{
+
+        background-color: var(--dark-primary-color);
+        --paper-input-container-focus-color: var(--accent-color);
+
+    }
+
+    app-header-layout {
+
+      /* use fit instead... */
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+
+    }
+
+    app-toolbar {
+
+      color: #ffffff;
+
+    }
+
+    .content {
+
+      min-height: 110vh;
+
+    }
+
+    a {
+
+      color: #ffffff;
+
+    }
+
+    #card {
+
+      position: relative;
+      max-width: 800px;
+      margin: auto;
+      margin-top: 64px;
+      margin-bottom: 100px;
+      /*min-height: 100vh;*/
+      /*height: 500px;*/
+      /*height: 100%;*/
+      background-color: var(--paper-grey-50);
+
+    }
+
+    paper-fab {
+
+      z-index:10;
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+
+    }
+
+
+      /* responsive layout */
+
+      @media all and (max-width: 800px) {
+
+        #card {
+
+          margin: 0;
+
+        }
+
+      }
+    
+    </style>
+
+    <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(pluginFs.color)]]">
+      <app-header fixed condenses effects="waterfall">
+        <app-toolbar style$="[[_setToolbarStyle(pluginFs.color)]]">
+          <div title>[[pluginFs.name]]</div>
+          <a class="back" href="/home">
+            <paper-icon-button icon="icons:clear"></paper-icon-button>
+          </a>
+        </app-toolbar>
+      </app-header>
+      <div class="content">
+        <div id="card">
+        </div>
+
+        <a href="/home">
+          <paper-fab icon="av:play-arrow" title="play-arrow" on-tap="_getParamters"></paper-fab>
+        </a>
+
+      </div>
+    </app-header-layout>
+
+  </template>
+
+
+  <script>
+    Polymer({
+        is: 'chris-plugin-fs',
+        properties: {
+
+          pluginFs: {
+            type: Object,
+            observer: '_pluginFSChanged'
+          },
+
+          feed:{
+            type: Object
+          }
+
+        },
+
+        _pluginFSChanged: function( ){
+
+          // remove child if any
+          // maybe better to hide?
+          var node = Polymer.dom(this.$.card).querySelector( '.plugin' );
+          if( node ){
+
+            Polymer.dom( this.$.card ).removeChild( node );
+
+            // remove event listener
+            node.removeEventListener( 'parameters-changed', this._createFeed );
+
+          }
+          
+          // fetch the plugin!
+          Polymer.Base.importHref(
+            this.pluginFs.url,
+            function( evt ){
+
+              var plugin = document.createElement( this.pluginFs.name );
+              plugin.classList.add( 'plugin' );
+              Polymer.dom( this.$.card ).appendChild( plugin );
+
+              // add event listener
+              plugin.addEventListener( 'parameters-changed', this._createFeed.bind( this ) );
+
+            }.bind( this ),
+
+            function( evt ){
+
+              window.console.log( 'oops, something went wrong...' );
+              window.console.log( evt );
+
+            }.bind( this ),
+            true );
+        },
+
+        _getParamters: function(){
+
+          var node = Polymer.dom(this.$.card).querySelector( '.plugin' );
+          node.generateParameters();
+
+        },
+
+        _createFeed: function(){
+
+          // push to the API
+          // print plugin command line paramters
+          var node = Polymer.dom(this.$.card).querySelector( '.plugin' );
+          console.log( node.parameters );
+
+          // feed created
+          // ask for feed ID # through API...
+          // call API to get feed
+          // the create plugin should return it to us...
+          this.feed = {};
+          this.feed.details = {
+            id: '', // will be overwritten
+            name: 'created by ' + this.pluginFs.name,
+            opened: false,
+            checked: false,
+            color: this.pluginFs.color,
+            favorite: false,
+            status: 'running',
+            tags: [],
+            selected: false,
+            letter: this.pluginFs.name.charAt(0).toUpperCase(),
+            date: ( new Date() ).toString()
+          }
+          this.feed.plugins = [];
+          this.feed.comments = [];
+
+          this.feed.note = '\
+# Note about ' + this.pluginFs.name + '\n\
+\n\
+---\n\
+### parameters\n\
+';
+
+        // add parameters to the note
+        var parametersKeys = Object.keys( node.parameters );
+        for( var i = 0; i < parametersKeys.length; i++ ){
+
+          var key = parametersKeys[i];
+          this.feed.note += '*' + key + '* : ' + node.parameters[key] + '\n\n';
+
+        }
+
+          // fire in X seconds to fake finished notification
+          this.fire('feed-changed');
+
+        },
+
+        _setLayoutStyle: function( color ){
+
+          // convert hex color to rgb in order to set the alpha channel
+          color = color.replace('#','');
+          var r = parseInt(color.substring(0,2), 16);
+          var g = parseInt(color.substring(2,4), 16);
+          var b = parseInt(color.substring(4,6), 16);
+
+          return 'background-color: rgba(' + r + ',' + g + ',' + b + ', 0.5);';
+
+        },
+
+        _setToolbarStyle: function( color ){
+
+          return 'background-color: ' + color + ';';
+
+        }
+  });
+  </script>
+</dom-module>

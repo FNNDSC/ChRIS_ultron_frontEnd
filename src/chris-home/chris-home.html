@@ -9,9 +9,11 @@
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
 <!-- PAPER ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- IRON ELEMENTS -->
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
@@ -21,6 +23,9 @@
 <link rel="import" href="../chris-api/chris-api.html">
 <link rel="import" href="../chris-feed-list/chris-feed-list.html">
 <link rel="import" href="../chris-label-list/chris-label-list.html">
+
+<!-- EXTERNAL ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
 
 <dom-module id="chris-home">
 
@@ -76,6 +81,17 @@
 
       }
 
+            paper-fab-speed-dial{
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+      }
+
+      paper-fab#create {
+        --paper-fab-background: var(--accent-color);
+      }
+
     </style>
 
     <div id="home">
@@ -127,6 +143,18 @@
 
             <paper-progress indeterminate></paper-progress>
 
+            <paper-fab-speed-dial direction="top">
+              <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
+              <div class="dropdown-content">
+                <template is="dom-repeat" items="{{plugins}}">
+                <a href="/plugin-fs">
+                  <paper-fab mini id="[[item.name]]" icon="[[item.icon]]" item="[[item]]" style$="[[_setPluginFSStyle(item.color)]]" on-tap="_handlePluginFS"></paper-fab>
+                  <paper-tooltip for="[[item.name]]" position="left" animation-delay="0">[[item.label]]</paper-tooltip>
+                  </a>
+                </template>
+              </div>
+            </paper-fab-speed-dial>
+
             <chris-feed-list id="feedList" feeds="[[feeds]]" on-notification="_showNotification" scroll-target="[[_getScrollTarget()]]"></chris-feed-list>
 
             <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
@@ -150,8 +178,18 @@
           type: Array
         },
 
+        feed:{
+          type: Object,
+          observer: '_feedChanged'
+        },
+
         plugins:{
           type: Array
+        },
+
+        pluginFs: {
+          type: Object,
+          notify: true
         },
 
         labels:{
@@ -222,6 +260,31 @@
 
         return this.$.header.scrollTarget;
         
+      },
+
+      _setPluginFSStyle: function( color ){
+
+          return 'background-color: ' + color + ';';
+
+        },
+
+      _handlePluginFS: function( event ){
+
+        // set the plugin FS
+        if( event ){
+
+          this.set( 'pluginFs', event.model.__data__.item );
+
+        }
+
+      },
+
+      _feedChanged: function(){
+
+          // get the shell of the feed
+          this.feed.id = this.feed.details.id = ( this.feeds.length + 1 ).toString();
+          this.unshift( 'feeds', this.feed );
+
       }
 
     });
