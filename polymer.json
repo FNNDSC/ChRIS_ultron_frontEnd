@@ -2,5 +2,8 @@
   "entrypoint": "index.html",
   "shell": "src/chris-ultron/chris-ultron.html",
   "fragments": [
+  	"src/chris-home/chris-home.html",
+  	"src/chris-login/chris-login.html",
+  	"src/chris-plugin-fs/chris-plugin-fs.html"
   ]
 }

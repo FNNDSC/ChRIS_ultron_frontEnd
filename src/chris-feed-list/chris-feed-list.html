@@ -14,9 +14,9 @@
 
   <template>
 
-    <style>:host{@apply (--layout-fit);}iron-list{@apply (--layout-fit);padding-top:16px;--iron-list-items-container:{max-width:800px;margin:auto;margin-top:30px;margin-bottom:60px;border-bottom:1px solid var(--accent-color);};}</style>
+    <style>:host{display:block;}iron-list{padding-top:16px;padding-bottom:64px;--iron-list-items-container:{max-width:800px;margin:auto;margin-top:30px;margin-bottom:60px;border-bottom:1px solid var(--accent-color);};}</style>
 
-    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled="" multi-selection="" on-resize-feed="resizeFeed">
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled="" multi-selection="" on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
 
       <template>
 
@@ -28,6 +28,6 @@
 
   </template>
 
-  <script>Polymer({is:"chris-feed-list",properties:{feeds:{type:Array}},resizeFeed:function(e){this.$.feeds.updateSizeForItem(e.detail.index)}});</script>
+  <script>Polymer({is:"chris-feed-list",properties:{feeds:{type:Array},scrollTarget:HTMLElement},resizeFeed:function(e){this.$.feeds.updateSizeForItem(e.detail.index)}});</script>
 </dom-module>
 </body></html>

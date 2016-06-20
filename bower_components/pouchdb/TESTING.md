@@ -43,8 +43,7 @@ or append `?grep=test.replication.js` if you opened the tests in a browser manua
 
 #### Test Coverage
 
-    $ npm run build-as-modular-es5
-    $ COVERAGE=1 npm test
+    $ npm run test-coverage
 
 Again, this uses `npm run build-as-modular-es5` in order to fully test the codebase
 as a non-bundle. See `build-as-modular-es5.sh` for details.
@@ -70,58 +69,6 @@ they take a long time. They'll also cause a ton of popups in Safari due to excee
 the 5MB limit.
 
     $ TYPE=mapreduce npm test
-
-### Cordova tests
-
-You may need to install `ant` in order for the Android tests to run (e.g. `brew install ant`). You'll also need the Android SDK, and to make sure your `$ANDROID_HOME` is set.
-
-Run the tests against an iOS simulator:
-
-    $ CLIENT=ios npm run cordova
-
-Run the tests against a connected Android device, using the given COUCH_HOST
-
-    $ CLIENT=android DEVICE=true COUCH_HOST=http://example.com:5984
-
-Run the tests against the FirefoxOS simulator:
-
-    $ CLIENT=firefoxos npm run cordova
-
-Run the tests against a BlackBerry 10 device:
-
-    $ CLIENT=blackberry10 DEVICE=true npm run cordova
-
-Use a custom Couch host:
-
-    $ COUCH_HOST=http://myurl:5984 npm run cordova
-
-Grep some tests:
-
-    $ GREP=basics npm run cordova
-
-Test against the [SQLite Plugin](https://github.com/brodysoft/Cordova-SQLitePlugin):
-
-    $ SQLITE_PLUGIN=true ADAPTERS=websql npm run cordova
-
-**Notes:**
-
-* `CLIENT=ios` will run on iOS, default is `CLIENT=android`
-* `DEVICE=true` will run on a device connected via USB, else on an emulator (default is the emulator)
-* `SQLITE_PLUGIN=true` will install and use the [SQLite Plugin](https://github.com/brodysoft/Cordova-SQLitePlugin).
-* `ADAPTERS=websql` should be used if you want to skip using IndexedDB on Android 4.4+ or if you want to force the SQLite Plugin.
-* `COUCH_HOST` should be the full URL; you can only omit this is in the Android emulator due to the magic `10.0.2.2` route to `localhost`.
-* `ES5_SHIM=true` should be used on devices that don't support ES5 (e.g. Android 2.x).
-
-**WEINRE debugging:**
-
-You can also debug with Weinre by doing:
-
-    $ npm install -g weinre
-    $ weinre --boundHost=0.0.0.0
-
-Then run the tests with:
-
-    $ WEINRE_HOST=http://route.to.my.weinre:8080 npm run cordova
 
 ### Testing against PouchDB server
 
@@ -172,9 +119,17 @@ Or the automated browser runner:
 
     PERF=1 CLIENT=selenium:firefox npm test
 
-You can also use `GREP` to run certain tests, or `LEVEL_ADAPTER` to use a certain *down adapter:
+You can also use `GREP` to run certain tests:
 
-    PERF=1 GREP=basic-inserts LEVEL_ADAPTER=memdown npm test
+    PERF=1 GREP=basic-inserts npm test
+
+You can also use `LEVEL_ADAPTER` to use a certain "DOWN" adapter:
+
+    PERF=1 LEVEL_ADAPTER=memdown npm test
+
+You can also test against node-websql:
+
+    PERF=1 ADAPTER=websql npm test
 
 ### Performance tests in the browser
 

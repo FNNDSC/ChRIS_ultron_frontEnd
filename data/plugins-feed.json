@@ -2,21 +2,21 @@
   {
     "name": "pacs-pull-plugin",
     "label": "Pacs Pull",
-    "color": "red",
+    "color": "#3F51B5",
     "url": "../../data/pacs_pull/pacs_pull.html",
     "icon": "icons:cloud-queue"
   },
   {
     "name": "search-plugin",
     "label": "Search",
-    "color": "green",
+    "color": "#009688",
     "url": "../../data/search/search.html",
     "icon": "icons:search"
   },
   {
     "name": "file-browser-plugin",
     "label": "File Browser",
-    "color": "blue",
+    "color": "#9C27B0",
     "url": "../../data/file_browser/file_browser.html",
     "icon": "icons:folder-open"
   }

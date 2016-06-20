@@ -29,7 +29,7 @@
 
 
 /* eslint-disable quotes, comma-spacing */
-var PrecacheConfig = [["/bower_components/webcomponentsjs/webcomponents-lite.min.js","a1882f82ebfc212658591b4e817d8e03"],["/index.html","bd22ad3f803dc2758a3c4017d7833fe2"],["/manifest.json","2b71c6b21c0659fe63b3b06547bdc747"],["/src/chris-ultron/chris-ultron.html","53d59f7b7cb71997e424f9487f41ed76"]];
+var PrecacheConfig = [["/bower_components/webcomponentsjs/webcomponents-lite.min.js","a1882f82ebfc212658591b4e817d8e03"],["/index.html","f937008d97bc1a1068d7deda826cbacf"],["/manifest.json","2b71c6b21c0659fe63b3b06547bdc747"],["/src/chris-home/chris-home.html","89e60f2a9f18163d0a7f23b1dba4715e"],["/src/chris-login/chris-login.html","505feedfe61cbe8dd0660eeffc16d0d0"],["/src/chris-plugin-fs/chris-plugin-fs.html","6c7c9c911e5f2c0f9857683149c17d21"],["/src/chris-ultron/chris-ultron.html","92bde64a27447b0da39121c242cce9a6"]];
 /* eslint-enable quotes, comma-spacing */
 var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
 
