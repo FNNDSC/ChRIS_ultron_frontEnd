@@ -12,6 +12,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <!-- PAPER ELEMENTS -->
 <!-- <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html"> -->
 <!-- <link rel="import" href="../../bower_components/paper-material/paper-material.html"> -->
+  <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+    <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+  <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+  <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+  <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+  <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 
 <link rel="import" href="../chris-feed/chris-feed.html">
 
@@ -43,6 +49,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
+
+    <!-- CAN NOT ENCAPSULATE DIALOG AND DROPDOWN IN THE IRON LIST...
+     https://github.com/PolymerElements/iron-list/issues/242 -->
+
+    <!-- DIALOG -->
+    <paper-button on-tap="openDialog">plain dialog</paper-button>
+    <paper-dialog id="dialog" fitInto="[[scrollTarget]]">
+      <h2>Header</h2>
+      <div>Dialog body</div>
+    </paper-dialog>
+
     <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
 
       <template>
@@ -65,6 +82,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           },
 
           scrollTarget: HTMLElement
+
+        },
+
+        openDialog: function(){
+
+          this.$.dialog.fitInto = this.scrollTarget;
+          this.$.dialog.open();
 
         },
 
