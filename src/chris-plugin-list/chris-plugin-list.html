@@ -1,0 +1,80 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<!-- POLYMER -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<!-- CHRIS -->
+<!-- <link rel="import" href="../chris-plugin/chris-plugin.html"> -->
+
+<dom-module id="chris-plugin-list">
+  <template>
+    <style>
+
+    .toolbar {
+
+        min-height: 48px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-wrap);
+        border-bottom: 1px solid var(--accent-color);
+
+      }
+
+      .name {
+
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+
+      }
+
+      .content {
+
+        padding: 20px;
+
+      }
+
+    </style>
+
+    <!-- Toolbar -->
+
+    <div class="toolbar">
+
+      <div class="name">Plugins</div>
+
+    </div>
+
+    <div class="content">
+
+      <!-- Middle comments -->
+      <template is="dom-repeat" items="[[plugins]]">
+
+        <!-- <chris-plugin plugin="[[item]]"></chris-plugin> -->
+
+      </template>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-plugin-list',
+
+        properties: {
+
+          plugins: {
+            type: Array
+          }
+
+        }
+
+    });
+  </script>
+</dom-module>
