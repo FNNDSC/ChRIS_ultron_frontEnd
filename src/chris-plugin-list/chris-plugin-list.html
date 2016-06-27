@@ -8,6 +8,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <!-- IRON ELEMENTS -->
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <!-- CHRIS -->
 <link rel="import" href="../chris-plugin/chris-plugin.html">
@@ -16,15 +20,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
     <style>
 
-    .toolbar {
+      .toolbar {
 
-        min-height: 48px;
-        @apply(--layout-horizontal);
-        @apply(--layout-end);
-        @apply(--layout-wrap);
-        border-bottom: 1px solid var(--accent-color);
+          min-height: 48px;
+          @apply(--layout-horizontal);
+          @apply(--layout-end);
+          @apply(--layout-wrap);
+          border-bottom: 1px solid var(--accent-color);
 
-      }
+        }
 
       .name {
 
@@ -34,30 +38,57 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      paper-icon-button {
+
+        color: var(--secondary-text-color);
+
+      }
+
       .content {
 
         padding: 20px;
+        display: none;
+
+      }
+
+      .plugin-list.open .content {
+
+        display: block;
 
       }
 
     </style>
 
-    <!-- Toolbar -->
+    <div id="pluginList" class="plugin-list">
 
-    <div class="toolbar">
+      <!-- Toolbar -->
 
-      <div class="name">Plugins</div>
+      <div class="toolbar">
 
-    </div>
+        <div class="name">Plugins ([[plugins.length]])</div>
 
-    <div class="content">
+        <div class="spacer"></div>
 
-      <!-- Middle comments -->
-      <template is="dom-repeat" items="[[plugins]]">
+        <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
 
-        <chris-plugin plugin="[[item]]"></chris-plugin>
+      </div>
 
-      </template>
+      <div class="content">
+
+        <!-- Middle comments -->
+        <template is="dom-repeat" items="[[plugins]]">
+
+          <chris-plugin plugin="[[item]]"></chris-plugin>
+
+        </template>
+
+      </div>
 
     </div>
 
@@ -71,7 +102,39 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           plugins: {
             type: Array
+          },
+
+          open: {
+            type: Boolean,
+            value: true,
+            observer: '_openChanged'
           }
+
+        },
+
+        toggle: function(){
+
+          this.open = !this.open;
+
+        },
+
+        _openChanged: function( ){
+
+          this.open ? this.$.pluginList.classList.add('open') : this.$.pluginList.classList.remove('open');
+
+          this._resizeContent();
+
+        },
+
+        _setToogleIcon: function( open ){
+          
+          return this.open ? 'icons:expand-less' : 'icons:expand-more';
+
+        },
+
+        _resizeContent: function( event ){
+
+          this.fire('resize-content');
 
         }
 

@@ -7,6 +7,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <!-- IRON ELEMENTS -->
 <link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <!-- PAPER ELEMENTS -->
@@ -51,6 +52,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       .content {
 
         padding: 20px;
+        display: none;
+
+      }
+
+      .note.open .content {
+
+        display: block;
 
       }
 
@@ -100,33 +108,40 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <!-- Toolbar -->
+    <div id="note" class="note">
 
-    <div class="toolbar">
+      <!-- Toolbar -->
 
-      <div class="name">Note</div>
+      <div class="toolbar">
 
-      <div class="spacer"></div>
+        <div class="name">Note</div>
 
-      <template is="dom-if" if="{{!editing}}" >
-        <paper-icon-button icon="create" on-tap="edit"></paper-icon-button>
-      </template>
-      <template is="dom-if" if="{{editing}}" >
-        <paper-icon-button icon="save" on-tap="save"></paper-icon-button>
-        <paper-icon-button icon="close" on-tap="close"></paper-icon-button>
-      </template>
+        <div class="spacer"></div>
 
-    </div>
+        <template is="dom-if" if="{{open}}" >
+          <template is="dom-if" if="{{!editing}}" >
+            <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
+          </template>
+          <template is="dom-if" if="{{editing}}" >
+            <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
+            <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
+          </template>
+        </template>
+        <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
 
-    <!-- Content -->
+      </div>
 
-    <div class="content">
+      <!-- Content -->
 
-      <iron-autogrow-textarea id="editor" on-keydown="_stopEventPropagation" on-keyup="_resizeContent" value="{{note}}"></iron-autogrow-textarea>
-      
-      <marked-element markdown="{{note}}" on-marked-render-complete="_resizeContent">
-        <div class="markdown-html"></div>
-      </marked-element>
+      <div class="content">
+
+        <iron-autogrow-textarea id="editor" on-keydown="_stopEventPropagation" on-keyup="_resizeContent" value="{{note}}"></iron-autogrow-textarea>
+        
+        <marked-element markdown="{{note}}" on-marked-render-complete="_resizeContent">
+          <div class="markdown-html"></div>
+        </marked-element>
+      </div>
+
     </div>
 
   </template>
@@ -148,6 +163,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           editing: {
             type: Boolean,
             value: false
+          },
+
+          open: {
+            type: Boolean,
+            value: false,
+            observer: '_openChanged'
           }
 
         },
@@ -197,6 +218,26 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           this.fire('note-changed');
           this.fire('note');
+
+        },
+
+        toggle: function(){
+
+          this.open = !this.open;
+
+        },
+
+        _openChanged: function( ){
+
+          this.open ? this.$.note.classList.add('open') : this.$.note.classList.remove('open');
+
+          this._resizeContent();
+
+        },
+
+        _setToogleIcon: function( open ){
+          
+          return this.open ? 'icons:expand-less' : 'icons:expand-more';
 
         },
 

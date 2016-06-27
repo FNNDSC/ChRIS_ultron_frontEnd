@@ -39,6 +39,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
       paper-icon-button {
 
         color: var(--secondary-text-color);
@@ -48,36 +54,51 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       .content {
 
         padding: 20px;
+        display: none;
+
+      }
+
+      .comment-list.open .content {
+
+        display: block;
 
       }
 
     </style>
 
-    <!-- Toolbar -->
+    <div id="commentList" class="comment-list">
 
-    <div class="toolbar">
+      <!-- Toolbar -->
 
-      <div class="name">Comments</div>
+      <div class="toolbar">
 
-    </div>
+        <div class="name">Comments ([[comments.length]])</div>
 
-    <div class="content">
+        <div class="spacer"></div>
 
-      <!-- First comment -->
+        <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
+
+      </div>
+
+      <div class="content">
+
+        <!-- First comment -->
 
 
-      <!-- Middle comments -->
-      <template is="dom-repeat" items="[[comments]]">
+        <!-- Middle comments -->
+        <template is="dom-repeat" items="[[comments]]">
 
-        <chris-comment comment="[[item]]"></chris-comment>
+          <chris-comment comment="[[item]]"></chris-comment>
 
-      </template>
+        </template>
 
-      <!-- Last comment -->
+        <!-- Last comment -->
 
-      <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter maxlength="120">
-        <paper-icon-button suffix icon="icons:clear" on-tap="clear"></paper-icon-button>
-      </paper-input>
+        <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter maxlength="120">
+          <paper-icon-button suffix icon="icons:clear" on-tap="clear"></paper-icon-button>
+        </paper-input>
+
+      </div>
 
     </div>
 
@@ -91,6 +112,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           comments: {
             type: Array
+          },
+
+          open: {
+            type: Boolean,
+            value: false,
+            observer: '_openChanged'
           }
 
         },
@@ -124,7 +151,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
               this.clear();
 
               this.push('comments', comment);
-              this.fire('resize-content');
+              this._resizeContent();
 
               this.fire('comments-changed');
               this.fire('comments');
@@ -132,6 +159,32 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             }
 
           }
+
+        },
+
+        _resizeContent: function( event ){
+
+          this.fire('resize-content');
+
+        },
+
+        toggle: function(){
+
+          this.open = !this.open;
+
+        },
+
+        _openChanged: function( ){
+
+          this.open ? this.$.commentList.classList.add('open') : this.$.commentList.classList.remove('open');
+
+          this._resizeContent();
+
+        },
+
+        _setToogleIcon: function( open ){
+          
+          return this.open ? 'icons:expand-less' : 'icons:expand-more';
 
         }
     });
