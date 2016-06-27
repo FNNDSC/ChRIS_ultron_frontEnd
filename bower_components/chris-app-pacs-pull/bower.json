@@ -1,0 +1,18 @@
+{
+  "name": "chris-app-pacs-pull",
+  "description": "Pacs-pull app for chris-ultron",
+  "main": "chris-app-pacs-pull.html",
+  "dependencies": {
+    "app-elements": "PolymerElements/app-elements#^0.9.0",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.10",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "polymer": "Polymer/polymer#^1.5.0",
+    "vaadin-grid": "vaadin/vaadin-grid#master"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  }
+}

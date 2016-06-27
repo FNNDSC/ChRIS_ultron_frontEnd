@@ -1,0 +1,48 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+
+<link rel="import" href="../chris-plugin/chris-plugin.html">
+
+</head><body><dom-module id="chris-plugin-list">
+  <template>
+    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;display:none;}.plugin-list.open .content{display:block;}</style>
+
+    <div id="pluginList" class="plugin-list">
+
+      
+
+      <div class="toolbar">
+
+        <div class="name">Plugins ([[plugins.length]])</div>
+
+        <div class="spacer"></div>
+
+        <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
+
+      </div>
+
+      <div class="content">
+
+        
+        <template is="dom-repeat" items="[[plugins]]">
+
+          <chris-plugin plugin="[[item]]"></chris-plugin>
+
+        </template>
+
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"chris-plugin-list",properties:{plugins:{type:Array},open:{type:Boolean,value:!0,observer:"_openChanged"}},toggle:function(){this.open=!this.open},_openChanged:function(){this.open?this.$.pluginList.classList.add("open"):this.$.pluginList.classList.remove("open"),this._resizeContent()},_setToogleIcon:function(e){return this.open?"icons:expand-less":"icons:expand-more"},_resizeContent:function(e){this.fire("resize-content")}});</script>
+</dom-module>
+</body></html>

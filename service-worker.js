@@ -29,7 +29,7 @@
 
 
 /* eslint-disable quotes, comma-spacing */
-var PrecacheConfig = [["/bower_components/webcomponentsjs/webcomponents-lite.min.js","a1882f82ebfc212658591b4e817d8e03"],["/data/file_browser/file_browser.html","fa30233359924a1732c094e05f91b6ce"],["/data/pacs_pull/pacs_pull.html","3d3ee3c121ce5e4958f574d520a3d84c"],["/data/search/search.html","6443e1fc1efc8b0d783de55d9af2c9b0"],["/index.html","f937008d97bc1a1068d7deda826cbacf"],["/manifest.json","2b71c6b21c0659fe63b3b06547bdc747"],["/src/chris-home/chris-home.html","c9420281dcfb82e9ca4d86e3e9baf313"],["/src/chris-login/chris-login.html","28870997aae27f9bcc72f847b6a00753"],["/src/chris-plugin-fs/chris-plugin-fs.html","6c7c9c911e5f2c0f9857683149c17d21"],["/src/chris-ultron/chris-ultron.html","8ebaa4e73f9c7f8de48b88c04f67b246"]];
+var PrecacheConfig = [["/bower_components/webcomponentsjs/webcomponents-lite.min.js","a1882f82ebfc212658591b4e817d8e03"],["/index.html","f937008d97bc1a1068d7deda826cbacf"],["/manifest.json","2b71c6b21c0659fe63b3b06547bdc747"],["/src/chris-apps/chris-apps-pacs-pull/chris-apps-pacs-pull.html","6e80f97b636849dedc8124f362a4f9be"],["/src/chris-home/chris-home.html","f57d1f65f21c0fadf818fb55fcf7b8a0"],["/src/chris-login/chris-login.html","28870997aae27f9bcc72f847b6a00753"],["/src/chris-plugin-fs/chris-plugin-fs.html","4264e4a5943e548d889405c61240c273"],["/src/chris-ultron/chris-ultron.html","fa0afe7ee6479491f7d9abad523cb86c"]];
 /* eslint-enable quotes, comma-spacing */
 var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
 

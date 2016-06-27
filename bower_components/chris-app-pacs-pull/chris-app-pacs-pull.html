@@ -1,0 +1,78 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+
+<link rel="import" href="../iron-pages/iron-pages.html">
+
+
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../paper-tabs/paper-tab.html">
+
+
+<link rel="import" href="../vaadin-grid/vaadin-grid.html">
+
+
+
+
+</head><body><dom-module id="chris-app-pacs-pull">
+
+  <template>
+
+    <style>host{display:block;}.container{padding:10px;}paper-tabs{--paper-tabs-selection-bar-color:var(--accent-color);}paper-tab{--paper-tab-ink:var(--accent-color);}</style>
+
+      <div class="container">
+
+        <paper-tabs selected="{{selected}}">
+          <paper-tab>Search</paper-tab>
+          <paper-tab>Results</paper-tab>
+          <paper-tab>Settings</paper-tab>
+        </paper-tabs>
+
+        <iron-pages selected="{{selected}}">
+          <div>
+
+            <paper-input label="Patient MRN"></paper-input>
+            <paper-input label="Date"></paper-input>
+            <paper-input label="Modality"></paper-input>
+
+            <paper-checkbox>Anonymize response</paper-checkbox>
+
+          </div>
+
+          <div>
+            <div id="vad" style="display: flex; flex-direction: column">
+            
+            
+
+            <paper-input id="filter" label="Filter by first name"></paper-input>
+
+            <vaadin-grid id="sort" selection-mode="multi" style="flex: 1">
+              <table>
+                <colgroup>
+                  <col name="firstName" sortable="">
+                  <col name="lastName" sortable="">
+                  <col name="email" sortable="">
+                </colgroup>
+              </table>
+            </vaadin-grid>
+
+            </div>
+
+          </div>
+
+          <div>
+            <paper-input label="PACS IP"></paper-input>
+            <paper-input label="AETITLE"></paper-input>
+          </div>
+
+        </iron-pages>
+         
+      </div>
+
+  </template>
+
+  <script>Polymer({is:"chris-app-pacs-pull",properties:{selected:{type:Number,value:0},parameters:{type:Object}},ready:function(){var e=this.$.sort,t=[];this.getJSON("https://demo.vaadin.com/demo-data/1.0/people",function(r){t=r.result,e.items=t}),e.addEventListener("sort-order-changed",function(){var t=e.sortOrder[0],r=e.columns[t.column].name,a=t.direction;e.items.sort(function(e,t){for(var s,n=r.split("."),o=0;o<n.length;o++)e=e[n[o]],t=t[n[o]];return s=isNaN(e)?e.localeCompare(t):parseInt(e,10)-parseInt(t,10),"desc"===a&&(s*=-1),s})});var r=this.$.filter;r.addEventListener("value-changed",function(){var a=r.value.toLowerCase();e.items=t.filter(function(e){return a?e.firstName.toLowerCase().indexOf(a)>-1:!0})})},getJSON:function(e,t){var r=new XMLHttpRequest;r.onreadystatechange=function(){r.readyState===XMLHttpRequest.DONE&&200===r.status&&t(JSON.parse(r.responseText))},r.open("GET",e,!0),r.send()},generateParameters:function(){this.parameters={hello:"from",the:"pacs_pull"},this.fire("parameters-changed")}});</script>
+</dom-module></body></html>

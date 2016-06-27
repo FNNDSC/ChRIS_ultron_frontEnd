@@ -4,7 +4,7 @@
   "main": "ami-import.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
-    "three-import": "NicolasRannou/three-import#r77"
+    "three-import": "NicolasRannou/three-import#r78"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

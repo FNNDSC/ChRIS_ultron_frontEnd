@@ -1,0 +1,47 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+
+
+
+
+
+
+</head><body><dom-module id="chris-plugin">
+
+  <template>
+
+    <style>.plugin{background-color:white;}.toolbar{@apply (--layout-horizontal);@apply (--layout-center);@apply (--layout-wrap);cursor:pointer;margin:10px 0;}.title{margin-left:8px;}.spacer{@apply (--layout-flex);}paper-icon-button{--paper-icon-button-ink-color:var(--paper-grey-300);}</style>
+
+    <paper-material elevation="1">
+      <div id$="[[plugin.id]]" class="plugin">
+        
+        <div class="toolbar">
+          <template is="dom-repeat" items="{{plugin.workflow}}">
+            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
+          </template>
+        
+          <div class="title" title="">[[plugin.label]]</div>
+
+          <div class="spacer"></div>
+
+          <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
+          <paper-icon-button icon="add" alt="More options" on-tap="newPlugin"></paper-icon-button>
+   
+      </div>
+
+      
+
+  </div></paper-material></template>
+
+  <script>Polymer({is:"chris-plugin",properties:{plugin:{type:Object}},donothing:function(n){n.stopPropagation(),n.preventDefault()},newFeed:function(n){this.donothing(n),console.log("create new feed")},newPlugin:function(n){this.donothing(n),console.log("create new plugin")},_setPluginStyle:function(n){return"color: "+n+";"}});</script>
+</dom-module>
+</body></html>

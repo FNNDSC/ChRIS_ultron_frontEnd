@@ -13,38 +13,46 @@
 
 </head><body><dom-module id="chris-comment-list">
   <template>
-    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;}</style>
+    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;display:none;}.comment-list.open .content{display:block;}</style>
 
-    
-
-    <div class="toolbar">
-
-      <div class="name">Comments</div>
-
-    </div>
-
-    <div class="content">
+    <div id="commentList" class="comment-list">
 
       
 
+      <div class="toolbar">
 
-      
-      <template is="dom-repeat" items="[[comments]]">
+        <div class="name">Comments ([[comments.length]])</div>
 
-        <chris-comment comment="[[item]]"></chris-comment>
+        <div class="spacer"></div>
 
-      </template>
+        <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
 
-      
+      </div>
 
-      <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter="" maxlength="120">
-        <paper-icon-button suffix="" icon="icons:clear" on-tap="clear"></paper-icon-button>
-      </paper-input>
+      <div class="content">
+
+        
+
+
+        
+        <template is="dom-repeat" items="[[comments]]">
+
+          <chris-comment comment="[[item]]"></chris-comment>
+
+        </template>
+
+        
+
+        <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter="" maxlength="120">
+          <paper-icon-button suffix="" icon="icons:clear" on-tap="clear"></paper-icon-button>
+        </paper-input>
+
+      </div>
 
     </div>
 
   </template>
 
-  <script>Polymer({is:"chris-comment-list",properties:{comments:{type:Array}},clear:function(){this.$.comment.value=""},save:function(e){if(13===e.keyCode&&(e.stopPropagation(),e.preventDefault(),""!==this.$.comment.value)){var t={name:"Nicolas Rannou",color:"blue",content:this.$.comment.value};this.clear(),this.push("comments",t),this.fire("resize-content"),this.fire("comments-changed"),this.fire("comments")}}});</script>
+  <script>Polymer({is:"chris-comment-list",properties:{comments:{type:Array},open:{type:Boolean,value:!1,observer:"_openChanged"}},clear:function(){this.$.comment.value=""},save:function(e){if(13===e.keyCode&&(e.stopPropagation(),e.preventDefault(),""!==this.$.comment.value)){var t={name:"Nicolas Rannou",color:"blue",content:this.$.comment.value};this.clear(),this.push("comments",t),this._resizeContent(),this.fire("comments-changed"),this.fire("comments")}},_resizeContent:function(e){this.fire("resize-content")},toggle:function(){this.open=!this.open},_openChanged:function(){this.open?this.$.commentList.classList.add("open"):this.$.commentList.classList.remove("open"),this._resizeContent()},_setToogleIcon:function(e){return this.open?"icons:expand-less":"icons:expand-more"}});</script>
 </dom-module>
 </body></html>
