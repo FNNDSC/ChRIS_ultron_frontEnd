@@ -73,7 +73,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <!-- Toolbar -->
         <div class="toolbar">
           <template is="dom-repeat" items="{{plugin.workflow}}">
-            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" invert" alt="More options"></paper-icon-button>
+            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
           </template>
         
           <div class="title" title>[[plugin.label]]</div>
@@ -127,7 +127,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _setPluginStyle: function( color){
 
           return 'color: ' + color + ';';
-          
+
         }
 
     });
