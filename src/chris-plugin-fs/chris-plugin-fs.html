@@ -150,13 +150,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             node.removeEventListener( 'parameters-changed', this._createFeed );
 
           }
+
+          console.log(this.pluginFs.name);
           
           // fetch the plugin!
           Polymer.Base.importHref(
-            this.resolveUrl( '../../bower_components/' + this.pluginFs.name + '/' + this.pluginFs.name + '.html' ),
+            this.resolveUrl( '../chris-apps/chris-apps-' + this.pluginFs.name + '/chris-apps-' + this.pluginFs.name + '.html' ),
             function( evt ){
 
-              var plugin = document.createElement( this.pluginFs.name );
+              var plugin = document.createElement( 'chris-apps-' + this.pluginFs.name );
               plugin.classList.add( 'plugin' );
               Polymer.dom( this.$.card ).appendChild( plugin );
 
@@ -186,7 +188,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // push to the API
           // print plugin command line paramters
           var node = Polymer.dom(this.$.card).querySelector( '.plugin' );
-          console.log( node.parameters );
 
           // feed created
           // ask for feed ID # through API...
