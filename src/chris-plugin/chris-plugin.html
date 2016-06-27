@@ -1,0 +1,135 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<!-- <link rel="import" href="../chris-dataview-columns/chris-dataview-columns.html">
+<link rel="import" href="../chris-dataview-grid/chris-dataview-grid.html">
+<link rel="import" href="../chris-dataview-plugin/chris-dataview-plugin.html">
+<link rel="import" href="../chris-dataview-rows/chris-dataview-rows.html"> -->
+
+<!-- <link rel="import" href="../chris-plugin-create/chris-plugin-create.html"> -->
+
+<!-- STYLE -->
+
+<dom-module id="chris-plugin">
+
+  <template>
+
+    <style>
+
+      .plugin{
+
+        background-color: white;
+
+      }
+
+      .toolbar{
+
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+        
+
+        /*border: 1px solid #ddd;*/
+        cursor: pointer;
+        margin: 10px 0;
+
+      }
+
+      .title{
+
+        margin-left:8px;
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      paper-icon-button{
+
+        --paper-icon-button-ink-color: var(--paper-grey-300);
+
+      }
+
+    </style>
+
+    <paper-material elevation=1>
+      <div id$="[[plugin.id]]" class="plugin">
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <template is="dom-repeat" items="{{plugin.workflow}}">
+            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" invert" alt="More options"></paper-icon-button>
+          </template>
+        
+          <div class="title" title>[[plugin.label]]</div>
+
+          <div class="spacer"></div>
+
+          <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
+          <paper-icon-button icon="add" alt="More options" on-tap="newPlugin"></paper-icon-button>
+   
+      </div>
+
+      </paper-material>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-plugin',
+
+        properties: {
+
+          plugin: {
+            type: Object
+          }
+
+        },
+
+        donothing: function( evt ){
+
+          evt.stopPropagation();
+          evt.preventDefault();
+
+        },
+
+        newFeed: function( evt ){
+
+          this.donothing(evt);
+          
+          console.log( 'create new feed' );
+
+        },
+
+        newPlugin: function( evt ){
+
+          this.donothing(evt);
+          
+          console.log( 'create new plugin' );
+
+        },
+
+        _setPluginStyle: function( color){
+
+          return 'color: ' + color + ';';
+          
+        }
+
+    });
+  </script>
+</dom-module>

@@ -207,7 +207,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             letter: this.pluginFs.name.charAt(0).toUpperCase(),
             date: ( new Date() ).toString()
           }
-          this.feed.plugins = [];
+          this.feed.plugins = [{
+            label: this.pluginFs.name,
+            color: this.pluginFs.color,
+            id: 0,
+            parentID: 0,
+            depth: 0,
+            icon: 'icons:cloud-queue',
+            workflow: [{
+              color: this.pluginFs.color,
+              icon: 'icons:cloud-queue',
+              label: this.pluginFs.name
+            }]
+          }];
           this.feed.comments = [];
 
           this.feed.note = '\
