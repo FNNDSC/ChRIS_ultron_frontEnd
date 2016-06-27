@@ -19,6 +19,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="behaviors/chris-api-plugin-create-behavior.html">
 <link rel="import" href="behaviors/chris-api-plugins-feed-behavior.html">
 
+<!--
+Import the JSON-Collection from 
+https://github.com/collection-json/collection-json.js
+clone
+npm install
+make build/collection-json.js
+-->
+<script src="scripts/collection-json.js"></script>
+
 <dom-module id="chris-api">
 
   <template>
@@ -122,6 +131,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           PluginPacspull,
           PluginsFeed
         ],
+
+        ready: function(){
+
+          console.log( window.CollectionJSON );
+
+        },
 
         generateRequest: function() {
 
