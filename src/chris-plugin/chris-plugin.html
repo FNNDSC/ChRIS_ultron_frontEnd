@@ -9,6 +9,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
@@ -18,6 +19,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../chris-dataview-grid/chris-dataview-grid.html">
 <link rel="import" href="../chris-dataview-plugin/chris-dataview-plugin.html">
 <link rel="import" href="../chris-dataview-rows/chris-dataview-rows.html"> -->
+<link rel="import" href="../chris-dataviews/chris-dataviews-columns/chris-dataviews-columns.html">
+<link rel="import" href="../chris-dataviews/chris-dataviews-rows/chris-dataviews-rows.html">
 
 <!-- <link rel="import" href="../chris-plugin-create/chris-plugin-create.html"> -->
 
@@ -66,23 +69,69 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
+      .content {
+
+        padding: 20px;
+        display: none;
+
+      }
+
+      .plugin.open .content {
+
+        display: block;
+
+      }
+
+/*      .dataview{
+
+        display:none;
+
+      }
+
+      .dataview.iron-selected{
+
+        display: block;
+
+      }*/
+
     </style>
 
-    <paper-material elevation=1>
-      <div id$="[[plugin.id]]" class="plugin">
+    <paper-material elevation=1 id="plugin" class="plugin">
+      <div id$="[[plugin.id]]">
         <!-- Toolbar -->
         <div class="toolbar">
           <template is="dom-repeat" items="{{plugin.workflow}}">
             <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
+
           </template>
         
           <div class="title" title>[[plugin.label]]</div>
 
           <div class="spacer"></div>
 
+          <template is="dom-if" if="{{open}}" >
+            <iron-selector id="dataButton" selected="{{selected}}">
+              <paper-icon-button icon="icons:view-headline"></paper-icon-button>
+              <paper-icon-button icon="icons:view-week"></paper-icon-button>
+            </iron-selector>
+          </template>
           <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
           <paper-icon-button icon="add" alt="More options" on-tap="newPlugin"></paper-icon-button>
+          <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
    
+      </div>
+
+      <div class="content">
+
+        <iron-pages role="main" selected="[[selected]]">
+
+          <!-- need {{}} to share state between dataviews -->
+          <chris-dataviews-rows class="dataview" data="[[plugin.data]]"></chris-dataviews-rows>
+          <chris-dataviews-columns class="dataview" data="[[plugin.data]]"></chris-dataviews-columns>
+          <!-- </iron-selector> -->
+
+        <iron-pages>
+
       </div>
 
       </paper-material>
@@ -97,6 +146,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           plugin: {
             type: Object
+          },
+
+          open: {
+            type: Boolean,
+            value: false,
+            observer: '_openChanged'
+          },
+
+          selected: {
+            type: Number,
+            value: 0
           }
 
         },
@@ -124,11 +184,44 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
+        toggle: function(){
+
+          this.open = !this.open;
+
+        },
+
         _setPluginStyle: function( color){
 
           return 'color: ' + color + ';';
 
+        },
+
+        _setToogleIcon: function( open ){
+          
+          return this.open ? 'icons:expand-less' : 'icons:expand-more';
+
+        },
+
+        _openChanged: function(){
+
+          this.open ? this.$.plugin.classList.add('open') : this.$.plugin.classList.remove('open');
+          this.open ? this.$.plugin.elevation = 4 : this.$.plugin.elevation = 1;
+
+          this._resizeContent();
+        },
+
+        _resizeContent: function( event ){
+
+          this.fire('resize-content');
+
         }
+
+        // _selectedChanged: function(){
+
+        //   // should lazy load data view...
+        //   this.$.dataView.selected = this.selected;
+
+        // }
 
     });
   </script>

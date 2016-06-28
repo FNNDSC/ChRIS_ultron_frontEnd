@@ -84,7 +84,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <!-- Middle comments -->
         <template is="dom-repeat" items="[[plugins]]">
 
-          <chris-plugin plugin="[[item]]"></chris-plugin>
+          <chris-plugin plugin="[[item]]" open$="[[_computePluginOpen(index)]]"></chris-plugin>
 
         </template>
 
@@ -135,6 +135,21 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _resizeContent: function( event ){
 
           this.fire('resize-content');
+
+        },
+
+        _computePluginOpen: function( index ){
+
+          if(this.plugins.length - 1 === index){
+
+            return true;
+
+          } 
+          else {
+
+            return false;
+
+          }
 
         }
 

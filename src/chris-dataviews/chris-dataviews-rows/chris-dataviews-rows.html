@@ -1,0 +1,283 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../../bower_components/iron-selector/iron-selector.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+
+<dom-module id="chris-dataviews-rows">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+
+      :host {
+
+        display: flex;
+        flex:1;
+
+      }
+
+      #rowsView{
+
+        width:100%;
+        overflow-x: scroll;
+        border: 1px solid var(--primary-text-color);;
+
+      }
+      #rowsView paper-listbox{
+
+        overflow-y: scroll;
+        min-height: 300px;
+        max-height: 300px;
+
+      }
+
+      iron-icon {
+
+        margin-right: 2px;
+
+      }
+
+      paper-item {
+        --paper-item: {
+          cursor: pointer;
+        };
+
+        --paper-item: {
+          cursor: pointer;
+        };
+      }
+
+      paper-item[type="folder"] iron-icon{
+
+        --iron-icon-stroke-color: var(--primary-color);
+        --iron-icon-fill-color: var(--paper-grey-100);
+
+      }
+
+      paper-item[type="folder"][up] iron-icon{
+
+        --iron-icon-stroke-color: var(--paper-grey-500);
+        --iron-icon-fill-color: var(--paper-grey-500);
+
+      }
+
+      paper-item[type="folder"][up] {
+
+        color: var(--paper-grey-500);
+
+      }
+
+      paper-item[type="file"] iron-icon{
+
+        --iron-icon-stroke-color: var(--accent-color);
+        --iron-icon-fill-color: var(--paper-grey-100);
+
+      }
+
+      #rowsView paper-item{
+
+        min-height:32px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display:block;
+        --paper-item-selected: {
+        color: var(--primary-color);
+
+        };
+
+      }
+    </style>
+
+    <div id="rowsView">
+
+    [[index]]
+
+      <paper-listbox depth="0" on-iron-select="selectionChanged">
+
+        <!-- button to go up -->
+        <paper-item type="folder" up> <iron-icon icon="icons:arrow-back"></iron-icon></paper-item>
+
+        <!-- show folders -->
+        <template is="dom-repeat" items="{{data.files}}" as="file">
+          <paper-item type="folder"> <iron-icon icon="icons:folder"></iron-icon> [[file.label]]</paper-item>
+        </template>
+
+        <!-- show files -->
+        <template is="dom-repeat" items="{{data.images}}" as="image">
+          <paper-item type="file"> <iron-icon icon="editor:insert-drive-file"></iron-icon> [[image.label]]</paper-item>
+        </template>
+
+      </paper-listbox>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-dataviews-rows',
+
+        properties: {
+
+          data: {
+            type: Object
+          },
+
+          path: {
+            type: Array,
+            value: []
+          }
+
+        },
+
+        selectionChanged: function( evt ){
+
+          console.log( this.data );
+          console.log( this.path );
+
+          var depth = parseInt( evt.target.attributes.depth.nodeValue, 10 );
+          var type = evt.target.selectedItem.attributes.type.nodeValue;
+
+          if(type === 'file'){
+            // we are done!
+            return;
+          }
+
+          var oldListBox = Polymer.dom( this.$.rowsView ).querySelector( 'paper-listbox' );
+          // update the path
+          if(oldListBox.selected === 0){
+            // if click up
+            this.pop('path');
+          }
+          else{
+            // else go down!
+            // index 0 it to top directory
+            this.push('path', oldListBox.selected - 1);
+          }
+
+          console.log( this.path );
+
+          // access current path
+          var files = this.data.files;
+          var images = this.data.images;
+          var parentLabel = '';
+
+          // get images/files and parent label of target location
+          for( var i=0; i<this.path.length; i++ ){
+
+            fileIndex = this.path[i];
+            images = files[fileIndex].images;
+            parentLabel = files[fileIndex].label;
+            files = files[fileIndex].files;
+
+          }
+
+          // if we have files or images, show it!
+          if( files || images ){
+
+            // create new node
+            var newListBox = document.createElement('paper-listbox');
+            newListBox.setAttribute('depth', depth + 1);
+            this.listen(newListBox, 'iron-select', 'selectionChanged');
+
+            // button to go top
+            var upItem = this.createUpItem( parentLabel );
+            Polymer.dom(newListBox).appendChild(upItem);
+
+            // create child nodes for folders...
+            if( files ){
+
+              for( var i = 0; i < files.length; i++ ){
+
+                var folderItem = this.createFolderItem( files[i].label );
+                Polymer.dom( newListBox ).appendChild( folderItem );
+
+              }
+
+            }
+
+            // then for images...
+            if( images ){
+
+              for( var i = 0; i < images.length; i++ ){
+
+                var paperItem = this.createFileItem( images[i].label );
+                Polymer.dom( newListBox ).appendChild( paperItem );
+
+              }
+            }
+
+            Polymer.dom( this.$.rowsView ).removeChild( oldListBox );
+            Polymer.dom( this.$.rowsView ).appendChild( newListBox );
+
+          }
+
+          // need to flush...?
+          Polymer.dom.flush();
+          this.$.rowsView.scrollTop = 0;
+        },
+
+        createUpItem: function( label ){
+
+          var upItem = document.createElement( 'paper-item' );
+          upItem.setAttribute( 'type', 'folder' );
+          upItem.setAttribute( 'up', true );
+
+          var ironIcon = document.createElement( 'iron-icon' );
+          ironIcon.setAttribute( 'icon', 'icons:arrow-back' );
+          Polymer.dom( upItem ).appendChild( ironIcon );
+
+          var text = document.createTextNode( label );
+          Polymer.dom( upItem ).appendChild( text );
+
+          return upItem;
+
+        },
+
+        createFolderItem: function( label ){
+
+          var folderItem = document.createElement( 'paper-item' );
+          folderItem.setAttribute( 'type', 'folder' );
+
+          var ironIcon = document.createElement( 'iron-icon' );
+          ironIcon.setAttribute( 'icon', 'icons:folder' );
+          Polymer.dom( folderItem ).appendChild( ironIcon );
+
+          var text = document.createTextNode( label );
+          Polymer.dom( folderItem ).appendChild( text );
+
+          return folderItem;
+
+        },
+
+        createFileItem: function( label ){
+
+          var fileItem = document.createElement( 'paper-item' );
+          fileItem.setAttribute( 'type', 'file' );
+
+          var ironIcon = document.createElement( 'iron-icon' );
+          ironIcon.setAttribute( 'icon', 'editor:insert-drive-file' );
+          Polymer.dom( fileItem ).appendChild( ironIcon );
+
+          var text = document.createTextNode( label );
+          Polymer.dom( fileItem ).appendChild( text );
+
+          return fileItem;
+
+        }
+    });
+  </script>
+</dom-module>
