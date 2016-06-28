@@ -4,12 +4,15 @@
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 
+<link rel="import" href="../chris-dataviews/chris-dataviews-columns/chris-dataviews-columns.html">
+<link rel="import" href="../chris-dataviews/chris-dataviews-rows/chris-dataviews-rows.html">
 
 
 
@@ -19,29 +22,50 @@
 
   <template>
 
-    <style>.plugin{background-color:white;}.toolbar{@apply (--layout-horizontal);@apply (--layout-center);@apply (--layout-wrap);cursor:pointer;margin:10px 0;}.title{margin-left:8px;}.spacer{@apply (--layout-flex);}paper-icon-button{--paper-icon-button-ink-color:var(--paper-grey-300);}</style>
+    <style>.plugin{background-color:white;}.toolbar{@apply (--layout-horizontal);@apply (--layout-center);@apply (--layout-wrap);cursor:pointer;margin:10px 0;}.title{margin-left:8px;}.spacer{@apply (--layout-flex);}paper-icon-button{--paper-icon-button-ink-color:var(--paper-grey-300);}.content{padding:20px;display:none;}.plugin.open .content{display:block;}</style>
 
-    <paper-material elevation="1">
-      <div id$="[[plugin.id]]" class="plugin">
+    <paper-material elevation="1" id="plugin" class="plugin">
+      <div id$="[[plugin.id]]">
         
         <div class="toolbar">
           <template is="dom-repeat" items="{{plugin.workflow}}">
             <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
+
           </template>
         
           <div class="title" title="">[[plugin.label]]</div>
 
           <div class="spacer"></div>
 
+          <template is="dom-if" if="{{open}}">
+            <iron-selector id="dataButton" selected="{{selected}}">
+              <paper-icon-button icon="icons:view-headline"></paper-icon-button>
+              <paper-icon-button icon="icons:view-week"></paper-icon-button>
+            </iron-selector>
+          </template>
           <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
           <paper-icon-button icon="add" alt="More options" on-tap="newPlugin"></paper-icon-button>
+          <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
    
       </div>
+
+      <div class="content">
+
+        <iron-pages role="main" selected="[[selected]]">
+
+          
+          <chris-dataviews-rows class="dataview" data="[[plugin.data]]"></chris-dataviews-rows>
+          <chris-dataviews-columns class="dataview" data="[[plugin.data]]"></chris-dataviews-columns>
+          
+
+        <iron-pages>
+
+      </iron-pages></iron-pages></div>
 
       
 
   </div></paper-material></template>
 
-  <script>Polymer({is:"chris-plugin",properties:{plugin:{type:Object}},donothing:function(n){n.stopPropagation(),n.preventDefault()},newFeed:function(n){this.donothing(n),console.log("create new feed")},newPlugin:function(n){this.donothing(n),console.log("create new plugin")},_setPluginStyle:function(n){return"color: "+n+";"}});</script>
+  <script>Polymer({is:"chris-plugin",properties:{plugin:{type:Object},open:{type:Boolean,value:!1,observer:"_openChanged"},selected:{type:Number,value:0}},donothing:function(e){e.stopPropagation(),e.preventDefault()},newFeed:function(e){this.donothing(e),console.log("create new feed")},newPlugin:function(e){this.donothing(e),console.log("create new plugin")},toggle:function(){this.open=!this.open},_setPluginStyle:function(e){return"color: "+e+";"},_setToogleIcon:function(e){return this.open?"icons:expand-less":"icons:expand-more"},_openChanged:function(){this.open?this.$.plugin.classList.add("open"):this.$.plugin.classList.remove("open"),this.open?this.$.plugin.elevation=4:this.$.plugin.elevation=1,this._resizeContent()},_resizeContent:function(e){this.fire("resize-content")}});</script>
 </dom-module>
 </body></html>
