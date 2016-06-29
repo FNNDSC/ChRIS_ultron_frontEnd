@@ -5,6 +5,8 @@
   	"src/chris-home/chris-home.html",
   	"src/chris-login/chris-login.html",
   	"src/chris-plugin-fs/chris-plugin-fs.html",
-  	"src/chris-apps/chris-apps-pacs-pull/chris-apps-pacs-pull.html"
+  	"src/chris-apps/chris-apps-pacs-pull/chris-apps-pacs-pull.html",
+  	"src/chris-dataviews/chris-dataviews-rows/chris-dataviews-rows.html",
+    "src/chris-dataviews/chris-dataviews-columns/chris-dataviews-columns.html"
   ]
 }

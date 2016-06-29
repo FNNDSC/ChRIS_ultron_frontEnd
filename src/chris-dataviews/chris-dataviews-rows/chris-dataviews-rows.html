@@ -1,26 +1,12 @@
-<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
-
-
-<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
-<link rel="import" href="../../../bower_components/iron-selector/iron-selector.html">
-
-
-<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
-
-</head><body><dom-module id="chris-dataviews-rows">
+<html><head><meta charset="UTF-8"><link rel="import" href="../../chris-ultron/chris-ultron.html"></head><body><dom-module id="chris-dataviews-rows">
 
   <template>
 
-    <style include="iron-flex iron-flex-alignment">:host{display:flex;flex:1;}#rowsView{width:100%;overflow-x:scroll;border:1px solid var(--primary-text-color);}#rowsView paper-listbox{overflow-y:scroll;min-height:300px;max-height:300px;}iron-icon{margin-right:2px;}paper-item{--paper-item:{cursor:pointer;};--paper-item:{cursor:pointer;};}paper-item[type="folder"] iron-icon{--iron-icon-stroke-color:var(--primary-color);--iron-icon-fill-color:var(--paper-grey-100);}paper-item[type="folder"][up] iron-icon{--iron-icon-stroke-color:var(--paper-grey-500);--iron-icon-fill-color:var(--paper-grey-500);}paper-item[type="folder"][up]{color:var(--paper-grey-500);}paper-item[type="file"] iron-icon{--iron-icon-stroke-color:var(--accent-color);--iron-icon-fill-color:var(--paper-grey-100);}#rowsView paper-item{min-height:32px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;--paper-item-selected:{color:var(--primary-color);};}</style>
+    <style include="iron-flex iron-flex-alignment">:host{display:flex;flex:1;}#rowsView{width:100%;overflow-x:scroll;border:1px solid var(--primary-text-color);}#rowsView paper-listbox{overflow-y:scroll;min-height:300px;max-height:300px;}iron-icon{margin-right:2px;}paper-item{--paper-item:{cursor:pointer;};}paper-item[type="folder"] iron-icon{--iron-icon-stroke-color:var(--primary-color);--iron-icon-fill-color:var(--paper-grey-100);}paper-item[type="folder"][up] iron-icon{--iron-icon-stroke-color:var(--paper-grey-500);--iron-icon-fill-color:var(--paper-grey-500);}paper-item[type="folder"][up]{color:var(--paper-grey-500);}paper-item[type="file"] iron-icon{--iron-icon-stroke-color:var(--accent-color);--iron-icon-fill-color:var(--paper-grey-100);}#rowsView paper-item{min-height:32px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;--paper-item-selected:{color:var(--primary-color);};}</style>
 
     <div id="rowsView">
 
-    [[index]]
-
-      <paper-listbox depth="0" on-iron-select="selectionChanged">
+      <paper-listbox depth="0" on-iron-select="_selectionChanged">
 
         
         <paper-item type="folder" up=""> <iron-icon icon="icons:arrow-back"></iron-icon></paper-item>
@@ -41,6 +27,6 @@
 
   </template>
 
-  <script>Polymer({is:"chris-dataviews-rows",properties:{data:{type:Object},path:{type:Array,value:[]}},selectionChanged:function(e){console.log(this.data),console.log(this.path);var t=parseInt(e.target.attributes.depth.nodeValue,10),r=e.target.selectedItem.attributes.type.nodeValue;if("file"!==r){var o=Polymer.dom(this.$.rowsView).querySelector("paper-listbox");0===o.selected?this.pop("path"):this.push("path",o.selected-1),console.log(this.path);for(var i=this.data.files,a=this.data.images,l="",d=0;d<this.path.length;d++)fileIndex=this.path[d],a=i[fileIndex].images,l=i[fileIndex].label,i=i[fileIndex].files;if(i||a){var n=document.createElement("paper-listbox");n.setAttribute("depth",t+1),this.listen(n,"iron-select","selectionChanged");var s=this.createUpItem(l);if(Polymer.dom(n).appendChild(s),i)for(var d=0;d<i.length;d++){var m=this.createFolderItem(i[d].label);Polymer.dom(n).appendChild(m)}if(a)for(var d=0;d<a.length;d++){var p=this.createFileItem(a[d].label);Polymer.dom(n).appendChild(p)}Polymer.dom(this.$.rowsView).removeChild(o),Polymer.dom(this.$.rowsView).appendChild(n)}Polymer.dom.flush(),this.$.rowsView.scrollTop=0}},createUpItem:function(e){var t=document.createElement("paper-item");t.setAttribute("type","folder"),t.setAttribute("up",!0);var r=document.createElement("iron-icon");r.setAttribute("icon","icons:arrow-back"),Polymer.dom(t).appendChild(r);var o=document.createTextNode(e);return Polymer.dom(t).appendChild(o),t},createFolderItem:function(e){var t=document.createElement("paper-item");t.setAttribute("type","folder");var r=document.createElement("iron-icon");r.setAttribute("icon","icons:folder"),Polymer.dom(t).appendChild(r);var o=document.createTextNode(e);return Polymer.dom(t).appendChild(o),t},createFileItem:function(e){var t=document.createElement("paper-item");t.setAttribute("type","file");var r=document.createElement("iron-icon");r.setAttribute("icon","editor:insert-drive-file"),Polymer.dom(t).appendChild(r);var o=document.createTextNode(e);return Polymer.dom(t).appendChild(o),t}});</script>
+  <script>Polymer({is:"chris-dataviews-rows",behaviors:[Dataviews],_pathChanged:function(){console.log("rows path changed"),console.log(this.path)},_selectionChanged:function(e){console.log(this.data),console.log(this.path);var t=parseInt(e.target.attributes.depth.nodeValue,10),i=e.target.selectedItem.attributes.type.nodeValue;if("file"!==i){var l=Polymer.dom(this.$.rowsView).querySelector("paper-listbox");0===l.selected?this.pop("path"):this.push("path",l.selected-1),console.log("fire..."),this.fire("path-changed");for(var a=this.data.files,o=this.data.images,s="",r=0;r<this.path.length;r++)fileIndex=this.path[r],o=a[fileIndex].images,s=a[fileIndex].label,a=a[fileIndex].files;if(a||o){var h=document.createElement("paper-listbox");h.setAttribute("depth",t+1),this.listen(h,"iron-select","_selectionChanged");var d=this.createUpItem(s);if(Polymer.dom(h).appendChild(d),a)for(var r=0;r<a.length;r++){var n=this.createFolderItem(a[r].label);Polymer.dom(h).appendChild(n)}if(o)for(var r=0;r<o.length;r++){var p=this.createFileItem(o[r].label);Polymer.dom(h).appendChild(p)}Polymer.dom(this.$.rowsView).removeChild(l),Polymer.dom(this.$.rowsView).appendChild(h)}Polymer.dom.flush(),this.$.rowsView.scrollTop=0}}});</script>
 </dom-module>
 </body></html>

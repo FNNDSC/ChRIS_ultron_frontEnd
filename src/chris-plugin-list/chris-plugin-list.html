@@ -6,13 +6,14 @@
 
 
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 
 <link rel="import" href="../chris-plugin/chris-plugin.html">
 
 </head><body><dom-module id="chris-plugin-list">
   <template>
-    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;display:none;}.plugin-list.open .content{display:block;}</style>
+    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;display:none;}.plugin-list.open .content{display:block;}.hidden{display:none;}#showAll{cursor:pointer;}</style>
 
     <div id="pluginList" class="plugin-list">
 
@@ -20,7 +21,7 @@
 
       <div class="toolbar">
 
-        <div class="name">Plugins ([[plugins.length]])</div>
+        <div class="name">Workflow ([[plugins.length]])</div>
 
         <div class="spacer"></div>
 
@@ -33,7 +34,16 @@
         
         <template is="dom-repeat" items="[[plugins]]">
 
-          <chris-plugin plugin="[[item]]" open$="[[_computePluginOpen(index)]]"></chris-plugin>
+          <template is="dom-if" if="[[_computeShowAllButton(index)]]">
+
+            <paper-material elevation="1" id="showAll" on-tap="_showAll">
+              <paper-icon-button icon="icons:view-headline"></paper-icon-button>
+              Show full workflow ([[_hiddenPlugins(plugins.length)]])
+            </paper-material>
+
+          </template>
+
+          <chris-plugin plugin="[[item]]" class$="[[_computePluginVisible(index)]]" open$="[[_computePluginOpen(index)]]"></chris-plugin>
 
         </template>
 
@@ -43,6 +53,6 @@
 
   </template>
 
-  <script>Polymer({is:"chris-plugin-list",properties:{plugins:{type:Array},open:{type:Boolean,value:!0,observer:"_openChanged"}},toggle:function(){this.open=!this.open},_openChanged:function(){this.open?this.$.pluginList.classList.add("open"):this.$.pluginList.classList.remove("open"),this._resizeContent()},_setToogleIcon:function(e){return this.open?"icons:expand-less":"icons:expand-more"},_resizeContent:function(e){this.fire("resize-content")},_computePluginOpen:function(e){return this.plugins.length-1===e}});</script>
+  <script>Polymer({is:"chris-plugin-list",properties:{plugins:{type:Array},open:{type:Boolean,value:!0,observer:"_openChanged"}},toggle:function(){this.open=!this.open},_openChanged:function(){this.open?this.$.pluginList.classList.add("open"):this.$.pluginList.classList.remove("open"),this._resizeContent()},_setToogleIcon:function(n){return this.open?"icons:expand-less":"icons:expand-more"},_resizeContent:function(n){this.fire("resize-content")},_computePluginOpen:function(n){return this.plugins.length-1===n},_computePluginVisible:function(n){return this.plugins.length<=3||this.plugins.length-1===n||0===n?"":"hidden"},_computeShowAllButton:function(n){return this.plugins.length-1===n&&this.plugins.length>3},_showAll:function(){this.shadowRoot.querySelector("#showAll").classList.add("hidden");for(var n=this.shadowRoot.querySelectorAll("chris-plugin.hidden"),e=0;e<n.length;e++)n[e].classList.remove("hidden");this.fire("resize-content")},_hiddenPlugins:function(n){return n-2}});</script>
 </dom-module>
 </body></html>

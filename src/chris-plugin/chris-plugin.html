@@ -10,19 +10,11 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
-
-<link rel="import" href="../chris-dataviews/chris-dataviews-columns/chris-dataviews-columns.html">
-<link rel="import" href="../chris-dataviews/chris-dataviews-rows/chris-dataviews-rows.html">
-
-
-
-
-
 </head><body><dom-module id="chris-plugin">
 
   <template>
 
-    <style>.plugin{background-color:white;}.toolbar{@apply (--layout-horizontal);@apply (--layout-center);@apply (--layout-wrap);cursor:pointer;margin:10px 0;}.title{margin-left:8px;}.spacer{@apply (--layout-flex);}paper-icon-button{--paper-icon-button-ink-color:var(--paper-grey-300);}.content{padding:20px;display:none;}.plugin.open .content{display:block;}</style>
+    <style>.plugin{background-color:white;}.toolbar{@apply (--layout-horizontal);@apply (--layout-center);@apply (--layout-wrap);cursor:pointer;margin:10px 0;}.title{margin-left:8px;}.spacer{@apply (--layout-flex);}paper-icon-button{--paper-icon-button-ink-color:var(--paper-grey-300);}paper-icon-button.iron-selected{color:var(--accent-color);}iron-selector{border-bottom:1px solid var(--primary-text-color);}.content{padding:20px;display:none;}.plugin.open .content{display:block;}</style>
 
     <paper-material elevation="1" id="plugin" class="plugin">
       <div id$="[[plugin.id]]">
@@ -38,9 +30,9 @@
           <div class="spacer"></div>
 
           <template is="dom-if" if="{{open}}">
-            <iron-selector id="dataButton" selected="{{selected}}">
-              <paper-icon-button icon="icons:view-headline"></paper-icon-button>
-              <paper-icon-button icon="icons:view-week"></paper-icon-button>
+            <iron-selector id="dataButton" attr-for-selected="name" selected="{{selected}}">
+              <paper-icon-button name="chris-dataviews-rows" icon="icons:view-headline"></paper-icon-button>
+              <paper-icon-button name="chris-dataviews-columns" icon="icons:view-week"></paper-icon-button>
             </iron-selector>
           </template>
           <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
@@ -51,11 +43,11 @@
 
       <div class="content">
 
-        <iron-pages role="main" selected="[[selected]]">
+        <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
 
           
-          <chris-dataviews-rows class="dataview" data="[[plugin.data]]"></chris-dataviews-rows>
-          <chris-dataviews-columns class="dataview" data="[[plugin.data]]"></chris-dataviews-columns>
+          <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data]]" path="{{path}}"></chris-dataviews-rows>
+          <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data]]" path="{{path}}"></chris-dataviews-columns>
           
 
         <iron-pages>
@@ -66,6 +58,6 @@
 
   </div></paper-material></template>
 
-  <script>Polymer({is:"chris-plugin",properties:{plugin:{type:Object},open:{type:Boolean,value:!1,observer:"_openChanged"},selected:{type:Number,value:0}},donothing:function(e){e.stopPropagation(),e.preventDefault()},newFeed:function(e){this.donothing(e),console.log("create new feed")},newPlugin:function(e){this.donothing(e),console.log("create new plugin")},toggle:function(){this.open=!this.open},_setPluginStyle:function(e){return"color: "+e+";"},_setToogleIcon:function(e){return this.open?"icons:expand-less":"icons:expand-more"},_openChanged:function(){this.open?this.$.plugin.classList.add("open"):this.$.plugin.classList.remove("open"),this.open?this.$.plugin.elevation=4:this.$.plugin.elevation=1,this._resizeContent()},_resizeContent:function(e){this.fire("resize-content")}});</script>
+  <script>Polymer({is:"chris-plugin",properties:{plugin:{type:Object},open:{type:Boolean,value:!1,observer:"_openChanged"},selected:{type:String,value:"chris-dataviews-rows",observer:"_selectedChanged"},path:{type:Array,observer:"_pathChanged"}},_pathChanged:function(){console.log(this.path)},_selectedChanged:function(){this.importHref(this.resolveUrl("../chris-dataviews/"+this.selected+"/"+this.selected+".html"),function(){this.fire("resize-content")},null,!0)},donothing:function(e){e.stopPropagation(),e.preventDefault()},newFeed:function(e){this.donothing(e),console.log("create new feed")},newPlugin:function(e){this.donothing(e),console.log("create new plugin")},toggle:function(){this.open=!this.open},_setPluginStyle:function(e){return"color: "+e+";"},_setToogleIcon:function(e){return this.open?"icons:expand-less":"icons:expand-more"},_openChanged:function(){this.open?this.$.plugin.classList.add("open"):this.$.plugin.classList.remove("open"),this.open?this.$.plugin.elevation=4:this.$.plugin.elevation=1,this._resizeContent()},_resizeContent:function(e){this.fire("resize-content")}});</script>
 </dom-module>
 </body></html>
