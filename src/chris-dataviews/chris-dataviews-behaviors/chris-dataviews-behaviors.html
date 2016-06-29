@@ -1,0 +1,75 @@
+<script>
+    /** @polymerBehavior Dataviews */
+    Dataviews = {
+
+      properties: {
+
+        data: {
+          type: Object
+        },
+
+        path: {
+          type: Array,
+          value: [],
+          observer: '_pathChanged'
+        }
+
+      },
+
+      createFolderItem: function( label ){
+
+        var folderItem = document.createElement( 'paper-item' );
+        folderItem.setAttribute( 'type', 'folder' );
+
+        var ironIcon = document.createElement( 'iron-icon' );
+        ironIcon.setAttribute( 'icon', 'icons:folder' );
+        Polymer.dom( folderItem ).appendChild( ironIcon );
+
+        var text = document.createTextNode( label );
+        Polymer.dom( folderItem ).appendChild( text );
+
+        return folderItem;
+
+      },
+
+      createFileItem: function( label ){
+
+        var fileItem = document.createElement( 'paper-item' );
+        fileItem.setAttribute( 'type', 'file' );
+
+        var ironIcon = document.createElement( 'iron-icon' );
+        ironIcon.setAttribute( 'icon', 'editor:insert-drive-file' );
+        Polymer.dom( fileItem ).appendChild( ironIcon );
+
+        var text = document.createTextNode( label );
+        Polymer.dom( fileItem ).appendChild( text );
+
+        return fileItem;
+
+      },
+
+      createUpItem: function( label ){
+
+        var upItem = document.createElement( 'paper-item' );
+        upItem.setAttribute( 'type', 'folder' );
+        upItem.setAttribute( 'up', true );
+
+        var ironIcon = document.createElement( 'iron-icon' );
+        ironIcon.setAttribute( 'icon', 'icons:arrow-back' );
+        Polymer.dom( upItem ).appendChild( ironIcon );
+
+        var text = document.createTextNode( label );
+        Polymer.dom( upItem ).appendChild( text );
+
+        return upItem;
+
+      },
+
+      _pathChanged: function(){
+
+        console.log( '_pathChanged should be overloaded.');
+
+      }
+
+    };
+</script>

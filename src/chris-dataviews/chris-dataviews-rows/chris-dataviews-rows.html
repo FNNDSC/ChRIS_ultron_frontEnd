@@ -15,6 +15,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
 
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../chris-dataviews-behaviors/chris-dataviews-behaviors.html">
+
 <dom-module id="chris-dataviews-rows">
 
   <template>
@@ -32,7 +35,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         width:100%;
         overflow-x: scroll;
-        border: 1px solid var(--primary-text-color);;
+        border: 1px solid var(--primary-text-color);
 
       }
       #rowsView paper-listbox{
@@ -50,10 +53,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       paper-item {
-        --paper-item: {
-          cursor: pointer;
-        };
-
         --paper-item: {
           cursor: pointer;
         };
@@ -103,9 +102,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <div id="rowsView">
 
-    [[index]]
-
-      <paper-listbox depth="0" on-iron-select="selectionChanged">
+      <paper-listbox depth="0" on-iron-select="_selectionChanged">
 
         <!-- button to go up -->
         <paper-item type="folder" up> <iron-icon icon="icons:arrow-back"></iron-icon></paper-item>
@@ -130,20 +127,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Polymer({
         is: 'chris-dataviews-rows',
 
-        properties: {
+        behaviors: [
+          Dataviews
+        ],
 
-          data: {
-            type: Object
-          },
+        _pathChanged: function(){
 
-          path: {
-            type: Array,
-            value: []
-          }
+          console.log( 'rows path changed');
+          console.log( this.path );
 
         },
 
-        selectionChanged: function( evt ){
+        _selectionChanged: function( evt ){
 
           console.log( this.data );
           console.log( this.path );
@@ -168,7 +163,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             this.push('path', oldListBox.selected - 1);
           }
 
-          console.log( this.path );
+          console.log('fire...');
+          // var path = this.path;
+          // this.set('path', path);
+          this.fire('path-changed');
 
           // access current path
           var files = this.data.files;
@@ -191,7 +189,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             // create new node
             var newListBox = document.createElement('paper-listbox');
             newListBox.setAttribute('depth', depth + 1);
-            this.listen(newListBox, 'iron-select', 'selectionChanged');
+            this.listen(newListBox, 'iron-select', '_selectionChanged');
 
             // button to go top
             var upItem = this.createUpItem( parentLabel );
@@ -228,56 +226,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // need to flush...?
           Polymer.dom.flush();
           this.$.rowsView.scrollTop = 0;
-        },
-
-        createUpItem: function( label ){
-
-          var upItem = document.createElement( 'paper-item' );
-          upItem.setAttribute( 'type', 'folder' );
-          upItem.setAttribute( 'up', true );
-
-          var ironIcon = document.createElement( 'iron-icon' );
-          ironIcon.setAttribute( 'icon', 'icons:arrow-back' );
-          Polymer.dom( upItem ).appendChild( ironIcon );
-
-          var text = document.createTextNode( label );
-          Polymer.dom( upItem ).appendChild( text );
-
-          return upItem;
-
-        },
-
-        createFolderItem: function( label ){
-
-          var folderItem = document.createElement( 'paper-item' );
-          folderItem.setAttribute( 'type', 'folder' );
-
-          var ironIcon = document.createElement( 'iron-icon' );
-          ironIcon.setAttribute( 'icon', 'icons:folder' );
-          Polymer.dom( folderItem ).appendChild( ironIcon );
-
-          var text = document.createTextNode( label );
-          Polymer.dom( folderItem ).appendChild( text );
-
-          return folderItem;
-
-        },
-
-        createFileItem: function( label ){
-
-          var fileItem = document.createElement( 'paper-item' );
-          fileItem.setAttribute( 'type', 'file' );
-
-          var ironIcon = document.createElement( 'iron-icon' );
-          ironIcon.setAttribute( 'icon', 'editor:insert-drive-file' );
-          Polymer.dom( fileItem ).appendChild( ironIcon );
-
-          var text = document.createTextNode( label );
-          Polymer.dom( fileItem ).appendChild( text );
-
-          return fileItem;
-
         }
+
     });
   </script>
 </dom-module>

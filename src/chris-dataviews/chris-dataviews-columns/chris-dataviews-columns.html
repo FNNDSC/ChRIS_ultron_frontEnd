@@ -15,31 +15,27 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
 
-<dom-module id="chris-dataviews-columns">
+<link rel="import" href="../chris-dataviews-behaviors/chris-dataviews-behaviors.html">
 
+
+<dom-module id="chris-dataviews-columns">
   <template>
 
     <style include="iron-flex iron-flex-alignment">
 
-      :host {
-
-        display: flex;
-        flex:1;
-
-      }
-
-      #rowsView{
+      #columnsView{
 
         width:100%;
         overflow-x: scroll;
-        border: 1px solid var(--accent-color);;
+        border: 1px solid var(--primary-text-color);
 
       }
-      #rowsView paper-listbox{
 
-        border-right: 1px solid var(--paper-red-100);
+      #columnsView paper-listbox{
+
+        border-right: 1px solid var(--paper-grey-100);
+        min-width: 128px;
         overflow-y: scroll;
-        min-height: 300px;
         max-height: 300px;
 
       }
@@ -50,23 +46,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
+      paper-item {
+
+        --paper-item: {
+          cursor: pointer;
+        };
+
+      }
+
       paper-item[type="folder"] iron-icon{
 
         --iron-icon-stroke-color: var(--primary-color);
         --iron-icon-fill-color: var(--paper-grey-100);
-
-      }
-
-      paper-item[type="folder"][up] iron-icon{
-
-        --iron-icon-stroke-color: var(--paper-grey-500);
-        --iron-icon-fill-color: var(--paper-grey-500);
-
-      }
-
-      paper-item[type="folder"][up] {
-
-        color: var(--paper-grey-500);
 
       }
 
@@ -77,7 +68,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
-      #rowsView paper-item{
+      #columnsView paper-item{
 
         min-height:32px;
         overflow: hidden;
@@ -85,35 +76,32 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         text-overflow: ellipsis;
         display:block;
         --paper-item-selected: {
-        color: var(--primary-color);
-
+          color: var(--primary-color);
         };
 
       }
+
+      #columnsView paper-listbox:last-child {
+
+        flex-grow:0;
+        flex-shrink:0;
+
+      }
+
+    <style>
+
     </style>
 
-    <div id="rowsView">
-
-    [[index]]
-
-      <paper-listbox depth="0" on-iron-select="selectionChanged">
-
-        <!-- button to go up -->
-        <paper-item type="folder" up> <iron-icon icon="icons:more-horiz"></iron-icon></paper-item>
-
-        <!-- show folders -->
-        <template is="dom-repeat" items="{{data.files}}" as="file">
-          <paper-item type="folder"> <iron-icon icon="icons:folder"></iron-icon> [[file.label]]</paper-item>
-        </template>
-
-        <!-- show files -->
-        <template is="dom-repeat" items="{{data.images}}" as="image">
-          <paper-item type="file"> <iron-icon icon="editor:insert-drive-file"></iron-icon> [[image.label]]</paper-item>
-        </template>
-
-      </paper-listbox>
-
-    </div>
+      <div id="columnsView" class="layout horizontal">
+        <paper-listbox depth="0" on-iron-select="_selectionChanged">
+          <template is="dom-repeat" items="{{data.files}}" as="file">
+            <paper-item type="folder"> <iron-icon icon="icons:folder"></iron-icon>[[file.label]]</paper-item>
+          </template>
+          <template is="dom-repeat" items="{{data.images}}" as="image">
+            <paper-item type="file"> <iron-icon icon="editor:insert-drive-file"></iron-icon>[[image.label]]</paper-item>
+          </template>
+        </paper-listbox>
+      </div>
 
   </template>
 
@@ -121,20 +109,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Polymer({
         is: 'chris-dataviews-columns',
 
-        properties: {
+        behaviors: [
+          Dataviews
+        ],
 
-          data: {
-            type: Object
-          },
+        _pathChanged: function(){
 
-          path: {
-            type: Array,
-            value: []
-          }
+          console.log( 'columns path changed');
+          console.log( this.path );
 
         },
 
-        selectionChanged: function( evt ){
+        _selectionChanged: function( evt ){
 
           console.log( this.data );
           console.log( this.path );
@@ -142,51 +128,51 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           var depth = parseInt( evt.target.attributes.depth.nodeValue, 10 );
           var type = evt.target.selectedItem.attributes.type.nodeValue;
 
-          if(type === 'file'){
+          // delete child nodes after
+          var childNodes = Polymer.dom( this.$.columnsView ).querySelectorAll( 'paper-listbox' );
+
+          // clean DOM
+          for( var i= depth + 1; i < childNodes.length; i++ ){
+
+            Polymer.dom( this.$.columnsView ).removeChild( childNodes[i] );
+
+          }
+
+          if( type === 'file' ){
+
             // we are done!
             return;
+
           }
 
-          var oldListBox = Polymer.dom( this.$.rowsView ).querySelector( 'paper-listbox' );
-          // update the path
-          if(oldListBox.selected === 0){
-            // if click up
-            this.pop('path');
-          }
-          else{
-            // else go down!
-            // index 0 it to top directory
-            this.push('path', oldListBox.selected - 1);
-          }
+          // get next files
+          // if any.. if not it is a file...
+          // check what do we got here
+          var fileIndex = childNodes[0].selected;
+          var files = this.data.files[fileIndex].files;
+          var images = this.data.files[fileIndex].images;
+          var path = [fileIndex];
 
-          console.log( this.path );
+          for( var i=1; i<depth + 1; i++ ){
 
-          // access current path
-          var files = this.data.files;
-          var images = this.data.images;
-          var parentLabel = '';
-
-          // get images/files and parent label of target location
-          for( var i=0; i<this.path.length; i++ ){
-
-            fileIndex = this.path[i];
+            path.push(childNodes[i].selected);
+            fileIndex = childNodes[i].selected;
             images = files[fileIndex].images;
-            parentLabel = files[fileIndex].label;
             files = files[fileIndex].files;
 
           }
 
-          // if we have files or images, show it!
+          this.set('path', path);
+          this.fire('path-changed');
+
           if( files || images ){
 
-            // create new node
-            var newListBox = document.createElement('paper-listbox');
-            newListBox.setAttribute('depth', depth + 1);
-            this.listen(newListBox, 'iron-select', 'selectionChanged');
+            // update path
 
-            // button to go top
-            var upItem = this.createUpItem( parentLabel );
-            Polymer.dom(newListBox).appendChild(upItem);
+            // add next node
+            var paperListbox = document.createElement( 'paper-listbox' );
+            paperListbox.setAttribute( 'depth', depth + 1 );
+            this.listen( paperListbox, 'iron-select', '_selectionChanged' );
 
             // create child nodes for folders...
             if( files ){
@@ -194,10 +180,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
               for( var i = 0; i < files.length; i++ ){
 
                 var folderItem = this.createFolderItem( files[i].label );
-                Polymer.dom( newListBox ).appendChild( folderItem );
+                Polymer.dom( paperListbox ).appendChild( folderItem );
 
               }
-
             }
 
             // then for images...
@@ -205,68 +190,21 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
               for( var i = 0; i < images.length; i++ ){
 
-                var paperItem = this.createFileItem( images[i].label );
-                Polymer.dom( newListBox ).appendChild( paperItem );
+                var fileItem = this.createFileItem( images[i].label );
+                Polymer.dom( paperListbox ).appendChild( fileItem );
 
               }
+
             }
 
-            Polymer.dom( this.$.rowsView ).removeChild( oldListBox );
-            Polymer.dom( this.$.rowsView ).appendChild( newListBox );
+            Polymer.dom( this.$.columnsView ).appendChild( paperListbox );
 
           }
 
-          // need to flush...?
+          // force scroll to the right
+          // proper value should be set
           Polymer.dom.flush();
-          this.$.rowsView.scrollTop = 0;
-        },
-
-        createUpItem: function( label ){
-
-          var upItem = document.createElement( 'paper-item' );
-          upItem.setAttribute( 'type', 'folder' );
-          upItem.setAttribute( 'up', true );
-
-          var ironIcon = document.createElement( 'iron-icon' );
-          ironIcon.setAttribute( 'icon', 'icons:more-horiz' );
-          Polymer.dom( upItem ).appendChild( ironIcon );
-
-          var text = document.createTextNode( label );
-          Polymer.dom( upItem ).appendChild( text );
-
-          return upItem;
-
-        },
-
-        createFolderItem: function( label ){
-
-          var folderItem = document.createElement( 'paper-item' );
-          folderItem.setAttribute( 'type', 'folder' );
-
-          var ironIcon = document.createElement( 'iron-icon' );
-          ironIcon.setAttribute( 'icon', 'icons:folder' );
-          Polymer.dom( folderItem ).appendChild( ironIcon );
-
-          var text = document.createTextNode( label );
-          Polymer.dom( folderItem ).appendChild( text );
-
-          return folderItem;
-
-        },
-
-        createFileItem: function( label ){
-
-          var fileItem = document.createElement( 'paper-item' );
-          fileItem.setAttribute( 'type', 'file' );
-
-          var ironIcon = document.createElement( 'iron-icon' );
-          ironIcon.setAttribute( 'icon', 'editor:insert-drive-file' );
-          Polymer.dom( fileItem ).appendChild( ironIcon );
-
-          var text = document.createTextNode( label );
-          Polymer.dom( fileItem ).appendChild( text );
-
-          return fileItem;
+          this.$.columnsView.scrollLeft = 9999999;
 
         }
     });

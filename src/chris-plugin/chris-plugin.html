@@ -15,17 +15,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
-<!-- <link rel="import" href="../chris-dataview-columns/chris-dataview-columns.html">
-<link rel="import" href="../chris-dataview-grid/chris-dataview-grid.html">
-<link rel="import" href="../chris-dataview-plugin/chris-dataview-plugin.html">
-<link rel="import" href="../chris-dataview-rows/chris-dataview-rows.html"> -->
-<link rel="import" href="../chris-dataviews/chris-dataviews-columns/chris-dataviews-columns.html">
-<link rel="import" href="../chris-dataviews/chris-dataviews-rows/chris-dataviews-rows.html">
-
-<!-- <link rel="import" href="../chris-plugin-create/chris-plugin-create.html"> -->
-
-<!-- STYLE -->
-
 <dom-module id="chris-plugin">
 
   <template>
@@ -66,6 +55,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       paper-icon-button{
 
         --paper-icon-button-ink-color: var(--paper-grey-300);
+
+      }
+
+      paper-icon-button.iron-selected{
+
+        color: var(--accent-color);
+
+      }
+
+      iron-selector{
+
+        border-bottom: 1px solid var(--primary-text-color);
 
       }
 
@@ -110,9 +111,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           <div class="spacer"></div>
 
           <template is="dom-if" if="{{open}}" >
-            <iron-selector id="dataButton" selected="{{selected}}">
-              <paper-icon-button icon="icons:view-headline"></paper-icon-button>
-              <paper-icon-button icon="icons:view-week"></paper-icon-button>
+            <iron-selector id="dataButton" attr-for-selected="name" selected="{{selected}}">
+              <paper-icon-button name="chris-dataviews-rows" icon="icons:view-headline"></paper-icon-button>
+              <paper-icon-button name="chris-dataviews-columns" icon="icons:view-week"></paper-icon-button>
             </iron-selector>
           </template>
           <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
@@ -123,11 +124,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <div class="content">
 
-        <iron-pages role="main" selected="[[selected]]">
+        <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
 
           <!-- need {{}} to share state between dataviews -->
-          <chris-dataviews-rows class="dataview" data="[[plugin.data]]"></chris-dataviews-rows>
-          <chris-dataviews-columns class="dataview" data="[[plugin.data]]"></chris-dataviews-columns>
+          <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data]]" path="{{path}}"></chris-dataviews-rows>
+          <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data]]" path="{{path}}"></chris-dataviews-columns>
           <!-- </iron-selector> -->
 
         <iron-pages>
@@ -155,9 +156,31 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           },
 
           selected: {
-            type: Number,
-            value: 0
+            type: String,
+            value: 'chris-dataviews-columns',
+            observer: '_selectedChanged'
+          },
+
+          path: {
+            type: Array,
+            observer: '_pathChanged'
           }
+
+        },
+
+        _pathChanged: function(){
+
+          console.log( this.path);
+
+        },
+
+        _selectedChanged: function(){
+
+          // load page import on demand.
+          this.importHref(
+            this.resolveUrl( '../chris-dataviews/' + this.selected + '/' + this.selected + '.html' ), function(){
+              this.fire('resize-content');
+            }, null, true );
 
         },
 

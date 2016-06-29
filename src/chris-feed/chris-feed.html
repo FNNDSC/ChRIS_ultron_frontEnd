@@ -339,8 +339,8 @@
         <paper-progress indeterminate></paper-progress>
         <div class="message">Loading details</div>
 
-        <chris-note note="{{feed.note}}" on-note="_saveFeed"></chris-note>
         <chris-plugin-list plugins="{{feed.plugins}}"></chris-plugin-list>
+        <chris-note note="{{feed.note}}" on-note="_saveFeed"></chris-note>
         <chris-comment-list comments="{{feed.comments}}" on-comments="_saveFeed"></chris-comment-list>
 
       </div>
