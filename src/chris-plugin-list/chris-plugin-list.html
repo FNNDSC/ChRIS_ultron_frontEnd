@@ -12,6 +12,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <!-- CHRIS -->
 <link rel="import" href="../chris-plugin/chris-plugin.html">
@@ -63,6 +64,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
+      .hidden {
+
+        display: none;
+
+      }
+
+      #showAll{
+
+        cursor: pointer;
+
+      }
+
     </style>
 
     <div id="pluginList" class="plugin-list">
@@ -71,7 +84,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <div class="toolbar">
 
-        <div class="name">Plugins ([[plugins.length]])</div>
+        <div class="name">Workflow ([[plugins.length]])</div>
 
         <div class="spacer"></div>
 
@@ -84,7 +97,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <!-- Middle comments -->
         <template is="dom-repeat" items="[[plugins]]">
 
-          <chris-plugin plugin="[[item]]" open$="[[_computePluginOpen(index)]]"></chris-plugin>
+          <template is="dom-if" if="[[_computeShowAllButton(index)]]">
+
+            <paper-material elevation=1 id="showAll" on-tap="_showAll">
+              <paper-icon-button icon="icons:view-headline"></paper-icon-button>
+              Show full workflow ([[_hiddenPlugins(plugins.length)]])
+            </paper-material>
+
+          </template>
+
+          <chris-plugin plugin="[[item]]" class$="[[_computePluginVisible(index)]]" open$="[[_computePluginOpen(index)]]"></chris-plugin>
 
         </template>
 
@@ -140,7 +162,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _computePluginOpen: function( index ){
 
-          if(this.plugins.length - 1 === index){
+          if( this.plugins.length - 1 === index ){
 
             return true;
 
@@ -150,6 +172,64 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             return false;
 
           }
+
+        },
+
+        _computePluginVisible: function( index ){
+
+          if( this.plugins.length <= 3 ||
+            this.plugins.length - 1 === index ||
+            index === 0 ){
+
+            return '';
+
+          } 
+          else {
+
+            return 'hidden';
+
+          }
+
+        },
+
+        _computeShowAllButton: function( index ){
+
+          // if last element and more than 3 elements
+
+          if( this.plugins.length - 1 === index && this.plugins.length > 3 ){
+
+            return true;
+
+          } 
+          else {
+
+            return false;
+
+          }
+
+        },
+
+        _showAll: function(){
+
+          // hide button
+          this.shadowRoot.querySelector('#showAll').classList.add('hidden');
+
+          // show plugins
+          var hiddenPlugins = this.shadowRoot.querySelectorAll('chris-plugin.hidden');
+
+          for( var i=0; i<hiddenPlugins.length; i++ ){
+
+            hiddenPlugins[i].classList.remove('hidden');
+
+          }
+
+          this.fire('resize-content');
+
+        },
+
+        _hiddenPlugins: function( allPlugins ){
+
+          return allPlugins - 2;
 
         }
 
