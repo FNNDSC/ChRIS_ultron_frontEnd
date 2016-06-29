@@ -88,20 +88,22 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
-    <style>
-
     </style>
 
-      <div id="columnsView" class="layout horizontal">
-        <paper-listbox depth="0" on-iron-select="_selectionChanged">
-          <template is="dom-repeat" items="{{data.files}}" as="file">
-            <paper-item type="folder"> <iron-icon icon="icons:folder"></iron-icon>[[file.label]]</paper-item>
-          </template>
-          <template is="dom-repeat" items="{{data.images}}" as="image">
-            <paper-item type="file"> <iron-icon icon="editor:insert-drive-file"></iron-icon>[[image.label]]</paper-item>
-          </template>
-        </paper-listbox>
-      </div>
+    <div id="columnsView" class="layout horizontal">
+      <paper-listbox depth="0" on-iron-select="_selectionChanged">
+
+        <template is="dom-repeat" items="{{data.files}}" as="file">
+          <paper-item type="folder"> <iron-icon icon="icons:folder"></iron-icon>[[file.label]]</paper-item>
+        </template>
+
+        <template is="dom-repeat" items="{{data.images}}" as="image">
+          <paper-item type="file"> <iron-icon icon="editor:insert-drive-file"></iron-icon>[[image.label]]</paper-item>
+        </template>
+
+      </paper-listbox>
+      
+    </div>
 
   </template>
 
