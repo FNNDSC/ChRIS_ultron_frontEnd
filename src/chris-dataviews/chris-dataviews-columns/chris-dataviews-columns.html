@@ -15,8 +15,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
 
+<!-- CHRIS ELEMENTS -->
 <link rel="import" href="../chris-dataviews-behaviors/chris-dataviews-behaviors.html">
-
 
 <dom-module id="chris-dataviews-columns">
   <template>
@@ -49,7 +49,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       paper-item {
 
         --paper-item: {
+
           cursor: pointer;
+
         };
 
       }
@@ -91,18 +93,21 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </style>
 
     <div id="columnsView" class="layout horizontal">
+
       <paper-listbox depth="0" on-iron-select="_selectionChanged">
 
+        <!-- show folders -->
         <template is="dom-repeat" items="{{data.files}}" as="file">
           <paper-item type="folder"> <iron-icon icon="icons:folder"></iron-icon>[[file.label]]</paper-item>
         </template>
 
+        <!-- show files -->
         <template is="dom-repeat" items="{{data.images}}" as="image">
           <paper-item type="file"> <iron-icon icon="editor:insert-drive-file"></iron-icon>[[image.label]]</paper-item>
         </template>
 
       </paper-listbox>
-      
+
     </div>
 
   </template>
@@ -123,9 +128,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         _selectionChanged: function( evt ){
-
-          console.log( this.data );
-          console.log( this.path );
 
           var depth = parseInt( evt.target.attributes.depth.nodeValue, 10 );
           var type = evt.target.selectedItem.attributes.type.nodeValue;
@@ -169,43 +171,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           if( files || images ){
 
-            // update path
-
-            // add next node
-            var paperListbox = document.createElement( 'paper-listbox' );
-            paperListbox.setAttribute( 'depth', depth + 1 );
-            this.listen( paperListbox, 'iron-select', '_selectionChanged' );
-
-            // create child nodes for folders...
-            if( files ){
-
-              for( var i = 0; i < files.length; i++ ){
-
-                var folderItem = this.createFolderItem( files[i].label );
-                Polymer.dom( paperListbox ).appendChild( folderItem );
-
-              }
-            }
-
-            // then for images...
-            if( images ){
-
-              for( var i = 0; i < images.length; i++ ){
-
-                var fileItem = this.createFileItem( images[i].label );
-                Polymer.dom( paperListbox ).appendChild( fileItem );
-
-              }
-
-            }
-
-            Polymer.dom( this.$.columnsView ).appendChild( paperListbox );
+            var listbox = this.fillListBox( depth + 1, files, images);
+            Polymer.dom( this.$.columnsView ).appendChild( listbox );
 
           }
 
           // force scroll to the right
           // proper value should be set
-          Polymer.dom.flush();
           this.$.columnsView.scrollLeft = 9999999;
 
         }

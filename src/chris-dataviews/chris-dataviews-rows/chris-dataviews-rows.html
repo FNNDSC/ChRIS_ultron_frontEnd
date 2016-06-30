@@ -24,13 +24,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <style include="iron-flex iron-flex-alignment">
 
-      :host {
-
-        display: flex;
-        flex:1;
-
-      }
-
       #rowsView{
 
         width:100%;
@@ -53,9 +46,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       paper-item {
+
         --paper-item: {
+
           cursor: pointer;
+
         };
+
       }
 
       paper-item[type="folder"] iron-icon{
@@ -140,9 +137,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _selectionChanged: function( evt ){
 
-          console.log( this.data );
-          console.log( this.path );
-
           var depth = parseInt( evt.target.attributes.depth.nodeValue, 10 );
           var type = evt.target.selectedItem.attributes.type.nodeValue;
 
@@ -163,9 +157,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             this.push('path', oldListBox.selected - 1);
           }
 
-          console.log('fire...');
-          // var path = this.path;
-          // this.set('path', path);
+          // need to call set for callbacks to be triggerred
+          this.set('path', this.path );
           this.fire('path-changed');
 
           // access current path
@@ -187,44 +180,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           if( files || images ){
 
             // create new node
-            var newListBox = document.createElement('paper-listbox');
-            newListBox.setAttribute('depth', depth + 1);
-            this.listen(newListBox, 'iron-select', '_selectionChanged');
+            var listbox = this.fillListBox( depth + 1, files, images);
 
-            // button to go top
+            // prepend button to go top
             var upItem = this.createUpItem( parentLabel );
-            Polymer.dom(newListBox).appendChild(upItem);
-
-            // create child nodes for folders...
-            if( files ){
-
-              for( var i = 0; i < files.length; i++ ){
-
-                var folderItem = this.createFolderItem( files[i].label );
-                Polymer.dom( newListBox ).appendChild( folderItem );
-
-              }
-
-            }
-
-            // then for images...
-            if( images ){
-
-              for( var i = 0; i < images.length; i++ ){
-
-                var paperItem = this.createFileItem( images[i].label );
-                Polymer.dom( newListBox ).appendChild( paperItem );
-
-              }
-            }
+            var beforeNode = Polymer.dom(listbox).firstChild;
+            Polymer.dom(listbox).insertBefore(upItem, beforeNode)
 
             Polymer.dom( this.$.rowsView ).removeChild( oldListBox );
-            Polymer.dom( this.$.rowsView ).appendChild( newListBox );
+            Polymer.dom( this.$.rowsView ).appendChild( listbox );
 
           }
 
-          // need to flush...?
-          Polymer.dom.flush();
           this.$.rowsView.scrollTop = 0;
         }
 

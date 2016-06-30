@@ -16,6 +16,40 @@
 
       },
 
+      fillListBox: function( depth, files, images ){
+
+        // add next node
+        var paperListbox = document.createElement( 'paper-listbox' );
+        paperListbox.setAttribute( 'depth', depth );
+        this.listen( paperListbox, 'iron-select', '_selectionChanged' );
+
+        // create child nodes for folders...
+        if( files ){
+
+          for( var i = 0; i < files.length; i++ ){
+
+            var folderItem = this.createFolderItem( files[i].label );
+            Polymer.dom( paperListbox ).appendChild( folderItem );
+
+          }
+        }
+
+        // then for images...
+        if( images ){
+
+          for( var i = 0; i < images.length; i++ ){
+
+            var fileItem = this.createFileItem( images[i].label );
+            Polymer.dom( paperListbox ).appendChild( fileItem );
+
+          }
+
+        }
+
+        return paperListbox;
+
+      },
+
       createFolderItem: function( label ){
 
         var folderItem = document.createElement( 'paper-item' );
