@@ -46,8 +46,10 @@
 
       <chris-login name="login" logged="{{loggedIn}}"></chris-login>
 
-      <chris-home name="home" plugin-fs="{{pluginFs}}" feed="[[feed]]"></chris-home>
+      <chris-home name="home" plugin-fs="{{pluginFs}}" feed-opened="{{feedOpened}}"></chris-home>
       <chris-plugin-fs name="plugin-fs" plugin-fs="[[pluginFs]]" feed="{{feed}}"></chris-plugin-fs>
+
+      <chris-feed-detail name="feed-detail" feed="{{feedOpened}}"></chris-feed-detail>
 
     </iron-pages>
 
@@ -93,6 +95,10 @@
 
         feed: {
           type: Object
+        },
+
+        feedOpened: {
+          type: Object
         }
 
       },
@@ -125,6 +131,8 @@
       },
 
       _pageChanged: function( page ) {
+
+        console.log( page );
 
         // load page import on demand.
         this.importHref(

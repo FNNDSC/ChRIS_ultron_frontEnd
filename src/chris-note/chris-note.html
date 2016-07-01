@@ -25,7 +25,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         @apply(--layout-horizontal);
         @apply(--layout-end);
         @apply(--layout-wrap);
-        border-bottom: 1px solid var(--accent-color);
 
       }
 
@@ -45,6 +44,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       paper-icon-button {
 
+        border-bottom: 1px solid var(--accent-color);
         color: var(--secondary-text-color);
 
       }
@@ -52,13 +52,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       .content {
 
         padding: 20px;
-        display: none;
-
-      }
-
-      .note.open .content {
-
-        display: block;
 
       }
 
@@ -114,20 +107,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <div class="toolbar">
 
-        <div class="name">Note</div>
+      <div class="spacer"></div>
 
-        <div class="spacer"></div>
-
-        <template is="dom-if" if="{{open}}" >
-          <template is="dom-if" if="{{!editing}}" >
-            <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
-          </template>
-          <template is="dom-if" if="{{editing}}" >
-            <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
-            <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
-          </template>
-        </template>
-        <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
+      <template is="dom-if" if="{{!editing}}" >
+        <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
+      </template>
+      <template is="dom-if" if="{{editing}}" >
+        <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
+        <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
+      </template>
 
       </div>
 
@@ -167,7 +155,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           open: {
             type: Boolean,
-            value: false,
+            value: true,
             observer: '_openChanged'
           }
 

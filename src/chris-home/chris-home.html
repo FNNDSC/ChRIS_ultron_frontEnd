@@ -81,11 +81,13 @@
 
       }
 
-            paper-fab-speed-dial{
+      paper-fab-speed-dial{
+
         z-index:10;
         position: fixed;
         bottom: 16px;
         right: 16px;
+
       }
 
       paper-fab#create {
@@ -155,7 +157,7 @@
               </div>
             </paper-fab-speed-dial>
 
-            <chris-feed-list id="feedList" feeds="[[feeds]]" on-notification="_showNotification" scroll-target="[[_getScrollTarget()]]"></chris-feed-list>
+            <chris-feed-list id="feedList" feeds="[[feeds]]" on-notification="_showNotification" scroll-target="[[_getScrollTarget()]]" feed-opened={{feedOpened}}></chris-feed-list>
 
             <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
 
@@ -181,6 +183,11 @@
         feed:{
           type: Object,
           observer: '_feedChanged'
+        },
+
+        feedOpened: {
+          type: Object,
+          notify: true
         },
 
         plugins:{

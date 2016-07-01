@@ -133,9 +133,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           console.log( 'rows path changed');
           console.log( this.path );
 
+          // update UI
+
         },
 
         _selectionChanged: function( evt ){
+
+          // update the path
 
           var depth = parseInt( evt.target.attributes.depth.nodeValue, 10 );
           var type = evt.target.selectedItem.attributes.type.nodeValue;

@@ -1,0 +1,349 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- APP ELEMENTS -->
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../chris-comment-list/chris-comment-list.html">
+<link rel="import" href="../chris-note/chris-note.html">
+<link rel="import" href="../chris-plugin-list/chris-plugin-list.html">
+
+<dom-module id="chris-feed-detail">
+
+  <template>
+
+    <style>
+    :host{
+
+        background-color: var(--dark-primary-color);
+        --paper-input-container-focus-color: var(--accent-color);
+
+    }
+
+    app-header-layout {
+
+      /* use fit instead... */
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+
+    }
+
+    app-toolbar {
+
+      color: #ffffff;
+
+    }
+
+    .content {
+
+      min-height: 101vh;
+
+    }
+
+    a {
+
+      color: #ffffff;
+
+    }
+
+    #card {
+
+      position: relative;
+      max-width: 800px;
+      margin: auto;
+      margin-top: 24px;
+      margin-bottom: 100px;
+      /*min-height: 100vh;*/
+      /*height: 500px;*/
+      /*height: 100%;*/
+      background-color: var(--paper-grey-50);
+
+    }
+
+    .test{
+      max-width: 800px;
+      margin: auto;
+      /*margin-top: 64px;*/
+    }
+
+    paper-fab {
+
+      z-index:10;
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+
+    }
+
+          paper-progress {
+            display: block;
+        width: 100%;
+        --paper-progress-active-color: #ffffff;
+        --paper-progress-container-color: transparent;
+        --paper-progress-height: 2px;
+      }
+
+      .loaded paper-progress{
+
+        display: none;
+
+      }
+
+            paper-tabs {
+
+        --paper-tabs-selection-bar-color: #ffffff;
+
+      }
+
+      paper-tab {
+
+        --paper-tab-ink: #ffffff;
+
+      }
+
+
+      /* responsive layout */
+
+      @media all and (max-width: 800px) {
+
+        #card {
+
+          margin: 0;
+
+        }
+
+      }
+    
+    </style>
+
+    <chris-api id="FeedDetailsAPI"
+      api="FeedDetails",
+      content-type="application/json",
+      response="{{response}}"
+      on-response="handleFeedDetails"
+      error="{{error}}"
+      on-error="handleError">
+    </chris-api>
+
+    <app-header-layout id="feedDetails" has-scrolling-region style$="[[_setLayoutStyle(feed.details.color)]]">
+      <app-header id="yoyo" condenses reveals fixed effects="waterfall" style$="[[_setToolbarStyle(feed.details.color)]]" style="height: 128px">
+        <app-toolbar>
+          <div title>[[feed.details.name]]</div>
+          <a class="back" href="/home" on-tap="_reset">
+            <paper-icon-button icon="icons:clear"></paper-icon-button>
+          </a>
+        </app-toolbar>
+
+        <app-toolbar class="test" primary style="height: 64px">
+                     <paper-tabs style="width: 100%" selected="{{selected}}" >
+          <paper-tab>Workflow ([[feed.plugins.length]])</paper-tab>
+          <paper-tab>Note</paper-tab>
+          <paper-tab>Comments ([[feed.comments.length]])</paper-tab>
+          <paper-tab>Details</paper-tab>
+        </paper-tabs>
+
+
+        </app-toolbar>
+
+                  <paper-progress indeterminate bottom-item></paper-progress>
+
+      </app-header>
+      <div  class="content">
+        <div id="card">
+
+        <iron-pages selected="{{selected}}">
+
+          <chris-plugin-list plugins="{{feed.plugins}}"></chris-plugin-list>
+
+          <chris-note note="{{feed.note}}" on-note="_saveFeed"></chris-note>
+
+          <chris-comment-list comments="{{feed.comments}}" on-comments="_saveFeed"></chris-comment-list>
+
+          <div>
+            <div>[[feed.details.date]]</div>
+            <div>[[feed.details.favorite]]</div>
+            <div>[[feed.details.id]]</div>
+            <div>[[feed.details.letter]]</div>
+            <div>etc.</div>
+          </div>
+
+        </iron-pages>
+
+        </div>
+
+        <a href="/home" on-tap="_reset">
+          <paper-fab icon="av:play-arrow" title="play-arrow"></paper-fab>
+        </a>
+
+      </div>
+    </app-header-layout>
+
+  </template>
+
+
+  <script>
+    Polymer({
+        is: 'chris-feed-detail',
+        properties: {
+
+          feed: {
+            type: Object,
+            observer: '_feedChanged'
+          },
+
+          selected: {
+            type: Number,
+            value: 0,
+            observer: '_selectedChanged'
+          },
+
+          response:{
+            type: Array
+          },
+
+          error: {
+            type: Array
+          }
+
+        },
+
+        handleFeedDetails: function(){
+
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
+
+          // could/should show nice reload button
+          if( !this.response ){
+
+            return;
+
+          }
+
+          // update style
+          if( !this.$.feedDetails.classList.contains( 'loaded' ) ){
+
+            this.$.feedDetails.classList.add('loaded');
+            // remove that when closing...
+
+          }
+
+          // attach new feed content
+          if( this.response.details ){
+
+            this.set( 'feed.details', this.response.details );
+
+          }
+
+         if( this.response.comments ){
+
+            this.set( 'feed.comments', this.response.comments );
+
+          }
+
+         if( this.response.note ){
+
+            this.set( 'feed.note', this.response.note );
+
+          }
+
+         if( this.response.plugins ){
+
+            this.set( 'feed.plugins', this.response.plugins );
+
+          }
+
+          // // if feed was not updated, fire notification message
+          // if( this.response.error && this.response.error.value ){
+
+          //   // show toast message
+          //   this.fire( 'notification', {text: this.response.error.text} );
+
+          // }
+
+        },
+
+        _reset: function(){
+
+          this.selected = 0;
+          this.$.feedDetails.classList.remove('loaded');
+          this.$.yoyo.scroll(0, 0);
+
+        },
+
+        _selectedChanged: function(){
+
+          console.log( 'selected changed...' );
+          this.$.yoyo.scroll(0, 0);
+
+        },
+
+        _feedChanged: function(){
+
+          // load new content
+          this._getFeed();
+
+        },
+
+        _getFeed: function(){
+
+          // let the ChRIS API know which will we will be calling
+          this.$.FeedDetailsAPI.targetID = {
+            feed: this.feed.details.id
+          };
+
+          // should be done in API directly if possible
+          // set params
+          var params = {
+            auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          };
+          this.$.FeedDetailsAPI.params = params;
+          this.$.FeedDetailsAPI.method = 'GET';
+          this.$.FeedDetailsAPI.generateRequest();
+
+        },
+
+        _setLayoutStyle: function( color ){
+
+          // convert hex color to rgb in order to set the alpha channel
+          color = color.replace('#','');
+          var r = parseInt(color.substring(0,2), 16);
+          var g = parseInt(color.substring(2,4), 16);
+          var b = parseInt(color.substring(4,6), 16);
+
+          return 'background-color: rgba(' + r + ',' + g + ',' + b + ', 0.5);';
+
+        },
+
+        _setToolbarStyle: function( color ){
+
+          return 'background-color: ' + color + ';';
+
+        }
+  });
+  </script>
+</dom-module>

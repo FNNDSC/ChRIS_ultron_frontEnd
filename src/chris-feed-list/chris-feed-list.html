@@ -43,15 +43,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled multi-selection on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
 
       <template>
 
-        <chris-feed index="[[index]]" feed="[[feed]]" open="[[selected]]"></chris-feed>
+        <chris-feed index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed>
 
       </template>
       
     </iron-list>
+
+    <a id="details" href="/feed-detail"></a>
 
   </template>
 
@@ -64,6 +66,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             type: Array
           },
 
+          feedOpened: {
+            type: Object
+          },
+
           scrollTarget: HTMLElement
 
         },
@@ -71,6 +77,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         resizeFeed: function( event ){
 
           this.$.feeds.updateSizeForItem( event.detail.index );
+
+        },
+
+        _showDetails: function( event ){
+          
+          console.log( event );
+          this.$.details.click();
+
+          this.set( 'feedOpened', event.model.__data__.feed );
+          console.log( this.feedOpened );
+          this.fire( 'feed-opened-changed' );
 
         }
 
