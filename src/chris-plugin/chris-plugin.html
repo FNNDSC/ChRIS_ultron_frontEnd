@@ -18,7 +18,8 @@
 
     <paper-material elevation="1" id="plugin" class="plugin">
       <div id$="[[plugin.id]]">
-        
+
+
         <div class="toolbar">
           <template is="dom-repeat" items="{{plugin.workflow}}">
             <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
@@ -45,10 +46,8 @@
 
         <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
 
-          
-          <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data]]" path="{{path}}"></chris-dataviews-rows>
-          <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data]]" path="{{path}}"></chris-dataviews-columns>
-          
+          <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data]]" path="[[path]]"></chris-dataviews-rows>
+          <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data]]" path="[[path]]"></chris-dataviews-columns>
 
         <iron-pages>
 

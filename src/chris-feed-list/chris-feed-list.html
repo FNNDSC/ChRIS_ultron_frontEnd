@@ -16,18 +16,20 @@
 
     <style>:host{display:block;}iron-list{padding-top:16px;padding-bottom:64px;--iron-list-items-container:{max-width:800px;margin:auto;margin-top:30px;margin-bottom:60px;border-bottom:1px solid var(--accent-color);};}</style>
 
-    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled="" multi-selection="" on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
+    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled="" on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
 
       <template>
 
-        <chris-feed index="[[index]]" feed="[[feed]]" open="[[selected]]"></chris-feed>
+        <chris-feed index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed>
 
       </template>
       
     </iron-list>
 
+    <a id="details" href="/feed-detail"></a>
+
   </template>
 
-  <script>Polymer({is:"chris-feed-list",properties:{feeds:{type:Array},scrollTarget:HTMLElement},resizeFeed:function(e){this.$.feeds.updateSizeForItem(e.detail.index)}});</script>
+  <script>Polymer({is:"chris-feed-list",properties:{feeds:{type:Array},feedOpened:{type:Object},scrollTarget:HTMLElement},resizeFeed:function(e){this.$.feeds.updateSizeForItem(e.detail.index)},_showDetails:function(e){console.log(e),this.$.details.click(),this.set("feedOpened",e.model.__data__.feed),console.log(this.feedOpened),this.fire("feed-opened-changed")}});</script>
 </dom-module>
 </body></html>

@@ -4,22 +4,25 @@
     <style include="iron-flex iron-flex-alignment">#columnsView{width:100%;overflow-x:scroll;border:1px solid var(--primary-text-color);}#columnsView paper-listbox{border-right:1px solid var(--paper-grey-100);min-width:128px;overflow-y:scroll;max-height:300px;}iron-icon{margin-right:2px;}paper-item{--paper-item:{cursor:pointer;};}paper-item[type="folder"] iron-icon{--iron-icon-stroke-color:var(--primary-color);--iron-icon-fill-color:var(--paper-grey-100);}paper-item[type="file"] iron-icon{--iron-icon-stroke-color:var(--accent-color);--iron-icon-fill-color:var(--paper-grey-100);}#columnsView paper-item{min-height:32px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;--paper-item-selected:{color:var(--primary-color);};}#columnsView paper-listbox:last-child{flex-grow:0;flex-shrink:0;}</style>
 
     <div id="columnsView" class="layout horizontal">
+
       <paper-listbox depth="0" on-iron-select="_selectionChanged">
 
+        
         <template is="dom-repeat" items="{{data.files}}" as="file">
           <paper-item type="folder"> <iron-icon icon="icons:folder"></iron-icon>[[file.label]]</paper-item>
         </template>
 
+        
         <template is="dom-repeat" items="{{data.images}}" as="image">
           <paper-item type="file"> <iron-icon icon="editor:insert-drive-file"></iron-icon>[[image.label]]</paper-item>
         </template>
 
       </paper-listbox>
-      
+
     </div>
 
   </template>
 
-  <script>Polymer({is:"chris-dataviews-columns",behaviors:[Dataviews],_pathChanged:function(){console.log("columns path changed"),console.log(this.path)},_selectionChanged:function(e){console.log(this.data),console.log(this.path);for(var t=parseInt(e.target.attributes.depth.nodeValue,10),l=e.target.selectedItem.attributes.type.nodeValue,s=Polymer.dom(this.$.columnsView).querySelectorAll("paper-listbox"),i=t+1;i<s.length;i++)Polymer.dom(this.$.columnsView).removeChild(s[i]);if("file"!==l){for(var o=s[0].selected,a=this.data.files[o].files,h=this.data.files[o].images,r=[o],i=1;t+1>i;i++)r.push(s[i].selected),o=s[i].selected,h=a[o].images,a=a[o].files;if(this.set("path",r),this.fire("path-changed"),a||h){var n=document.createElement("paper-listbox");if(n.setAttribute("depth",t+1),this.listen(n,"iron-select","_selectionChanged"),a)for(var i=0;i<a.length;i++){var d=this.createFolderItem(a[i].label);Polymer.dom(n).appendChild(d)}if(h)for(var i=0;i<h.length;i++){var c=this.createFileItem(h[i].label);Polymer.dom(n).appendChild(c)}Polymer.dom(this.$.columnsView).appendChild(n)}Polymer.dom.flush(),this.$.columnsView.scrollLeft=9999999}}});</script>
+  <script>Polymer({is:"chris-dataviews-columns",behaviors:[Dataviews],_pathChanged:function(){console.log("columns path changed"),console.log(this.path)},_selectionChanged:function(e){for(var t=parseInt(e.target.attributes.depth.nodeValue,10),s=e.target.selectedItem.attributes.type.nodeValue,i=Polymer.dom(this.$.columnsView).querySelectorAll("paper-listbox"),l=t+1;l<i.length;l++)Polymer.dom(this.$.columnsView).removeChild(i[l]);if("file"!==s){for(var a=i[0].selected,o=this.data.files[a].files,h=this.data.files[a].images,n=[a],l=1;t+1>l;l++)n.push(i[l].selected),a=i[l].selected,h=o[a].images,o=o[a].files;if(this.set("path",n),this.fire("path-changed"),o||h){var r=this.fillListBox(t+1,o,h);Polymer.dom(this.$.columnsView).appendChild(r)}this.$.columnsView.scrollLeft=9999999}}});</script>
 </dom-module>
 </body></html>

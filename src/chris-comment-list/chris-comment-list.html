@@ -13,21 +13,9 @@
 
 </head><body><dom-module id="chris-comment-list">
   <template>
-    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;display:none;}.comment-list.open .content{display:block;}</style>
+    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;}</style>
 
     <div id="commentList" class="comment-list">
-
-      
-
-      <div class="toolbar">
-
-        <div class="name">Comments ([[comments.length]])</div>
-
-        <div class="spacer"></div>
-
-        <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
-
-      </div>
 
       <div class="content">
 
