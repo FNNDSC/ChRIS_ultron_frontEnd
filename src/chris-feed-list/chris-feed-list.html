@@ -41,19 +41,27 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
+      a {
+   color: inherit;
+}
+
     </style>
 
     <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
 
       <template>
 
-        <chris-feed index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed>
+        <a href="/feed-detail">
+
+          <chris-feed index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed>
+
+        </a>
+
 
       </template>
       
     </iron-list>
 
-    <a id="details" href="/feed-detail"></a>
 
   </template>
 
@@ -82,11 +90,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _showDetails: function( event ){
           
-          console.log( event );
-          this.$.details.click();
-
+          // attach to event instead of linking?
           this.set( 'feedOpened', event.model.__data__.feed );
-          console.log( this.feedOpened );
           this.fire( 'feed-opened-changed' );
 
         }

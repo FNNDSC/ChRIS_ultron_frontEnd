@@ -99,25 +99,13 @@ make build/collection-json.js
           apiRoot:{
             type: String,
             value: ''
-          },
-
-          // target IDs to help us build proper REST call
-          // feed ID
-          // comment ID
-          targetID: {
-            type: Object,
-            value: {}
-          },
-
-          previous:{
-            type:Object
           }
 
         },
 
         observers: [
-         'getBody(body, body.* api)',
-         'getParams(params, params.* api)'
+         'getBody(body, body.*)',
+         'getParams(params, params.*)'
         ],
 
         behaviors: [
@@ -188,7 +176,10 @@ make build/collection-json.js
 
           }
 
-          return this['prepare' + this.api ]( 'body' );
+          var test = this['prepare' + this.api ]( 'body' );
+          console.log( test );
+
+          return test;
 
         },
 

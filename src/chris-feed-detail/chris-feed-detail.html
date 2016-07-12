@@ -34,77 +34,79 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
-    :host{
+      :host{
 
-        background-color: var(--dark-primary-color);
-        --paper-input-container-focus-color: var(--accent-color);
+          background-color: var(--dark-primary-color);
+          --paper-input-container-focus-color: var(--accent-color);
 
-    }
+      }
 
-    app-header-layout {
+      app-header-layout {
 
-      /* use fit instead... */
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
+        /* use fit instead... */
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
 
-    }
+      }
 
-    app-toolbar {
+      app-toolbar {
 
-      color: #ffffff;
+        color: #ffffff;
 
-    }
+      }
 
-    .content {
+      .content {
 
-      min-height: 101vh;
+        min-height: 101vh;
 
-    }
+      }
 
-    a {
+      a {
 
-      color: #ffffff;
+        color: #ffffff;
 
-    }
+      }
 
-    #card {
+      #card {
 
-      position: relative;
-      max-width: 800px;
-      margin: auto;
-      margin-top: 24px;
-      margin-bottom: 100px;
-      /*min-height: 100vh;*/
-      /*height: 500px;*/
-      /*height: 100%;*/
-      background-color: var(--paper-grey-50);
+        position: relative;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
+        /*min-height: 100vh;*/
+        /*height: 500px;*/
+        /*height: 100%;*/
+        background-color: var(--paper-grey-50);
 
-    }
+      }
 
-    .test{
-      max-width: 800px;
-      margin: auto;
-      /*margin-top: 64px;*/
-    }
+      .test{
+        max-width: 800px;
+        margin: auto;
+        /*margin-top: 64px;*/
+      }
 
-    paper-fab {
+      paper-fab {
 
-      z-index:10;
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
 
-    }
+      }
 
-          paper-progress {
-            display: block;
+      paper-progress {
+
+        display: block;
         width: 100%;
         --paper-progress-active-color: #ffffff;
         --paper-progress-container-color: transparent;
         --paper-progress-height: 2px;
+
       }
 
       .loaded paper-progress{
@@ -113,7 +115,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
-            paper-tabs {
+      paper-tabs {
 
         --paper-tabs-selection-bar-color: #ffffff;
 
@@ -149,27 +151,28 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       on-error="handleError">
     </chris-api>
 
-    <app-header-layout id="feedDetails" has-scrolling-region style$="[[_setLayoutStyle(feed.details.color)]]">
-      <app-header id="yoyo" condenses reveals fixed effects="waterfall" style$="[[_setToolbarStyle(feed.details.color)]]" style="height: 128px">
+    <app-header-layout id="feedDetails" has-scrolling-region style$="[[_setLayoutStyle(feed.data.color)]]">
+      <app-header id="yoyo" condenses reveals fixed effects="waterfall" style$="[[_setToolbarStyle(feed.data.color)]]" style="height: 128px">
         <app-toolbar>
-          <div title>[[feed.details.name]]</div>
+          <div title>[[feed.data.name]]</div>
           <a class="back" href="/home" on-tap="_reset">
             <paper-icon-button icon="icons:clear"></paper-icon-button>
           </a>
         </app-toolbar>
 
         <app-toolbar class="test" primary style="height: 64px">
-                     <paper-tabs style="width: 100%" selected="{{selected}}" >
-          <paper-tab>Workflow ([[feed.plugins.length]])</paper-tab>
-          <paper-tab>Note</paper-tab>
-          <paper-tab>Comments ([[feed.comments.length]])</paper-tab>
-          <paper-tab>Details</paper-tab>
+        
+          <paper-tabs style="width: 100%" selected="{{selected}}" >
+            <paper-tab>Workflow ([[feed.plugins.length]])</paper-tab>
+            <paper-tab>Note</paper-tab>
+            <paper-tab>Comments ([[feed.comments.length]])</paper-tab>
+            <paper-tab>Details</paper-tab>
         </paper-tabs>
 
 
         </app-toolbar>
 
-                  <paper-progress indeterminate bottom-item></paper-progress>
+        <paper-progress indeterminate bottom-item></paper-progress>
 
       </app-header>
       <div  class="content">
@@ -184,20 +187,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           <chris-comment-list comments="{{feed.comments}}" on-comments="_saveFeed"></chris-comment-list>
 
           <div>
-            <div>[[feed.details.date]]</div>
-            <div>[[feed.details.favorite]]</div>
-            <div>[[feed.details.id]]</div>
-            <div>[[feed.details.letter]]</div>
+            <div>[[feed.data.date]]</div>
+            <div>[[feed.data.favorite]]</div>
+            <div>[[feed.data.id]]</div>
+            <div>[[feed.data.letter]]</div>
             <div>etc.</div>
           </div>
 
         </iron-pages>
 
         </div>
-
-        <a href="/home" on-tap="_reset">
-          <paper-fab icon="av:play-arrow" title="play-arrow"></paper-fab>
-        </a>
 
       </div>
     </app-header-layout>
@@ -255,7 +254,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // attach new feed content
           if( this.response.details ){
 
-            this.set( 'feed.details', this.response.details );
+            this.set( 'feed.data', this.response.details );
 
           }
 
@@ -313,7 +312,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // let the ChRIS API know which will we will be calling
           this.$.FeedDetailsAPI.targetID = {
-            feed: this.feed.details.id
+            feed: this.feed.data.id
           };
 
           // should be done in API directly if possible

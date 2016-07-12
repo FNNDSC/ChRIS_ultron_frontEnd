@@ -253,13 +253,19 @@
 
     </style>
 
+    <chris-api id="FeedAPI"
+      api="Feed"
+      response="{{response}}" on-response="handleFeedDetails"
+      error="{{error}}" on-error="handleError">
+    </chris-api>
+
     <paper-material id="feed" class="feed" elevation=1>
 
       <!-- Toolbar -->
       <div class="toolbar">
 
         <!-- Check Area -->
-        <div class="check-area" style$="[[_setStyle(feed.details.color)]]" on-tap="_blockEvents">
+        <div class="check-area" style$="[[_setStyle(feed.data.color)]]" on-tap="_blockEvents">
 
           <template is="dom-if" if="{{!valid}}">
 
@@ -269,8 +275,8 @@
 
           <template is="dom-if" if="{{valid}}">
 
-              <span class="letter">[[feed.details.letter]]</span>
-              <paper-checkbox class="checkbox" checked="{{feed.details.checked}}"></paper-checkbox>
+              <span class="letter">[[feed.data.letter]]</span>
+              <paper-checkbox class="checkbox" checked="{{checked}}"></paper-checkbox>
 
           </template>
 
@@ -279,11 +285,11 @@
         <!-- Title Area -->
         <div class="title-area">
 
-          <div class="name">Feed [[feed.details.id]] - [[feed.details.name]]</div>
-          <div class="date">[[feed.details.date]]</div>
+          <div class="name">Feed [[feed.data.id]] - [[feed.data.name]]</div>
+          <div class="date">[[feed.data.date]]</div>
           <div class="tags">
 
-            <template is="dom-repeat" items="[[_validateTags(feed.details.tags)]]">
+            <template is="dom-repeat" items="[[_validateTags(feed.data.tags)]]">
 
               <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
 
@@ -298,8 +304,8 @@
 
           <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
           <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
-          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.details.favorite)]]" on-tap="favorite"></paper-icon-button>
-          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.details.status)]]" class$="[[feed.details.status]]" disabled></paper-icon-button>
+          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.data.favorite)]]" on-tap="favorite"></paper-icon-button>
+          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.data.status)]]" class$="[[feed.data.status]]" disabled></paper-icon-button>
 
           <paper-tooltip for="share" offset="0">Share</paper-tooltip>
           <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
@@ -323,17 +329,20 @@
             observer: '_validateFeed'
           },
 
-          // to be REMOVED
-          // WE USE IT TO RESTORE FEED AFTER FAILED POST
-          // API SHOULD RETURN THE FEED TO BE USED FOR RESTORE
-          previous: {
-            type: Object
+          checked: {
+            type: Boolean,
+            value: false,
+            observer: '_checkedChanged'
+          },
+
+          cache: {
+            type: Array,
+            value: []
           },
 
           open:{
             type: Boolean,
-            value: false,
-            observer: '_openChanged'
+            value: false
           },
 
           index: {
@@ -350,49 +359,6 @@
 
           error: {
             type: Array
-          }
-
-        },
-
-        observers: [
-          '_checkedChanged(feed.details.checked)'
-        ],
-
-        _openChanged: function( ){
-
-          if( !this.valid ){
-
-            return;
-
-          }
-
-          // toggle if details available
-          //  && this.feed.details 
-          if( this.feed ){
-
-            this.open ? this.$.feed.classList.add('open') : this.$.feed.classList.remove('open');
-            this.open ? this.$.feed.elevation = 4 : this.$.feed.elevation = 1;
-
-          }
-
-          // trigger API call if no details
-          // need this.open if not iron-list recycle elements and fires unexpected
-          // fetch requests
-          if( this.open && this.feed && this.feed.details &&
-            (!this.feed.comments || !this.feed.note || !this.feed.plugins ) ){
-
-            this._getFeed();
-
-          }
-          else{
-
-            // update style
-            if( !this.$.content.classList.contains( 'loaded' ) ){
-
-              this.$.content.classList.add('loaded');
-
-            }
-
           }
 
         },
@@ -429,13 +395,14 @@
 
         _checkedChanged: function(){
 
+          console.log( this.checked );
+
           // add/remove class
-          if( this.feed && this.feed.details ){
+          // if( this.feed && this.feed.data ){
 
-            this.feed.details.checked ? this.$.feed.classList.add('checked') : this.$.feed.classList.remove('checked');
-            this.fire('checked', this.feed);
+            this.checked ? this.$.feed.classList.add('checked') : this.$.feed.classList.remove('checked');
 
-          }
+          // }
 
         },
 
@@ -485,19 +452,15 @@
           }
 
           // update feed favorite
-          // SAVE OLD FEED FOR NOW SO WE CAN RESTORE IT IF ERROR IN _saveFeed
-          // TO BE REMOVED
-          // API CALL POST WILL RETURN THE CORRECT FEED
-          // FAKE DEEP COPY
-          this.previous = JSON.parse(JSON.stringify(this.feed));
-          this.set('feed.details.favorite', !this.feed.details.favorite);
-
+          this.cache.push( {'name' : 'favorite', 'value': this.feed.data.favorite } );
+          this.set('feed.data.favorite', !this.feed.data.favorite);
           this._saveFeed();
+
         },
 
         _setFavoriteIcon: function( favorite ) {
 
-          return this.feed.details.favorite ? 'icons:favorite' : 'icons:favorite-border';
+          return favorite ? 'icons:favorite' : 'icons:favorite-border';
 
         },
 
@@ -514,89 +477,44 @@
 
           }
 
-          // update style
-          if( !this.$.content.classList.contains( 'loaded' ) ){
-
-            this.$.content.classList.add('loaded');
-
-          }
-
           // attach new feed content
-          if( this.response.details ){
+          // if( this.response.data ){
 
-            this.set( 'feed.details', this.response.details );
+          //   this.set( 'feed.data', this.response.data );
 
-          }
+          // }
 
-         if( this.response.comments ){
-
-            this.set( 'feed.comments', this.response.comments );
-
-          }
-
-         if( this.response.note ){
-
-            this.set( 'feed.note', this.response.note );
-
-          }
-
-         if( this.response.plugins ){
-
-            this.set( 'feed.plugins', this.response.plugins );
-
-          }
 
           // if feed was not updated, fire notification message
-          if( this.response.error && this.response.error.value ){
+          if( this.response.error && this.response.error.code ){
+
+            // restore cache
+            this.set( 'feed.data.' + this.cache[0].name , this.cache[0].value );
 
             // show toast message
-            this.fire( 'notification', {text: this.response.error.text} );
+            this.fire( 'notification', this.response.error );
 
           }
+
+          // clean cache
+          this.cache.shift();
 
           // let the iron-list know the feed's size changed (new content)
           this._resizeFeed();
 
         },
 
-        _getFeed: function(){
-
-          // let the ChRIS API know which will we will be calling
-          this.$.FeedDetailsAPI.targetID = {
-            feed: this.feed.details.id
-          };
-
-          // should be done in API directly if possible
-          // set params
-          var params = {
-            auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
-          };
-          this.$.FeedDetailsAPI.params = params;
-          this.$.FeedDetailsAPI.method = 'GET';
-          this.$.FeedDetailsAPI.generateRequest();
-
-        },
-
         _saveFeed: function( event ){
 
-          // HACK TO RESTORE FEED AFTER FAILED POST
-          // TO BE REMOVED, API SHOULD RETURN THE CURRENT FEED OBJECT
-          this.$.FeedDetailsAPI.previous = this.previous;
-          // let the ChRIS API know which will we will be calling
-          this.$.FeedDetailsAPI.targetID = {
-            feed: this.feed.details.id
-          };
-
           // should be done in API directly if possible
           // set params
           var params = {
             auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
           };
-          this.$.FeedDetailsAPI.params = params;
-          console.log( this.feed );
-          this.$.FeedDetailsAPI.body = this.feed;
-          this.$.FeedDetailsAPI.method = 'POST';
-          this.$.FeedDetailsAPI.generateRequest();
+          this.$.FeedAPI.params = params;
+          this.$.FeedAPI.body = this.feed;
+          this.$.FeedAPI.method = 'PUT';
+          this.$.FeedAPI.generateRequest();
 
         },
 
@@ -620,7 +538,7 @@
 
         _validateFeed: function(){
 
-          if( !this.feed || !this.feed.details ){
+          if( !this.feed || !this.feed.data ){
 
             return;
 
@@ -629,63 +547,63 @@
           var error = [];
 
           // need id
-          if( !( typeof this.feed.details.id === 'string' ) ){
+          if( !( typeof this.feed.data.id === 'string' ) ){
 
             error.push( 'id:String' );
 
           }
 
           // need name
-          if( !( typeof this.feed.details.name === 'string' ) ){
+          if( !( typeof this.feed.data.name === 'string' ) ){
 
             error.push( 'name:String' );
 
           }
 
           // need letter
-          if( !( typeof this.feed.details.letter === 'string' ) ){
+          if( !( typeof this.feed.data.letter === 'string' ) ){
 
             error.push( 'letter:String' );
 
           }
 
           // need color
-          if( !( typeof this.feed.details.color === 'string' ) ){
+          if( !( typeof this.feed.data.color === 'string' ) ){
 
             error.push( 'color:String' );
 
           }
 
           // need date
-          if( !( typeof this.feed.details.date === 'string' ) ){
+          if( !( typeof this.feed.data.date === 'string' ) ){
 
             error.push( 'date:String' );
 
           }
 
           // need status
-          if( !( typeof this.feed.details.status === 'string' ) ){
+          if( !( typeof this.feed.data.status === 'string' ) ){
 
             error.push( 'status:String' );
 
           }
 
           // need favorite
-          if( !( typeof this.feed.details.favorite === 'boolean' ) ){
+          if( !( typeof this.feed.data.favorite === 'boolean' ) ){
 
             error.push( 'favorite:Boolean' );
 
           }
 
           // need checked
-          if( !( typeof this.feed.details.checked === 'boolean' ) ){
+          // if( !( typeof this.feed.data.checked === 'boolean' ) ){
 
-            error.push( 'checked:Boolean' );
+          //   error.push( 'checked:Boolean' );
 
-          }
+          // }
 
           // need tags array
-          if( !( this.feed.details.tags && this.feed.details.tags.constructor === Array ) ){
+          if( !( this.feed.data.tags && this.feed.data.tags.constructor === Array ) ){
 
             // should we "fix" it or hide the feed and show error
             // just show error "feed"

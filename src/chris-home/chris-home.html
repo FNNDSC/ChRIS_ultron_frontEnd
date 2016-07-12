@@ -94,6 +94,10 @@
         --paper-fab-background: var(--accent-color);
       }
 
+      /*on small screens, make toast full width
+ class="fit-bottom"
+      */
+
     </style>
 
     <div id="home">
@@ -230,7 +234,7 @@
         this.$.LabelsAPI.generateRequest();
 
         // anchor toast to the chris-feed-list
-        this.$.notification.fitInto = this.$.feedList;
+        this.$.notification.fitInto = this.$.layout;
 
       },
 
@@ -255,8 +259,11 @@
 
       _showNotification: function( event ){
 
+        console.log( 'got notification' );
+        console.log( event.detail );
+
         // update text
-        this.$.notification.text = event.detail.text;
+        this.$.notification.text = event.detail.message;
 
         // show notification
         this.$.notification.show();

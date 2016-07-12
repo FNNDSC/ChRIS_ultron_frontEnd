@@ -10,25 +10,13 @@
 
           case 'url':
 
-            var url = '/data/feeds.json';
-
-            if( this.chrisAPI ){
-
-              // generate REAL URL
-              url = this.apiRoot + 'Feeds/NAME';
-
-            }
+            // shoud be empty as it is main entry point in API
+            var suffix = '/data/feeds.json';
+            var url = this.apiRoot + suffix;
 
             return url;
 
           case 'params':
-
-            if( this.chrisAPI ){
-
-              this.params.DBpath = this.dbPath;
-
-            }
-
             return this.params;
 
           case 'body':
@@ -44,83 +32,39 @@
 
       handleFeeds: function( ){
 
-        var feeds = [];
-
-        if( this.chrisAPI ){
-          feeds = this.handleFeedsFromChrisAPI();
-        }
-        else{
-          feeds = this.handleFeedsFromMars();
-        }
+        // generate fake data
+        var feedsCJ = this._generateFeedsCJ( this.response );
+        
+        // parse fake CJ response and format it as needed
+        var feeds = this.formatFeeds( feedsCJ );
 
         return feeds;
 
       },
 
-      handleFeedsFromChrisAPI: function( ){
+      formatFeeds: function( feedsCJ ){
+
+        var feedObj = JSON.parse( feedsCJ );
+        var items = feedObj.collection.items;
+        var template = feedObj.collection.template;
 
         var feeds = [];
-        var payload = this.response.return.payload;
 
-        var colors = this.colors();
-
-        for( var i=0; i<payload.length; i++ ){
+        for( var i=0; i<items.length; i++ ){
 
           var feed = {};
-          feed.details = {
-            id: 'id: ' + payload[i],
-            name: 'name: ' + payload[i],
-            image: '',
-            opened: false,//this.response[i].expanded,
-            favorite: i%3 ? true : false,
-            selected: false,
-            details: null,
-            color: colors[Math.floor(Math.random() * colors.length)].value,
-            letter: 'N',
-            // status: ((this.response[i].zip < 20000) ? 'success' : (this.response[i].zip < 30000 ? 'running' : 'error')),
-            description: 'description for ' + payload[i],
-            fulldescription: 'full description for ' + payload[i],
-            date: Date() //this.response[i].date
-          };
+          feed.data = {};
+          feed.template = template;
+
+          for( var j=0; j < items[i].data.length; j++ ){
+
+            feed.data[ items[i].data[j].name ] = items[i].data[j].value;
+
+          }
 
           feeds.push(feed);
 
         }
-
-        return feeds;
-
-      },
-
-      handleFeedsFromMars: function(){
-
-        var feeds = [];
-
-        // from the helper
-        var colors = this.colors();
-
-        for( var i=0; i<this.response.length; i++ ){
-
-          var feed = {};
-          feed.details = {
-            id: 'id: ' + this.response[i].index,
-            name: this.response[i].name,
-            opened: false,
-            checked: false,
-            favorite: this.response[i].integer > 50 ? true : false,
-            status: this._generateStatus(this.response[i].integer),
-            tags: this._generateTags(colors),
-            selected: false,
-            color: colors[Math.floor(Math.random() * colors.length)].value,
-            letter: 'N',
-            date: this.response[i].date
-          };
-
-          feeds.push(feed);
-
-        }
-
-        // make second feed invalid
-        feeds[1].id = true;
 
         return feeds;
 
@@ -129,6 +73,56 @@
       handleErrorFeeds: function( ){
 
         return this.error;
+
+      },
+
+      _generateFeedsCJ: function( rawData ){
+
+        var cj = {};
+        cj.collection = {};
+
+        // create the template field
+        cj.collection.template = {};
+        var template = cj.collection.template;
+        template.data = [
+          {"name" : "color", "value" : ""},
+          {"name" : "date", "value" : ""},
+          {"name" : "favorite", "value" : ""},
+          {"name" : "id", "value" : ""},
+          {"name" : "letter", "value" : ""},
+          {"name" : "name", "value" : ""},
+          {"name" : "status", "value" : ""},
+          {"name" : "tags", "value" : ""}
+        ];
+
+        // create the items
+        cj.collection.items = [];
+        var items = cj.collection.items;
+
+        var colors = this.colors();
+
+        for( var i=0; i<rawData.length; i++ ){
+
+          var item = {};
+          // href? links?
+          item.data = [];
+          var data = item.data;
+
+          data.push( { "name" : "color", "value" : colors[Math.floor(Math.random() * colors.length)].value } );
+          data.push( { "name" : "date", "value" : rawData[i].date } );
+          data.push( { "name" : "favorite", "value" : rawData[i].integer > 50 ? true : false } );
+          data.push( { "name" : "id", "value" : "id: " + rawData[i].index } );
+          data.push( { "name" : "letter", "value" : "N" } );
+          data.push( { "name" : "name", "value" : rawData[i].name } );
+          data.push( { "name" : "status", "value" : this._generateStatus( rawData[i].integer ) } );
+          data.push( { "name" : "tags", "value" : this._generateTags( colors ) } );
+
+          items.push(item);
+
+        }
+
+        // convert to JSON
+        return JSON.stringify( cj );
 
       },
 
