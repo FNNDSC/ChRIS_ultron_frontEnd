@@ -32,17 +32,19 @@
 
       handleFeeds: function( ){
 
-        // generate fake data
-        var feedsCJ = this._generateFeedsCJ( this.response );
+        // generate fake data with CJ helpers
+        var feedsCJ = this.generateFeedCollectionCJ( this.response );
         
         // parse fake CJ response and format it as needed
-        var feeds = this.formatFeeds( feedsCJ );
+        var feeds = this.formatResponseFeeds( feedsCJ );
+
+        console.log( feeds );
 
         return feeds;
 
       },
 
-      formatFeeds: function( feedsCJ ){
+      formatResponseFeeds: function( feedsCJ ){
 
         var feedObj = JSON.parse( feedsCJ );
         var items = feedObj.collection.items;
@@ -53,12 +55,21 @@
         for( var i=0; i<items.length; i++ ){
 
           var feed = {};
-          feed.data = {};
+          
+          feed.href = items[i].href;
           feed.template = template;
 
+          feed.data = {};
           for( var j=0; j < items[i].data.length; j++ ){
 
             feed.data[ items[i].data[j].name ] = items[i].data[j].value;
+
+          }
+
+          feed.links = {};
+          for( var j=0; j < items[i].links.length; j++ ){
+
+            feed.links[ items[i].links[j].rel ] = items[i].links[j].href;
 
           }
 
@@ -73,103 +84,6 @@
       handleErrorFeeds: function( ){
 
         return this.error;
-
-      },
-
-      _generateFeedsCJ: function( rawData ){
-
-        var cj = {};
-        cj.collection = {};
-
-        // create the template field
-        cj.collection.template = {};
-        var template = cj.collection.template;
-        template.data = [
-          {"name" : "color", "value" : ""},
-          {"name" : "date", "value" : ""},
-          {"name" : "favorite", "value" : ""},
-          {"name" : "id", "value" : ""},
-          {"name" : "letter", "value" : ""},
-          {"name" : "name", "value" : ""},
-          {"name" : "status", "value" : ""},
-          {"name" : "tags", "value" : ""}
-        ];
-
-        // create the items
-        cj.collection.items = [];
-        var items = cj.collection.items;
-
-        var colors = this.colors();
-
-        for( var i=0; i<rawData.length; i++ ){
-
-          var item = {};
-          // href? links?
-          item.data = [];
-          var data = item.data;
-
-          data.push( { "name" : "color", "value" : colors[Math.floor(Math.random() * colors.length)].value } );
-          data.push( { "name" : "date", "value" : rawData[i].date } );
-          data.push( { "name" : "favorite", "value" : rawData[i].integer > 50 ? true : false } );
-          data.push( { "name" : "id", "value" : "id: " + rawData[i].index } );
-          data.push( { "name" : "letter", "value" : "N" } );
-          data.push( { "name" : "name", "value" : rawData[i].name } );
-          data.push( { "name" : "status", "value" : this._generateStatus( rawData[i].integer ) } );
-          data.push( { "name" : "tags", "value" : this._generateTags( colors ) } );
-
-          items.push(item);
-
-        }
-
-        // convert to JSON
-        return JSON.stringify( cj );
-
-      },
-
-      _generateStatus: function( value ){
-
-        if( value < 30 ){
-
-          return 'done';
-
-        }
-        else if( value < 60 ){
-
-          return 'running';
-
-        }
-        else{
-
-          return 'error';
-
-        }
-
-      },
-
-      _generateTags: function( available ){
-
-        var tags = [];
-        var countTags = {};
-        var nbTags = Math.floor(Math.random() * available.length);
-
-        for( var i=0; i<nbTags; i++ ){
-
-          var tag = available[Math.floor(Math.random() * available.length)];
-
-          if( !countTags[tag.name] ){
-
-            tags.push({
-              name: tag.name,
-              color: tag.value
-            });
-
-            countTags[tag.name] = true;
-
-          }
-
-        }
-
-        return tags;
 
       }
 

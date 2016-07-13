@@ -151,6 +151,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       on-error="handleError">
     </chris-api>
 
+    <chris-api id="ItemAPI"
+      api="Item",
+      content-type="application/json",
+      response="{{response}}"
+      on-response="handleItem"
+      error="{{error}}"
+      on-error="handleError">
+    </chris-api>
+
     <app-header-layout id="feedDetails" has-scrolling-region style$="[[_setLayoutStyle(feed.data.color)]]">
       <app-header id="yoyo" condenses reveals fixed effects="waterfall" style$="[[_setToolbarStyle(feed.data.color)]]" style="height: 128px">
         <app-toolbar>
@@ -236,6 +245,66 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           event.preventDefault();
           event.stopPropagation();
 
+          return;
+
+          // could/should show nice reload button
+          if( !this.response ){
+
+            return;
+
+          }
+
+          // update style
+          if( !this.$.feedDetails.classList.contains( 'loaded' ) ){
+
+            this.$.feedDetails.classList.add('loaded');
+            // remove that when closing...
+
+          }
+
+          // attach new feed content
+          if( this.response.details ){
+
+            this.set( 'feed.data', this.response.details );
+
+          }
+
+         if( this.response.comments ){
+
+            this.set( 'feed.comments', this.response.comments );
+
+          }
+
+         if( this.response.note ){
+
+            this.set( 'feed.note', this.response.note );
+
+          }
+
+         if( this.response.plugins ){
+
+            this.set( 'feed.plugins', this.response.plugins );
+
+          }
+
+          // // if feed was not updated, fire notification message
+          // if( this.response.error && this.response.error.value ){
+
+          //   // show toast message
+          //   this.fire( 'notification', {text: this.response.error.text} );
+
+          // }
+
+        },
+
+        handleItem: function(){
+
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
+
+          return;
+
           // could/should show nice reload button
           if( !this.response ){
 
@@ -296,7 +365,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _selectedChanged: function(){
 
-          console.log( 'selected changed...' );
           this.$.yoyo.scroll(0, 0);
 
         },
@@ -304,16 +372,29 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _feedChanged: function(){
 
           // load new content
-          this._getFeed();
+          // this._get( 'CommentCollection' );
+          // this._get( 'PluginCollection' );
+          // this._get( 'Note' );
+
+          // this._getFeed();
+
+        },
+
+      // _get is a bad name
+      _getTest: function( what, data ){
+
+          console.log( this.feed );
+          // var params = {
+          //   auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          // };
+          // this.$.url = this.feed.links
+          // this.$.ItemAPI.params = params;
+          // this.$.ItemAPI.method = 'GET';
+          // this.$.ItemAPI.generateRequest();
 
         },
 
         _getFeed: function(){
-
-          // let the ChRIS API know which will we will be calling
-          this.$.FeedDetailsAPI.targetID = {
-            feed: this.feed.data.id
-          };
 
           // should be done in API directly if possible
           // set params

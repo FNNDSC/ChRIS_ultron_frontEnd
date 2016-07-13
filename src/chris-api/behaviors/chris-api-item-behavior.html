@@ -1,0 +1,47 @@
+<script>
+    /** @polymerBehavior Item */
+    Item = {
+
+      prepareItem: function( what ){
+
+        this.handleAs = 'json';
+
+        switch( what ){
+
+          case 'url':
+
+            var url = '/data/contacts.json';
+
+            return url;
+
+          case 'params':
+
+            return this.params;
+
+          case 'body':
+
+            return this.body;
+
+          default:
+
+            break;
+
+          }
+
+        return false;
+
+      },
+
+      handleItem: function(){
+
+        return labels;
+
+      },
+
+      handleErrorItem: function(){
+
+        return this.error;
+
+      }
+    };
+</script>

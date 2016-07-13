@@ -32,11 +32,11 @@
 
             if( this.body.template && this.body.data ){
 
-              bodyCJ = this._generateFeedCJPost( this.body.template, this.body.data );
+              bodyCJ = this.formatQueryCJ( this.body.template, this.body.data );
 
             }
             
-            return JSON.stringify(bodyCJ);
+            return bodyCJ;
 
           default:
 
@@ -51,8 +51,11 @@
         if( this.method === 'PUT' ){
 
           // generate error 50% of the time
-          var feedCJ = this._generateFeedCJ( Math.random() > 0.5 );
+          var feedCJ = this.generateFeedCJ( this.body.data, Math.random() > 0.5 );
           var feed = this.formatFeedCJ( feedCJ );
+
+          console.log( feed );
+
           return feed;
 
         }
@@ -77,12 +80,26 @@
 
         if( feedObj.collection.error ){
 
-          feed[ 'error' ] = feedObj.collection.error;
+          feed.error = feedObj.collection.error;
 
         }
         else{
 
-          feed[ 'data' ] = feedObj.collection.items[0].data;
+          feed.data = {};
+          for( var j=0; j < feedObj.collection.items[0].data.length; j++ ){
+
+            feed.data[ feedObj.collection.items[0].data[j].name ] = feedObj.collection.items[0].data[j].value;
+
+          }
+
+          feed.links = {};
+          for( var j=0; j < feedObj.collection.items[0].links.length; j++ ){
+
+            feed.links[ feedObj.collection.items[0].links[j].rel ] = feedObj.collection.items[0].links[j].href;
+
+          }
+
+          feed.href = feedObj.collection.items[0].href;
 
         }
 
@@ -96,90 +113,7 @@
 
       },
 
-      _generateFeedCJPost: function( template, data ){
-
-        // use template + data to do the magics
-        var feedCJ = {};
-        feedCJ.template = template;
-
-        // fill the values
-        for( var i=0; i < template.data.length; i++ ){
-
-          feedCJ.template.data[i].value = data[ template.data[i].name ];
-
-        }
-
-        return feedCJ;
-
-
-      },
-
       _feedTemplate: function(){
-
-      },
-
-      _generateFeedItem: function( template, data ){
-          
-          var item = {};
-          // href? links?
-
-          // create the data field
-          item.data = [];
-
-          for( var j=0; j < template.data.length; j++ ){
-
-            var attribute = {};
-            attribute[ template.data[j].name ] = data[ template.data[j].name ]
-            item.data.push( attribute );
-
-          }
-
-          return item;
-
-      },
-
-      _generateFeedCJ: function( error ){
-
-        var cj = {};
-        cj.collection = {};
-
-        // create the template field
-        cj.collection.template = {};
-        var template = cj.collection.template;
-        template.data = [
-          {"name" : "color", "value" : ""},
-          {"name" : "date", "value" : ""},
-          {"name" : "favorite", "value" : ""},
-          {"name" : "id", "value" : ""},
-          {"name" : "letter", "value" : ""},
-          {"name" : "name", "value" : ""},
-          {"name" : "status", "value" : ""},
-          {"name" : "tags", "value" : ""}
-        ];
-
-        // create the error field
-        if( error === true ){
-
-          // create the template field
-          cj.collection.error = {
-            "title"   : "Server Error",
-            "code"    : "X1234",
-            "message" : "Favorite could not be updated"
-          };
-
-        }
-        else{
-
-          // create the items field
-          cj.collection.items = [];
-          // we get body instead of response for now...
-          // var rawData = JSON.parse( this.body );
-          var rawData = this.body;
-          cj.collection.items.push( this._generateFeedItem( rawData.template, rawData.data ) );
-
-        }
-
-        return JSON.stringify( cj );
 
       }
 

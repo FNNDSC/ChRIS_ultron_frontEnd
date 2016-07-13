@@ -1,0 +1,47 @@
+<script>
+  /** @polymerBehavior HelperCJ */
+  HelperCJ = {
+
+    formatQueryCJ: function( template, data ){
+
+      // use template + data to do the magics
+      var feedCJ = {};
+      feedCJ.template = template;
+
+      // fill the values
+      for( var i=0; i < template.data.length; i++ ){
+
+        feedCJ.template.data[i].value = data[ template.data[i].name ];
+
+      }
+
+      return JSON.stringify(feedCJ);
+
+    },
+
+    generateItemDataCJ: function( template, data ){
+
+      var item = {};
+      // api to pass required info...?
+      // href? links?
+
+      // create the data field
+      item.data = [];
+
+      for( var j=0; j < template.length; j++ ){
+
+        item.data.push( {
+
+            'name': template[j].name,
+            'value': data[ template[j].name ]
+
+        } );
+
+      }
+
+      return item;
+
+    }
+
+  }
+</script>

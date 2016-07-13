@@ -2,6 +2,71 @@
     /** @polymerBehavior Helper */
     Helper = {
 
+      generateFeedRawData: function( rawData ){
+
+        var colors = this.colors();
+        var feed = {
+          'color': colors[Math.floor(Math.random() * colors.length)].value,
+          'date': rawData.date,
+          'favorite': rawData.integer > 50 ? true : false,
+          'id': String(rawData.index),
+          'letter': rawData.name.charAt(0),
+          'name': rawData.name,
+          'status': this.generateStatusRawData( rawData.integer ),
+          'tags': this.generateTagsRawData( colors )
+        }
+
+        return feed;
+        
+      },
+
+      generateStatusRawData: function( value ){
+
+        if( value < 30 ){
+
+          return 'done';
+
+        }
+        else if( value < 60 ){
+
+          return 'running';
+
+        }
+        else{
+
+          return 'error';
+
+        }
+
+      },
+
+      generateTagsRawData: function( available ){
+
+        var tags = [];
+        var countTags = {};
+        var nbTags = Math.floor(Math.random() * available.length);
+
+        for( var i=0; i<nbTags; i++ ){
+
+          var tag = available[Math.floor(Math.random() * available.length)];
+
+          if( !countTags[tag.name] ){
+
+            tags.push({
+              name: tag.name,
+              color: tag.value
+            });
+
+            countTags[tag.name] = true;
+
+          }
+
+        }
+
+        return tags;
+
+      },
+
       colors: function(){
 
         var colors = [

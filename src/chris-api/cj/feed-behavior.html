@@ -1,0 +1,77 @@
+<script>
+  /** @polymerBehavior FeedCJ */
+  FeedCJ = {
+
+    feedTemplate: function(){
+
+      var template = [
+        {'name' : 'color', 'value' : ''},
+        {'name' : 'date', 'value' : ''},
+        {'name' : 'favorite', 'value' : ''},
+        {'name' : 'id', 'value' : ''},
+        {'name' : 'letter', 'value' : ''},
+        {'name' : 'name', 'value' : ''},
+        {'name' : 'status', 'value' : ''},
+        {'name' : 'tags', 'value' : ''}
+      ];
+
+      return template;
+
+    },
+
+    generateFeedCJ: function( rawData, error ){
+
+      var cj = {};
+      cj.collection = {};
+
+      // create the template field
+      cj.collection.template = {};
+      cj.collection.template.data = this.feedTemplate();
+
+      // create the error field
+      if( error === true ){
+
+        // create the template field
+        cj.collection.error = {
+          'title'   : 'API Error',
+          'code'    : 'X1234',
+          'message' : 'Feed request could not be processed.'
+        };
+
+      }
+      else{
+
+        // create the items field
+        cj.collection.items = [];
+
+        // create the data field
+        var item = this.generateItemDataCJ( cj.collection.template.data, rawData );
+
+        // create the href field
+        item.href = this.apiRoot + '/' + rawData.id;
+
+        // create the links
+        item.links = [];
+        item.links.push( {
+          'rel' : 'note',
+          'href' : this.apiRoot + '/' + rawData.id + '/note'
+        });
+        item.links.push( {
+          'rel' : 'comments',
+          'href' : this.apiRoot + '/' + rawData.id + '/comments'
+        });
+        item.links.push( {
+          'rel' : 'plugins',
+          'href' : this.apiRoot + '/' + rawData.id + '/plugins'
+        });
+
+        cj.collection.items.push( item );
+
+      }
+
+      return JSON.stringify( cj );
+
+    }
+
+  }
+</script>

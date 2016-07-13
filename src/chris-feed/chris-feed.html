@@ -395,8 +395,6 @@
 
         _checkedChanged: function(){
 
-          console.log( this.checked );
-
           // add/remove class
           // if( this.feed && this.feed.data ){
 
@@ -511,6 +509,7 @@
           var params = {
             auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
           };
+          this.$.FeedAPI.url = this.feed.href;
           this.$.FeedAPI.params = params;
           this.$.FeedAPI.body = this.feed;
           this.$.FeedAPI.method = 'PUT';

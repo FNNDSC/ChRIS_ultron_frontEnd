@@ -92,7 +92,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           
           // attach to event instead of linking?
           this.set( 'feedOpened', event.model.__data__.feed );
-          this.fire( 'feed-opened-changed' );
+          this.fire( 'feed-opened-changed', event.model.__data__.feed );
 
         }
 
