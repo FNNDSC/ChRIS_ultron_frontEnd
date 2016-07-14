@@ -22,6 +22,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../chris-api/chris-api.html">
@@ -174,7 +175,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           <paper-tabs style="width: 100%" selected="{{selected}}" >
             <paper-tab>Workflow ([[feed.plugins.length]])</paper-tab>
             <paper-tab>Note</paper-tab>
-            <paper-tab>Comments ([[feed.comments.length]])</paper-tab>
+            <paper-tab>Comments ([[feed.comments.data.length]])</paper-tab>
             <paper-tab>Details</paper-tab>
         </paper-tabs>
 
@@ -184,7 +185,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <paper-progress indeterminate bottom-item></paper-progress>
 
       </app-header>
-      <div  class="content">
+      <div  class="content" on-notification="_showNotification">
         <div id="card">
 
         <iron-pages selected="{{selected}}">
@@ -206,6 +207,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         </iron-pages>
 
         </div>
+
+        <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
 
       </div>
     </app-header-layout>
@@ -303,12 +306,25 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           event.preventDefault();
           event.stopPropagation();
 
-          return;
-
           // could/should show nice reload button
           if( !this.response ){
 
             return;
+
+          }
+
+          console.log( this.response );
+          // use href to decide on how to handle it!
+          var type = this.response.href.split(/[/]+/).pop();
+
+          switch(type){
+
+            case 'comments' :
+              this.set( 'feed.comments', this.response );
+              break
+
+            default:
+              break;
 
           }
 
@@ -319,6 +335,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             // remove that when closing...
 
           }
+
+          return;
+
+
+
+
 
           // attach new feed content
           if( this.response.details ){
@@ -375,22 +397,29 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // this._get( 'CommentCollection' );
           // this._get( 'PluginCollection' );
           // this._get( 'Note' );
+          console.log( this.feed );
+          this._api('GET', this.feed.links.comments );
 
           // this._getFeed();
 
         },
 
-      // _get is a bad name
-      _getTest: function( what, data ){
+        // _get is a bad name
+        _api: function( action, url, template, data ){
 
-          console.log( this.feed );
-          // var params = {
-          //   auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
-          // };
-          // this.$.url = this.feed.links
-          // this.$.ItemAPI.params = params;
-          // this.$.ItemAPI.method = 'GET';
-          // this.$.ItemAPI.generateRequest();
+          var params = {
+              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          };
+
+          this.$.ItemAPI.params = params;
+          this.$.ItemAPI.method = action;
+          this.$.ItemAPI.url = url;
+
+          if( action === 'GET' ){
+
+            this.$.ItemAPI.generateRequest();
+
+          }
 
         },
 
@@ -423,7 +452,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           return 'background-color: ' + color + ';';
 
-        }
+        },
+
+        _showNotification: function( event ){
+
+        // update text
+        this.$.notification.text = event.detail.message;
+
+        // show notification
+        this.$.notification.show();
+
+      },
   });
   </script>
 </dom-module>

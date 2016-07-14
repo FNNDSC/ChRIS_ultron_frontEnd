@@ -1,0 +1,46 @@
+<script>
+  /** @polymerBehavior CommentCollectionCJ */
+  CommentCollectionCJ = {
+
+    /**
+     */
+    generateCommentCollectionCJ: function( ){
+
+      var cj = {};
+      cj.collection = {};
+
+      // create the href field
+      cj.collection.href = this.apiRoot + '/' + '<feedID>/comments';
+
+      // create the template field
+      cj.collection.template = {};
+      cj.collection.template.data = this.commentTemplate();
+
+      // create the items
+      cj.collection.items = [];
+      var items = cj.collection.items;
+
+      // generate random number of items
+      var nbComments = Math.floor(Math.random() * 10);
+
+      for( var i=0; i<nbComments; i++ ){
+
+        var item = {};
+        //create the href field (will miss the feed id but OK)
+        item.href = this.apiRoot + '/' + '<feedID>/comments/' + i;
+
+        // create the links field
+        item.links = [];
+
+        var data = this.generateCommentRawData( i );
+        item.data = this.generateItemDataCJ( cj.collection.template.data, data ).data;
+        items.push(item);
+
+      }
+
+      return cj;
+
+    }
+
+  }
+</script>

@@ -10,7 +10,23 @@
 
           case 'url':
 
-            var url = '/data/contacts.json';
+            // get last part of url for now
+            var url = '';
+
+            if( this.method !== 'GET'){
+
+              url = 'https://httpbin.org/post';
+
+            }
+            else{
+              url = '/data/';
+              url += this.url.split(/[/]+/).pop();
+              if( url.indexOf('.json') === -1 ){
+
+                url += '.json';
+
+              }
+            }
 
             return url;
 
@@ -19,6 +35,12 @@
             return this.params;
 
           case 'body':
+
+            console.log( this.body);
+            // template
+            // href reserved
+            // format with template contained in body.template
+
 
             return this.body;
 
@@ -34,7 +56,113 @@
 
       handleItem: function(){
 
-        return labels;
+        var response = this.response;
+
+        //
+        // TO BE REMOVED WHEN CONNECTED TO REAL API?
+        // STILL GOD FOR TESTING
+        // NEED SWITCH?
+        //
+        // FROM HERE
+        //.....................................
+
+        var itemCJ = {};
+
+        // Simulate GET
+        if( this.method === 'GET' && this.response.type === 'comments' ){
+
+          itemCJ = this.generateCommentCollectionCJ();
+
+        }
+        
+        // Simulate POST/PUT
+        if( this.method !== 'GET' ){
+
+          itemCJ.collection = {};
+          itemCJ.collection.href = this.response.json.href;
+
+        }
+
+        // Generate random errors...
+        if( Math.random() > 0.75 ){
+
+          itemCJ.collection.error = {
+            'title'   : 'API Error',
+            'code'    : 'X1234',
+            'message' : this.method + ' : ' + itemCJ.collection.href + ' could not be processed.'
+          };
+          
+        }
+
+        itemCJ = JSON.stringify( itemCJ );
+
+        // TO HERE
+        //.....................................
+
+        // format the response
+        var item = this.formatItemCJ( itemCJ );
+        response = item;
+
+        return response;
+
+      },
+
+
+      formatItemCJ: function( feedCJ ){
+      
+        var itemObj = JSON.parse( feedCJ );
+        // debug here why template...
+
+        var item = {
+
+          template: itemObj.collection.template,
+          href: itemObj.collection.href
+
+        }
+
+        if( itemObj.collection.template && itemObj.collection.template.data && itemObj.collection.template.data.length >0 ){
+          // attach template if any
+          item['template'] = itemObj.collection.template;
+
+        }
+
+        if( itemObj.collection.error ){
+
+          // attach only error if any
+          item.error = itemObj.collection.error;
+
+        }
+        else if( itemObj.collection.items ){
+
+          // attach items if any
+          item.data = [];
+          
+          for( var i = 0; i < itemObj.collection.items.length; i++ ){
+
+            var data = {};
+            data.data = {};
+            for( var j=0; j < itemObj.collection.items[i].data.length; j++ ){
+
+              data.data[ itemObj.collection.items[i].data[j].name ] = itemObj.collection.items[i].data[j].value;
+
+            }
+
+            data.links = {};
+            for( var j=0; j < itemObj.collection.items[i].links.length; j++ ){
+
+              data.links[ itemObj.collection.items[i].links[j].rel ] = itemObj.collection.items[i].links[j].href;
+
+            }
+
+            data.href = itemObj.collection.items[i].href;
+
+            item.data.push( data);
+
+          }
+
+        }
+
+        return item;
 
       },
 

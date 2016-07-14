@@ -1,31 +1,29 @@
 <script>
-  /** @polymerBehavior FeedCJ */
-  FeedCJ = {
+  /** @polymerBehavior CommentCJ */
+  CommentCJ = {
 
-    feedTemplate: function(){
+    commentTemplate: function(){
 
       var template = [
         {'name' : 'color', 'value' : ''},
+        {'name' : 'content', 'value' : ''},
         {'name' : 'date', 'value' : ''},
-        {'name' : 'favorite', 'value' : ''},
-        {'name' : 'id', 'value' : ''},
-        {'name' : 'letter', 'value' : ''},
-        {'name' : 'name', 'value' : ''},
-        {'name' : 'status', 'value' : ''},
-        {'name' : 'tags', 'value' : ''}
+        {'name' : 'index', 'value' : ''},
+        {'name' : 'author', 'value' : ''}
       ];
 
       return template;
 
     },
 
-    generateFeedCJ: function( rawData, error ){
+    generateCommentCJ: function( rawData, error ){
 
       var cj = {};
       cj.collection = {};
 
       // create the template field
       cj.collection.template = {};
+      cj.collection.template.data = this.feedTemplate();
 
       // create the error field
       if( error === true ){
@@ -39,9 +37,6 @@
 
       }
       else{
-        
-        //
-        cj.collection.template.data = this.feedTemplate();
 
         // create the items field
         cj.collection.items = [];

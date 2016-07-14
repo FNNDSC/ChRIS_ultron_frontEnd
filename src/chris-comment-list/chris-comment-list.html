@@ -15,6 +15,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <!-- CHRIS -->
+<link rel="import" href="../chris-api/chris-api.html">
 <link rel="import" href="../chris-comment/chris-comment.html">
 
 <dom-module id="chris-comment-list">
@@ -59,15 +60,24 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
+    <chris-api id="ItemAPI"
+      api="Item",
+      content-type="application/json",
+      response="{{response}}"
+      on-response="handleItem"
+      error="{{error}}"
+      on-error="handleError">
+    </chris-api>
+
     <div id="commentList" class="comment-list">
 
-      <div class="content">
+      <div id="content" class="content">
 
         <!-- First comment -->
 
 
         <!-- Middle comments -->
-        <template is="dom-repeat" items="[[comments]]">
+        <template is="dom-repeat" items="[[comments.data]]">
 
           <chris-comment comment="[[item]]"></chris-comment>
 
@@ -92,13 +102,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         properties: {
 
           comments: {
-            type: Array
-          },
-
-          open: {
-            type: Boolean,
-            value: false,
-            observer: '_openChanged'
+            type: Object
           }
 
         },
@@ -122,20 +126,30 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
             if( this.$.comment.value !== '' ){
 
-              // name and color should be fetched from user's settings
-              var comment = {
-                name: "Nicolas Rannou",
-                color: "blue",
-                content: this.$.comment.value
+              // create from template then POST!
+              var options = {
+                weekday: "long", year: "numeric", month: "short",
+                day: "numeric", hour: "2-digit", minute: "2-digit"
               };
+
+              var comment = {};
+              comment.data = {
+                author: "Nicolas Rannou",
+                color: "blue",
+                content: this.$.comment.value,
+                index: this.comments.length + 1,
+                date: new Date().toLocaleTimeString("en-us", options)
+              }
+
+              comment.template = this.comments.template.data;
+              comment.href = this.comments.href;
+
+              // cache this guy... how?
+              this.push( 'comments.data', comment );
 
               this.clear();
 
-              this.push('comments', comment);
-              this._resizeContent();
-
-              this.fire('comments-changed');
-              this.fire('comments');
+              this._api( 'POST', this.comments.href, comment);
 
             }
 
@@ -143,31 +157,57 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        _resizeContent: function( event ){
+        _api: function( action, url, data ){
 
-          this.fire('resize-content');
+          var params = {
+              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          };
+
+          this.$.ItemAPI.params = params;
+          this.$.ItemAPI.method = action;
+          this.$.ItemAPI.url = url;
+
+          if( action === 'POST' ){
+            
+            // attach template to data
+            this.$.ItemAPI.body = data;
+
+          }
+
+          this.$.ItemAPI.generateRequest();
 
         },
 
-        toggle: function(){
+        handleItem: function(){
 
-          this.open = !this.open;
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
+
+          // could/should show nice reload button
+          if( !this.response ){
+
+            return;
+
+          }
+
+          // if feed was not updated, fire notification message
+          if( this.response.error && this.response.error.code ){
+
+            // restore cache
+            this.pop('comments.data');
+
+            // show toast message
+            this.fire( 'notification', this.response.error );
+
+          }
 
         },
 
-        _openChanged: function( ){
-
-          this.open ? this.$.commentList.classList.add('open') : this.$.commentList.classList.remove('open');
-
-          this._resizeContent();
-
-        },
-
-        _setToogleIcon: function( open ){
-          
-          return this.open ? 'icons:expand-less' : 'icons:expand-more';
+        handleError: function(){
 
         }
+
     });
   </script>
 </dom-module>

@@ -2,6 +2,24 @@
     /** @polymerBehavior Helper */
     Helper = {
 
+      // generateComment
+      //...
+      generateCommentRawData: function( index ){
+
+        var fakeComments = this.comments();
+        var comment = fakeComments[Math.floor(Math.random() * fakeComments.length)];
+        comment.index = index;
+        var options = {
+          weekday: "long", year: "numeric", month: "short",
+          day: "numeric", hour: "2-digit", minute: "2-digit"
+        };
+        var date = new Date();
+        comment.date = date.toLocaleTimeString("en-us", options);
+
+        return comment;
+
+      },
+
       generateFeedRawData: function( rawData ){
 
         var colors = this.colors();
@@ -160,22 +178,22 @@
 
         var comments = [
         {
-          name: "Rudolph Pienaar",
+          author: "Rudolph Pienaar",
           color: "#03A9F4",
           content: "It's a beautiful day!"
         },
         {
-          name: "Jorge Rusiel Bernal",
+          author: "Jorge Rusiel Bernal",
           color: "#FFC107",
           content: "Let's do something fun!"
         },
         { 
-          name: "Banu Ahtam",
+          author: "Banu Ahtam",
           color: "#E91E63",
           content: "I love MINIONS!!!"
         },
         {
-          name: "Nicolas Rannou",
+          author: "Nicolas Rannou",
           color: "#FF5722",
           content: "Life is good in BILBAO!!!"
         }];
