@@ -16,57 +16,18 @@
 
     },
 
-    generateCommentCJ: function( rawData, error ){
+    generateCommentRawData: function( index ){
 
-      var cj = {};
-      cj.collection = {};
+      var fakeComments = this.comments();
+      var comment = fakeComments[Math.floor(Math.random() * fakeComments.length)];
+      comment.index = index;
+      var options = {
+        weekday: "long", year: "numeric", month: "short",
+        day: "numeric", hour: "2-digit", minute: "2-digit"
+      };
+      comment.date = new Date().toLocaleTimeString("en-us", options);
 
-      // create the template field
-      cj.collection.template = {};
-      cj.collection.template.data = this.feedTemplate();
-
-      // create the error field
-      if( error === true ){
-
-        // create the template field
-        cj.collection.error = {
-          'title'   : 'API Error',
-          'code'    : 'X1234',
-          'message' : 'Feed request could not be processed.'
-        };
-
-      }
-      else{
-
-        // create the items field
-        cj.collection.items = [];
-
-        // create the data field
-        var item = this.generateItemDataCJ( cj.collection.template.data, rawData );
-
-        // create the href field
-        item.href = this.apiRoot + '/' + rawData.id;
-
-        // create the links
-        item.links = [];
-        item.links.push( {
-          'rel' : 'note',
-          'href' : this.apiRoot + '/' + rawData.id + '/note'
-        });
-        item.links.push( {
-          'rel' : 'comments',
-          'href' : this.apiRoot + '/' + rawData.id + '/comments'
-        });
-        item.links.push( {
-          'rel' : 'plugins',
-          'href' : this.apiRoot + '/' + rawData.id + '/plugins'
-        });
-
-        cj.collection.items.push( item );
-
-      }
-
-      return JSON.stringify( cj );
+      return comment;
 
     }
 

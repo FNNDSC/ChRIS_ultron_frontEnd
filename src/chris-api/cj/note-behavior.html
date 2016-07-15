@@ -1,0 +1,90 @@
+<script>
+  /** @polymerBehavior NoteCJ */
+  NoteCJ = {
+
+    noteTemplate: function(){
+
+      var template = [
+        {'name' : 'title', 'value' : ''},
+        {'name' : 'content', 'value' : ''},
+        {'name' : 'date', 'value' : ''},
+        {'name' : 'index', 'value' : ''},
+        {'name' : 'author', 'value' : ''}
+      ];
+
+      return template;
+
+    },
+
+    generateNoteCJ: function(){
+
+      var cj = {};
+      cj.collection = {};
+
+      // create the href field
+      cj.collection.href = this.apiRoot + '/<feedID>/note';
+
+      // create the template field
+      cj.collection.template = {};
+      cj.collection.template.data = this.noteTemplate();
+
+      // create the items field
+      cj.collection.items = [];
+
+      var data = this.generateNoteRawData();
+      var item = this.generateItemDataCJ( cj.collection.template.data, data );
+      item.href = this.apiRoot + '/<feedID>/note';
+
+      cj.collection.items.push( item );
+
+      return cj;
+
+    },
+
+    generateNoteRawData: function(){
+
+      var note = {};
+      note.title = 'Cool note';
+      note.content = '# Hi there\n\
+### This is a _Markdown_ renderer\n\
+\n\
+---\n\
+It is `awesome` to take notes because it is *easy* yet **powerful**!\n\
+\n\
+[Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)\n\
+\n\
+You can create tables:\n\
+\n\
+| Tables        | Are           | Cool  |\n\
+| ------------- |:-------------:| -----:|\n\
+| col 3 is      | right-aligned | $1600 |\n\
+| col 2 is      | centered      |   $12 |\n\
+| zebra stripes | are neat      |    $1 |\n\
+\
+\n\
+\n\
+Quote people\n\
+> "ho yeah"\n\
+\n\
+Write some code:\n\
+\n\
+```\n\
+$> ss\n\
+$> . neuro-fs stable\n\
+$> mri_convert <image>\n\
+```';
+
+      var options = {
+        weekday: "long", year: "numeric", month: "short",
+        day: "numeric", hour: "2-digit", minute: "2-digit"
+      };
+      note.date = new Date().toLocaleTimeString("en-us", options);
+      note.index = 0;
+      note.author = 'ChRIS Ultron'
+
+      return note;
+
+    }
+
+  }
+</script>

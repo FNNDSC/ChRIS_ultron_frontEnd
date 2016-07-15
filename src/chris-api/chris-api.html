@@ -9,9 +9,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <!-- BEHAVIORS -->
-<link rel="import" href="behaviors/chris-api-feed-behavior.html">
 <link rel="import" href="behaviors/chris-api-feed-details-behavior.html">
-<link rel="import" href="behaviors/chris-api-feeds-behavior.html">
 <link rel="import" href="behaviors/chris-api-labels-behavior.html">
 <link rel="import" href="behaviors/chris-api-login-behavior.html">
 <link rel="import" href="behaviors/chris-api-helper-behavior.html">
@@ -26,6 +24,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="cj/comment-behavior.html">
 <link rel="import" href="cj/feed-collection-behavior.html">
 <link rel="import" href="cj/feed-behavior.html">
+<link rel="import" href="cj/note-behavior.html">
 
 <dom-module id="chris-api">
 
@@ -46,7 +45,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           },
 
           auto: {
-            type:Boolean
+            type:Boolean,
+            value: false
           },
 
           response: {
@@ -114,10 +114,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           CommentCJ,
           FeedCollectionCJ,
           FeedCJ,
+          NoteCJ,
           Item,
-          Feed,
           FeedDetails,
-          Feeds,
           Labels,
           Login,
           PluginCreate,
@@ -134,6 +133,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         generateRequest: function() {
 
           this.url = this.getUrl();
+
+          console.log( this.url );
 
           this.$.ironAjax.generateRequest();
 
@@ -194,6 +195,27 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
 
           return this['prepare' + this.api ]( 'params' );
+
+        },
+
+        request: function( action, url, data ){
+
+          var params = {
+              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+          };
+
+          this.params = params;
+          this.method = action;
+          this.url = url;
+
+          if( action !== 'GET' ){
+            
+            // attach template to data
+            this.body = data;
+
+          }
+
+          this.generateRequest();
 
         },
 

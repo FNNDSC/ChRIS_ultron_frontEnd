@@ -3,32 +3,32 @@
 Copyright (c) 2016 FNNDSC. All rights reserved.
 -->
 
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- APP ELEMENTS -->
-<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 
 <!-- PAPER ELEMENTS -->
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../../bower_components/paper-toast/paper-toast.html">
 
 <!-- CHRIS ELEMENTS -->
-<link rel="import" href="../chris-api/chris-api.html">
-<link rel="import" href="../chris-comment-list/chris-comment-list.html">
-<link rel="import" href="../chris-note/chris-note.html">
-<link rel="import" href="../chris-plugin-list/chris-plugin-list.html">
+<link rel="import" href="../../chris-api/chris-api.html">
+<link rel="import" href="../../chris-components/chris-comment-list/chris-comment-list.html">
+<link rel="import" href="../../chris-components/chris-note/chris-note.html">
+<link rel="import" href="../../chris-plugin-list/chris-plugin-list.html">
 
 <dom-module id="chris-feed-detail">
 
@@ -37,8 +37,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <style>
       :host{
 
-          background-color: var(--dark-primary-color);
-          --paper-input-container-focus-color: var(--accent-color);
+        background-color: var(--dark-primary-color);
+        --paper-input-container-focus-color: var(--accent-color);
 
       }
 
@@ -103,6 +103,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       paper-progress {
 
         display: block;
+        background-color: rgba(255, 255, 255, 0.25);
         width: 100%;
         --paper-progress-active-color: #ffffff;
         --paper-progress-container-color: transparent;
@@ -145,7 +146,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <chris-api id="FeedDetailsAPI"
       api="FeedDetails",
-      content-type="application/json",
+      content-type="application/json"
       response="{{response}}"
       on-response="handleFeedDetails"
       error="{{error}}"
@@ -153,8 +154,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </chris-api>
 
     <chris-api id="ItemAPI"
-      api="Item",
-      content-type="application/json",
+      api="Item"
+      content-type="application/json"
+      response="{{response}}"
+      on-response="handleItem"
+      error="{{error}}"
+      on-error="handleError">
+    </chris-api>
+
+    <chris-api id="NoteAPI"
+      api="Item"
+      content-type="application/json"
       response="{{response}}"
       on-response="handleItem"
       error="{{error}}"
@@ -300,7 +310,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        handleItem: function(){
+        handleItem: function( e ){
 
           // stop ajax propagation
           event.preventDefault();
@@ -321,7 +331,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
             case 'comments' :
               this.set( 'feed.comments', this.response );
-              break
+              break;
+
+            case 'note' :
+              this.set( 'feed.note', this.response );
+              break;
 
             default:
               break;
@@ -331,7 +345,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // update style
           if( !this.$.feedDetails.classList.contains( 'loaded' ) ){
 
-            this.$.feedDetails.classList.add('loaded');
+            // this.$.feedDetails.classList.add('loaded');
             // remove that when closing...
 
           }
@@ -398,28 +412,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // this._get( 'PluginCollection' );
           // this._get( 'Note' );
           console.log( this.feed );
-          this._api('GET', this.feed.links.comments );
+          // use promises...?
+          // http://stackoverflow.com/questions/33835907/polymer-iron-ajax-and-asynchronous-requests-etag-sync-and-response-handling
+          //http://stackoverflow.com/questions/37846726/using-one-iron-ajax-element-for-multiple-requests
+          this.$.ItemAPI.request( 'GET', this.feed.links.comments );
+          this.$.NoteAPI.request( 'GET', this.feed.links.note );
 
           // this._getFeed();
-
-        },
-
-        // _get is a bad name
-        _api: function( action, url, template, data ){
-
-          var params = {
-              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
-          };
-
-          this.$.ItemAPI.params = params;
-          this.$.ItemAPI.method = action;
-          this.$.ItemAPI.url = url;
-
-          if( action === 'GET' ){
-
-            this.$.ItemAPI.generateRequest();
-
-          }
 
         },
 

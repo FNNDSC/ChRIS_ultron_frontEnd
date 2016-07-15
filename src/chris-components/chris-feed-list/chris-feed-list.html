@@ -3,11 +3,11 @@
 Copyright (c) 2016 FNNDSC. All rights reserved.
 -->
 
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
 
 <!-- PAPER ELEMENTS -->
 <!-- <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html"> -->
@@ -47,7 +47,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <iron-list id="feeds" items="[[feeds]]" as="feed" selection-enabled on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
+    <iron-list id="feeds" items="[[feeds.data]]" as="feed" selection-enabled on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
 
       <template>
 

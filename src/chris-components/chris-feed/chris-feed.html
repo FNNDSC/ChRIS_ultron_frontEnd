@@ -1,20 +1,20 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/social-icons.html">
 
 <!-- PAPER ELEMENTS -->
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<!-- <link rel="import" href="../../bower_components/paper-menu/paper-menu.html"> -->
-<!-- <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html"> -->
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<!-- <link rel="import" href="../../../bower_components/paper-menu/paper-menu.html"> -->
+<!-- <link rel="import" href="../../../bower_components/paper-menu-button/paper-menu-button.html"> -->
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- CHRIS -->
-<link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../../chris-api/chris-api.html">
 
 <dom-module id="chris-feed">
 
@@ -254,9 +254,12 @@
     </style>
 
     <chris-api id="FeedAPI"
-      api="Feed"
-      response="{{response}}" on-response="handleFeedDetails"
-      error="{{error}}" on-error="handleError">
+      api="Item",
+      content-type="application/json",
+      response="{{response}}"
+      on-response="handleFeedDetails"
+      error="{{error}}"
+      on-error="handleError">
     </chris-api>
 
     <paper-material id="feed" class="feed" elevation=1>
@@ -497,30 +500,18 @@
           // clean cache
           this.cache.shift();
 
-          // let the iron-list know the feed's size changed (new content)
-          this._resizeFeed();
-
         },
 
         _saveFeed: function( event ){
 
           // should be done in API directly if possible
-          // set params
-          var params = {
-            auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
-          };
-          this.$.FeedAPI.url = this.feed.href;
-          this.$.FeedAPI.params = params;
-          this.$.FeedAPI.body = this.feed;
-          this.$.FeedAPI.method = 'PUT';
-          this.$.FeedAPI.generateRequest();
 
-        },
+          // attach template and href
+          var feed = this.feed.data;
+          feed.template = this.feed.template;
+          feed.href = this.feed.href;
 
-        _resizeFeed: function(){
-
-          // fire event to let iron-its know element's size changed
-          this.fire( 'resize-feed', {index: this.index} );
+          this.$.FeedAPI.request('PUT', this.feed.href, feed);
 
         },
 

@@ -4,18 +4,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 -->
 
 <!-- POLYMER -->
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 
 <!-- PAPER ELEMENTS-->
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 
 <!-- CHRIS -->
-<link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="../../chris-api/chris-api.html">
 <link rel="import" href="../chris-comment/chris-comment.html">
 
 <dom-module id="chris-comment-list">
@@ -149,7 +149,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
               this.clear();
 
-              this._api( 'POST', this.comments.href, comment);
+              this.$.ItemAPI.request( 'POST', this.comments.href, comment);
 
             }
 
@@ -157,28 +157,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        _api: function( action, url, data ){
-
-          var params = {
-              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
-          };
-
-          this.$.ItemAPI.params = params;
-          this.$.ItemAPI.method = action;
-          this.$.ItemAPI.url = url;
-
-          if( action === 'POST' ){
-            
-            // attach template to data
-            this.$.ItemAPI.body = data;
-
-          }
-
-          this.$.ItemAPI.generateRequest();
-
-        },
-
-        handleItem: function(){
+        handleItem: function( event ){
 
           // stop ajax propagation
           event.preventDefault();
@@ -195,6 +174,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           if( this.response.error && this.response.error.code ){
 
             // restore cache
+            // pop not good  if we write 2 comments before first response returns
             this.pop('comments.data');
 
             // show toast message

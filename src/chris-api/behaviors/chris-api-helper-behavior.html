@@ -2,24 +2,6 @@
     /** @polymerBehavior Helper */
     Helper = {
 
-      // generateComment
-      //...
-      generateCommentRawData: function( index ){
-
-        var fakeComments = this.comments();
-        var comment = fakeComments[Math.floor(Math.random() * fakeComments.length)];
-        comment.index = index;
-        var options = {
-          weekday: "long", year: "numeric", month: "short",
-          day: "numeric", hour: "2-digit", minute: "2-digit"
-        };
-        var date = new Date();
-        comment.date = date.toLocaleTimeString("en-us", options);
-
-        return comment;
-
-      },
-
       generateFeedRawData: function( rawData ){
 
         var colors = this.colors();
@@ -1125,41 +1107,6 @@
         }];
 
         return files;
-
-      },
-
-      note: function(){
-
-        var note = '# Hi there\n\
-### This is a _Markdown_ renderer\n\
-\n\
----\n\
-It is `awesome` to take notes because it is *easy* yet **powerful**!\n\
-\n\
-[Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)\n\
-\n\
-You can create tables:\n\
-\n\
-| Tables        | Are           | Cool  |\n\
-| ------------- |:-------------:| -----:|\n\
-| col 3 is      | right-aligned | $1600 |\n\
-| col 2 is      | centered      |   $12 |\n\
-| zebra stripes | are neat      |    $1 |\n\
-\
-\n\
-\n\
-Quote people\n\
-> "ho yeah"\n\
-\n\
-Write some code:\n\
-\n\
-```\n\
-$> ss\n\
-$> . neuro-fs stable\n\
-$> mri_convert <image>\n\
-```';
-
-      return note;
 
       }
 

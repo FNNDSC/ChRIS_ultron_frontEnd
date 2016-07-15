@@ -3,17 +3,20 @@
 Copyright (c) 2016 FNNDSC. All rights reserved.
 -->
 
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <!-- PAPER ELEMENTS -->
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 
-<link rel="import" href="../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../../bower_components/marked-element/marked-element.html">
+
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../../chris-api/chris-api.html">
 
 <dom-module id="chris-note">
   <template>
@@ -101,6 +104,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
+    <chris-api id="ItemAPI"
+      api="Item",
+      content-type="application/json",
+      response="{{response}}"
+      on-response="handleItem"
+      error="{{error}}"
+      on-error="handleError">
+    </chris-api>
+
     <div id="note" class="note">
 
       <!-- Toolbar -->
@@ -123,9 +135,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <div class="content">
 
-        <iron-autogrow-textarea id="editor" on-keydown="_stopEventPropagation" on-keyup="_resizeContent" value="{{note}}"></iron-autogrow-textarea>
+        <iron-autogrow-textarea id="editor" value="{{note.data.0.data.content}}" on-input="_updateContent"></iron-autogrow-textarea>
         
-        <marked-element markdown="{{note}}" on-marked-render-complete="_resizeContent">
+        <marked-element id="md" markdown="[[note.data.0.data.content]]">
           <div class="markdown-html"></div>
         </marked-element>
       </div>
@@ -141,22 +153,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         properties: {
 
           note: {
-            type: String
+            type: Object
           },
 
-          previousNote: {
+          previousContent: {
             type: String
           },
 
           editing: {
             type: Boolean,
             value: false
-          },
-
-          open: {
-            type: Boolean,
-            value: true,
-            observer: '_openChanged'
           }
 
         },
@@ -174,10 +180,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // start editing (will show related buttons)
           this.editing = true;
           // save current content
-          this.previousNote = this.note;
+          this.previousContent = this.note.data[0].data.content;
 
           this.$.editor.style.display = 'block';
-          this.fire('resize-content');
 
         },
 
@@ -187,11 +192,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // stop editing
           this.editing = false;
+
           // restore previous content
-          this.note = this.previousNote;
+          this.note.data[0].data.content = this.previousContent;
+          this.$.editor.value = this.previousContent;
+          this.$.md.markdown = this.previousContent;
 
           this.$.editor.style.display = 'none';
-          this._resizeContent();
 
         },
 
@@ -202,36 +209,54 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.editing = false;
 
           this.$.editor.style.display = 'none';
-          this._resizeContent();
 
-          this.fire('note-changed');
-          this.fire('note');
+          var note = this.note.data[0];
+          note.template = this.note.template;
+          note.href = this.note.href;
 
-        },
-
-        toggle: function(){
-
-          this.open = !this.open;
+          this.$.ItemAPI.request( 'PUT', note.href, note);
 
         },
 
-        _openChanged: function( ){
+        handleItem: function( event ){
 
-          this.open ? this.$.note.classList.add('open') : this.$.note.classList.remove('open');
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
 
-          this._resizeContent();
+          // could/should show nice reload button
+          if( !this.response ){
+
+            return;
+
+          }
+
+          // if feed was not updated, fire notification message
+          if( this.response.error && this.response.error.code ){
+
+            // restore cache, not good solution
+            // restore previous content
+            this.note.data[0].data.content = this.previousContent;
+            this.$.editor.value = this.previousContent;
+            this.$.md.markdown = this.previousContent;
+
+            // show toast message
+            this.fire( 'notification', this.response.error );
+
+          }
 
         },
 
-        _setToogleIcon: function( open ){
-          
-          return this.open ? 'icons:expand-less' : 'icons:expand-more';
+        handleError: function(){
+
+          console.log( this.error );
 
         },
 
-        _resizeContent: function( event ){
+        // binding not supported with arrays items ***.0.***
+        _updateContent: function(){
 
-          this.fire('resize-content');
+          this.$.md.markdown = this.$.editor.value;
 
         }
     });

@@ -11,14 +11,23 @@
           case 'url':
 
             // get last part of url for now
+
+            console.log( this.url );
+
             var url = '';
 
-            if( this.method !== 'GET'){
+            if( this.method === 'POST' ){
 
               url = 'https://httpbin.org/post';
 
             }
+            else if( this.method === 'PUT' ){
+
+              url = 'https://httpbin.org/put';
+
+            }
             else{
+
               url = '/data/';
               url += this.url.split(/[/]+/).pop();
               if( url.indexOf('.json') === -1 ){
@@ -26,6 +35,7 @@
                 url += '.json';
 
               }
+
             }
 
             return url;
@@ -36,13 +46,17 @@
 
           case 'body':
 
-            console.log( this.body);
-            // template
-            // href reserved
-            // format with template contained in body.template
+            // format body for proper CJ POST
+            var bodyCJ = this.body;
 
+            if( this.body.template && this.body.data ){
 
-            return this.body;
+              console.log( this.body );
+              bodyCJ = this.formatQueryCJ( this.body.template, this.body.data );
+
+            }
+            
+            return bodyCJ;
 
           default:
 
@@ -58,6 +72,8 @@
 
         var response = this.response;
 
+        console.log( response );
+
         //
         // TO BE REMOVED WHEN CONNECTED TO REAL API?
         // STILL GOD FOR TESTING
@@ -69,9 +85,20 @@
         var itemCJ = {};
 
         // Simulate GET
-        if( this.method === 'GET' && this.response.type === 'comments' ){
+        if( this.method === 'GET' && response.type === 'comments' ){
 
           itemCJ = this.generateCommentCollectionCJ();
+
+        }
+        else if( this.method === 'GET' && response.type === 'feeds' ){
+
+          itemCJ = this.generateFeedCollectionCJ( this.response.data );
+          console.log( itemCJ );
+
+        }
+        else if( this.method === 'GET' && response.type === 'note' ){
+
+          itemCJ = this.generateNoteCJ();
 
         }
         
@@ -79,7 +106,7 @@
         if( this.method !== 'GET' ){
 
           itemCJ.collection = {};
-          itemCJ.collection.href = this.response.json.href;
+          itemCJ.collection.href = response.json.href;
 
         }
 
@@ -121,6 +148,7 @@
         }
 
         if( itemObj.collection.template && itemObj.collection.template.data && itemObj.collection.template.data.length >0 ){
+
           // attach template if any
           item['template'] = itemObj.collection.template;
 
@@ -147,10 +175,14 @@
 
             }
 
-            data.links = {};
-            for( var j=0; j < itemObj.collection.items[i].links.length; j++ ){
+            if( itemObj.collection.items[i].links && itemObj.collection.items[i].links.length > 0){
 
-              data.links[ itemObj.collection.items[i].links[j].rel ] = itemObj.collection.items[i].links[j].href;
+              data.links = {};
+              for( var j=0; j < itemObj.collection.items[i].links.length; j++ ){
+
+                data.links[ itemObj.collection.items[i].links[j].rel ] = itemObj.collection.items[i].links[j].href;
+
+              }
 
             }
 

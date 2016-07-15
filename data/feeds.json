@@ -1,4 +1,7 @@
-[
+{
+  "type": "feeds",
+
+  "data": [
   {
     "index": 0,
     "name": "Liz Grimes",
@@ -11000,3 +11003,4 @@
     "color": "rgb(171,145,136)"
   }
 ]
+}
