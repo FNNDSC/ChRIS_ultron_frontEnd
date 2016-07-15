@@ -1,14 +1,14 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 
 
 <!-- PAPER ELEMENTS -->
-<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
 
 <dom-module id="chris-label-list">
 
@@ -101,10 +101,10 @@
 
     <paper-menu id="customLabels" class="layout vertical" attr-for-selected="value" multi on-iron-select="updateCustomFilter" on-iron-deselect="updateCustomFilter">
 
-      <template is="dom-repeat" items="{{customLabels}}">
+      <template is="dom-repeat" items="{{customLabels.data}}">
 
-        <paper-icon-item id="{{item.value}}" value$="{{item.value}}" role="menuitem">
-          <iron-icon icon="label" item-icon style$="{{_setStyle(item.color)}}" invert></iron-icon><span>{{item.value}}</span>
+        <paper-icon-item id="{{item.data.title}}" value$="{{item.data.title}}" role="menuitem">
+          <iron-icon icon="label" item-icon style$="{{_setStyle(item.data.color)}}" invert></iron-icon><span>{{item.data.title}}</span>
         </paper-icon-item>
 
       </template>

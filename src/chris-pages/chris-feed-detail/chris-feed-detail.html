@@ -342,6 +342,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           }
 
+          // if feed was not updated, fire notification message
+          if( this.response.error && this.response.error.code ){
+
+            this._showNotification( { detail: this.response.error });
+
+          }
+
           // update style
           if( !this.$.feedDetails.classList.contains( 'loaded' ) ){
 
@@ -351,10 +358,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
 
           return;
-
-
-
-
 
           // attach new feed content
           if( this.response.details ){
@@ -455,13 +458,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _showNotification: function( event ){
 
-        // update text
-        this.$.notification.text = event.detail.message;
+          // update text
+          this.$.notification.text = event.detail.message;
 
-        // show notification
-        this.$.notification.show();
+          // show notification
+          this.$.notification.show();
 
-      },
+        }
   });
   </script>
 </dom-module>

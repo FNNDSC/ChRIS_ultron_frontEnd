@@ -1,0 +1,46 @@
+<script>
+  /** @polymerBehavior LabelCollectionCJ */
+  LabelCollectionCJ = {
+
+    /**
+     */
+    generateLabelCollectionCJ: function( ){
+
+      var cj = {};
+      cj.collection = {};
+
+      // create the href field
+      cj.collection.href = this.apiRoot + '/labels';
+
+      // create the template field
+      cj.collection.template = {};
+      cj.collection.template.data = this.labelTemplate();
+
+      // create the items
+      cj.collection.items = [];
+      var items = cj.collection.items;
+
+      // generate random number of items
+      var labels = this.colors();
+
+      for( var i=0; i<labels.length; i++ ){
+
+        var item = {};
+        //create the href field (will miss the feed id but OK)
+        item.href = this.apiRoot + '/labels/' + i;
+
+        // create the links field
+        item.links = [];
+
+        var data = this.generateLabelRawData( labels[i] );
+        item.data = this.generateItemDataCJ( cj.collection.template.data, data ).data;
+        items.push(item);
+
+      }
+
+      return cj;
+
+    }
+
+  }
+</script>

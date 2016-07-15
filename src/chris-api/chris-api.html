@@ -10,7 +10,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <!-- BEHAVIORS -->
 <link rel="import" href="behaviors/chris-api-feed-details-behavior.html">
-<link rel="import" href="behaviors/chris-api-labels-behavior.html">
 <link rel="import" href="behaviors/chris-api-login-behavior.html">
 <link rel="import" href="behaviors/chris-api-helper-behavior.html">
 <link rel="import" href="behaviors/chris-api-plugin-pacspull-behavior.html">
@@ -24,6 +23,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="cj/comment-behavior.html">
 <link rel="import" href="cj/feed-collection-behavior.html">
 <link rel="import" href="cj/feed-behavior.html">
+<link rel="import" href="cj/label-collection-behavior.html">
+<link rel="import" href="cj/label-behavior.html">
 <link rel="import" href="cj/note-behavior.html">
 
 <dom-module id="chris-api">
@@ -114,10 +115,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           CommentCJ,
           FeedCollectionCJ,
           FeedCJ,
+          LabelCollectionCJ,
+          LabelCJ,
           NoteCJ,
           Item,
           FeedDetails,
-          Labels,
           Login,
           PluginCreate,
           PluginPacspull,

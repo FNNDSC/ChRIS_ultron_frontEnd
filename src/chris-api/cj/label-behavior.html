@@ -1,0 +1,28 @@
+<script>
+  /** @polymerBehavior LabelCJ */
+  LabelCJ = {
+
+    labelTemplate: function(){
+
+      var template = [
+        {'name' : 'color', 'value' : ''},
+        {'name' : 'title', 'value' : ''}
+      ];
+
+      return template;
+
+    },
+
+    generateLabelRawData: function( data ){
+
+      var label = {
+        'color': data.value,
+        'title': data.name,
+      };
+
+      return label;
+
+    }
+
+  }
+</script>

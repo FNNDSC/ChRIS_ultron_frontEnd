@@ -22,7 +22,7 @@
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../chris-api/chris-api.html">
 <link rel="import" href="../../chris-components/chris-feed-list/chris-feed-list.html">
-<link rel="import" href="../../chris-label-list/chris-label-list.html">
+<link rel="import" href="../../chris-components/chris-label-list/chris-label-list.html">
 
 <!-- EXTERNAL ELEMENTS -->
 <link rel="import" href="../../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
@@ -119,9 +119,12 @@
       </chris-api>
 
       <chris-api id="LabelsAPI"
-        api="Labels"
+        api="Item",
+        content-type="application/json",
         response="{{labels}}"
-        error="{{error}}" on-error="handleError">
+        on-response="handleFeeds"
+        error="{{error}}"
+        on-error="handleError">
       </chris-api>
 
       <app-drawer-layout fullbleed>
@@ -156,10 +159,10 @@
               <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
               <div class="dropdown-content">
                 <template is="dom-repeat" items="{{plugins}}">
-                <a href="/plugin-fs">
-                  <paper-fab mini id="[[item.name]]" icon="[[item.icon]]" item="[[item]]" style$="[[_setPluginFSStyle(item.color)]]" on-tap="_handlePluginFS"></paper-fab>
-                  <paper-tooltip for="[[item.name]]" position="left" animation-delay="0">[[item.label]]</paper-tooltip>
-                  </a>
+                  <a href="/plugin-fs">
+                    <paper-fab mini id="[[item.name]]" icon="[[item.icon]]" item="[[item]]" style$="[[_setPluginFSStyle(item.color)]]" on-tap="_handlePluginFS"></paper-fab>
+                    <paper-tooltip for="[[item.name]]" position="left" animation-delay="0">[[item.label]]</paper-tooltip>
+                    </a>
                 </template>
               </div>
             </paper-fab-speed-dial>
@@ -232,8 +235,7 @@
         this.$.PluginsFeedAPI.generateRequest();
 
         // fetch the labels
-        this.$.LabelsAPI.params = params;
-        this.$.LabelsAPI.generateRequest();
+        this.$.LabelsAPI.request('GET', '/labels');
 
         // anchor toast to the chris-feed-list
         this.$.notification.fitInto = this.$.layout;
@@ -243,13 +245,15 @@
       handleFeeds: function(){
 
         // if feed was not updated, fire notification message
-        if( this.feeds.error && this.feeds.error.code ){
+        if( this.feeds && this.feeds.error && this.feeds.error.code ){
 
           this._showNotification( { detail: this.feeds.error });
 
         }
 
-        this.$.content.classList.add('loaded')
+        console.log( this.labels );
+
+        this.$.content.classList.add('loaded');
 
       },
 
