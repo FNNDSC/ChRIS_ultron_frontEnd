@@ -106,25 +106,13 @@
       <chris-api id="FeedsAPI"
         api="Item",
         content-type="application/json",
-        response="{{feeds}}"
-        on-response="handleFeeds"
-        error="{{error}}"
-        on-error="handleError">
+        error="{{error}}">
       </chris-api>
 
       <chris-api id="PluginsFeedAPI"
         api="PluginsFeed"
         response="{{plugins}}" on-response="handlePlugins"
         error="{{error}}" on-error="handleError">
-      </chris-api>
-
-      <chris-api id="LabelsAPI"
-        api="Item",
-        content-type="application/json",
-        response="{{labels}}"
-        on-response="handleFeeds"
-        error="{{error}}"
-        on-error="handleError">
       </chris-api>
 
       <app-drawer-layout fullbleed>
@@ -228,32 +216,54 @@
         };
 
         // fetch the feeds
-        this.$.FeedsAPI.request('GET', '/feeds');
+        var request =this.$.FeedsAPI.request('GET', '/feeds');
+        request
+          .then( this.handleFeeds.bind(this) )
+          .catch( this.handleError.bind(this) );
 
         // fetch the plugins that can create a feed
         this.$.PluginsFeedAPI.params = params;
         this.$.PluginsFeedAPI.generateRequest();
 
         // fetch the labels
-        this.$.LabelsAPI.request('GET', '/labels');
+        var request2 = this.$.FeedsAPI.request('GET', '/labels');
+        request2
+          .then( this.handleLabels.bind(this) )
+          .catch( this.handleError.bind(this) );
 
         // anchor toast to the chris-feed-list
         this.$.notification.fitInto = this.$.layout;
 
       },
 
-      handleFeeds: function(){
+      handleFeeds: function( response ){
 
-        // if feed was not updated, fire notification message
-        if( this.feeds && this.feeds.error && this.feeds.error.code ){
+        this.set( 'feeds', response );
 
-          this._showNotification( { detail: this.feeds.error });
+        this.showError( response.error );
 
-        }
+        this.$.content.classList.add( 'loaded' );
 
-        console.log( this.labels );
+      },
+
+      handleLabels: function( response ){
+
+        this.set( 'labels', response );
+
+        this.showError( response.error );
 
         this.$.content.classList.add('loaded');
+
+      },
+
+      showError: function( error ){
+
+        // if feed was not updated, fire notification message
+        if( error && error.code ){
+
+          this._showNotification( { detail: error });
+
+        }
 
       },
 
@@ -264,9 +274,9 @@
 
       },
 
-      handleError: function(){
+      handleError: function( response ){
 
-        console.error( this.error );
+        console.error( response );
 
       },
 

@@ -67,9 +67,10 @@
 
       },
 
-      handleItem: function(){
+      handleItem: function( request ){
 
-        var response = this.response;
+        var response = request.response;
+        var cache = request.cache;
 
         //
         // TO BE REMOVED WHEN CONNECTED TO REAL API?
@@ -89,7 +90,7 @@
         }
         else if( this.method === 'GET' && response.type === 'feeds' ){
 
-          itemCJ = this.generateFeedCollectionCJ( this.response.data );
+          itemCJ = this.generateFeedCollectionCJ( response.data );
 
         }
         else if( this.method === 'GET' && response.type === 'labels' ){
@@ -130,6 +131,12 @@
         // format the response
         var item = this.formatItemCJ( itemCJ );
         response = item;
+
+        if( cache ){
+
+          response.cache = cache;
+
+        }
 
         return response;
 
@@ -199,9 +206,9 @@
 
       },
 
-      handleErrorItem: function(){
+      handleErrorItem: function( request ){
 
-        return this.error;
+        return request;
 
       }
     };

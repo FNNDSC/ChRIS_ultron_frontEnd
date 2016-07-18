@@ -107,7 +107,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <chris-api id="ItemAPI"
       api="Item",
       content-type="application/json",
-      response="{{response}}"
       on-response="handleItem"
       error="{{error}}"
       on-error="handleError">
@@ -213,6 +212,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           var note = this.note.data[0];
           note.template = this.note.template;
           note.href = this.note.href;
+          note.cache = [{ 'name': 'content', 'value': this.previousContent }]
 
           this.$.ItemAPI.request( 'PUT', note.href, note);
 
@@ -225,23 +225,25 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           event.stopPropagation();
 
           // could/should show nice reload button
-          if( !this.response ){
+          if( !event.detail ){
 
             return;
 
           }
 
+          var response = event.detail;
+
           // if feed was not updated, fire notification message
-          if( this.response.error && this.response.error.code ){
+          if( response.error && response.error.code ){
 
             // restore cache, not good solution
             // restore previous content
-            this.note.data[0].data.content = this.previousContent;
-            this.$.editor.value = this.previousContent;
-            this.$.md.markdown = this.previousContent;
+            this.note.data[0].data.content = response.cache[0].value;
+            this.$.editor.value = response.cache[0].value;
+            this.$.md.markdown = response.cache[0].value;
 
             // show toast message
-            this.fire( 'notification', this.response.error );
+            this.fire( 'notification', response.error );
 
           }
 

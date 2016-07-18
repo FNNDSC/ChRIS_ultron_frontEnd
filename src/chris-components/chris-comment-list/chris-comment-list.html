@@ -141,7 +141,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
                 date: new Date().toLocaleTimeString("en-us", options)
               }
 
-              comment.template = this.comments.template.data;
+              comment.template = this.comments.template;
               comment.href = this.comments.href;
 
               // cache this guy... how?
@@ -149,7 +149,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
               this.clear();
 
-              this.$.ItemAPI.request( 'POST', this.comments.href, comment);
+              this.$.ItemAPI.request( 'POST', this.comments.href, comment );
 
             }
 
@@ -164,21 +164,27 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           event.stopPropagation();
 
           // could/should show nice reload button
-          if( !this.response ){
+          if( !event.detail ){
 
             return;
 
           }
 
+          var response = event.detail;
+
           // if feed was not updated, fire notification message
-          if( this.response.error && this.response.error.code ){
+          if( response.error && response.error.code ){
+
+            // find index where all data matches
+
+            // console.log( this.comments.data.indexOf( response.cache ) );
 
             // restore cache
             // pop not good  if we write 2 comments before first response returns
             this.pop('comments.data');
 
             // show toast message
-            this.fire( 'notification', this.response.error );
+            this.fire( 'notification', response.error );
 
           }
 

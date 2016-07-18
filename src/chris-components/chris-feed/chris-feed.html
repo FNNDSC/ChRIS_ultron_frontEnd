@@ -256,7 +256,6 @@
     <chris-api id="FeedAPI"
       api="Item",
       content-type="application/json",
-      response="{{response}}"
       on-response="handleFeedDetails"
       error="{{error}}"
       on-error="handleError">
@@ -338,11 +337,6 @@
             observer: '_checkedChanged'
           },
 
-          cache: {
-            type: Array,
-            value: []
-          },
-
           open:{
             type: Boolean,
             value: false
@@ -354,10 +348,6 @@
 
           valid:{
             type: Boolean
-          },
-
-          response:{
-            type: Array
           },
 
           error: {
@@ -453,9 +443,9 @@
           }
 
           // update feed favorite
-          this.cache.push( {'name' : 'favorite', 'value': this.feed.data.favorite } );
+          var cache = [ { 'name': 'favorite', 'value': this.feed.data.favorite } ];
           this.set('feed.data.favorite', !this.feed.data.favorite);
-          this._saveFeed();
+          this._saveFeed( cache );
 
         },
 
@@ -465,53 +455,48 @@
 
         },
 
-        handleFeedDetails: function(){
+        handleFeedDetails: function( event ){
 
           // stop ajax propagation
           event.preventDefault();
           event.stopPropagation();
 
           // could/should show nice reload button
-          if( !this.response ){
+          if( !event.detail ){
 
             return;
 
           }
 
-          // attach new feed content
-          // if( this.response.data ){
+          var response = event.detail;
 
-          //   this.set( 'feed.data', this.response.data );
-
-          // }
-
-
-          // if feed was not updated, fire notification message
-          if( this.response.error && this.response.error.code ){
+           // if feed was not updated, fire notification message
+          if( response.error && response.error.code ){
 
             // restore cache
-            this.set( 'feed.data.' + this.cache[0].name , this.cache[0].value );
+            for( var i = 0; i < response.cache.length; i++ ){
+
+              this.set( 'feed.data.' + response.cache[i].name , response.cache[i].value );
+
+            }
+
 
             // show toast message
-            this.fire( 'notification', this.response.error );
+            this.fire( 'notification', response.error );
 
           }
 
-          // clean cache
-          this.cache.shift();
-
         },
 
-        _saveFeed: function( event ){
-
-          // should be done in API directly if possible
+        _saveFeed: function( cache ){
 
           // attach template and href
           var feed = this.feed.data;
           feed.template = this.feed.template;
           feed.href = this.feed.href;
+          feed.cache = cache;
 
-          this.$.FeedAPI.request('PUT', this.feed.href, feed);
+          var request = this.$.FeedAPI.request('PUT', this.feed.href, feed);
 
         },
 

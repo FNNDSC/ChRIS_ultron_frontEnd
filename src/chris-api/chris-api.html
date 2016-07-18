@@ -31,7 +31,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
   <template>
 
-    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" on-response="handleResponse" last-error="{{error}}" on-error="handleError" handle-as="[[handleAs]]" auto="[[auto]]"></iron-ajax>
+    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" last-error="{{error}}" handle-as="[[handleAs]]" auto="[[auto]]"></iron-ajax>
 
   </template>
 
@@ -136,31 +136,24 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           this.url = this.getUrl();
 
-          console.log( this.url );
-
-          this.$.ironAjax.generateRequest();
+          return this.$.ironAjax.generateRequest();
 
         },
 
-        handleResponse: function( event ){
+        handleResponse: function( request ){
 
-          // stop ajax propagation
-          event.preventDefault();
-          event.stopPropagation();
-
-          var response = this['handle' + this.api ]();
+          var response = this[ 'handle' + this.api ]( request );
+          // should fire instead!
           this._setResponse( response );
+          return response;
 
         },
 
-        handleError: function( event ){
+        handleError: function( request ){
 
-          // stop ajax propagation
-          event.preventDefault();
-          event.stopPropagation();
-
-          var error = this['handleError' + this.api ]( );
+          var error = this[ 'handleError' + this.api ]( request );
           this._setError( error );
+          return error;
 
         },
 
@@ -217,7 +210,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           }
 
-          this.generateRequest();
+          var request = this.generateRequest();
+
+          // cache data!
+          var cache = '';
+          if( action !== 'GET' ){
+
+            request.cache = data.cache;
+
+          }
+
+          return request.completes
+            .then( this.handleResponse.bind(this) )
+            .catch( this.handleError.bind(this) );
 
         },
 
@@ -229,7 +234,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // i.e. notify: true
           this.fire( 'response-changed' );
           // trigger parent callback
-          this.fire( 'response' );
+          this.fire( 'response', response );
 
         },
 
@@ -241,7 +246,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // i.e. notify: true
           this.fire( 'error-changed' );
           // trigger parent callback
-          this.fire( 'error' );
+          this.fire( 'error', error );
 
         },
 
