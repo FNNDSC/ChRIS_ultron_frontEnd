@@ -103,6 +103,12 @@
           itemCJ = this.generateNoteCJ();
 
         }
+        else if( this.method === 'GET' && response.type === 'plugins' ){
+
+          itemCJ = this.generatePluginCollectionCJ();
+          console.log( itemCJ );
+
+        }
         
         // Simulate POST/PUT
         if( this.method !== 'GET' ){

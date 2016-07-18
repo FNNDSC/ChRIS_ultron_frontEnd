@@ -4,15 +4,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 -->
 
 <!-- POLYMER -->
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 
 <!-- PAPER ELEMENTS -->
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 
 <!-- CHRIS -->
 <link rel="import" href="../chris-plugin/chris-plugin.html">
@@ -77,13 +77,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <div class="content">
 
         <!-- Middle comments -->
-        <template is="dom-repeat" items="[[plugins]]">
+        <template is="dom-repeat" items="[[plugins.data]]">
 
           <template is="dom-if" if="[[_computeShowAllButton(index)]]">
 
             <paper-material elevation=1 id="showAll" on-tap="_showAll">
               <paper-icon-button icon="icons:view-headline"></paper-icon-button>
-              Show full workflow ([[_hiddenPlugins(plugins.length)]])
+              Show full workflow ([[_hiddenPlugins(plugins.data.length)]])
             </paper-material>
 
           </template>
@@ -126,8 +126,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           this.open ? this.$.pluginList.classList.add('open') : this.$.pluginList.classList.remove('open');
 
-          this._resizeContent();
-
         },
 
         _setToogleIcon: function( open ){
@@ -136,15 +134,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        _resizeContent: function( event ){
-
-          this.fire('resize-content');
-
-        },
-
         _computePluginOpen: function( index ){
 
-          if( this.plugins.length - 1 === index ){
+          if( this.plugins.data.length - 1 === index ){
 
             return true;
 
@@ -159,8 +151,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _computePluginVisible: function( index ){
 
-          if( this.plugins.length <= 3 ||
-            this.plugins.length - 1 === index ||
+          if( this.plugins.data.length <= 3 ||
+            this.plugins.data.length - 1 === index ||
             index === 0 ){
 
             return '';
@@ -178,7 +170,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // if last element and more than 3 elements
 
-          if( this.plugins.length - 1 === index && this.plugins.length > 3 ){
+          if( this.plugins.data.length - 1 === index && this.plugins.data.length > 3 ){
 
             return true;
 

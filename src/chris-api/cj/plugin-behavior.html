@@ -1,0 +1,91 @@
+<script>
+  /** @polymerBehavior PluginCJ */
+  PluginCJ = {
+
+    pluginTemplate: function(){
+
+      var template = [
+        {'name' : 'available', 'value' : ''},
+        {'name' : 'color', 'value' : ''},
+        {'name' : 'data', 'value' : ''},
+        {'name' : 'dataview', 'value' : ''},
+        {'name' : 'depth', 'value' : ''},
+        {'name' : 'icon', 'value' : ''},
+        {'name' : 'id', 'value' : ''},
+        {'name' : 'label', 'value' : ''},
+        {'name' : 'leaves', 'value' : ''},
+        {'name' : 'name', 'value' : ''},
+        {'name' : 'parentID', 'value' : ''},
+        {'name' : 'workflow', 'value' : ''}
+      ];
+
+      return template;
+
+    },
+
+    generatePluginRawData: function( index ){
+
+      var fakeComments = this.comments();
+      var comment = fakeComments[Math.floor(Math.random() * fakeComments.length)];
+      comment.index = index;
+      var options = {
+        weekday: "long", year: "numeric", month: "short",
+        day: "numeric", hour: "2-digit", minute: "2-digit"
+      };
+      comment.date = new Date().toLocaleTimeString("en-us", options);
+
+      //
+      //
+
+      return comment;
+
+    },
+
+
+    generatePlugin: function( parent, index, depth){
+
+      var plugins = this.plugins();
+
+      var plugin = plugins[Math.floor(Math.random() * plugins.length)];
+
+      var parentID = 0;
+      var workflow = [];
+      var id = index;
+      if( parent ){
+
+        parentID = parent.id;
+        id = parentID + '-' + index;
+        workflow = parent.workflow.slice(0);
+
+      }
+
+      workflow.push({
+        label: plugin.label,
+        color: plugin.color,
+        icon: plugin.icon
+      });
+
+      return {
+        parentID: String(parentID),
+        id: String(id),
+        depth: depth,
+        data: this.generateFakePluginData(),
+        name: plugin.name,
+        label: plugin.label,
+        color: plugin.color,
+        icon: plugin.icon,
+        available: [],
+        leaves: [],
+        workflow: workflow,
+        dataview: plugin.dataview
+      }
+    },
+
+    generateFakePluginData: function(){
+      return {
+          "files": this.files()
+        };
+    }
+
+  }
+</script>

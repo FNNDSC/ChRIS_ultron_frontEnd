@@ -3,17 +3,17 @@
 Copyright (c) 2016 FNNDSC. All rights reserved.
 -->
 
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 
 <!-- PAPER ELEMENTS -->
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 
 <dom-module id="chris-plugin">
 
@@ -102,12 +102,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 
         <div class="toolbar">
-          <template is="dom-repeat" items="{{plugin.workflow}}">
+          <template is="dom-repeat" items="{{plugin.data.workflow}}">
             <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
 
           </template>
         
-          <div class="title" title>[[plugin.label]]</div>
+          <div class="title" title>[[plugin.data.label]]</div>
 
           <div class="spacer"></div>
 
@@ -127,8 +127,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
 
-          <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data]]" path="[[path]]"></chris-dataviews-rows>
-          <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data]]" path="[[path]]"></chris-dataviews-columns>
+          <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-rows>
+          <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-columns>
 
         <iron-pages>
 
