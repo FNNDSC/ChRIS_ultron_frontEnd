@@ -9,7 +9,7 @@
 
 <!-- CHRIS -->
 <link rel="import" href="../../chris-api/chris-api.html">
-<link rel="import" href="../../chris-footer/chris-footer.html">
+<link rel="import" href="../../chris-components/chris-footer/chris-footer.html">
 
 <dom-module id="chris-login">
 
@@ -246,13 +246,20 @@
                 username: this._username,
                 password: this._password
               };
-              this.$.LoginAPI.generateRequest();
+              this.$.LoginAPI.request('GET', '/data/feeds.json');
 
             }
 
         },
 
         handleResponse: function(){
+
+          console.log( this.response );
+          if( ! this.response ){
+
+            return;
+
+          }
 
           this.$.login.disabled = false;
           this.$.loginLabel.style.display = 'block';

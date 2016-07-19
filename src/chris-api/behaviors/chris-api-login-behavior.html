@@ -11,11 +11,6 @@
           case 'url':
 
             var url = '/data/feeds.json';
-            if( this.chrisAPI ){
-
-              //url = this.apiRoot + this.url;
-
-            }
 
             return url;
 
@@ -45,47 +40,23 @@
         return false;
       },
 
-      handleLogin: function( ){
+      handleLogin: function( request ){
 
         var response = {};
         // ChRIS API login not working so dummy check
         // dummy test, should only rely on response!
-        var match = false;
+        var match = ( Math.random() > 0.1 );
 
-        if( this.params && this.params.username && this.params.password ){
-
-          match = ( this.params.username === this.params.password );
-
-        }
-
-        if( this.chrisAPI ){
-
-          //var details = this.response.return.payload.loginDetail;
-          // response = {
-          //   status: details.loginStatus,
-          //   message: details.loginMessage,
-          //   token: details.sessionToken
-          // };
-          response = {
-            status: match,
-            message: match? 'Successful login.' : 'Username and password do not match.',
-            token: 'ABCDEF123456789'
-          }
-
-        } else {
-
-          response = {
-            status: match,
-            message: match? 'Successful login.' : 'Username and password do not match.',
-            token: 'ABCDEF123456789'
-          };
-
-        }
+        response = {
+          status: match,
+          message: match? 'Successful login.' : 'Username and password do not match.',
+          token: 'ABCDEF123456789'
+        };
 
         return response;
       },
 
-      handleErrorLogin: function( ){
+      handleErrorLogin: function( request ){
 
         return this.error;
 
