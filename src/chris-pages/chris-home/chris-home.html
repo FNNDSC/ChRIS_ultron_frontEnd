@@ -109,12 +109,6 @@
         error="{{error}}">
       </chris-api>
 
-      <chris-api id="PluginsFeedAPI"
-        api="PluginsFeed"
-        response="{{plugins}}" on-response="handlePlugins"
-        error="{{error}}" on-error="handleError">
-      </chris-api>
-
       <app-drawer-layout fullbleed>
 
         <!-- Drawer content -->
@@ -146,10 +140,10 @@
             <paper-fab-speed-dial direction="top">
               <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
               <div class="dropdown-content">
-                <template is="dom-repeat" items="{{plugins}}">
+                <template is="dom-repeat" items="{{plugins.data}}">
                   <a href="/plugin-fs">
-                    <paper-fab mini id="[[item.name]]" icon="[[item.icon]]" item="[[item]]" style$="[[_setPluginFSStyle(item.color)]]" on-tap="_handlePluginFS"></paper-fab>
-                    <paper-tooltip for="[[item.name]]" position="left" animation-delay="0">[[item.label]]</paper-tooltip>
+                    <paper-fab mini id="[[item.data.name]]" icon="[[item.data.icon]]" item="[[item]]" style$="[[_setPluginFSStyle(item.data.color)]]" on-tap="_handlePluginFS"></paper-fab>
+                    <paper-tooltip for="[[item.data.name]]" position="left" animation-delay="0">[[item.data.label]]</paper-tooltip>
                     </a>
                 </template>
               </div>
@@ -222,8 +216,15 @@
           .catch( this.handleError.bind(this) );
 
         // fetch the plugins that can create a feed
-        this.$.PluginsFeedAPI.params = params;
-        this.$.PluginsFeedAPI.generateRequest();
+        var request3 = this.$.FeedsAPI.request('GET', '/pluginsFS');
+        request3
+          .then( this.handlePlugins.bind(this) )
+          .catch( this.handleError.bind(this) );
+        //       <chris-api id="PluginsFeedAPI"
+        // api="PluginsFeed"
+        // response="{{plugins}}" on-response="handlePlugins"
+        // error="{{error}}" on-error="handleError">
+      // </chris-api>
 
         // fetch the labels
         var request2 = this.$.FeedsAPI.request('GET', '/labels');
@@ -267,10 +268,15 @@
 
       },
 
-      handlePlugins: function(){
+      handlePlugins: function( response ){
 
-        console.log( 'handlePlugins not implemented' );
-        // console.log( this.plugins );
+        console.log( response );
+
+        this.set( 'plugins', response );
+
+        this.showError( response.error );
+
+        this.$.content.classList.add('loaded');
 
       },
 
