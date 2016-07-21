@@ -52,6 +52,8 @@
 
       <chris-feed-detail name="feed-detail" feed="{{feedOpened}}"></chris-feed-detail>
 
+      <chris-detail name="detail" feed="{{feedOpened}}"></chris-detail>
+
     </iron-pages>
 
   </template>
@@ -110,11 +112,15 @@
 
       _routePageChanged: function( page ) {
 
+        console.log( page );
+
         this.page = page || 'login';
 
       },
 
       _loggedInChanged: function( loggedIn ){
+
+        console.log( loggedIn );
 
         if( loggedIn ){
 

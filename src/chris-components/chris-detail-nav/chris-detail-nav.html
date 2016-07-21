@@ -1,0 +1,164 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
+
+<dom-module id="chris-detail-nav">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+    <style>
+
+      :host {
+
+        display: flex;
+        position: absolute;
+      
+      }
+
+      .separator {
+
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--primary-text-color);
+        padding: 16px 16px 0;
+        border-top: 1px solid rgb(224, 224, 224);
+
+      }
+
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+    </style>
+
+    <!--  Default labels -->
+    <div class="separator">General</div>
+
+    <paper-menu id="labels" class="layout vertical" attr-for-selected="value" on-iron-select="handleSelect">
+
+      <a href="/detail/[[feed]]/about">
+        <paper-icon-item value="all" role="menuitem">
+          <iron-icon icon="icons:list" item-icon></iron-icon>About
+        </paper-icon-item>
+      </a>
+      <a href="/detail/[[feed]]/note">
+        <paper-icon-item value="favorite" role="menuitem">
+          <iron-icon  icon="icons:create" item-icon></iron-icon>Note
+        </paper-icon-item>
+      </a>
+      <a href="/detail/[[feed]]/comments">
+        <paper-icon-item value="running" role="menuitem">
+          <iron-icon icon="icons:question-answer" item-icon></iron-icon>Discussion ([[comments.data.length]])
+        </paper-icon-item>
+      </a>
+<!--            <paper-icon-item role="menuitem">
+        <iron-icon icon="social:people" item-icon></iron-icon>Shared
+      </paper-icon-item>
+      <paper-icon-item role="menuitem">
+        <iron-icon icon="icons:visibility-off" item-icon></iron-icon>Hidden
+      </paper-icon-item> -->
+
+    </paper-menu>
+
+
+    <!-- User generated labels -->
+    <!-- add + button to create/edit/delete label -->
+    <!-- then toast to let user know he needs to reload -->
+    <div class="separator">Workflow ([[workflow.data.length]])</div>
+
+<!--       <paper-icon-item role="menuitem" on-tap="Create label">
+        <iron-icon icon="icons:clear" item-icon></iron-icon>Create label
+      </paper-icon-item> -->
+
+    <paper-menu class="layout vertical" attr-for-selected="value" on-iron-select="handleSelect">
+
+      <template is="dom-repeat" items="{{workflow.data}}">
+
+        <a href="/detail/[[feed]]/workflow/[[index]]">
+
+
+        
+          <!-- <div class="title" title>[[plugin.data.label]]</div> -->
+
+          <paper-icon-item id="{{item.data.label}}">
+                      <template is="dom-repeat" items="{{item.data.workflow}}" as="wf">
+            <iron-icon icon="[[wf.icon]]" style$="{{_setPluginStyle(wf.color)}}" item-icon></iron-icon>
+
+          </template>
+          <span class="title">{{item.data.label}}</span>
+          </paper-icon-item>
+        </a>
+
+      </template>
+
+    </paper-menu>
+
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-detail-nav',
+
+        properties: {
+
+          workflow: {
+            type: Array,
+            observer: '_workflowChanged'
+          },
+
+          comments: {
+            type: Array
+          },
+
+          feed:{
+            type: String
+          }
+
+        },
+
+        _workflowChanged: function(){
+
+          console.log( this.workflow );
+
+        },
+
+        handleSelect: function( event ){
+
+          console.log( event );
+
+        },
+
+        updateCustomFilter: function(){
+
+          this.customFilter = this.$.customLabels.selectedValues;
+          this.fire( 'custom-filter-changed');
+
+        },
+
+        _setStyle: function( color ){
+
+          return 'color: ' + color;
+
+        },
+
+        _setPluginStyle: function( color){
+
+          return 'color: ' + color + ';';
+
+        }
+
+    });
+  </script>
+</dom-module>

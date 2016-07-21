@@ -1,0 +1,112 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel='import' href='../../bower_components/google-map/google-map.html'>
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/maps-icons.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel='import' href='../contact/contact-member-behavior.html'>
+<link rel="import" href="../contact/contact-member-styles.html">
+
+<dom-module id="contact-member">
+  <template>
+    <style include="contact-member-styles"></style>
+    <style>
+      :host {
+        display: block;
+      }
+
+    </style>
+
+    <paper-card heading="[[member.title]]">
+      <div class="card-content">
+
+        <!-- FROM https://github.com/robdodson/contacts-app -->
+
+        <!-- CONTACT PERSON -->
+        <div class="group">
+          <div class="item">
+            <iron-icon icon="icons:face"></iron-icon>
+            <div class="double-line-1">[[member.firstname]] [[member.middlename]] [[member.lastname]]</div>
+            <div class="double-line-2">Contact</div>
+          </div>
+          <div class="item">
+            <div class="double-line-1">[[member.position]]</div>
+            <div class="double-line-2">Position</div>
+          </div>
+                      <div class="item">
+            <div class="double-line-1">[[member.laboratory]]</div>
+            <div class="double-line-2">Laboratory</div>
+          </div>
+        </div>
+
+        <!-- CONTACT MEDIA -->
+        <div class="group">
+          <div class="item">
+            <iron-icon icon="communication:phone"></iron-icon>
+            <div class="double-line-1">[[member.phone]]</div>
+            <div class="double-line-2">Office</div>
+          </div>
+          <div class="item">
+            <div class="double-line-1">[[member.fax]]</div>
+            <div class="double-line-2">Fax</div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="item">
+            <iron-icon icon="icons:mail"></iron-icon>
+            <div class="double-line-1">[[member.email]]</div>
+            <div class="double-line-2">email</div>
+          </div>
+        </div>
+
+        <!-- CONTACT ADDRESS -->
+        <div class="group">
+          <div class="item">
+            <iron-icon icon="maps:place"></iron-icon>
+            <div class="double-line-1">[[member.address]]</div>
+            <div class="double-line-2">Address</div>
+          </div>
+          <div class="item">
+            <div class="double-line-1">[[member.city]]</div>
+            <div class="double-line-2">City, State ZIP</div>
+          </div>
+          <div class="item">
+            <div class="double-line-1">United States</div>
+            <div class="double-line-2">Country</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT MAP -->
+      <div class="card-actions">
+        <div on-tap="handleTap">
+          <paper-button>Show map</paper-button>
+          <paper-icon-button id="moreInfoIcon" icon="hardware:keyboard-arrow-up" title="more info" style="float:right;"></paper-icon-button>
+        </div>
+        <iron-collapse id="moreInfo" style="width:100%;">
+          <google-map latitude=[[member.latitude]] longitude=[[member.longitude]] zoom="17">
+            <google-map-marker latitude="[[member.latitude]]" longitude="[[member.longitude]]"
+      title="[[member.title]]"></google-map-marker>
+          </google-map>
+        </iron-collapse>
+      </div>
+    </paper-card>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'contact-member',
+        behaviors: [ContactMemberBehavior]
+      });
+    })();
+  </script>
+</dom-module>

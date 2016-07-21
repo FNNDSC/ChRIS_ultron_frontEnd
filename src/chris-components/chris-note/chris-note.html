@@ -11,6 +11,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../../bower_components/marked-element/marked-element.html">
@@ -28,6 +29,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         @apply(--layout-horizontal);
         @apply(--layout-end);
         @apply(--layout-wrap);
+
+            padding: 16px;
+    font-size: 24px;
+    font-weight: 400;
+    color: #737373;
 
       }
 
@@ -54,7 +60,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       .content {
 
-        padding: 20px;
+        /*padding: 20px;*/
 
       }
 
@@ -102,7 +108,50 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
+    paper-card {
+        width: 800px;
+      }
+
+    @media (max-width: 800px) {
+      paper-card {
+        width: 100%;
+      }
+    }
+
+
+    paper-card{
+      color: var(--primary-text-color);
+      --paper-card-header-color: var(--secondary-text-color);
+      --paper-card-background-color: var(--paper-grey-100);
+      background: var(--paper-grey-100);
+    }
+
     </style>
+
+        <paper-card>
+
+              <div class="toolbar">
+
+ <div class="title" title>Note</div>
+
+      <div class="spacer"></div>
+
+      <template is="dom-if" if="{{!editing}}" >
+        <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
+      </template>
+      <template is="dom-if" if="{{editing}}" >
+        <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
+        <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
+      </template>
+
+<a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet" target="_blank"><paper-icon-button icon="help-outline"></paper-icon-button></a>
+              
+
+
+      </div>
+
+      <div class="card-content">
+
 
     <chris-api id="ItemAPI"
       api="Item",
@@ -116,19 +165,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <!-- Toolbar -->
 
-      <div class="toolbar">
 
-      <div class="spacer"></div>
-
-      <template is="dom-if" if="{{!editing}}" >
-        <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
-      </template>
-      <template is="dom-if" if="{{editing}}" >
-        <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
-        <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
-      </template>
-
-      </div>
 
       <!-- Content -->
 
@@ -142,6 +179,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       </div>
 
     </div>
+
+          </div>
+    </paper-card>
 
   </template>
 
@@ -162,6 +202,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           editing: {
             type: Boolean,
             value: false
+          },
+
+          error: {
+            type: Object
           }
 
         },

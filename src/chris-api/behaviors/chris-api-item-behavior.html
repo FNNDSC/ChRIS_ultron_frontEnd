@@ -123,15 +123,15 @@
         }
 
         // Generate random errors...
-        if( Math.random() > 0.75 ){
+        // if( Math.random() > 0.75 ){
 
-          itemCJ.collection.error = {
-            'title'   : 'API Error',
-            'code'    : 'X1234',
-            'message' : this.method + ' : ' + itemCJ.collection.href + ' could not be processed.'
-          };
+        //   itemCJ.collection.error = {
+        //     'title'   : 'API Error',
+        //     'code'    : 'X1234',
+        //     'message' : this.method + ' : ' + itemCJ.collection.href + ' could not be processed.'
+        //   };
           
-        }
+        // }
 
         itemCJ = JSON.stringify( itemCJ );
 
@@ -147,6 +147,8 @@
           response.cache = cache;
 
         }
+
+        console.log( response );
 
         return response;
 

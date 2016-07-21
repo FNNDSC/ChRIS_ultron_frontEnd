@@ -262,7 +262,15 @@
         // if feed was not updated, fire notification message
         if( error && error.code ){
 
-          this._showNotification( { detail: error });
+          var notification = document.createElement('paper-toast');
+          notification.text = error.message;
+          notification.fitInto = this.$.layout;
+          this.$.content.appendChild(notification);
+          notification.show();
+// dynamicEl.regions = this.officesRegions;    
+// dynamicEl.cities = this.officesCities;
+
+          //this._showNotification( { detail: error });
 
         }
 

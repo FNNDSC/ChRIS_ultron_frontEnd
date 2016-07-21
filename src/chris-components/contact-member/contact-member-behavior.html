@@ -1,0 +1,14 @@
+<script>
+  ContactMemberBehavior = {
+    properties: {
+      member: Object
+    },
+    handleTap: function(){
+      var moreInfo = this.$.moreInfo;
+      var iconButton = this.$.moreInfoIcon;
+      iconButton.icon = moreInfo.opened ? 'icons:expand-less'
+                                        : 'icons:expand-more';
+      moreInfo.toggle();
+    }
+  }
+</script>

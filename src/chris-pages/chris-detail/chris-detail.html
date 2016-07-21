@@ -1,0 +1,385 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- APP ELEMENTS -->
+<link rel="import" href="../../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../../bower_components/app-route/app-route.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../../chris-api/chris-api.html">
+<link rel="import" href="../../chris-components/team-member-detail/team-member-detail.html">
+<link rel="import" href="../../chris-components/chris-comment-list/chris-comment-list.html">
+<link rel="import" href="../../chris-components/chris-detail-nav/chris-detail-nav.html">
+<link rel="import" href="../../chris-components/chris-note/chris-note.html">
+<link rel="import" href="../../chris-components/chris-plugin/chris-plugin.html">
+
+<dom-module id="chris-detail">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+    <style>
+
+      :host {
+
+        display: block;
+
+      }
+
+      app-header {
+
+        background-color: var(--dark-primary-color);
+        color: #ffffff;
+
+      }
+
+      app-header paper-icon-button {
+
+        --paper-icon-button-ink-color: #ffffff;
+
+      }
+
+      .drawer.content {
+
+        height: 100%;
+        overflow: auto;
+
+      }
+
+      app-header-layout {
+
+        background-color: var(--paper-grey-100);
+        /*min-height: 201vh;*/
+
+      }
+
+      app-header-layout app-toolbar {
+
+        color: #ffffff;
+
+      }
+
+      paper-progress {
+
+        width: 100%;
+        --paper-progress-active-color: var(--accent-color);
+        --paper-progress-height: 2px;
+
+      }
+
+      .loaded paper-progress {
+
+        display: none;
+
+      }
+
+      a {
+
+        color: #ffffff;
+
+      }
+
+      iron-pages{
+        position: relative;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
+        /*min-height: 100vh;*/
+        /*height: 500px;*/
+        /*height: 100%;*/
+        background-color: var(--paper-grey-50);
+      }
+
+    </style>
+
+    <div id="detail">
+
+      <app-location id="location" route="{{feedRoute}}"></app-location>
+      <app-route
+        route="{{feedRoute}}"
+        pattern="/detail/:index"
+        data="{{feedRouteData}}"
+        tail="{{pageRoute}}"></app-route>
+      <app-route
+        route="{{pageRoute}}"
+        pattern="/:page"
+        data="{{pageRouteData}}"
+        tail="{{pluginRoute}}"></app-route>
+      <app-route
+        route="{{pluginRoute}}"
+        pattern="/:index"
+        data="{{pluginRouteData}}"></app-route>
+
+      <!-- API Calls -->
+      <chris-api id="ItemAPI"
+        api="Item",
+        content-type="application/json",
+        error="{{error}}">
+      </chris-api>
+
+      <app-drawer-layout id="adl" fullbleed>
+
+        <!-- Drawer content -->
+        <app-drawer>
+
+          <div class="drawer content">
+
+            <app-toolbar>[[feed.data.name]]</app-toolbar>
+            <chris-detail-nav feed="[[feedRouteData.index]]" workflow="[[workflow]]" comments="[[comments]]"></chris-detail-nav>
+
+          </div>
+
+        </app-drawer>
+
+        <!-- Main content -->
+        <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(feed.data.color)]]">
+
+          <app-header id="header" fixed effects="waterfall" style$="[[_setToolbarStyle(feed.data.color)]]">
+            <app-toolbar>
+              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+              <div title>[[feed.data.name]]</div>
+              <a class="back" href="/home" on-tap="_reset">
+                <paper-icon-button icon="icons:clear"></paper-icon-button>
+              </a>
+            </app-toolbar>
+          </app-header>
+
+          <div id="content" class="main content">
+
+          <iron-pages selected="[[page]]" attr-for-selected="name">
+
+              <team-member-detail name="about" feed="[[feed]]"> Hi about </team-member-detail>
+              <chris-note name="note" note="{{note}}"></chris-note>
+              <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
+              <chris-plugin name="workflow" plugin="[[_targetPlugin(pluginRouteData.index)]]"></chris-plugin>
+
+            </iron-pages>
+
+          <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+
+          </div>
+
+        </app-header-layout>
+
+      </app-drawer-layout>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'chris-detail',
+      properties: {
+
+        feed: {
+          type: Object,
+          observer: '_feedChanged'
+          },
+
+        workflow: {
+          type: Array
+        },
+
+        note:{
+          type: Object,
+        },
+
+        comments: {
+          type: Object
+        },
+
+        details:{
+          type: Object
+        },
+
+        feedRoute: {
+          type: Object
+        },
+
+        feedRouteData: {
+          type: Object
+        },
+
+        pageRoute: {
+          type: Object
+        },
+
+        pageRouteData: {
+          type: Object
+        },
+
+        pluginRoute: {
+          type: Object
+        },
+
+        pluginRouteData: {
+          type: Object
+        },
+
+        error: {
+          type: Object
+        },
+
+        page: {
+          type: String
+          // reflectToAttribute: true,
+          // observer: '_pageChanged'
+        },
+
+      },
+
+      observers: [
+        '_feedIndexChanged(feedRouteData.index)',
+        '_pageDataChanged(pageRouteData.page)',
+        '_pluginIndexChanged(pluginRouteData.index)',
+      ],
+
+      ready: function( event ){
+
+        // hackish...
+        this.$.adl.resetLayout();
+
+      },
+
+      _targetPlugin: function( index ){
+
+        if( !index ){
+          return;
+        }
+
+        return this.workflow.data[index];
+
+      },
+
+      _feedIndexChanged: function( index ) {
+
+        console.log( '_feedIndexChanged ');
+        console.log( index );
+
+      },
+
+      _pageDataChanged: function( page ) {
+
+        console.log( '_pageDataChanged' );
+        console.log( page );
+
+        this.page = page || 'about';
+
+      },
+
+      _pluginIndexChanged: function( index ) {
+
+        console.log( '_pluginIndexChanged' );
+        console.log( index );
+
+      },
+
+      _feedChanged: function(){
+
+        console.log( this.feed );
+
+        // get comments
+        var requestComments = this.$.ItemAPI.request( 'GET', this.feed.links.comments );
+        requestComments
+          .then( this.handleItem.bind(this) )
+          .catch( this.handleError.bind(this) );
+
+        // get note
+        var requestNote = this.$.ItemAPI.request( 'GET', this.feed.links.note );
+        requestNote
+          .then( this.handleItem.bind(this) )
+          .catch( this.handleError.bind(this) );
+
+        // get plugins/wokflow
+        var requestPlugins = this.$.ItemAPI.request( 'GET', this.feed.links.plugins );
+        requestPlugins
+          .then( this.handleItem.bind(this) )
+          .catch( this.handleError.bind(this) );
+
+      },
+
+      _reset: function(){
+        
+        console.log( 'reset' );
+        this.page = 'about';
+
+      },
+
+      handleItem: function( response ){
+
+          // could/should show nice reload button
+        if( !response ){
+
+          return;
+
+        }
+
+        // use href to decide on how to handle it!
+        var type = response.href.split(/[/]+/).pop();
+
+        switch(type){
+
+          case 'comments' :
+            this.set( 'comments', response );
+            break;
+
+          case 'note' :
+            this.set( 'note', response );
+            break;
+
+          case 'plugins' :
+            this.set( 'workflow', response );
+            break;
+
+          default:
+            break;
+
+        }
+      },
+
+      handleError: function( response ){
+
+        console.error( response );
+
+      },
+
+      _setLayoutStyle: function( color ){
+
+        // convert hex color to rgb in order to set the alpha channel
+        color = color.replace('#','');
+        var r = parseInt(color.substring(0,2), 16);
+        var g = parseInt(color.substring(2,4), 16);
+        var b = parseInt(color.substring(4,6), 16);
+
+        return 'background-color: rgba(' + r + ',' + g + ',' + b + ', 0.5);';
+
+      },
+
+      _setToolbarStyle: function( color ){
+
+        return 'background-color: ' + color + ';';
+
+      }
+
+    });
+  </script>
+</dom-module>

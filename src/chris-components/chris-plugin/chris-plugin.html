@@ -12,6 +12,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 
 <!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 
@@ -23,7 +24,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       .plugin{
 
-        background-color: white;
+        /*background-color: white;*/
 
       }
 
@@ -36,7 +37,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         /*border: 1px solid #ddd;*/
         cursor: pointer;
-        margin: 10px 0;
+
+
+    padding: 16px;
+    font-size: 24px;
+    font-weight: 400;
+    color: #737373;
 
       }
 
@@ -66,22 +72,18 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       iron-selector{
 
-        border-bottom: 1px solid var(--primary-text-color);
+        border-bottom: 1px solid var(--accent-color);
+        color: var(--secondary-text-color);
 
       }
 
       .content {
-
+/*
         padding: 20px;
-        display: none;
+        display: block;*/
 
       }
 
-      .plugin.open .content {
-
-        display: block;
-
-      }
 
 /*      .dataview{
 
@@ -95,46 +97,79 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }*/
 
+                paper-card {
+        width: 800px;
+      }
+
+    @media (max-width: 800px) {
+      paper-card {
+        width: 100%;
+      }
+    }
+
+
+    paper-card{
+      color: var(--primary-text-color);
+      --paper-card-header-color: var(--secondary-text-color);
+      --paper-card-background-color: var(--paper-grey-100);
+      background: var(--paper-grey-100);
+    }
+
+    paper-card .header{
+
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+
+    }
+
+
     </style>
+
+                <paper-card>
+
+                        <div class="toolbar">
+
+                        <template is="dom-repeat" items="{{plugin.data.workflow}}">
+            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button> >
+
+          </template>
+
+        
+          <div class="title" title>[[plugin.data.label]]
+          </div>
+
+          <div class="spacer"></div>
+
+          <iron-selector id="dataButton" attr-for-selected="name" selected="{{selected}}">
+            <paper-icon-button name="chris-dataviews-rows" icon="icons:view-headline"></paper-icon-button>
+            <paper-icon-button name="chris-dataviews-columns" icon="icons:view-week"></paper-icon-button>
+          </iron-selector>
+        </div>
+
+      <div class="card-content">
+
 
     <paper-material elevation=1 id="plugin" class="plugin">
       <div id$="[[plugin.id]]">
 
 
-        <div class="toolbar">
-          <template is="dom-repeat" items="{{plugin.data.workflow}}">
-            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
 
-          </template>
-        
-          <div class="title" title>[[plugin.data.label]]</div>
 
-          <div class="spacer"></div>
+        <div class="content">
 
-          <template is="dom-if" if="{{open}}" >
-            <iron-selector id="dataButton" attr-for-selected="name" selected="{{selected}}">
-              <paper-icon-button name="chris-dataviews-rows" icon="icons:view-headline"></paper-icon-button>
-              <paper-icon-button name="chris-dataviews-columns" icon="icons:view-week"></paper-icon-button>
-            </iron-selector>
-          </template>
-          <paper-icon-button icon="communication:call-split" on-tap="newFeed"></paper-icon-button>
-          <paper-icon-button icon="add" alt="More options" on-tap="newPlugin"></paper-icon-button>
-          <paper-icon-button icon$="[[_setToogleIcon(open)]]" on-tap="toggle"></paper-icon-button>
-   
-      </div>
+          <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
 
-      <div class="content">
+            <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-rows>
+            <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-columns>
 
-        <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
+          </iron-pages>
 
-          <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-rows>
-          <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-columns>
-
-        <iron-pages>
-
-      </div>
+        </div>
 
       </paper-material>
+
+      </div>
+      </paper-card>
 
   </template>
 
@@ -145,14 +180,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         properties: {
 
           plugin: {
-            type: Object
+            type: Object,
+            observer: '_pluginChanged'
           },
 
-          open: {
-            type: Boolean,
-            value: false,
-            observer: '_openChanged'
-          },
 
           selected: {
             type: String,
@@ -164,6 +195,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             type: Array,
             observer: '_pathChanged'
           }
+
+        },
+
+        _pluginChanged: function(){
+          
+          console.log( this.plugin);
 
         },
 
@@ -183,67 +220,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        donothing: function( evt ){
-
-          evt.stopPropagation();
-          evt.preventDefault();
-
-        },
-
-        newFeed: function( evt ){
-
-          this.donothing(evt);
-          
-          console.log( 'create new feed' );
-
-        },
-
-        newPlugin: function( evt ){
-
-          this.donothing(evt);
-          
-          console.log( 'create new plugin' );
-
-        },
-
-        toggle: function(){
-
-          this.open = !this.open;
-
-        },
-
         _setPluginStyle: function( color){
 
           return 'color: ' + color + ';';
 
-        },
-
-        _setToogleIcon: function( open ){
-          
-          return this.open ? 'icons:expand-less' : 'icons:expand-more';
-
-        },
-
-        _openChanged: function(){
-
-          this.open ? this.$.plugin.classList.add('open') : this.$.plugin.classList.remove('open');
-          this.open ? this.$.plugin.elevation = 4 : this.$.plugin.elevation = 1;
-
-          this._resizeContent();
-        },
-
-        _resizeContent: function( event ){
-
-          this.fire('resize-content');
-
         }
-
-        // _selectedChanged: function(){
-
-        //   // should lazy load data view...
-        //   this.$.dataView.selected = this.selected;
-
-        // }
 
     });
   </script>

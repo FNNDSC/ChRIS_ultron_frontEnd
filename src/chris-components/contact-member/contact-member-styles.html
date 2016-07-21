@@ -1,0 +1,59 @@
+<dom-module id="contact-member-styles">
+  <template>
+    <style>
+      paper-card {
+        width: 840px;
+        margin-bottom: 16px;
+      }
+
+    @media (max-width: 840px) {
+      paper-card {
+        width: 100%;
+      }
+    }
+
+
+    paper-card{
+      color: var(--primary-text-color);
+      --paper-card-header-color: var(--secondary-text-color);
+      --paper-card-background-color: var(--paper-grey-100);
+      background: var(--paper-grey-100);
+    }
+
+    /*from https://github.com/robdodson/contacts-app*/
+
+    .group {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 8px 0;
+      position: relative;
+    }
+
+    .item {
+      padding: 10px 72px;
+      color: rgb(102, 102, 102);
+    }
+
+    .item iron-icon {
+      position: absolute;
+      left: 16px;
+      top: 24px;
+      color: rgb(33, 33, 33);
+    }
+
+    .double-line-1 {
+      margin-top: 5px;
+      margin-bottom: 6px;
+    }
+
+    .double-line-2 {
+      font-size: 13px;
+      line-height: 13px;
+      color: rgba(0, 0, 0, 0.4);
+    }
+
+    google-map {
+      height: 500px;
+    }
+    </style>
+  </template>
+</dom-module>

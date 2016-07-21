@@ -11,6 +11,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 
 <!-- PAPER ELEMENTS-->
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 
@@ -54,11 +55,32 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       .content {
 
-        padding: 20px;
+        /*padding: 20px;*/
 
       }
 
+          paper-card {
+        width: 800px;
+      }
+
+    @media (max-width: 800px) {
+      paper-card {
+        width: 100%;
+      }
+    }
+
+
+    paper-card{
+      color: var(--primary-text-color);
+      --paper-card-header-color: var(--secondary-text-color);
+      --paper-card-background-color: var(--paper-grey-100);
+      background: var(--paper-grey-100);
+    }
+
     </style>
+
+            <paper-card heading="Discussion">
+      <div class="card-content">
 
     <chris-api id="ItemAPI"
       api="Item",
@@ -92,6 +114,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       </div>
 
     </div>
+    </div>
+    </paper-card>
 
   </template>
 
