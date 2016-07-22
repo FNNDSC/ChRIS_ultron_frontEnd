@@ -24,7 +24,7 @@
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../chris-api/chris-api.html">
-<link rel="import" href="../../chris-components/team-member-detail/team-member-detail.html">
+<link rel="import" href="../../chris-components/chris-feed-about/chris-feed-about.html">
 <link rel="import" href="../../chris-components/chris-comment-list/chris-comment-list.html">
 <link rel="import" href="../../chris-components/chris-detail-nav/chris-detail-nav.html">
 <link rel="import" href="../../chris-components/chris-note/chris-note.html">
@@ -166,7 +166,7 @@
 
           <iron-pages selected="[[page]]" attr-for-selected="name">
 
-              <team-member-detail name="about" feed="{{feed}}"> Hi about </team-member-detail>
+              <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
               <chris-note name="note" note="{{note}}"></chris-note>
               <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
               <chris-plugin name="workflow" feed-index="[[feedRouteData.index]]" plugin="[[_targetPlugin(pluginRouteData.index)]]"></chris-plugin>

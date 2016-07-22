@@ -12,9 +12,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 
 <!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<!-- EXTERNAL ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
 
 <dom-module id="chris-plugin">
 
@@ -94,81 +99,111 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }*/
 
       paper-card {
+
         width: 800px;
+
       }
 
-    @media (max-width: 800px) {
-      paper-card {
-        width: 100%;
+      @media (max-width: 800px) {
+
+        paper-card {
+
+          width: 100%;
+
+        }
+
       }
-    }
 
+      paper-card{
 
-    paper-card{
-      color: var(--primary-text-color);
-      --paper-card-header-color: var(--secondary-text-color);
-      --paper-card-background-color: var(--paper-grey-100);
-      background: var(--paper-grey-100);
-    }
+        color: var(--primary-text-color);
+        --paper-card-header-color: var(--secondary-text-color);
+        --paper-card-background-color: var(--paper-grey-100);
+        background: var(--paper-grey-100);
 
-    paper-card .header{
+      }
 
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 8px 0;
+      paper-card .header{
 
-    }
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 8px 0;
+
+      }
+
+      paper-fab-speed-dial{
+
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+
+      }
+
+      paper-fab#create {
+
+        --paper-fab-background: var(--accent-color);
+
+      }
 
 
     </style>
 
-                <paper-card>
+    <paper-card>
 
-                        <div class="toolbar">
+      <div class="toolbar">
 
-                        <template is="dom-repeat" items="{{plugin.data.workflow}}">
-                        <!-- might want to do that in a method to make sure it binds nicely -->
-            <a href="/detail/[[feedIndex]]/workflow/[[item.id]]">
-            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
-            </a>>
+        <template is="dom-repeat" items="{{plugin.data.workflow}}">
+          <a href="/detail/[[feedIndex]]/workflow/[[item.id]]">
+          <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
+          </a>>
 
-          </template>
+        </template>
 
-        
-          <div class="title" title>[[plugin.data.label]]
-          </div>
-
-          <div class="spacer"></div>
-
-          <iron-selector id="dataButton" attr-for-selected="name" selected="{{selected}}">
-            <paper-icon-button name="chris-dataviews-rows" icon="icons:view-headline"></paper-icon-button>
-            <paper-icon-button name="chris-dataviews-columns" icon="icons:view-week"></paper-icon-button>
-          </iron-selector>
+      
+        <div class="title" title>[[plugin.data.label]]
         </div>
+
+        <div class="spacer"></div>
+
+        <iron-selector id="dataButton" attr-for-selected="name" selected="{{selected}}">
+          <paper-icon-button name="chris-dataviews-rows" icon="icons:view-headline"></paper-icon-button>
+          <paper-icon-button name="chris-dataviews-columns" icon="icons:view-week"></paper-icon-button>
+        </iron-selector>
+      </div>
 
       <div class="card-content">
 
 
-    <paper-material elevation=1 id="plugin" class="plugin">
-      <div id$="[[plugin.id]]">
+      <paper-material elevation=1 id="plugin" class="plugin">
+        <div id$="[[plugin.id]]">
 
+          <div class="content">
 
+            <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
 
+              <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-rows>
+              <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-columns>
 
-        <div class="content">
+            </iron-pages>
 
-          <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
+          </div>
 
-            <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-rows>
-            <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-columns>
-
-          </iron-pages>
-
-        </div>
-
-      </paper-material>
+        </paper-material>
 
       </div>
       </paper-card>
+
+      <paper-fab-speed-dial direction="top">
+        <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
+        <div class="dropdown-content">
+          <template is="dom-repeat" items="{{plugins.data}}">
+            <a href="/plugin-fs">
+              <paper-fab mini id="[[item.data.name]]" icon="[[item.data.icon]]" item="[[item]]" style$="[[_setBackgroundColor(item.data.color)]]"></paper-fab>
+              <paper-tooltip for="[[item.data.name]]" position="left" animation-delay="0">[[item.data.label]]</paper-tooltip>
+              </a>
+          </template>
+        </div>
+      </paper-fab-speed-dial>
 
   </template>
 
@@ -183,6 +218,29 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             observer: '_pluginChanged'
           },
 
+          plugins: {
+            type: Object,
+            value: {
+              data: [
+                {
+                  data: {
+                    color: '#009688',
+                    name: 'Nameyo',
+                    label: 'YO label',
+                    icon: 'icons:favorite'
+                  }
+                },
+                {
+                  data: {
+                    color: '#F44336',
+                    name: 'OKCOOL',
+                    label: 'Hey there',
+                    icon: 'icons:favorite-border'
+                  }
+                }
+
+            ]}
+          },
 
           selected: {
             type: String,
@@ -218,7 +276,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // load page import on demand.
           this.importHref(
             this.resolveUrl( '../chris-dataviews/' + this.selected + '/' + this.selected + '.html' ), function(){
-              this.fire('resize-content');
+              // this.fire('resize-content');
             }, null, true );
 
         },
@@ -227,7 +285,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           return 'color: ' + color + ';';
 
-        }
+        },
+
+        _setBackgroundColor: function( color ){
+
+          return 'background-color: ' + color + ';';
+
+        },
 
     });
   </script>

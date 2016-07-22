@@ -1,8 +1,12 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- IRON ELEMENTS -->
 <link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<!-- PAPER ELEMENTS -->
 <link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
@@ -13,15 +17,11 @@
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
 
+<!-- EXTERNAL ELEMENTS -->
 <link rel="import" href="../../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
 
-<link rel="import" href="./team-member-detail-styles.html">
-<link rel="import" href="./team-styles.html">
-
-<dom-module id="team-member-detail">
+<dom-module id="chris-feed-about">
   <template>
-    <style include="team-member-detail-styles"></style>
-    <style include="team-styles"></style>
     <style>
       :host {
         display: block;
@@ -30,6 +30,85 @@
         @apply(--layout-wrap);
         margin-left: auto;
         margin-right: auto;
+      }
+
+       paper-card {
+        width: 800px;
+      }
+
+      @media (max-width: 800px) {
+        paper-card {
+          width: 100%;
+        }
+      }
+
+      paper-card{
+        color: var(--primary-text-color);
+        --paper-card-header-color: var(--secondary-text-color);
+        --paper-card-background-color: var(--paper-grey-100);
+        background: var(--paper-grey-100);
+      }
+
+      /*from https://github.com/robdodson/contacts-app*/
+
+      .group {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 8px 0;
+        position: relative;
+      }
+
+      .item {
+        padding: 10px 72px;
+        color: rgb(102, 102, 102);
+      }
+
+      .item iron-icon {
+        position: absolute;
+        left: 16px;
+        top: 24px;
+        color: rgb(33, 33, 33);
+      }
+
+      .double-line-1 {
+        margin-top: 5px;
+        margin-bottom: 6px;
+      }
+
+      .double-line-2 {
+        font-size: 13px;
+        line-height: 13px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .border-wrap{
+        font-size: 64px;
+        text-align: center;
+        position: relative;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        margin: auto;
+        margin-top: 32px;
+        margin-bottom: -20px;
+        background: #FFFFFF;
+      }
+
+      .check{
+        display: flex;
+        position: absolute;
+        right: 20px;
+        bottom: 0;
+        margin-bottom: -10px;
+      }
+
+      .center {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        @apply(--layout-center-justified);
+      }
+
+      .colored{
+        position:relative;
       }
 
       .done{
@@ -56,7 +135,7 @@
 
       }
 
-       paper-swatch-picker {
+      paper-swatch-picker {
 
         margin: 0 10px;
 
@@ -82,7 +161,7 @@
           [[feed.data.letter]]
         </div>
         <div class="check">
-        <paper-fab class$="fab" id="favorite" icon$="[[_setFavoriteIcon(feed.data.favorite)]]"></paper-fab>
+        <paper-fab class="fab" id="favorite" icon$="[[_setFavoriteIcon(feed.data.favorite)]]"></paper-fab>
         <paper-fab class$="fab [[feed.data.status]]" id="status" icon$="[[_setStatusIcon(feed.data.status)]]"></paper-fab>
         </div>
       </div>
@@ -98,22 +177,21 @@
             <div class="double-line-2">Name</div>
           </div>
           <div class="item">
+            <div class="double-line-1">[[feed.data.letter]]</div>
+            <div class="double-line-2">Letter</div>
+          </div>
+          <div class="item">
             <iron-icon icon="icons:assignment-ind"></iron-icon>
             <div class="double-line-1">[[feed.data.date]]</div>
             <div class="double-line-2">Last modified</div>
           </div>
-          <div class="item">
-            <div class="double-line-1">[[feed.data.letter]]</div>
-            <div class="double-line-2">Letter</div>
-          </div>
         </div>
 
         <!-- COLOR -->
-<!-- icons:invert-colors -->
       <div class="group">
         <div class="item">
-          <iron-icon style="[[_setColor(feed.data.color)]]" icon="invert-colors"></iron-icon>
-          <div class="double-line-1"> Change <paper-swatch-picker color="{{feed.data.color}}"></paper-swatch-picker> </div>
+          <iron-icon style$="[[_setColor(feed.data.color)]]" icon="invert-colors"></iron-icon>
+          <div class="double-line-1"> Pick color: [[feed.data.color]]<paper-swatch-picker color="{{feed.data.color}}"></paper-swatch-picker> </div>
           <div class="double-line-2">Color</div>
         </div>
       </div>
@@ -133,14 +211,14 @@
           <iron-icon icon="social:people"></iron-icon>
           <div class="double-line-1">[[feed.data.tags]]</div>
 
-<paper-menu-button ignore-select>
-  <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-  <paper-menu class="dropdown-content" multi>
-    <paper-item>Share</paper-item>
-    <paper-item>Settings</paper-item>
-    <paper-item>Help</paper-item>
-  </paper-menu>
-</paper-menu-button>
+          <paper-menu-button ignore-select>
+            <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu class="dropdown-content" multi>
+              <paper-item>Share</paper-item>
+              <paper-item>Settings</paper-item>
+              <paper-item>Help</paper-item>
+            </paper-menu>
+          </paper-menu-button>
 
           <div class="double-line-2">Shared ([[feed.data.tags.length]])</div>
         </div>
@@ -152,14 +230,14 @@
           <iron-icon icon="icons:label"></iron-icon>
           <div class="double-line-1">[[feed.data.tags]]</div>
 
-                    <paper-dropdown-menu label="Dinosaurs">
-  <paper-listbox class="dropdown-content">
-    <paper-item>allosaurus</paper-item>
-    <paper-item>brontosaurus</paper-item>
-    <paper-item>carcharodontosaurus</paper-item>
-    <paper-item>diplodocus</paper-item>
-  </paper-listbox>
-</paper-dropdown-menu>
+            <paper-dropdown-menu label="Dinosaurs">
+              <paper-listbox class="dropdown-content">
+                <paper-item>allosaurus</paper-item>
+                <paper-item>brontosaurus</paper-item>
+                <paper-item>carcharodontosaurus</paper-item>
+                <paper-item>diplodocus</paper-item>
+              </paper-listbox>
+          </paper-dropdown-menu>
 
           <div class="double-line-2">Labels ([[feed.data.tags.length]])</div>
         </div>
@@ -173,7 +251,7 @@
       'use strict';
 
       Polymer({
-        is: 'team-member-detail',
+        is: 'chris-feed-about',
         properties: {
           feed :{
             type: Object
