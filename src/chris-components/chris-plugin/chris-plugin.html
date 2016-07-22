@@ -34,15 +34,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         @apply(--layout-center);
         @apply(--layout-wrap);
         
-
-        /*border: 1px solid #ddd;*/
-        cursor: pointer;
-
-
-    padding: 16px;
-    font-size: 24px;
-    font-weight: 400;
-    color: #737373;
+        padding: 16px;
+        font-size: 24px;
+        font-weight: 400;
+        color: #737373;
 
       }
 
@@ -60,7 +55,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       paper-icon-button{
 
-        --paper-icon-button-ink-color: var(--paper-grey-300);
+        /*--paper-icon-button-ink-color: var(--paper-grey-300);*/
 
       }
 
@@ -78,6 +73,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       .content {
+
 /*
         padding: 20px;
         display: block;*/
@@ -97,7 +93,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }*/
 
-                paper-card {
+      paper-card {
         width: 800px;
       }
 
@@ -130,7 +126,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
                         <div class="toolbar">
 
                         <template is="dom-repeat" items="{{plugin.data.workflow}}">
-            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button> >
+                        <!-- might want to do that in a method to make sure it binds nicely -->
+            <a href="/detail/[[feedIndex]]/workflow/[[item.id]]">
+            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
+            </a>>
 
           </template>
 
@@ -194,6 +193,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           path: {
             type: Array,
             observer: '_pathChanged'
+          },
+
+          feedIndex: {
+            type: String
           }
 
         },

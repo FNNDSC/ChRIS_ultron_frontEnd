@@ -13,6 +13,8 @@
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
 
+<link rel="import" href="../../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
+
 <link rel="import" href="./team-member-detail-styles.html">
 <link rel="import" href="./team-styles.html">
 
@@ -48,6 +50,30 @@
 
       }
 
+      .fab{
+
+        margin: 4px;
+
+      }
+
+       paper-swatch-picker {
+
+        margin: 0 10px;
+
+      }
+
+      #favorite[icon="icons:favorite"]{
+
+        background-color: var(--accent-color);
+
+      }
+
+      #favorite[icon="icons:favorite-border"]{
+
+        background-color: var(--disabled-text-color);
+
+      }
+
     </style>
 
     <paper-card>
@@ -55,7 +81,10 @@
         <div class='border-wrap'>
           [[feed.data.letter]]
         </div>
-        <paper-fab class$="check [[feed.data.status]]" id="status" icon$="[[_setStatusIcon(feed.data.status)]]"></paper-fab>
+        <div class="check">
+        <paper-fab class$="fab" id="favorite" icon$="[[_setFavoriteIcon(feed.data.favorite)]]"></paper-fab>
+        <paper-fab class$="fab [[feed.data.status]]" id="status" icon$="[[_setStatusIcon(feed.data.status)]]"></paper-fab>
+        </div>
       </div>
 
       <div class="card-content">
@@ -74,22 +103,26 @@
             <div class="double-line-2">Last modified</div>
           </div>
           <div class="item">
-            <div class="double-line-1">[[feed.data.color]]</div>
-            <div class="double-line-2">Color</div>
-          </div>
-          <div class="item">
             <div class="double-line-1">[[feed.data.letter]]</div>
             <div class="double-line-2">Letter</div>
           </div>
         </div>
 
+        <!-- COLOR -->
+<!-- icons:invert-colors -->
+      <div class="group">
+        <div class="item">
+          <iron-icon style="[[_setColor(feed.data.color)]]" icon="invert-colors"></iron-icon>
+          <div class="double-line-1"> Change <paper-swatch-picker color="{{feed.data.color}}"></paper-swatch-picker> </div>
+          <div class="double-line-2">Color</div>
+        </div>
+      </div>
+
       <!-- FAVORITE -->
       <div class="group">
         <div class="item">
-          <iron-icon icon="icons:star"></iron-icon>
-          <div class="double-line-1">[[feed.data.favorite]]</div>
-
-          <paper-toggle-button>Toggle</paper-toggle-button>
+          <iron-icon icon$="[[_setFavoriteIcon(feed.data.favorite)]]"></iron-icon>
+          <paper-toggle-button class="double-line-1" checked="{{feed.data.favorite}}"></paper-toggle-button>
 
           <div class="double-line-2">Favorite</div>
         </div>
@@ -153,6 +186,12 @@
 
         },
 
+        _setColor: function( color ){
+
+          return 'color: ' + color + ';';
+
+        },
+
         _setStatusIcon: function( status ){
 
           var icon = 'icons:';
@@ -175,6 +214,24 @@
 
           return icon;
 
+        },
+
+        _setFavoriteIcon: function( favorite ){
+
+          var icon = 'icons:';
+
+          if( favorite ){
+
+            icon += 'favorite';
+
+          }
+          else{
+
+            icon += 'favorite-border';
+
+          }
+
+          return icon;
         }
 
       });
