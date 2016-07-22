@@ -1,0 +1,11 @@
+{
+  "type": "pluginsFS",
+  "data": [
+    {
+      "name": "pacs-pull",
+      "label": "Pacs Pull",
+      "color": "#3F51B5",
+      "icon": "icons:cloud-queue"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+
+
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+
+</head><body><dom-module id="chris-plugin">
+
+  <template>
+
+    <style>.plugin{}.toolbar{@apply (--layout-horizontal);@apply (--layout-center);@apply (--layout-wrap);padding:16px;font-size:24px;font-weight:400;color:#737373;}.title{margin-left:8px;}.spacer{@apply (--layout-flex);}paper-icon-button{}paper-icon-button.iron-selected{color:var(--accent-color);}iron-selector{border-bottom:1px solid var(--accent-color);color:var(--secondary-text-color);}.content{}paper-card{width:800px;}@media (max-width: 800px){paper-card{width:100%;}}paper-card{color:var(--primary-text-color);--paper-card-header-color:var(--secondary-text-color);--paper-card-background-color:var(--paper-grey-100);background:var(--paper-grey-100);}paper-card .header{border-bottom:1px solid rgba(0, 0, 0, 0.1);padding:8px 0;}</style>
+
+                <paper-card>
+
+                        <div class="toolbar">
+
+                        <template is="dom-repeat" items="{{plugin.data.workflow}}">
+                        
+            <a href="/detail/[[feedIndex]]/workflow/[[item.id]]">
+            <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
+            </a>&gt;
+
+          </template>
+
+        
+          <div class="title" title="">[[plugin.data.label]]
+          </div>
+
+          <div class="spacer"></div>
+
+          <iron-selector id="dataButton" attr-for-selected="name" selected="{{selected}}">
+            <paper-icon-button name="chris-dataviews-rows" icon="icons:view-headline"></paper-icon-button>
+            <paper-icon-button name="chris-dataviews-columns" icon="icons:view-week"></paper-icon-button>
+          </iron-selector>
+        </div>
+
+      <div class="card-content">
+
+
+    <paper-material elevation="1" id="plugin" class="plugin">
+      <div id$="[[plugin.id]]">
+
+
+
+
+        <div class="content">
+
+          <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
+
+            <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-rows>
+            <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-columns>
+
+          </iron-pages>
+
+        </div>
+
+      
+
+      </div>
+      
+
+  </paper-material></div></paper-card></template>
+
+  <script>Polymer({is:"chris-plugin",properties:{plugin:{type:Object,observer:"_pluginChanged"},selected:{type:String,value:"chris-dataviews-rows",observer:"_selectedChanged"},path:{type:Array,observer:"_pathChanged"},feedIndex:{type:String}},_pluginChanged:function(){console.log(this.plugin)},_pathChanged:function(){console.log(this.path)},_selectedChanged:function(){this.importHref(this.resolveUrl("../chris-dataviews/"+this.selected+"/"+this.selected+".html"),function(){this.fire("resize-content")},null,!0)},_setPluginStyle:function(e){return"color: "+e+";"}});</script>
+</dom-module>
+</body></html>

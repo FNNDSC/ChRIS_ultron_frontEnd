@@ -1,0 +1,56 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+
+
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+
+
+<link rel="import" href="../../chris-api/chris-api.html">
+<link rel="import" href="../chris-comment/chris-comment.html">
+
+</head><body><dom-module id="chris-comment-list">
+  <template>
+    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{}paper-card{width:800px;}@media (max-width: 800px){paper-card{width:100%;}}paper-card{color:var(--primary-text-color);--paper-card-header-color:var(--secondary-text-color);--paper-card-background-color:var(--paper-grey-100);background:var(--paper-grey-100);}</style>
+
+            <paper-card heading="Discussion">
+      <div class="card-content">
+
+    <chris-api id="ItemAPI" api="Item" ,="" content-type="application/json" response="{{response}}" on-response="handleItem" error="{{error}}" on-error="handleError">
+    </chris-api>
+
+    <div id="commentList" class="comment-list">
+
+      <div id="content" class="content">
+
+        
+
+
+        
+        <template is="dom-repeat" items="[[comments.data]]">
+
+          <chris-comment comment="[[item]]"></chris-comment>
+
+        </template>
+
+        
+
+        <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter="" maxlength="120">
+          <paper-icon-button suffix="" icon="icons:clear" on-tap="clear"></paper-icon-button>
+        </paper-input>
+
+      </div>
+
+    </div>
+    </div>
+    </paper-card>
+
+  </template>
+
+  <script>Polymer({is:"chris-comment-list",properties:{comments:{type:Object}},clear:function(){this.$.comment.value=""},save:function(e){if(13===e.keyCode&&(e.stopPropagation(),e.preventDefault(),""!==this.$.comment.value)){var t={weekday:"long",year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"},o={};o.data={author:"Nicolas Rannou",color:"blue",content:this.$.comment.value,index:this.comments.length+1,date:(new Date).toLocaleTimeString("en-us",t)},o.template=this.comments.template,o.href=this.comments.href,this.push("comments.data",o),this.clear(),this.$.ItemAPI.request("POST",this.comments.href,o)}},handleItem:function(e){if(e.preventDefault(),e.stopPropagation(),e.detail){var t=e.detail;t.error&&t.error.code&&(this.pop("comments.data"),this.fire("notification",t.error))}},handleError:function(){}});</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,100 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../../chris-ultron/chris-ultron.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="chris-plugin-list" assetpath="../../chris-components/chris-plugin-list/">
+  <template>
+    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;}.hidden{display:none;}#showAll{cursor:pointer;}</style>
+
+    <div id="pluginList" class="plugin-list">
+
+
+      <div class="content">
+
+        
+        <template is="dom-repeat" items="[[plugins.data]]">
+
+          <template is="dom-if" if="[[_computeShowAllButton(index)]]">
+
+            <paper-material elevation="1" id="showAll" on-tap="_showAll">
+              <paper-icon-button icon="icons:view-headline"></paper-icon-button>
+              Show full workflow ([[_hiddenPlugins(plugins.data.length)]])
+            </paper-material>
+
+          </template>
+
+          <chris-plugin plugin="[[item]]" class$="[[_computePluginVisible(index)]]" open$="[[_computePluginOpen(index)]]"></chris-plugin>
+
+        </template>
+
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"chris-plugin-list",properties:{plugins:{type:Array},open:{type:Boolean,value:!0,observer:"_openChanged"}},toggle:function(){this.open=!this.open},_openChanged:function(){this.open?this.$.pluginList.classList.add("open"):this.$.pluginList.classList.remove("open")},_setToogleIcon:function(n){return this.open?"icons:expand-less":"icons:expand-more"},_computePluginOpen:function(n){return this.plugins.data.length-1===n},_computePluginVisible:function(n){return this.plugins.data.length<=3||this.plugins.data.length-1===n||0===n?"":"hidden"},_computeShowAllButton:function(n){return this.plugins.data.length-1===n&&this.plugins.data.length>3},_showAll:function(){this.shadowRoot.querySelector("#showAll").classList.add("hidden");for(var n=this.shadowRoot.querySelectorAll("chris-plugin.hidden"),e=0;e<n.length;e++)n[e].classList.remove("hidden");this.fire("resize-content")},_hiddenPlugins:function(n){return n-2}});</script>
+</dom-module>
+</div><dom-module id="chris-feed-detail">
+
+  <template>
+
+    <style>:host{background-color:var(--dark-primary-color);--paper-input-container-focus-color:var(--accent-color);}app-header-layout{position:absolute;top:0;right:0;left:0;bottom:0;}app-toolbar{color:#ffffff;}.content{min-height:101vh;}a{color:#ffffff;}#card{position:relative;max-width:800px;margin:auto;margin-top:24px;margin-bottom:100px;background-color:var(--paper-grey-50);}.test{max-width:800px;margin:auto;}paper-fab{z-index:10;position:fixed;bottom:16px;right:16px;}paper-progress{display:block;background-color:rgba(255, 255, 255, 0.25);width:100%;--paper-progress-active-color:#ffffff;--paper-progress-container-color:transparent;--paper-progress-height:2px;}.loaded paper-progress{display:none;}paper-tabs{--paper-tabs-selection-bar-color:#ffffff;}paper-tab{--paper-tab-ink:#ffffff;}@media all and (max-width: 800px){#card{margin:0;}}</style>
+
+    <chris-api id="ItemAPI" api="Item" content-type="application/json" error="{{error}}">
+    </chris-api>
+
+    <app-header-layout id="feedDetails" has-scrolling-region="" style$="[[_setLayoutStyle(feed.data.color)]]">
+      <app-header id="yoyo" condenses="" reveals="" fixed="" effects="waterfall" style$="[[_setToolbarStyle(feed.data.color)]]" style="height: 128px">
+        <app-toolbar>
+          <div title="">[[feed.data.name]]</div>
+          <a class="back" href="/home" on-tap="_reset">
+            <paper-icon-button icon="icons:clear"></paper-icon-button>
+          </a>
+        </app-toolbar>
+
+        <app-toolbar class="test" primary="" style="height: 64px">
+        
+          <paper-tabs style="width: 100%" selected="{{selected}}">
+            <paper-tab>Workflow ([[feed.plugins.data.length]])</paper-tab>
+            <paper-tab>Note</paper-tab>
+            <paper-tab>Comments ([[feed.comments.data.length]])</paper-tab>
+            <paper-tab>Details</paper-tab>
+        </paper-tabs>
+
+
+        </app-toolbar>
+
+        <paper-progress indeterminate="" bottom-item=""></paper-progress>
+
+      </app-header>
+      <div class="content" on-notification="_showNotification">
+        <div id="card">
+
+        <iron-pages selected="{{selected}}">
+
+          <chris-plugin-list plugins="{{feed.plugins}}"></chris-plugin-list>
+
+          <chris-note note="{{feed.note}}" on-note="_saveFeed"></chris-note>
+
+          <chris-comment-list comments="{{feed.comments}}" on-comments="_saveFeed"></chris-comment-list>
+
+          <div>
+            <div>[[feed.data.date]]</div>
+            <div>[[feed.data.favorite]]</div>
+            <div>[[feed.data.id]]</div>
+            <div>[[feed.data.letter]]</div>
+            <div>etc.</div>
+          </div>
+
+        </iron-pages>
+
+        </div>
+
+        <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
+
+      </div>
+    </app-header-layout>
+
+  </template>
+
+
+  <script>Polymer({is:"chris-feed-detail",properties:{feed:{type:Object,observer:"_feedChanged"},selected:{type:Number,value:0,observer:"_selectedChanged"},response:{type:Array},error:{type:Array}},handleItem:function(e){if(e){console.log(e);var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("feed.comments",e);break;case"note":this.set("feed.note",e);break;case"plugins":console.log(e),this.set("feed.plugins",e)}e.error&&e.error.code&&this._showNotification({detail:e.error}),this.$.feedDetails.classList.contains("loaded")||this.$.feedDetails.classList.add("loaded")}},handleError:function(e){console.error(e)},_reset:function(){this.selected=0,this.$.feedDetails.classList.remove("loaded"),this.$.yoyo.scroll(0,0)},_selectedChanged:function(){this.$.yoyo.scroll(0,0)},_feedChanged:function(){console.log(this.feed);var e=this.$.ItemAPI.request("GET",this.feed.links.comments);e.then(this.handleItem.bind(this))["catch"](this.handleError.bind(this));var t=this.$.ItemAPI.request("GET",this.feed.links.note);t.then(this.handleItem.bind(this))["catch"](this.handleError.bind(this));var s=this.$.ItemAPI.request("GET",this.feed.links.plugins);s.then(this.handleItem.bind(this))["catch"](this.handleError.bind(this))},_setLayoutStyle:function(e){e=e.replace("#","");var t=parseInt(e.substring(0,2),16),s=parseInt(e.substring(2,4),16),i=parseInt(e.substring(4,6),16);return"background-color: rgba("+t+","+s+","+i+", 0.5);"},_setToolbarStyle:function(e){return"background-color: "+e+";"},_showNotification:function(e){this.$.notification.text=e.detail.message,this.$.notification.show()}});</script>
+</dom-module>
+</body></html>

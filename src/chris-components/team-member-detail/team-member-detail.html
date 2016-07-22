@@ -1,0 +1,120 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
+
+<link rel="import" href="../../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
+
+<link rel="import" href="./team-member-detail-styles.html">
+<link rel="import" href="./team-styles.html">
+
+</head><body><dom-module id="team-member-detail">
+  <template>
+    <style include="team-member-detail-styles"></style>
+    <style include="team-styles"></style>
+    <style>:host{display:block;@apply (--layout-horizontal);@apply (--layout-around-justified);@apply (--layout-wrap);margin-left:auto;margin-right:auto;}.done{background-color:var(--paper-light-green-500);}.running{background-color:var(--paper-light-blue-500);}.error{background-color:var(--paper-red-500);}.fab{margin:4px;}paper-swatch-picker{margin:0 10px;}#favorite[icon="icons:favorite"]{background-color:var(--accent-color);}#favorite[icon="icons:favorite-border"]{background-color:var(--disabled-text-color);}</style>
+
+    <paper-card>
+      <div class="center colored" style$="[[_setBackgroundColor(feed.data.color)]]">
+        <div class="border-wrap">
+          [[feed.data.letter]]
+        </div>
+        <div class="check">
+        <paper-fab class$="fab" id="favorite" icon$="[[_setFavoriteIcon(feed.data.favorite)]]"></paper-fab>
+        <paper-fab class$="fab [[feed.data.status]]" id="status" icon$="[[_setStatusIcon(feed.data.status)]]"></paper-fab>
+        </div>
+      </div>
+
+      <div class="card-content">
+
+        
+
+        
+        <div class="group">
+          <div class="item">
+            <div class="double-line-1">[[feed.data.name]]</div>
+            <div class="double-line-2">Name</div>
+          </div>
+          <div class="item">
+            <iron-icon icon="icons:assignment-ind"></iron-icon>
+            <div class="double-line-1">[[feed.data.date]]</div>
+            <div class="double-line-2">Last modified</div>
+          </div>
+          <div class="item">
+            <div class="double-line-1">[[feed.data.letter]]</div>
+            <div class="double-line-2">Letter</div>
+          </div>
+        </div>
+
+        
+
+      <div class="group">
+        <div class="item">
+          <iron-icon style="[[_setColor(feed.data.color)]]" icon="invert-colors"></iron-icon>
+          <div class="double-line-1"> Change <paper-swatch-picker color="{{feed.data.color}}"></paper-swatch-picker> </div>
+          <div class="double-line-2">Color</div>
+        </div>
+      </div>
+
+      
+      <div class="group">
+        <div class="item">
+          <iron-icon icon$="[[_setFavoriteIcon(feed.data.favorite)]]"></iron-icon>
+          <paper-toggle-button class="double-line-1" checked="{{feed.data.favorite}}"></paper-toggle-button>
+
+          <div class="double-line-2">Favorite</div>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="item">
+          <iron-icon icon="social:people"></iron-icon>
+          <div class="double-line-1">[[feed.data.tags]]</div>
+
+<paper-menu-button ignore-select="">
+  <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+  <paper-menu class="dropdown-content" multi="">
+    <paper-item>Share</paper-item>
+    <paper-item>Settings</paper-item>
+    <paper-item>Help</paper-item>
+  </paper-menu>
+</paper-menu-button>
+
+          <div class="double-line-2">Shared ([[feed.data.tags.length]])</div>
+        </div>
+      </div>
+
+      
+      <div class="group">
+        <div class="item">
+          <iron-icon icon="icons:label"></iron-icon>
+          <div class="double-line-1">[[feed.data.tags]]</div>
+
+                    <paper-dropdown-menu label="Dinosaurs">
+  <paper-listbox class="dropdown-content">
+    <paper-item>allosaurus</paper-item>
+    <paper-item>brontosaurus</paper-item>
+    <paper-item>carcharodontosaurus</paper-item>
+    <paper-item>diplodocus</paper-item>
+  </paper-listbox>
+</paper-dropdown-menu>
+
+          <div class="double-line-2">Labels ([[feed.data.tags.length]])</div>
+        </div>
+      </div>
+    
+
+  </div></paper-card></template>
+
+  <script>!function(){"use strict";Polymer({is:"team-member-detail",properties:{feed:{type:Object}},_setBackgroundColor:function(r){return"background-color: "+r+";"},_setColor:function(r){return"color: "+r+";"},_setStatusIcon:function(r){var e="icons:";return e+="running"===r?"schedule":"error"===r?"clear":"done"},_setFavoriteIcon:function(r){var e="icons:";return e+=r?"favorite":"favorite-border"}})}();</script>
+</dom-module></body></html>

@@ -1,0 +1,32 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../../../chris-ultron/chris-ultron.html"></head><body><dom-module id="chris-dataviews-rows">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">#rowsView{width:100%;overflow-x:scroll;}#rowsView paper-listbox{overflow-y:scroll;}iron-icon{margin-right:2px;}paper-item{--paper-item:{cursor:pointer;};}paper-item[type="folder"] iron-icon{--iron-icon-stroke-color:var(--primary-color);--iron-icon-fill-color:var(--paper-grey-100);}paper-item[type="folder"][up] iron-icon{--iron-icon-stroke-color:var(--paper-grey-500);--iron-icon-fill-color:var(--paper-grey-500);}paper-item[type="folder"][up]{color:var(--paper-grey-500);}paper-item[type="file"] iron-icon{--iron-icon-stroke-color:var(--accent-color);--iron-icon-fill-color:var(--paper-grey-100);}#rowsView paper-item{min-height:32px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;--paper-item-selected:{color:var(--primary-color);};}</style>
+
+    <div id="rowsView">
+
+      <paper-listbox depth="0" on-iron-select="_selectionChanged">
+
+        
+        <paper-item type="folder" up=""> <iron-icon icon="icons:arrow-back"></iron-icon></paper-item>
+
+        
+        <template is="dom-repeat" items="{{data.files}}" as="file">
+          <paper-item type="folder"> <iron-icon icon="icons:folder"></iron-icon> [[file.label]]</paper-item>
+        </template>
+
+        
+        <template is="dom-repeat" items="{{data.images}}" as="image">
+          <paper-item type="file"> <iron-icon icon="editor:insert-drive-file"></iron-icon> [[image.label]]</paper-item>
+        </template>
+
+      </paper-listbox>
+
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"chris-dataviews-rows",behaviors:[Dataviews],_pathChanged:function(){console.log("rows path changed"),console.log(this.path)},_selectionChanged:function(e){var t=parseInt(e.target.attributes.depth.nodeValue,10),i=e.target.selectedItem.attributes.type.nodeValue;if("file"!==i){var s=Polymer.dom(this.$.rowsView).querySelector("paper-listbox");0===s.selected?this.pop("path"):this.push("path",s.selected-1),this.set("path",this.path),this.fire("path-changed");for(var a=this.data.files,h=this.data.images,o="",l=0;l<this.path.length;l++)fileIndex=this.path[l],h=a[fileIndex].images,o=a[fileIndex].label,a=a[fileIndex].files;if(a||h){var r=this.fillListBox(t+1,a,h),d=this.createUpItem(o),p=Polymer.dom(r).firstChild;Polymer.dom(r).insertBefore(d,p),Polymer.dom(this.$.rowsView).removeChild(s),Polymer.dom(this.$.rowsView).appendChild(r)}this.$.rowsView.scrollTop=0}}});</script>
+</dom-module>
+</body></html>

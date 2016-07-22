@@ -1,0 +1,293 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../../chris-ultron/chris-ultron.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="iron-list" assetpath="../../../bower_components/iron-list/">
+  <template>
+    <style>:host{display:block;position:relative;}@media only screen and (-webkit-max-device-pixel-ratio: 1){:host{will-change:transform;}}#items{@apply (--iron-list-items-container);position:relative;}:host(:not([grid])) #items > ::content > *{width:100%;}#items > ::content > *{box-sizing:border-box;margin:0;position:absolute;top:0;will-change:transform;}</style>
+
+    <array-selector id="selector" items="{{items}}" selected="{{selectedItems}}" selected-item="{{selectedItem}}">
+    </array-selector>
+
+    <div id="items">
+      <content></content>
+    </div>
+
+  </template>
+</dom-module>
+
+<script>!function(){var t=navigator.userAgent.match(/iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/),i=t&&t[1]>=8,e=3,s="-10000px",h=200,l=-100;Polymer({is:"iron-list",properties:{items:{type:Array},maxPhysicalCount:{type:Number,value:500},as:{type:String,value:"item"},indexAs:{type:String,value:"index"},selectedAs:{type:String,value:"selected"},grid:{type:Boolean,value:!1,reflectToAttribute:!0},selectionEnabled:{type:Boolean,value:!1},selectedItem:{type:Object,notify:!0},selectedItems:{type:Object,notify:!0},multiSelection:{type:Boolean,value:!1}},observers:["_itemsChanged(items.*)","_selectionEnabledChanged(selectionEnabled)","_multiSelectionChanged(multiSelection)","_setOverflow(scrollTarget)"],behaviors:[Polymer.Templatizer,Polymer.IronResizableBehavior,Polymer.IronA11yKeysBehavior,Polymer.IronScrollTargetBehavior],keyBindings:{up:"_didMoveUp",down:"_didMoveDown",enter:"_didEnter"},_ratio:.5,_scrollerPaddingTop:0,_scrollPosition:0,_physicalSize:0,_physicalAverage:0,_physicalAverageCount:0,_physicalTop:0,_virtualCount:0,_physicalIndexForKey:null,_estScrollHeight:0,_scrollHeight:0,_viewportHeight:0,_viewportWidth:0,_physicalItems:null,_physicalSizes:null,_firstVisibleIndexVal:null,_lastVisibleIndexVal:null,_collection:null,_itemsRendered:!1,_lastPage:null,_maxPages:3,_focusedItem:null,_focusedIndex:-1,_offscreenFocusedItem:null,_focusBackfillItem:null,_itemsPerRow:1,_itemWidth:0,_rowHeight:0,get _physicalBottom(){return this._physicalTop+this._physicalSize},get _scrollBottom(){return this._scrollPosition+this._viewportHeight},get _virtualEnd(){return this._virtualStart+this._physicalCount-1},get _hiddenContentSize(){var t=this.grid?this._physicalRows*this._rowHeight:this._physicalSize;return t-this._viewportHeight},get _maxScrollTop(){return this._estScrollHeight-this._viewportHeight+this._scrollerPaddingTop},_minVirtualStart:0,get _maxVirtualStart(){return Math.max(0,this._virtualCount-this._physicalCount)},_virtualStartVal:0,set _virtualStart(t){this._virtualStartVal=Math.min(this._maxVirtualStart,Math.max(this._minVirtualStart,t))},get _virtualStart(){return this._virtualStartVal||0},_physicalStartVal:0,set _physicalStart(t){this._physicalStartVal=t%this._physicalCount,this._physicalStartVal<0&&(this._physicalStartVal=this._physicalCount+this._physicalStartVal),this._physicalEnd=(this._physicalStart+this._physicalCount-1)%this._physicalCount},get _physicalStart(){return this._physicalStartVal||0},_physicalCountVal:0,set _physicalCount(t){this._physicalCountVal=t,this._physicalEnd=(this._physicalStart+this._physicalCount-1)%this._physicalCount},get _physicalCount(){return this._physicalCountVal},_physicalEnd:0,get _optPhysicalSize(){return this.grid?this._estRowsInView*this._rowHeight*this._maxPages:this._viewportHeight*this._maxPages},get _optPhysicalCount(){return this._estRowsInView*this._itemsPerRow*this._maxPages},get _isVisible(){return this.scrollTarget&&Boolean(this.scrollTarget.offsetWidth||this.scrollTarget.offsetHeight)},get firstVisibleIndex(){if(null===this._firstVisibleIndexVal){var t=Math.floor(this._physicalTop+this._scrollerPaddingTop);this._firstVisibleIndexVal=this._iterateItems(function(i,e){return t+=this._getPhysicalSizeIncrement(i),t>this._scrollPosition?this.grid?e-e%this._itemsPerRow:e:this.grid&&this._virtualCount-1===e?e-e%this._itemsPerRow:void 0})||0}return this._firstVisibleIndexVal},get lastVisibleIndex(){if(null===this._lastVisibleIndexVal)if(this.grid){var t=this.firstVisibleIndex+this._estRowsInView*this._itemsPerRow-1;this._lastVisibleIndexVal=Math.min(this._virtualCount,t)}else{var i=this._physicalTop;this._iterateItems(function(t,e){return i<this._scrollBottom?(this._lastVisibleIndexVal=e,void(i+=this._getPhysicalSizeIncrement(t))):!0})}return this._lastVisibleIndexVal},get _defaultScrollTarget(){return this},get _virtualRowCount(){return Math.ceil(this._virtualCount/this._itemsPerRow)},get _estRowsInView(){return Math.ceil(this._viewportHeight/this._rowHeight)},get _physicalRows(){return Math.ceil(this._physicalCount/this._itemsPerRow)},ready:function(){this.addEventListener("focus",this._didFocus.bind(this),!0)},attached:function(){this.updateViewportBoundaries(),this._render(),this.listen(this,"iron-resize","_resizeHandler")},detached:function(){this._itemsRendered=!1,this.unlisten(this,"iron-resize","_resizeHandler")},_setOverflow:function(t){this.style.webkitOverflowScrolling=t===this?"touch":"",this.style.overflow=t===this?"auto":""},updateViewportBoundaries:function(){this._scrollerPaddingTop=this.scrollTarget===this?0:parseInt(window.getComputedStyle(this)["padding-top"],10),this._viewportHeight=this._scrollTargetHeight,this.grid&&this._updateGridMetrics()},_scrollHandler:function(){var t,i,e,s,h,l=Math.max(0,Math.min(this._maxScrollTop,this._scrollTop)),o=l-this._scrollPosition,a=this._ratio,n=0,r=this._hiddenContentSize,c=a,_=[];if(this._scrollPosition=l,this._firstVisibleIndexVal=null,this._lastVisibleIndexVal=null,s=this._scrollBottom,h=this._physicalBottom,Math.abs(o)>this._physicalSize)this._physicalTop+=o,n=Math.round(o/this._physicalAverage);else if(0>o){var u=l-this._physicalTop,d=this._virtualStart;for(e=[],i=this._physicalEnd,c=u/r;a>c&&n<this._physicalCount&&d-n>0&&h-this._getPhysicalSizeIncrement(i)>s;)t=this._getPhysicalSizeIncrement(i),c+=t/r,h-=t,e.push(i),n++,i=0===i?this._physicalCount-1:i-1;_=e,n=-n}else if(o>0){var m=h-s,p=this._virtualEnd,f=this._virtualCount-1;for(e=[],i=this._physicalStart,c=m/r;a>c&&n<this._physicalCount&&f>p+n&&this._physicalTop+this._getPhysicalSizeIncrement(i)<l;)t=this._getPhysicalSizeIncrement(i),c+=t/r,this._physicalTop+=t,e.push(i),n++,i=(i+1)%this._physicalCount}0===n?(s>h||this._physicalTop>l)&&this._increasePoolIfNeeded():(this._virtualStart=this._virtualStart+n,this._physicalStart=this._physicalStart+n,this._update(e,_))},_update:function(t,i){if(this._manageFocus(),this._assignModels(t),this._updateMetrics(t),i)for(;i.length;){var e=i.pop();this._physicalTop-=this._getPhysicalSizeIncrement(e)}this._positionItems(),this._updateScrollerSize(),this._increasePoolIfNeeded()},_createPool:function(t){var i=new Array(t);this._ensureTemplatized();for(var e=0;t>e;e++){var s=this.stamp(null);i[e]=s.root.querySelector("*"),Polymer.dom(this).appendChild(s.root)}return i},_increasePoolIfNeeded:function(){if(0===this._viewportHeight)return!1;var t=this._physicalBottom>=this._scrollBottom&&this._physicalTop<=this._scrollPosition;if(this._physicalSize>=this._optPhysicalSize&&t)return!1;var i=Math.floor(this._physicalSize/this._viewportHeight);return 0===i?this._debounceTemplate(this._increasePool.bind(this,Math.round(.5*this._physicalCount))):this._lastPage!==i&&t?Polymer.dom.addDebouncer(this.debounce("_debounceTemplate",this._increasePool.bind(this,this._itemsPerRow),16)):this._debounceTemplate(this._increasePool.bind(this,this._itemsPerRow)),this._lastPage=i,!0},_increasePool:function(t){var i=Math.min(this._physicalCount+t,this._virtualCount-this._virtualStart,Math.max(this.maxPhysicalCount,e)),s=this._physicalCount,h=i-s;0>=h||([].push.apply(this._physicalItems,this._createPool(h)),[].push.apply(this._physicalSizes,new Array(h)),this._physicalCount=s+h,this._physicalStart>this._physicalEnd&&this._isIndexRendered(this._focusedIndex)&&this._getPhysicalIndex(this._focusedIndex)<this._physicalEnd&&(this._physicalStart=this._physicalStart+h),this._update())},_render:function(){var t=this._virtualCount>0||this._physicalCount>0;this.isAttached&&!this._itemsRendered&&this._isVisible&&t&&(this._lastPage=0,this._update(),this._itemsRendered=!0)},_ensureTemplatized:function(){if(!this.ctor){var t={};t.__key__=!0,t[this.as]=!0,t[this.indexAs]=!0,t[this.selectedAs]=!0,t.tabIndex=!0,this._instanceProps=t,this._userTemplate=Polymer.dom(this).querySelector("template"),this._userTemplate?this.templatize(this._userTemplate):console.warn("iron-list requires a template to be provided in light-dom")}},_getStampedChildren:function(){return this._physicalItems},_forwardInstancePath:function(t,i,e){0===i.indexOf(this.as+".")&&this.notifyPath("items."+t.__key__+"."+i.slice(this.as.length+1),e)},_forwardParentProp:function(t,i){this._physicalItems&&this._physicalItems.forEach(function(e){e._templateInstance[t]=i},this)},_forwardParentPath:function(t,i){this._physicalItems&&this._physicalItems.forEach(function(e){e._templateInstance.notifyPath(t,i,!0)},this)},_forwardItemPath:function(t,i){if(this._physicalIndexForKey){var e=t.indexOf("."),s=t.substring(0,0>e?t.length:e),h=this._physicalIndexForKey[s],l=this._offscreenFocusedItem,o=l&&l._templateInstance.__key__===s?l:this._physicalItems[h];if(o&&o._templateInstance.__key__===s)if(e>=0)t=this.as+"."+t.substring(e+1),o._templateInstance.notifyPath(t,i,!0);else{var a=o._templateInstance[this.as];if(Array.isArray(this.selectedItems)){for(var n=0;n<this.selectedItems.length;n++)if(this.selectedItems[n]===a){this.set("selectedItems."+n,i);break}}else this.selectedItem===a&&this.set("selectedItem",i);o._templateInstance[this.as]=i}}},_itemsChanged:function(t){if("items"===t.path)this._virtualStart=0,this._physicalTop=0,this._virtualCount=this.items?this.items.length:0,this._collection=this.items?Polymer.Collection.get(this.items):null,this._physicalIndexForKey={},this._firstVisibleIndexVal=null,this._lastVisibleIndexVal=null,this._resetScrollPosition(0),this._removeFocusedItem(),this._physicalItems||(this._physicalCount=Math.max(1,Math.min(e,this._virtualCount)),this._physicalItems=this._createPool(this._physicalCount),this._physicalSizes=new Array(this._physicalCount)),this._physicalStart=0;else{if("items.splices"!==t.path)return void this._forwardItemPath(t.path.split(".").slice(1).join("."),t.value);this._adjustVirtualIndex(t.value.indexSplices),this._virtualCount=this.items?this.items.length:0}this._itemsRendered=!1,this._debounceTemplate(this._render)},_adjustVirtualIndex:function(t){t.forEach(function(t){if(t.removed.forEach(this._removeItem,this),t.index<this._virtualStart){var i=Math.max(t.addedCount-t.removed.length,t.index-this._virtualStart);this._virtualStart=this._virtualStart+i,this._focusedIndex>=0&&(this._focusedIndex=this._focusedIndex+i)}},this)},_removeItem:function(t){this.$.selector.deselect(t),this._focusedItem&&this._focusedItem._templateInstance[this.as]===t&&this._removeFocusedItem()},_iterateItems:function(t,i){var e,s,h,l;if(2===arguments.length&&i){for(l=0;l<i.length;l++)if(e=i[l],s=this._computeVidx(e),null!=(h=t.call(this,e,s)))return h}else{for(e=this._physicalStart,s=this._virtualStart;e<this._physicalCount;e++,s++)if(null!=(h=t.call(this,e,s)))return h;for(e=0;e<this._physicalStart;e++,s++)if(null!=(h=t.call(this,e,s)))return h}},_computeVidx:function(t){return t>=this._physicalStart?this._virtualStart+(t-this._physicalStart):this._virtualStart+(this._physicalCount-this._physicalStart)+t},_assignModels:function(t){this._iterateItems(function(t,i){var e=this._physicalItems[t],s=e._templateInstance,h=this.items&&this.items[i];null!=h?(s[this.as]=h,s.__key__=this._collection.getKey(h),s[this.selectedAs]=this.$.selector.isSelected(h),s[this.indexAs]=i,s.tabIndex=this._focusedIndex===i?0:-1,this._physicalIndexForKey[s.__key__]=t,e.removeAttribute("hidden")):(s.__key__=null,e.setAttribute("hidden",""))},t)},_updateMetrics:function(t){Polymer.dom.flush();var i=0,e=0,s=this._physicalAverageCount,h=this._physicalAverage;this._iterateItems(function(t,s){e+=this._physicalSizes[t]||0,this._physicalSizes[t]=this._physicalItems[t].offsetHeight,i+=this._physicalSizes[t],this._physicalAverageCount+=this._physicalSizes[t]?1:0},t),this._viewportHeight=this._scrollTargetHeight,this.grid?(this._updateGridMetrics(),this._physicalSize=Math.ceil(this._physicalCount/this._itemsPerRow)*this._rowHeight):this._physicalSize=this._physicalSize+i-e,this._physicalAverageCount!==s&&(this._physicalAverage=Math.round((h*s+i)/this._physicalAverageCount))},_updateGridMetrics:function(){this._viewportWidth=this.$.items.offsetWidth,this._itemWidth=this._physicalCount>0?this._physicalItems[0].getBoundingClientRect().width:h,this._rowHeight=this._physicalCount>0?this._physicalItems[0].offsetHeight:h,this._itemsPerRow=this._itemWidth?Math.floor(this._viewportWidth/this._itemWidth):this._itemsPerRow},_positionItems:function(){this._adjustScrollPosition();var t=this._physicalTop;if(this.grid){var i=this._itemsPerRow*this._itemWidth,e=(this._viewportWidth-i)/2;this._iterateItems(function(i,s){var h=s%this._itemsPerRow,l=Math.floor(h*this._itemWidth+e);this.translate3d(l+"px",t+"px",0,this._physicalItems[i]),this._shouldRenderNextRow(s)&&(t+=this._rowHeight)})}else this._iterateItems(function(i,e){this.translate3d(0,t+"px",0,this._physicalItems[i]),t+=this._physicalSizes[i]})},_getPhysicalSizeIncrement:function(t){return this.grid?this._computeVidx(t)%this._itemsPerRow!==this._itemsPerRow-1?0:this._rowHeight:this._physicalSizes[t]},_shouldRenderNextRow:function(t){return t%this._itemsPerRow===this._itemsPerRow-1},_adjustScrollPosition:function(){var t=0===this._virtualStart?this._physicalTop:Math.min(this._scrollPosition+this._physicalTop,0);t&&(this._physicalTop=this._physicalTop-t,i||0===this._physicalTop||this._resetScrollPosition(this._scrollTop-t))},_resetScrollPosition:function(t){this.scrollTarget&&(this._scrollTop=t,this._scrollPosition=this._scrollTop)},_updateScrollerSize:function(t){this.grid?this._estScrollHeight=this._virtualRowCount*this._rowHeight:this._estScrollHeight=this._physicalBottom+Math.max(this._virtualCount-this._physicalCount-this._virtualStart,0)*this._physicalAverage,t=t||0===this._scrollHeight,t=t||this._scrollPosition>=this._estScrollHeight-this._physicalSize,t=t||this.grid&&this.$.items.style.height<this._estScrollHeight,(t||Math.abs(this._estScrollHeight-this._scrollHeight)>=this._optPhysicalSize)&&(this.$.items.style.height=this._estScrollHeight+"px",this._scrollHeight=this._estScrollHeight)},scrollToItem:function(t){return this.scrollToIndex(this.items.indexOf(t))},scrollToIndex:function(t){if(!("number"!=typeof t||0>t||t>this.items.length-1)){Polymer.dom.flush(),t=Math.min(Math.max(t,0),this._virtualCount-1),(!this._isIndexRendered(t)||t>=this._maxVirtualStart)&&(this._virtualStart=this.grid?t-2*this._itemsPerRow:t-1),this._manageFocus(),this._assignModels(),this._updateMetrics();var i=Math.floor(this._virtualStart/this._itemsPerRow)*this._physicalAverage;this._physicalTop=i;for(var e=this._physicalStart,s=this._virtualStart,h=0,l=this._hiddenContentSize;t>s&&l>=h;)h+=this._getPhysicalSizeIncrement(e),e=(e+1)%this._physicalCount,s++;this._updateScrollerSize(!0),this._positionItems(),this._resetScrollPosition(this._physicalTop+this._scrollerPaddingTop+h),this._increasePoolIfNeeded(),this._firstVisibleIndexVal=null,this._lastVisibleIndexVal=null}},_resetAverage:function(){this._physicalAverage=0,this._physicalAverageCount=0},_resizeHandler:function(){t&&Math.abs(this._viewportHeight-this._scrollTargetHeight)<100||Polymer.dom.addDebouncer(this.debounce("_debounceTemplate",function(){this.updateViewportBoundaries(),this._render(),this._itemsRendered&&this._physicalItems&&this._isVisible&&(this._resetAverage(),this.scrollToIndex(this.firstVisibleIndex))}.bind(this),1))},_getModelFromItem:function(t){var i=this._collection.getKey(t),e=this._physicalIndexForKey[i];return null!=e?this._physicalItems[e]._templateInstance:null},_getNormalizedItem:function(t){if(void 0===this._collection.getKey(t)){if("number"==typeof t){if(t=this.items[t],!t)throw new RangeError("<item> not found");return t}throw new TypeError("<item> should be a valid item")}return t},selectItem:function(t){t=this._getNormalizedItem(t);var i=this._getModelFromItem(t);!this.multiSelection&&this.selectedItem&&this.deselectItem(this.selectedItem),i&&(i[this.selectedAs]=!0),this.$.selector.select(t),this.updateSizeForItem(t)},deselectItem:function(t){t=this._getNormalizedItem(t);var i=this._getModelFromItem(t);i&&(i[this.selectedAs]=!1),this.$.selector.deselect(t),this.updateSizeForItem(t)},toggleSelectionForItem:function(t){t=this._getNormalizedItem(t),this.$.selector.isSelected(t)?this.deselectItem(t):this.selectItem(t)},clearSelection:function(){function t(t){var i=this._getModelFromItem(t);i&&(i[this.selectedAs]=!1)}Array.isArray(this.selectedItems)?this.selectedItems.forEach(t,this):this.selectedItem&&t.call(this,this.selectedItem),this.$.selector.clearSelection()},_selectionEnabledChanged:function(t){var i=t?this.listen:this.unlisten;i.call(this,this,"tap","_selectionHandler")},_selectionHandler:function(t){var i=this.modelForElement(t.target);if(i){var e,s,h=Polymer.dom(t).path[0],o=Polymer.dom(this.domHost?this.domHost.root:document).activeElement,a=this._physicalItems[this._getPhysicalIndex(i[this.indexAs])];"input"!==h.localName&&"button"!==h.localName&&"select"!==h.localName&&(e=i.tabIndex,i.tabIndex=l,s=o?o.tabIndex:-1,i.tabIndex=e,o&&a.contains(o)&&s!==l||this.toggleSelectionForItem(i[this.as]))}},_multiSelectionChanged:function(t){this.clearSelection(),this.$.selector.multi=t},updateSizeForItem:function(t){t=this._getNormalizedItem(t);var i=this._collection.getKey(t),e=this._physicalIndexForKey[i];null!=e&&(this._updateMetrics([e]),this._positionItems())},_manageFocus:function(){var t=this._focusedIndex;t>=0&&t<this._virtualCount?this._isIndexRendered(t)?this._restoreFocusedItem():this._createFocusBackfillItem():this._virtualCount>0&&this._physicalCount>0&&(this._focusedIndex=this._virtualStart,this._focusedItem=this._physicalItems[this._physicalStart])},_isIndexRendered:function(t){return t>=this._virtualStart&&t<=this._virtualEnd},_isIndexVisible:function(t){return t>=this.firstVisibleIndex&&t<=this.lastVisibleIndex},_getPhysicalIndex:function(t){return this._physicalIndexForKey[this._collection.getKey(this._getNormalizedItem(t))]},_focusPhysicalItem:function(t){if(!(0>t||t>=this._virtualCount)){this._restoreFocusedItem(),this._isIndexRendered(t)||this.scrollToIndex(t);var i,e=this._physicalItems[this._getPhysicalIndex(t)],s=e._templateInstance;s.tabIndex=l,e.tabIndex===l&&(i=e),i||(i=Polymer.dom(e).querySelector('[tabindex="'+l+'"]')),s.tabIndex=0,this._focusedIndex=t,i&&i.focus()}},_removeFocusedItem:function(){this._offscreenFocusedItem&&Polymer.dom(this).removeChild(this._offscreenFocusedItem),this._offscreenFocusedItem=null,this._focusBackfillItem=null,this._focusedItem=null,this._focusedIndex=-1},_createFocusBackfillItem:function(){var t,i=this._focusedIndex;if(!(this._offscreenFocusedItem||0>i)){if(!this._focusBackfillItem){var e=this.stamp(null);this._focusBackfillItem=e.root.querySelector("*"),Polymer.dom(this).appendChild(e.root)}t=this._getPhysicalIndex(i),null!=t&&(this._offscreenFocusedItem=this._physicalItems[t],this._physicalItems[t]=this._focusBackfillItem,this.translate3d(0,s,0,this._offscreenFocusedItem))}},_restoreFocusedItem:function(){var t,i=this._focusedIndex;!this._offscreenFocusedItem||this._focusedIndex<0||(this._assignModels(),t=this._getPhysicalIndex(i),null!=t&&(this._focusBackfillItem=this._physicalItems[t],this._physicalItems[t]=this._offscreenFocusedItem,this._offscreenFocusedItem=null,this.translate3d(0,s,0,this._focusBackfillItem)))},_didFocus:function(t){var i=this.modelForElement(t.target),e=this._focusedItem?this._focusedItem._templateInstance:null,s=null!==this._offscreenFocusedItem,h=this._focusedIndex;i&&e&&(e===i?this._isIndexVisible(h)||this.scrollToIndex(h):(this._restoreFocusedItem(),e.tabIndex=-1,i.tabIndex=0,h=i[this.indexAs],this._focusedIndex=h,this._focusedItem=this._physicalItems[this._getPhysicalIndex(h)],s&&!this._offscreenFocusedItem&&this._update()))},_didMoveUp:function(){this._focusPhysicalItem(this._focusedIndex-1)},_didMoveDown:function(t){t.detail.keyboardEvent.preventDefault(),this._focusPhysicalItem(this._focusedIndex+1)},_didEnter:function(t){this._focusPhysicalItem(this._focusedIndex),this._selectionHandler(t.detail.keyboardEvent)}})}();</script>
+<dom-module id="chris-feed" assetpath="../../chris-components/chris-feed/">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment"><style>
+
+      :host{display:block;}.feed{@apply (--layout-flex);@apply (--layout-vertical);padding:20px;background-color:white;margin-bottom:10px;}.feed:hover{@apply (--shadow-elevation-8dp);}.feed.checked{background-color:var(--paper-grey-200);border-left:4px solid var(--accent-color);}.toolbar{min-height:64px;@apply (--layout-horizontal);@apply (--layout-wrap);}.check-area{height:48px;width:48px;border-radius:24px;box-sizing:border-box;@apply (--layout-vertical);@apply (--layout-center);@apply (--layout-center-justified);}.check-area .invalid{color:var(--paper-red-500);border-color:var(--paper-red-500)!important;background-color:#ffffff;border-radius:26px;cursor:pointer;padding:0;width:52px;height:52px;}.check-area:hover .invalid{background-color:var(--paper-red-500);color:#ffffff;}.check-area:hover, .checked .check-area{background-color:var(--accent-color);border-color:var(--accent-color)!important;}.letter{font-size:24px;}.check-area:hover .letter, .checked .letter{display:none;}.checkbox{display:none;--paper-checkbox-checked-color:var(--accent-color);--paper-checkbox-checked-ink-color:var(--accent-color);--paper-checkbox-unchecked-color:#ffffff;--paper-checkbox-unchecked-ink-color:var(--dark-accent-color);--paper-checkbox-size:24px;--paper-checkbox-label-spacing:0px;}.check-area:hover .checkbox, .checked .checkbox{display:block;}.title-area{padding:0 16px;@apply (--layout-flex);@apply (--layout-vertical);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.date, .tags{font-size:14px;color:var(--secondary-text-color);}#favorite[icon="icons:favorite"]{color:var(--accent-color);}.done{color:var(--paper-light-green-500);}.running{color:var(--paper-light-blue-500);}.error{color:var(--paper-red-500);}.action:hover{color:var(--accent-color);}.content{margin-top:8px;min-height:64px;display:none;}.feed.open .content{display:block;}@media all and (max-width: 800px){.toolbar{@apply (--layout-justified);}.title-area{flex:1 100%;padding:16px 0 0;}.check-area{order:1;}.actions-area{order:2;}.title-area{order:3;}}</style>
+
+    <chris-api id="FeedAPI" api="Item" ,="" content-type="application/json" on-response="handleFeedDetails" error="{{error}}" on-error="handleError">
+    </chris-api>
+
+    <paper-material id="feed" class="feed" elevation="1">
+
+      
+      <div class="toolbar">
+
+        
+        <div class="check-area" style$="[[_setStyle(feed.data.color)]]" on-tap="_blockEvents">
+
+          <template is="dom-if" if="{{!valid}}">
+
+            <paper-icon-button id="invalid" class="invalid" icon="icons:bug-report" disabled=""></paper-icon-button>
+
+          </template>
+
+          <template is="dom-if" if="{{valid}}">
+
+              <span class="letter">[[feed.data.letter]]</span>
+              <paper-checkbox class="checkbox" checked="{{checked}}"></paper-checkbox>
+
+          </template>
+
+        </div>
+
+        
+        <div class="title-area">
+
+          <div class="name">Feed [[feed.data.id]] - [[feed.data.name]]</div>
+          <div class="date">[[feed.data.date]]</div>
+          <div class="tags">
+
+            <template is="dom-repeat" items="[[_validateTags(feed.data.tags)]]">
+
+              <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
+
+            </template>
+
+          </div>
+
+        </div>
+
+        
+        <div class="actions-area" on-tap="_blockEvents">
+
+          <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
+          <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
+          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.data.favorite)]]" on-tap="favorite"></paper-icon-button>
+          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.data.status)]]" class$="[[feed.data.status]]" disabled=""></paper-icon-button>
+
+          <paper-tooltip for="share" offset="0">Share</paper-tooltip>
+          <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
+          <paper-tooltip for="favorite" offset="0">Favorite</paper-tooltip>
+
+        </div>
+
+      </div>
+
+    </paper-material>
+
+  </template>
+
+  <script>Polymer({is:"chris-feed",properties:{feed:{type:Object,observer:"_validateFeed"},checked:{type:Boolean,value:!1,observer:"_checkedChanged"},open:{type:Boolean,value:!1},index:{type:Number},valid:{type:Boolean},error:{type:Array}},_setStyle:function(e){return"border: 4px solid "+e+";"},_setStatusIcon:function(e){var t="icons:";return t+="running"===e?"schedule":"error"===e?"clear":"done"},_checkedChanged:function(){this.checked?this.$.feed.classList.add("checked"):this.$.feed.classList.remove("checked")},share:function(e){e.preventDefault(),e.stopPropagation(),this.valid&&console.log("share feed")},tag:function(e){e.preventDefault(),e.stopPropagation(),!this.valid},_setTagStyle:function(e){return"color: "+e+";"},favorite:function(e){if(e.preventDefault(),e.stopPropagation(),this.valid){var t=[{name:"favorite",value:this.feed.data.favorite}];this.set("feed.data.favorite",!this.feed.data.favorite),this._saveFeed(t)}},_setFavoriteIcon:function(e){return e?"icons:favorite":"icons:favorite-border"},handleFeedDetails:function(e){if(e.preventDefault(),e.stopPropagation(),e.detail){var t=e.detail;if(t.error&&t.error.code){for(var a=0;a<t.cache.length;a++)this.set("feed.data."+t.cache[a].name,t.cache[a].value);this.fire("notification",t.error)}}},_saveFeed:function(e){var t=this.feed.data;t.template=this.feed.template,t.href=this.feed.href,t.cache=e;this.$.FeedAPI.request("PUT",this.feed.href,t)},handleError:function(e){this.$.FeedDetailsAPI.url="",e.preventDefault(),e.stopPropagation(),console.log(this.error)},_validateFeed:function(){if(this.feed&&this.feed.data){var e=[];if("string"!=typeof this.feed.data.id&&e.push("id:String"),"string"!=typeof this.feed.data.name&&e.push("name:String"),"string"!=typeof this.feed.data.letter&&e.push("letter:String"),"string"!=typeof this.feed.data.color&&e.push("color:String"),"string"!=typeof this.feed.data.date&&e.push("date:String"),"string"!=typeof this.feed.data.status&&e.push("status:String"),"boolean"!=typeof this.feed.data.favorite&&e.push("favorite:Boolean"),this.feed.data.tags&&this.feed.data.tags.constructor===Array||e.push("tags:Array"),e.length>0)return console.log(e),this.error=e,this.fire("error-changed"),this.valid=!1,this.fire("valid-changed"),void this.fire("error");this.valid=!0,this.fire("valid-changed")}},_validateTags:function(e){return e&&e.constructor===Array?e:[]},_blockEvents:function(e){e.preventDefault(),e.stopPropagation()}});</script>
+</dom-module>
+<dom-module id="chris-feed-list" assetpath="../../chris-components/chris-feed-list/">
+
+  <template>
+
+    <style>:host{display:block;}iron-list{padding-top:16px;padding-bottom:64px;--iron-list-items-container:{max-width:800px;margin:auto;margin-top:30px;margin-bottom:60px;border-bottom:1px solid var(--accent-color);};}a{color:inherit;}</style>
+
+    <iron-list id="feeds" items="[[feeds.data]]" as="feed" selection-enabled="" on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
+
+      <template>
+
+        <a href="/detail/{{index}}/">
+
+          <chris-feed index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed>
+
+        </a>
+
+
+      </template>
+      
+    </iron-list>
+
+
+  </template>
+
+  <script>Polymer({is:"chris-feed-list",properties:{feeds:{type:Array},feedOpened:{type:Object},scrollTarget:HTMLElement},resizeFeed:function(e){this.$.feeds.updateSizeForItem(e.detail.index)},_showDetails:function(e){this.set("feedOpened",e.model.__data__.feed),this.fire("feed-opened-changed",e.model.__data__.feed)}});</script>
+</dom-module>
+<dom-module id="chris-label-list" assetpath="../../chris-components/chris-label-list/">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment"><style>
+
+      :host{display:flex;position:absolute;}.separator{font-size:14px;font-weight:500;color:var(--primary-text-color);padding:16px 16px 0;border-top:1px solid rgb(224, 224, 224);}.favorite{color:var(--accent-color);}.done{color:var(--paper-light-green-500);}.running{color:var(--paper-light-blue-500);}.error{color:var(--paper-red-500);}</style>
+
+    
+    <div class="separator">Categories</div>
+
+    <paper-menu id="labels" class="layout vertical" attr-for-selected="value" on-iron-select="handleSelect" on-iron-deselect="updateFilter" multi="">
+
+      <paper-icon-item value="all" role="menuitem">
+        <iron-icon icon="icons:view-headline" item-icon=""></iron-icon>All
+      </paper-icon-item>
+      <paper-icon-item value="favorite" role="menuitem">
+        <iron-icon class="favorite" icon="icons:favorite" item-icon=""></iron-icon>Favorite
+      </paper-icon-item>
+      <paper-icon-item value="running" role="menuitem">
+        <iron-icon class="running" icon="icons:schedule" item-icon=""></iron-icon>Running
+      </paper-icon-item>
+      <paper-icon-item value="done" role="menuitem">
+        <iron-icon class="done" icon="icons:done" item-icon=""></iron-icon>Done
+      </paper-icon-item>
+      <paper-icon-item value="error" role="menuitem">
+        <iron-icon class="error" icon="icons:clear" item-icon=""></iron-icon>Error
+      </paper-icon-item>
+
+
+    </paper-menu>
+
+
+    
+    
+    
+    <div class="separator">Labels</div>
+
+
+
+    <paper-menu id="customLabels" class="layout vertical" attr-for-selected="value" multi="" on-iron-select="updateCustomFilter" on-iron-deselect="updateCustomFilter">
+
+      <template is="dom-repeat" items="{{customLabels.data}}">
+
+        <paper-icon-item id="{{item.data.title}}" value$="{{item.data.title}}" role="menuitem">
+          <iron-icon icon="label" item-icon="" style$="{{_setStyle(item.data.color)}}" invert=""></iron-icon><span>{{item.data.title}}</span>
+        </paper-icon-item>
+
+      </template>
+
+    </paper-menu>
+
+
+  </template>
+
+  <script>Polymer({is:"chris-label-list",properties:{customLabels:{type:Array},filter:{type:Array,value:[]},customFilter:{type:Array,value:[]}},handleSelect:function(e){var l=e.detail.item.getAttribute("value"),t=this.$.labels.selectedValues;if("all"===l||0===this.$.labels.selectedValues.length)this.$.labels.selectedValues=["all"];else{var s=t.indexOf("all");s>-1&&t.splice(s,1),this.$.labels.selectedValues=t.slice(0)}this.updateFilter()},updateFilter:function(){0===this.$.labels.selectedValues.length&&(this.$.labels.selectedValues=["all"]),this.filter=this.$.labels.selectedValues,this.fire("filter-changed")},updateCustomFilter:function(){this.customFilter=this.$.customLabels.selectedValues,this.fire("custom-filter-changed")},_setStyle:function(e){return"color: "+e}});</script>
+</dom-module>
+<script>console.warn("This file is deprecated. Please use `iron-flex-layout/iron-flex-layout-classes.html`, and one of the specific dom-modules instead");</script>
+
+<style>html /deep/ .layout.horizontal,
+  html /deep/ .layout.horizontal-reverse,
+  html /deep/ .layout.vertical,
+  html /deep/ .layout.vertical-reverse{display:-ms-flexbox;display:-webkit-flex;display:flex;}html /deep/ .layout.inline{display:-ms-inline-flexbox;display:-webkit-inline-flex;display:inline-flex;}html /deep/ .layout.horizontal{-ms-flex-direction:row;-webkit-flex-direction:row;flex-direction:row;}html /deep/ .layout.horizontal-reverse{-ms-flex-direction:row-reverse;-webkit-flex-direction:row-reverse;flex-direction:row-reverse;}html /deep/ .layout.vertical{-ms-flex-direction:column;-webkit-flex-direction:column;flex-direction:column;}html /deep/ .layout.vertical-reverse{-ms-flex-direction:column-reverse;-webkit-flex-direction:column-reverse;flex-direction:column-reverse;}html /deep/ .layout.wrap{-ms-flex-wrap:wrap;-webkit-flex-wrap:wrap;flex-wrap:wrap;}html /deep/ .layout.wrap-reverse{-ms-flex-wrap:wrap-reverse;-webkit-flex-wrap:wrap-reverse;flex-wrap:wrap-reverse;}html /deep/ .flex-auto{-ms-flex:1 1 auto;-webkit-flex:1 1 auto;flex:1 1 auto;}html /deep/ .flex-none{-ms-flex:none;-webkit-flex:none;flex:none;}html /deep/ .flex,
+  html /deep/ .flex-1{-ms-flex:1;-webkit-flex:1;flex:1;}html /deep/ .flex-2{-ms-flex:2;-webkit-flex:2;flex:2;}html /deep/ .flex-3{-ms-flex:3;-webkit-flex:3;flex:3;}html /deep/ .flex-4{-ms-flex:4;-webkit-flex:4;flex:4;}html /deep/ .flex-5{-ms-flex:5;-webkit-flex:5;flex:5;}html /deep/ .flex-6{-ms-flex:6;-webkit-flex:6;flex:6;}html /deep/ .flex-7{-ms-flex:7;-webkit-flex:7;flex:7;}html /deep/ .flex-8{-ms-flex:8;-webkit-flex:8;flex:8;}html /deep/ .flex-9{-ms-flex:9;-webkit-flex:9;flex:9;}html /deep/ .flex-10{-ms-flex:10;-webkit-flex:10;flex:10;}html /deep/ .flex-11{-ms-flex:11;-webkit-flex:11;flex:11;}html /deep/ .flex-12{-ms-flex:12;-webkit-flex:12;flex:12;}html /deep/ .layout.start{-ms-flex-align:start;-webkit-align-items:flex-start;align-items:flex-start;}html /deep/ .layout.center,
+  html /deep/ .layout.center-center{-ms-flex-align:center;-webkit-align-items:center;align-items:center;}html /deep/ .layout.end{-ms-flex-align:end;-webkit-align-items:flex-end;align-items:flex-end;}html /deep/ .layout.start-justified{-ms-flex-pack:start;-webkit-justify-content:flex-start;justify-content:flex-start;}html /deep/ .layout.center-justified,
+  html /deep/ .layout.center-center{-ms-flex-pack:center;-webkit-justify-content:center;justify-content:center;}html /deep/ .layout.end-justified{-ms-flex-pack:end;-webkit-justify-content:flex-end;justify-content:flex-end;}html /deep/ .layout.around-justified{-ms-flex-pack:around;-webkit-justify-content:space-around;justify-content:space-around;}html /deep/ .layout.justified{-ms-flex-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;}html /deep/ .self-start{-ms-align-self:flex-start;-webkit-align-self:flex-start;align-self:flex-start;}html /deep/ .self-center{-ms-align-self:center;-webkit-align-self:center;align-self:center;}html /deep/ .self-end{-ms-align-self:flex-end;-webkit-align-self:flex-end;align-self:flex-end;}html /deep/ .self-stretch{-ms-align-self:stretch;-webkit-align-self:stretch;align-self:stretch;}html /deep/ .block{display:block;}html /deep/ [hidden]{display:none !important;}html /deep/ .invisible{visibility:hidden !important;}html /deep/ .relative{position:relative;}html /deep/ .fit{position:absolute;top:0;right:0;bottom:0;left:0;}body.fullbleed{margin:0;height:100vh;}html /deep/ .scroll{-webkit-overflow-scrolling:touch;overflow:auto;}.fixed-bottom,
+  .fixed-left,
+  .fixed-right,
+  .fixed-top{position:fixed;}html /deep/ .fixed-top{top:0;left:0;right:0;}html /deep/ .fixed-right{top:0;right:0;bottom:0;}html /deep/ .fixed-bottom{right:0;bottom:0;left:0;}html /deep/ .fixed-left{top:0;bottom:0;left:0;}</style>
+<script>console.warn("This file is deprecated. Please use `iron-flex-layout/iron-flex-layout-classes.html`, and one of the specific dom-modules instead");</script>
+
+<style>.layout.horizontal,
+  .layout.horizontal-reverse,
+  .layout.vertical,
+  .layout.vertical-reverse{display:-ms-flexbox;display:-webkit-flex;display:flex;}.layout.inline{display:-ms-inline-flexbox;display:-webkit-inline-flex;display:inline-flex;}.layout.horizontal{-ms-flex-direction:row;-webkit-flex-direction:row;flex-direction:row;}.layout.horizontal-reverse{-ms-flex-direction:row-reverse;-webkit-flex-direction:row-reverse;flex-direction:row-reverse;}.layout.vertical{-ms-flex-direction:column;-webkit-flex-direction:column;flex-direction:column;}.layout.vertical-reverse{-ms-flex-direction:column-reverse;-webkit-flex-direction:column-reverse;flex-direction:column-reverse;}.layout.wrap{-ms-flex-wrap:wrap;-webkit-flex-wrap:wrap;flex-wrap:wrap;}.layout.wrap-reverse{-ms-flex-wrap:wrap-reverse;-webkit-flex-wrap:wrap-reverse;flex-wrap:wrap-reverse;}.flex-auto{-ms-flex:1 1 auto;-webkit-flex:1 1 auto;flex:1 1 auto;}.flex-none{-ms-flex:none;-webkit-flex:none;flex:none;}.flex,
+  .flex-1{-ms-flex:1;-webkit-flex:1;flex:1;}.flex-2{-ms-flex:2;-webkit-flex:2;flex:2;}.flex-3{-ms-flex:3;-webkit-flex:3;flex:3;}.flex-4{-ms-flex:4;-webkit-flex:4;flex:4;}.flex-5{-ms-flex:5;-webkit-flex:5;flex:5;}.flex-6{-ms-flex:6;-webkit-flex:6;flex:6;}.flex-7{-ms-flex:7;-webkit-flex:7;flex:7;}.flex-8{-ms-flex:8;-webkit-flex:8;flex:8;}.flex-9{-ms-flex:9;-webkit-flex:9;flex:9;}.flex-10{-ms-flex:10;-webkit-flex:10;flex:10;}.flex-11{-ms-flex:11;-webkit-flex:11;flex:11;}.flex-12{-ms-flex:12;-webkit-flex:12;flex:12;}.layout.start{-ms-flex-align:start;-webkit-align-items:flex-start;align-items:flex-start;}.layout.center,
+  .layout.center-center{-ms-flex-align:center;-webkit-align-items:center;align-items:center;}.layout.end{-ms-flex-align:end;-webkit-align-items:flex-end;align-items:flex-end;}.layout.start-justified{-ms-flex-pack:start;-webkit-justify-content:flex-start;justify-content:flex-start;}.layout.center-justified,
+  .layout.center-center{-ms-flex-pack:center;-webkit-justify-content:center;justify-content:center;}.layout.end-justified{-ms-flex-pack:end;-webkit-justify-content:flex-end;justify-content:flex-end;}.layout.around-justified{-ms-flex-pack:around;-webkit-justify-content:space-around;justify-content:space-around;}.layout.justified{-ms-flex-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;}.self-start{-ms-align-self:flex-start;-webkit-align-self:flex-start;align-self:flex-start;}.self-center{-ms-align-self:center;-webkit-align-self:center;align-self:center;}.self-end{-ms-align-self:flex-end;-webkit-align-self:flex-end;align-self:flex-end;}.self-stretch{-ms-align-self:stretch;-webkit-align-self:stretch;align-self:stretch;}.block{display:block;}[hidden]{display:none !important;}.invisible{visibility:hidden !important;}.relative{position:relative;}.fit{position:absolute;top:0;right:0;bottom:0;left:0;}body.fullbleed{margin:0;height:100vh;}.scroll{-webkit-overflow-scrolling:touch;overflow:auto;}.fixed-bottom,
+  .fixed-left,
+  .fixed-right,
+  .fixed-top{position:fixed;}.fixed-top{top:0;left:0;right:0;}.fixed-right{top:0;right:0;bottom:0;}.fixed-bottom{right:0;bottom:0;left:0;}.fixed-left{top:0;bottom:0;left:0;}</style>
+<script>Polymer({is:"cascaded-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(i){this._animations=[];var n=i.nodes,e=[],o=i.nodeDelay||50;i.timing=i.timing||{},i.timing.delay=i.timing.delay||0;for(var t,a,m=i.timing.delay,r=0;a=n[r];r++){i.timing.delay+=o,i.node=a;var s=document.createElement(i.animation);if(!s.isNeonAnimation){console.warn(this.is+":",i.animation,"not found!"),t=!0;break}var c=s.configure(i);this._animations.push(s),e.push(c)}return i.timing.delay=m,i.node=null,t?void 0:(this._effect=new GroupEffect(e),this._effect)},complete:function(){for(var i,n=0;i=this._animations[n];n++)i.complete(i.config)}});</script>
+<script>Polymer.NeonSharedElementAnimationBehaviorImpl={properties:{sharedElements:{type:Object}},findSharedElements:function(e){var n=e.fromPage,r=e.toPage;if(!n||!r)return console.warn(this.is+":",n?"toPage":"fromPage","is undefined!"),null;if(!n.sharedElements||!r.sharedElements)return console.warn(this.is+":","sharedElements are undefined for",n.sharedElements?r:n),null;var t=n.sharedElements[e.id],i=r.sharedElements[e.id];return t&&i?(this.sharedElements={from:t,to:i},this.sharedElements):(console.warn(this.is+":","sharedElement with id",e.id,"not found in",t?r:n),null)}},Polymer.NeonSharedElementAnimationBehavior=[Polymer.NeonAnimationBehavior,Polymer.NeonSharedElementAnimationBehaviorImpl];</script>
+<script>Polymer({is:"hero-animation",behaviors:[Polymer.NeonSharedElementAnimationBehavior],configure:function(e){var t=this.findSharedElements(e);if(t){var i=t.from.getBoundingClientRect(),n=t.to.getBoundingClientRect(),o=i.left-n.left,r=i.top-n.top,f=i.width/n.width,s=i.height/n.height;return this._effect=new KeyframeEffect(t.to,[{transform:"translate("+o+"px,"+r+"px) scale("+f+","+s+")"},{transform:"none"}],this.timingFromConfig(e)),this.setPrefixedProperty(t.to,"transformOrigin","0 0"),t.to.style.zIndex=1e4,t.from.style.visibility="hidden",this._effect}},complete:function(e){var t=this.findSharedElements(e);return t?(t.to.style.zIndex="",void(t.from.style.visibility="")):null}});</script>
+<script>Polymer({is:"ripple-animation",behaviors:[Polymer.NeonSharedElementAnimationBehavior],configure:function(t){var e=this.findSharedElements(t);if(!e)return null;var i,r,s=e.to.getBoundingClientRect();if(t.gesture)i=t.gesture.x-(s.left+s.width/2),r=t.gesture.y-(s.top+s.height/2);else{var h=e.from.getBoundingClientRect();i=h.left+h.width/2-(s.left+s.width/2),r=h.top+h.height/2-(s.top+s.height/2)}var n="translate("+i+"px,"+r+"px)",o=Math.max(s.width+2*Math.abs(i),s.height+2*Math.abs(r)),a=Math.sqrt(2*o*o),f=a/s.width,l=a/s.height,d="scale("+f+","+l+")";return this._effect=new KeyframeEffect(e.to,[{transform:n+" scale(0)"},{transform:n+" "+d}],this.timingFromConfig(t)),this.setPrefixedProperty(e.to,"transformOrigin","50% 50%"),e.to.style.borderRadius="50%",this._effect},complete:function(){this.sharedElements&&(this.setPrefixedProperty(this.sharedElements.to,"transformOrigin",""),this.sharedElements.to.style.borderRadius="")}});</script>
+<script>Polymer({is:"reverse-ripple-animation",behaviors:[Polymer.NeonSharedElementAnimationBehavior],configure:function(e){var t=this.findSharedElements(e);if(!t)return null;var r,i,s=t.from.getBoundingClientRect();if(e.gesture)r=e.gesture.x-(s.left+s.width/2),i=e.gesture.y-(s.top+s.height/2);else{var h=t.to.getBoundingClientRect();r=h.left+h.width/2-(s.left+s.width/2),i=h.top+h.height/2-(s.top+s.height/2)}var n="translate("+r+"px,"+i+"px)",o=Math.max(s.width+2*Math.abs(r),s.height+2*Math.abs(i)),a=Math.sqrt(2*o*o),f=a/s.width,m=a/s.height,l="scale("+f+","+m+")";return this._effect=new KeyframeEffect(t.from,[{transform:n+" "+l},{transform:n+" scale(0)"}],this.timingFromConfig(e)),this.setPrefixedProperty(t.from,"transformOrigin","50% 50%"),t.from.style.borderRadius="50%",this._effect},complete:function(){this.sharedElements&&(this.setPrefixedProperty(this.sharedElements.from,"transformOrigin",""),this.sharedElements.from.style.borderRadius="")}});</script>
+<script>Polymer({is:"scale-down-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var e=r.node,i="scale(0, 0)";return"x"===r.axis?i="scale(0, 1)":"y"===r.axis&&(i="scale(1, 0)"),this._effect=new KeyframeEffect(e,[{transform:"scale(1,1)"},{transform:i}],this.timingFromConfig(r)),r.transformOrigin&&this.setPrefixedProperty(e,"transformOrigin",r.transformOrigin),this._effect}});</script>
+<script>Polymer({is:"scale-up-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var e=r.node,i="scale(0)";return"x"===r.axis?i="scale(0, 1)":"y"===r.axis&&(i="scale(1, 0)"),this._effect=new KeyframeEffect(e,[{transform:i},{transform:"scale(1, 1)"}],this.timingFromConfig(r)),r.transformOrigin&&this.setPrefixedProperty(e,"transformOrigin",r.transformOrigin),this._effect}});</script>
+<script>Polymer({is:"slide-from-left-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var e=r.node;return this._effect=new KeyframeEffect(e,[{transform:"translateX(-100%)"},{transform:"none"}],this.timingFromConfig(r)),r.transformOrigin?this.setPrefixedProperty(e,"transformOrigin",r.transformOrigin):this.setPrefixedProperty(e,"transformOrigin","0 50%"),this._effect}});</script>
+<script>Polymer({is:"slide-from-right-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var i=r.node;return this._effect=new KeyframeEffect(i,[{transform:"translateX(100%)"},{transform:"none"}],this.timingFromConfig(r)),r.transformOrigin?this.setPrefixedProperty(i,"transformOrigin",r.transformOrigin):this.setPrefixedProperty(i,"transformOrigin","0 50%"),this._effect}});</script>
+<script>Polymer({is:"slide-from-top-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var i=r.node;return this._effect=new KeyframeEffect(i,[{transform:"translateY(-100%)"},{transform:"translateY(0%)"}],this.timingFromConfig(r)),r.transformOrigin?this.setPrefixedProperty(i,"transformOrigin",r.transformOrigin):this.setPrefixedProperty(i,"transformOrigin","50% 0"),this._effect}});</script>
+<script>Polymer({is:"slide-from-bottom-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var t=r.node;return this._effect=new KeyframeEffect(t,[{transform:"translateY(100%)"},{transform:"translateY(0)"}],this.timingFromConfig(r)),r.transformOrigin?this.setPrefixedProperty(t,"transformOrigin",r.transformOrigin):this.setPrefixedProperty(t,"transformOrigin","50% 0"),this._effect}});</script>
+<script>Polymer({is:"slide-left-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var e=r.node;return this._effect=new KeyframeEffect(e,[{transform:"none"},{transform:"translateX(-100%)"}],this.timingFromConfig(r)),r.transformOrigin?this.setPrefixedProperty(e,"transformOrigin",r.transformOrigin):this.setPrefixedProperty(e,"transformOrigin","0 50%"),this._effect}});</script>
+<script>Polymer({is:"slide-right-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var i=r.node;return this._effect=new KeyframeEffect(i,[{transform:"none"},{transform:"translateX(100%)"}],this.timingFromConfig(r)),r.transformOrigin?this.setPrefixedProperty(i,"transformOrigin",r.transformOrigin):this.setPrefixedProperty(i,"transformOrigin","0 50%"),this._effect}});</script>
+<script>Polymer({is:"slide-up-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var i=r.node;return this._effect=new KeyframeEffect(i,[{transform:"translate(0)"},{transform:"translateY(-100%)"}],this.timingFromConfig(r)),r.transformOrigin?this.setPrefixedProperty(i,"transformOrigin",r.transformOrigin):this.setPrefixedProperty(i,"transformOrigin","50% 0"),this._effect}});</script>
+<script>Polymer({is:"slide-down-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var i=r.node;return this._effect=new KeyframeEffect(i,[{transform:"translateY(0%)"},{transform:"translateY(100%)"}],this.timingFromConfig(r)),r.transformOrigin?this.setPrefixedProperty(i,"transformOrigin",r.transformOrigin):this.setPrefixedProperty(i,"transformOrigin","50% 0"),this._effect}});</script>
+<script>Polymer({is:"transform-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(r){var n=r.node,o=r.transformFrom||"none",i=r.transformTo||"none";return this._effect=new KeyframeEffect(n,[{transform:o},{transform:i}],this.timingFromConfig(r)),r.transformOrigin&&this.setPrefixedProperty(n,"transformOrigin",r.transformOrigin),this._effect}});</script>
+<script>Polymer({is:"paper-square-grow-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(e){var i=e.node,t=e.startSize,n=i.getBoundingClientRect().height,o=i.getBoundingClientRect().width;return this._effect=new KeyframeEffect(i,[{height:t+"px",width:t+"px"},{height:n+"px",width:o+"px"}],this.timingFromConfig(e)),this._effect}});</script>
+<dom-module id="paper-fab-speed-dial" assetpath="../../../bower_components/paper-fab-transitions/">
+  <template>
+    <style>:host .vertical ::content .dropdown-content{@apply (--layout-vertical);}:host .horizontal ::content .dropdown-content{@apply (--layout-horizontal);}:host ::content .dropdown-content > *{margin:8px;@apply (--paper-fab-speed-dial-option);}</style>
+    <content id="fabContainer" select=".dropdown-trigger"></content>
+    <iron-dropdown id="dropdown" open-animation-config="[[openAnimationConfig]]" close-animation-config="[[closeAnimationConfig]]">
+      <content id="contentContainer" select=".dropdown-content"></content>
+    </iron-dropdown>
+  </template>
+</dom-module>
+<script>!function(t){t({is:"paper-fab-speed-dial",properties:{direction:{type:String,value:"bottom"},offset:{type:Number,value:66},openAnimationConfig:{type:Array,value:function(){return[{name:"fade-in-animation",timing:{delay:150,duration:50}},{name:"paper-square-grow-animation",startSize:56,timing:{delay:150,duration:200}}]}},closeAnimationConfig:{type:Array,value:function(){return[{name:"fade-out-animation",timing:{duration:200}}]}}},observers:["_updateDropdown(direction, offset)"],ready:function(){var e=t.dom(this.$.fabContainer).getDistributedNodes()[0];e.addEventListener("tap",function(){this.$.dropdown.open()}.bind(this));var i=t.dom(this.$.contentContainer).getDistributedNodes()[0];i.addEventListener("tap",function(){this.$.dropdown.close()}.bind(this))},open:function(){this.$.dropdown.open()},close:function(){this.$.dropdown.close()},_updateDropdown:function(t,e){var i=this.$.dropdown;switch(t){case"bottom":i.verticalAlign="top",i.horizontalOffset=0,i.verticalOffset=e,i.classList.add("vertical"),i.classList.remove("horizontal");break;case"top":i.verticalAlign="bottom",i.horizontalOffset=0,i.verticalOffset=e,i.classList.add("vertical"),i.classList.remove("horizontal");break;case"right":i.horizontalAlign="left",i.horizontalOffset=e,i.verticalOffset=0,i.classList.add("horizontal"),i.classList.remove("vertical");break;case"left":i.horizontalAlign="right",i.horizontalOffset=e,i.verticalOffset=0,i.classList.add("horizontal"),i.classList.remove("vertical");break;default:throw"Invalid direction. Must be one of [top, bottom, left, right]."}}})}(Polymer);</script>
+</div><dom-module id="chris-home">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment"><style>
+
+      :host{display:block;}app-header{background-color:var(--dark-primary-color);color:#ffffff;}app-header paper-icon-button{--paper-icon-button-ink-color:#ffffff;}.drawer.content{height:100%;overflow:auto;}app-header-layout{background-color:var(--paper-grey-100);}paper-progress{width:100%;--paper-progress-active-color:var(--accent-color);--paper-progress-height:2px;}.loaded paper-progress{display:none;}paper-fab-speed-dial{z-index:10;position:fixed;bottom:16px;right:16px;}paper-fab#create{--paper-fab-background:var(--accent-color);}</style>
+
+    <div id="home">
+
+      
+      <chris-api id="FeedsAPI" api="Item" ,="" content-type="application/json" error="{{error}}">
+      </chris-api>
+
+      <app-drawer-layout fullbleed="">
+
+        
+        <app-drawer>
+
+          <div class="drawer content">
+
+            <app-toolbar>Menu</app-toolbar>
+            <chris-label-list custom-labels="{{labels}}"></chris-label-list>
+
+          </div>
+
+        </app-drawer>
+
+        
+        <app-header-layout has-scrolling-region="" id="layout">
+
+          <app-header id="header" fixed="" effects="waterfall">
+            <app-toolbar>
+              <paper-icon-button icon="menu" drawer-toggle=""></paper-icon-button>
+              <div title="">ChRIS 3.0 - Ultrøn</div>
+            </app-toolbar>
+          </app-header>
+
+          <div id="content" class="main content">
+
+            <paper-progress indeterminate=""></paper-progress>
+
+            <paper-fab-speed-dial direction="top">
+              <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
+              <div class="dropdown-content">
+                <template is="dom-repeat" items="{{plugins.data}}">
+                  <a href="/plugin-fs">
+                    <paper-fab mini="" id="[[item.data.name]]" icon="[[item.data.icon]]" item="[[item]]" style$="[[_setPluginFSStyle(item.data.color)]]" on-tap="_handlePluginFS"></paper-fab>
+                    <paper-tooltip for="[[item.data.name]]" position="left" animation-delay="0">[[item.data.label]]</paper-tooltip>
+                    </a>
+                </template>
+              </div>
+            </paper-fab-speed-dial>
+
+            <chris-feed-list id="feedList" feeds="[[feeds]]" on-notification="_showNotification" scroll-target="[[_getScrollTarget()]]" feed-opened="{{feedOpened}}"></chris-feed-list>
+
+            <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
+
+          </div>
+
+        </app-header-layout>
+
+      </app-drawer-layout>
+
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"chris-home",properties:{feeds:{type:Array},feed:{type:Object,observer:"_feedChanged"},feedOpened:{type:Object,notify:!0},plugins:{type:Array},pluginFs:{type:Object,notify:!0},labels:{type:Array},error:{type:Object}},ready:function(e){var t=({auth:"user="+sessionStorage.getItem("username")+",hash="+sessionStorage.getItem("token")},this.$.FeedsAPI.request("GET","/feeds"));t.then(this.handleFeeds.bind(this))["catch"](this.handleError.bind(this));var s=this.$.FeedsAPI.request("GET","/pluginsFS");s.then(this.handlePlugins.bind(this))["catch"](this.handleError.bind(this));var i=this.$.FeedsAPI.request("GET","/labels");i.then(this.handleLabels.bind(this))["catch"](this.handleError.bind(this)),this.$.notification.fitInto=this.$.layout},handleFeeds:function(e){this.set("feeds",e),this.showError(e.error),this.$.content.classList.add("loaded")},handleLabels:function(e){this.set("labels",e),this.showError(e.error),this.$.content.classList.add("loaded")},showError:function(e){if(e&&e.code){var t=document.createElement("paper-toast");t.text=e.message,t.fitInto=this.$.layout,this.$.content.appendChild(t),t.show()}},handlePlugins:function(e){console.log(e),this.set("plugins",e),this.showError(e.error),this.$.content.classList.add("loaded")},handleError:function(e){console.error(e)},_showNotification:function(e){this.$.notification.text=e.detail.message,this.$.notification.show()},_getScrollTarget:function(){return this.$.header.scrollTarget},_setPluginFSStyle:function(e){return"background-color: "+e+";"},_handlePluginFS:function(e){e&&this.set("pluginFs",e.model.__data__.item)},_feedChanged:function(){this.feed.id=this.feed.details.id=(this.feeds.length+1).toString(),this.unshift("feeds",this.feed)}});</script>
+</dom-module>
+</body></html>

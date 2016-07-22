@@ -1,0 +1,18 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="chris-comment">
+
+  <template>
+
+    <style>:host{display:block;}.container{min-height:64px;display:flex;flex-direction:row;align-items:center;border-bottom:1px solid var(--paper-grey-300);}.name{padding:8px;font-style:bold;font-size:smaller;}.content{padding:8px;}</style>
+
+    <div class="container" style$="{{_setCommentStyle(comment.data.color)}}">
+      <div class="name">[[comment.data.author]]</div>
+      <div class="content">[[comment.data.content]]</div>
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"chris-comment",properties:{comment:{type:Object}},_setCommentStyle:function(e){return"border-left: 1px solid "+e}});</script>
+</dom-module>
+</body></html>

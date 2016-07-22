@@ -1,0 +1,48 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+
+
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+
+
+<link rel="import" href="../chris-plugin/chris-plugin.html">
+
+</head><body><dom-module id="chris-plugin-list">
+  <template>
+    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;}.hidden{display:none;}#showAll{cursor:pointer;}</style>
+
+    <div id="pluginList" class="plugin-list">
+
+
+      <div class="content">
+
+        
+        <template is="dom-repeat" items="[[plugins.data]]">
+
+          <template is="dom-if" if="[[_computeShowAllButton(index)]]">
+
+            <paper-material elevation="1" id="showAll" on-tap="_showAll">
+              <paper-icon-button icon="icons:view-headline"></paper-icon-button>
+              Show full workflow ([[_hiddenPlugins(plugins.data.length)]])
+            </paper-material>
+
+          </template>
+
+          <chris-plugin plugin="[[item]]" class$="[[_computePluginVisible(index)]]" open$="[[_computePluginOpen(index)]]"></chris-plugin>
+
+        </template>
+
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"chris-plugin-list",properties:{plugins:{type:Array},open:{type:Boolean,value:!0,observer:"_openChanged"}},toggle:function(){this.open=!this.open},_openChanged:function(){this.open?this.$.pluginList.classList.add("open"):this.$.pluginList.classList.remove("open")},_setToogleIcon:function(n){return this.open?"icons:expand-less":"icons:expand-more"},_computePluginOpen:function(n){return this.plugins.data.length-1===n},_computePluginVisible:function(n){return this.plugins.data.length<=3||this.plugins.data.length-1===n||0===n?"":"hidden"},_computeShowAllButton:function(n){return this.plugins.data.length-1===n&&this.plugins.data.length>3},_showAll:function(){this.shadowRoot.querySelector("#showAll").classList.add("hidden");for(var n=this.shadowRoot.querySelectorAll("chris-plugin.hidden"),e=0;e<n.length;e++)n[e].classList.remove("hidden");this.fire("resize-content")},_hiddenPlugins:function(n){return n-2}});</script>
+</dom-module>
+</body></html>

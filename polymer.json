@@ -2,12 +2,13 @@
   "entrypoint": "index.html",
   "shell": "src/chris-ultron/chris-ultron.html",
   "fragments": [
-  	"src/chris-home/chris-home.html",
-  	"src/chris-login/chris-login.html",
-    "src/chris-feed-detail/chris-feed-detail.html",
-  	"src/chris-plugin-fs/chris-plugin-fs.html",
+  	"src/chris-pages/chris-home/chris-home.html",
+  	"src/chris-pages/chris-login/chris-login.html",
+    "src/chris-pages/chris-detail/chris-detail.html",
+    "src/chris-pages/chris-feed-detail/chris-feed-detail.html",
+  	"src/chris-pages/chris-plugin-fs/chris-plugin-fs.html",
   	"src/chris-apps/chris-apps-pacs-pull/chris-apps-pacs-pull.html",
-  	"src/chris-dataviews/chris-dataviews-rows/chris-dataviews-rows.html",
-    "src/chris-dataviews/chris-dataviews-columns/chris-dataviews-columns.html"
+  	"src/chris-components/chris-dataviews/chris-dataviews-rows/chris-dataviews-rows.html",
+    "src/chris-components/chris-dataviews/chris-dataviews-columns/chris-dataviews-columns.html"
   ]
 }
