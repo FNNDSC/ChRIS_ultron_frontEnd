@@ -29,6 +29,7 @@
 <link rel="import" href="../../chris-components/chris-detail-nav/chris-detail-nav.html">
 <link rel="import" href="../../chris-components/chris-note/chris-note.html">
 <link rel="import" href="../../chris-components/chris-plugin/chris-plugin.html">
+<link rel="import" href="../../chris-components/chris-plugin-ds/chris-plugin-ds.html">
 
 <dom-module id="chris-detail">
 
@@ -126,7 +127,12 @@
       <app-route
         route="{{pluginRoute}}"
         pattern="/:index"
-        data="{{pluginRouteData}}"></app-route>
+        data="{{pluginRouteData}}"
+        tail="{{pluginDSRoute}}"></app-route>
+      <app-route
+        route="{{pluginDSRoute}}"
+        pattern="/plugin/:id"
+        data="{{pluginDSRouteData}}"></app-route>
 
       <!-- API Calls -->
       <chris-api id="ItemAPI"
@@ -170,7 +176,7 @@
               <chris-note name="note" note="{{note}}"></chris-note>
               <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
               <chris-plugin name="workflow" feed-index="[[feedRouteData.index]]" plugin="[[_targetPlugin(pluginRouteData.index)]]"></chris-plugin>
-
+              <chris-plugin-ds name="plugin" feed-id="[[feedRouteData.index]]" work-id="[[pluginRouteData.index]]" plugin-id="[[pluginDSRouteData.id]]"></chris-plugin-ds>
             </iron-pages>
 
           <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
@@ -235,6 +241,14 @@
           type: Object
         },
 
+        pluginDSRoute: {
+          type: Object
+        },
+
+        pluginDSRouteData: {
+          type: Object
+        },
+
         error: {
           type: Object
         },
@@ -251,6 +265,7 @@
         '_feedIndexChanged(feedRouteData.index)',
         '_pageDataChanged(pageRouteData.page)',
         '_pluginIndexChanged(pluginRouteData.index)',
+        '_pluginDSIdChanged(pluginDSRouteData.id)',
       ],
 
       ready: function( event ){
@@ -263,7 +278,6 @@
           return;
         }
 
-        console.log( this.workflow );
         // find matching id...
         for( var i=0; i<this.workflow.data.length; i++ ){
 
@@ -291,6 +305,12 @@
         console.log( '_pageDataChanged' );
         console.log( page );
 
+        if( page === 'workflow'){
+
+          console.log( this.pluginDSRouteData );
+
+        }
+
         this.page = page || 'about';
 
       },
@@ -299,6 +319,19 @@
 
         console.log( '_pluginIndexChanged' );
         console.log( index );
+
+      },
+
+      _pluginDSIdChanged: function( id ) {
+
+        console.log( '_pluginDSIdChanged' );
+        console.log( id );
+
+        if( id ){
+
+          this.page = 'plugin';
+
+        }
 
       },
 

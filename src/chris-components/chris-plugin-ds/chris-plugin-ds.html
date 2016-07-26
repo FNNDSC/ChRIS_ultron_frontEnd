@@ -1,0 +1,386 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
+
+
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-slider/paper-slider.html">
+
+<!-- EXTERNAL ELEMENTS -->
+
+<dom-module id="chris-plugin-ds">
+  <template>
+    <style>
+
+        paper-slider {
+      width: 100%;
+    }
+
+            .toolbar {
+
+        min-height: 48px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-wrap);
+
+            padding: 16px;
+    font-size: 24px;
+    font-weight: 400;
+    color: #737373;
+
+      }
+
+      .name {
+
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+       paper-card {
+        width: 800px;
+      }
+
+      @media (max-width: 800px) {
+        paper-card {
+          width: 100%;
+        }
+      }
+
+      paper-card{
+        color: var(--primary-text-color);
+        --paper-card-header-color: var(--secondary-text-color);
+        --paper-card-background-color: var(--paper-grey-100);
+        background: var(--paper-grey-100);
+      }
+
+      /*from https://github.com/robdodson/contacts-app*/
+
+      .group {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 8px 0;
+        position: relative;
+      }
+
+      .item {
+        padding: 10px 72px;
+        color: rgb(102, 102, 102);
+      }
+
+      .item iron-icon {
+        position: absolute;
+        left: 16px;
+        top: 24px;
+        color: rgb(33, 33, 33);
+      }
+
+      .double-line-1 {
+        margin-top: 5px;
+        margin-bottom: 6px;
+      }
+
+      .double-line-2 {
+        font-size: 13px;
+        line-height: 13px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .border-wrap{
+        font-size: 64px;
+        text-align: center;
+        position: relative;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        margin: auto;
+        margin-top: 32px;
+        margin-bottom: -20px;
+        background: #FFFFFF;
+      }
+
+      .check{
+        display: flex;
+        position: absolute;
+        right: 20px;
+        bottom: 0;
+        margin-bottom: -10px;
+      }
+
+      .center {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        @apply(--layout-center-justified);
+      }
+
+      .colored{
+        position:relative;
+      }
+
+      .done{
+
+        background-color: var(--paper-light-green-500);
+
+      }
+
+      .running{
+
+        background-color: var(--paper-light-blue-500);
+
+      }
+
+      .error{
+
+        background-color: var(--paper-red-500);
+
+      }
+
+      .fab{
+
+        margin: 4px;
+
+      }
+
+      paper-swatch-picker {
+
+        margin: 0 10px;
+
+      }
+
+      #favorite[icon="icons:favorite"]{
+
+        background-color: var(--accent-color);
+
+      }
+
+      #favorite[icon="icons:favorite-border"]{
+
+        background-color: var(--disabled-text-color);
+
+      }
+
+      paper-fab {
+
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+
+      }
+
+      paper-fab#create {
+
+        --paper-fab-background: var(--accent-color);
+
+      }
+
+    </style>
+
+    <paper-card>
+
+      <div class="toolbar">
+
+        <div class="title" title>[[pluginId]]</div>
+
+        <div class="spacer"></div>
+
+        <a href="/detail/[[feedId]]/workflow/[[workId]]">
+          Back to data
+          <paper-icon-button icon="icons:close"></paper-icon-button>
+        </a>
+
+      </div>
+
+      <div class="card-content">
+
+        <!-- FROM https://github.com/robdodson/contacts-app -->
+          I am Plugin DS... [[feedId]] = [[workId]] = [[pluginId]]
+
+
+           <!-- loop through the groups -->
+           <template is="dom-repeat" items="{{plugin.data.groups}}" as="group">
+             <div class="group">
+               <div class="group-title">[[group.title]]</div>
+               <div class="group-content">
+                 
+                 <template is="dom-repeat" items="{{plugin.data.parameters}}" as="parameter">
+
+                   <template is="dom-if" if="{{_parameterInGroup(parameter,group)}}">
+
+                    <template is="dom-if" if="{{_isCheckbox(parameter)}}">
+
+                      <paper-checkbox value={{parameter.value}}>[[parameter.title]]</paper-checkbox>
+
+                    </template>
+
+                    <template is="dom-if" if="{{_isSlider(parameter)}}">
+
+                      <div>[[parameter.title]]</div>
+                      <paper-slider min="{{parameter.min}}" max="{{parameter.max}}" value="{{parameter.value}}"></paper-slider>
+
+                    </template>
+
+                  </template>
+
+                 </template>
+
+               </div>
+             </div>
+           </template>
+
+      </div>
+
+    </paper-card>
+
+    <a href="/home">
+      <paper-fab  icon="av:play-arrow" title="run"></paper-fab>
+    </a>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'chris-plugin-ds',
+        properties: {
+
+          feedId :{
+            type: String
+          },
+
+          workId :{
+            type: String
+          },
+          
+          // plugin should contain all info already...
+          pluginId: {
+            type: String,
+            observer: "_pluginIDChanged"
+          },
+
+          plugin: {
+            type: Object,
+            value:{
+              'href': 'plugin/href/etc.',
+              'template': '<template obj>',
+              'data' :{
+                'name': 'iamthename',
+                'title': 'I am the TITLE!',
+                'color': '#123456',
+                'icon': 'icons:favorite',
+                'groups': [
+                  {
+                    'name': 'simple',
+                    'title': 'Simple params',
+                    'visible': true
+                  },
+                  {
+                    'name': 'advanced',
+                    'title': 'Advanced params',
+                    'visible': false
+                  }
+                ],
+                'parameters': [
+                  { 'group': 'simple',
+                    'type': 'checkbox',
+                    'title': 'I am a check check box..!',
+                    'default': false,
+                    'value': false
+                  },
+                  { 'group': 'advanced',
+                    'type': 'slider',
+                    'title': 'I am a slider..!',
+                    'default': 50,
+                    'min': 0,
+                    'max': 100,
+                    'value': 50
+                  }
+                ]
+
+              }
+            }
+          }
+        },
+
+        _isCheckbox: function( parameter ){
+
+          if( parameter.type === 'checkbox' ){
+
+            return true;
+
+          }
+
+          return false;
+
+        },
+
+        _isSlider: function( parameter ){
+
+          if( parameter.type === 'slider' ){
+
+            return true;
+
+          }
+
+          return false;
+
+        },
+
+        _parameterInGroup: function( parameter, group ){
+
+          if( parameter.group === group.name ){
+
+            return true;
+
+          }
+
+          return false;
+
+        },
+
+        _pluginIDChanged: function( pluginID ){
+
+          // go AJAX
+          console.log( pluginID );
+
+        },
+
+        _setBackgroundColor: function( color ){
+
+          return 'background-color: ' + color + ';';
+
+        },
+
+        _setColor: function( color ){
+
+          return 'color: ' + color + ';';
+
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

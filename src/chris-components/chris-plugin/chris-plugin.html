@@ -197,7 +197,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
         <div class="dropdown-content">
           <template is="dom-repeat" items="{{plugins.data}}">
-            <a href="/plugin-fs">
+            <a href="/detail/[[feedIndex]]/workflow/[[plugin.data.id]]/plugin/[[item.data.name]]">
               <paper-fab mini id="[[item.data.name]]" icon="[[item.data.icon]]" item="[[item]]" style$="[[_setBackgroundColor(item.data.color)]]"></paper-fab>
               <paper-tooltip for="[[item.data.name]]" position="left" animation-delay="0">[[item.data.label]]</paper-tooltip>
               </a>
