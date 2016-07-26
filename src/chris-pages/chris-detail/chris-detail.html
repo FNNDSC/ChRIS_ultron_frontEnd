@@ -536,7 +536,7 @@
         <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
         <div class="dropdown-content">
           <template is="dom-repeat" items="{{plugins.data}}">
-            <a href="/plugin-fs">
+            <a href="/detail/[[feedIndex]]/workflow/[[plugin.data.id]]/plugin/[[item.data.name]]">
               <paper-fab mini="" id="[[item.data.name]]" icon="[[item.data.icon]]" item="[[item]]" style$="[[_setBackgroundColor(item.data.color)]]"></paper-fab>
               <paper-tooltip for="[[item.data.name]]" position="left" animation-delay="0">[[item.data.label]]</paper-tooltip>
               </a>
@@ -548,7 +548,107 @@
 
   <script>Polymer({is:"chris-plugin",properties:{plugin:{type:Object,observer:"_pluginChanged"},plugins:{type:Object,value:{data:[{data:{color:"#009688",name:"Nameyo",label:"YO label",icon:"icons:favorite"}},{data:{color:"#F44336",name:"OKCOOL",label:"Hey there",icon:"icons:favorite-border"}}]}},selected:{type:String,value:"chris-dataviews-rows",observer:"_selectedChanged"},path:{type:Array,observer:"_pathChanged"},feedIndex:{type:String}},_pluginChanged:function(){console.log(this.plugin)},_pathChanged:function(){console.log(this.path)},_selectedChanged:function(){this.importHref(this.resolveUrl("../chris-dataviews/"+this.selected+"/"+this.selected+".html"),function(){},null,!0)},_setPluginStyle:function(e){return"color: "+e+";"},_setBackgroundColor:function(e){return"background-color: "+e+";"}});</script>
 </dom-module>
-</div><dom-module id="chris-detail">
+<dom-module id="paper-slider" assetpath="../../../bower_components/paper-slider/">
+  <template strip-whitespace="">
+    <style>:host{@apply (--layout);@apply (--layout-justified);@apply (--layout-center);width:200px;cursor:default;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);--paper-progress-active-color:var(--paper-slider-active-color, --google-blue-700);--paper-progress-secondary-color:var(--paper-slider-secondary-color, --google-blue-300);--paper-progress-disabled-active-color:var(--paper-slider-disabled-active-color, --paper-grey-400);--paper-progress-disabled-secondary-color:var(--paper-slider-disabled-secondary-color, --paper-grey-400);}:host(:focus){outline:none;}#sliderContainer{position:relative;width:100%;height:calc(30px + var(--paper-slider-height, 2px));margin-left:calc(15px + var(--paper-slider-height, 2px)/2);margin-right:calc(15px + var(--paper-slider-height, 2px)/2);}#sliderContainer:focus{outline:0;}#sliderContainer.editable{margin-top:12px;margin-bottom:12px;}.bar-container{position:absolute;top:0;bottom:0;left:0;right:0;overflow:hidden;}.ring > .bar-container{left:calc(5px + var(--paper-slider-height, 2px)/2);transition:left 0.18s ease;}.ring.expand.dragging > .bar-container{transition:none;}.ring.expand:not(.pin) > .bar-container{left:calc(8px + var(--paper-slider-height, 2px)/2);}#sliderBar{padding:15px 0;width:100%;background-color:var(--paper-slider-bar-color, transparent);--paper-progress-container-color:var(--paper-slider-container-color, --paper-grey-400);--paper-progress-height:var(--paper-slider-height, 2px);}.slider-markers{position:absolute;top:calc(14px + var(--paper-slider-height,2px)/2);height:var(--paper-slider-height, 2px);left:0;right:-1px;box-sizing:border-box;pointer-events:none;@apply (--layout-horizontal);}.slider-marker{@apply (--layout-flex);}.slider-markers::after,
+      .slider-marker::after{content:"";display:block;margin-left:-1px;width:2px;height:2px;border-radius:50%;background-color:black;}#sliderKnob{position:absolute;left:0;top:0;margin-left:calc(-15px - var(--paper-slider-height, 2px)/2);width:calc(30px + var(--paper-slider-height, 2px));height:calc(30px + var(--paper-slider-height, 2px));}.transiting > #sliderKnob{transition:left 0.08s ease;}#sliderKnob:focus{outline:none;}#sliderKnob.dragging{transition:none;}.snaps > #sliderKnob.dragging{transition:-webkit-transform 0.08s ease;transition:transform 0.08s ease;}#sliderKnobInner{margin:10px;width:calc(100% - 20px);height:calc(100% - 20px);background-color:var(--paper-slider-knob-color, --google-blue-700);border:2px solid var(--paper-slider-knob-color, --google-blue-700);border-radius:50%;-moz-box-sizing:border-box;box-sizing:border-box;transition-property:-webkit-transform, background-color, border;transition-property:transform, background-color, border;transition-duration:0.18s;transition-timing-function:ease;}.expand:not(.pin) > #sliderKnob > #sliderKnobInner{-webkit-transform:scale(1.5);transform:scale(1.5);}.ring > #sliderKnob > #sliderKnobInner{background-color:var(--paper-slider-knob-start-color, transparent);border:2px solid var(--paper-slider-knob-start-border-color, --paper-grey-400);}#sliderKnobInner::before{background-color:var(--paper-slider-pin-color, --google-blue-700);}.pin > #sliderKnob > #sliderKnobInner::before{content:"";position:absolute;top:0;left:50%;margin-left:-13px;width:26px;height:26px;border-radius:50% 50% 50% 0;-webkit-transform:rotate(-45deg) scale(0) translate(0);transform:rotate(-45deg) scale(0) translate(0);}#sliderKnobInner::before,
+      #sliderKnobInner::after{transition:-webkit-transform .18s ease, background-color .18s ease;transition:transform .18s ease, background-color .18s ease;}.pin.ring > #sliderKnob > #sliderKnobInner::before{background-color:var(--paper-slider-pin-start-color, --paper-grey-400);}.pin.expand > #sliderKnob > #sliderKnobInner::before{-webkit-transform:rotate(-45deg) scale(1) translate(17px, -17px);transform:rotate(-45deg) scale(1) translate(17px, -17px);}.pin > #sliderKnob > #sliderKnobInner::after{content:attr(value);position:absolute;top:0;left:50%;margin-left:-16px;width:32px;height:26px;text-align:center;color:var(--paper-slider-font-color, #fff);font-size:10px;-webkit-transform:scale(0) translate(0);transform:scale(0) translate(0);}.pin.expand > #sliderKnob > #sliderKnobInner::after{-webkit-transform:scale(1) translate(0, -17px);transform:scale(1) translate(0, -17px);}.slider-input{width:50px;overflow:hidden;--paper-input-container-input:{text-align:center;};@apply (--paper-slider-input);}#sliderContainer.disabled{pointer-events:none;}.disabled > #sliderKnob > #sliderKnobInner{background-color:var(--paper-slider-disabled-knob-color, --paper-grey-400);border:2px solid var(--paper-slider-disabled-knob-color, --paper-grey-400);-webkit-transform:scale3d(0.75, 0.75, 1);transform:scale3d(0.75, 0.75, 1);}.disabled.ring > #sliderKnob > #sliderKnobInner{background-color:var(--paper-slider-knob-start-color, transparent);border:2px solid var(--paper-slider-knob-start-border-color, --paper-grey-400);}paper-ripple{color:var(--paper-slider-knob-color, --google-blue-700);}</style>
+
+    <div id="sliderContainer" class$="[[_getClassNames(disabled, pin, snaps, immediateValue, min, expand, dragging, transiting, editable)]]">
+      <div class="bar-container">
+        <paper-progress disabled$="[[disabled]]" id="sliderBar" aria-hidden="true" min="[[min]]" max="[[max]]" step="[[step]]" value="[[immediateValue]]" secondary-progress="[[secondaryProgress]]" on-down="_bardown" on-up="_resetKnob" on-track="_onTrack">
+        </paper-progress>
+      </div>
+
+      <template is="dom-if" if="[[snaps]]">
+        <div class="slider-markers">
+          <template is="dom-repeat" items="[[markers]]">
+            <div class="slider-marker"></div>
+          </template>
+        </div>
+      </template>
+
+      <div id="sliderKnob" on-down="_knobdown" on-up="_resetKnob" on-track="_onTrack" on-transitionend="_knobTransitionEnd">
+          <div id="sliderKnobInner" value$="[[immediateValue]]"></div>
+      </div>
+    </div>
+
+    <template is="dom-if" if="[[editable]]">
+      <paper-input id="input" type="number" step="[[step]]" min="[[min]]" max="[[max]]" class="slider-input" disabled$="[[disabled]]" value="[[immediateValue]]" on-change="_changeValue" on-keydown="_inputKeyDown" no-label-float="">
+      </paper-input>
+    </template>
+  </template>
+
+  <script>Polymer({is:"paper-slider",behaviors:[Polymer.IronA11yKeysBehavior,Polymer.IronFormElementBehavior,Polymer.PaperInkyFocusBehavior,Polymer.IronRangeBehavior],properties:{snaps:{type:Boolean,value:!1,notify:!0},pin:{type:Boolean,value:!1,notify:!0},secondaryProgress:{type:Number,value:0,notify:!0,observer:"_secondaryProgressChanged"},editable:{type:Boolean,value:!1},immediateValue:{type:Number,value:0,readOnly:!0,notify:!0},maxMarkers:{type:Number,value:0,notify:!0},expand:{type:Boolean,value:!1,readOnly:!0},dragging:{type:Boolean,value:!1,readOnly:!0},transiting:{type:Boolean,value:!1,readOnly:!0},markers:{type:Array,readOnly:!0,value:[]}},observers:["_updateKnob(value, min, max, snaps, step)","_valueChanged(value)","_immediateValueChanged(immediateValue)","_updateMarkers(maxMarkers, min, max, snaps)"],hostAttributes:{role:"slider",tabindex:0},keyBindings:{"left down pagedown home":"_decrementKey","right up pageup end":"_incrementKey"},increment:function(){this.value=this._clampValue(this.value+this.step)},decrement:function(){this.value=this._clampValue(this.value-this.step)},_updateKnob:function(t,e,i,s,a){this.setAttribute("aria-valuemin",e),this.setAttribute("aria-valuemax",i),this.setAttribute("aria-valuenow",t),this._positionKnob(this._calcRatio(t))},_valueChanged:function(){this.fire("value-change")},_immediateValueChanged:function(){this.dragging?this.fire("immediate-value-change"):this.value=this.immediateValue},_secondaryProgressChanged:function(){this.secondaryProgress=this._clampValue(this.secondaryProgress)},_expandKnob:function(){this._setExpand(!0)},_resetKnob:function(){this.cancelDebouncer("expandKnob"),this._setExpand(!1)},_positionKnob:function(t){this._setImmediateValue(this._calcStep(this._calcKnobPosition(t))),this._setRatio(this._calcRatio(this.immediateValue)),this.$.sliderKnob.style.left=100*this.ratio+"%",this.dragging&&(this._knobstartx=this.ratio*this._w,this.translate3d(0,0,0,this.$.sliderKnob))},_calcKnobPosition:function(t){return(this.max-this.min)*t+this.min},_onTrack:function(t){switch(t.stopPropagation(),t.detail.state){case"start":this._trackStart(t);break;case"track":this._trackX(t);break;case"end":this._trackEnd()}},_trackStart:function(t){this._w=this.$.sliderBar.offsetWidth,this._x=this.ratio*this._w,this._startx=this._x,this._knobstartx=this._startx,this._minx=-this._startx,this._maxx=this._w-this._startx,this.$.sliderKnob.classList.add("dragging"),this._setDragging(!0)},_trackX:function(t){this.dragging||this._trackStart(t);var e=Math.min(this._maxx,Math.max(this._minx,t.detail.dx));this._x=this._startx+e;var i=this._calcStep(this._calcKnobPosition(this._x/this._w));this._setImmediateValue(i);var s=this._calcRatio(this.immediateValue)*this._w-this._knobstartx;this.translate3d(s+"px",0,0,this.$.sliderKnob)},_trackEnd:function(){var t=this.$.sliderKnob.style;this.$.sliderKnob.classList.remove("dragging"),this._setDragging(!1),this._resetKnob(),this.value=this.immediateValue,t.transform=t.webkitTransform="",this.fire("change")},_knobdown:function(t){this._expandKnob(),t.preventDefault(),this.focus()},_bardown:function(t){this._w=this.$.sliderBar.offsetWidth;var e=this.$.sliderBar.getBoundingClientRect(),i=(t.detail.x-e.left)/this._w,s=this.ratio;this._setTransiting(!0),this._positionKnob(i),this.debounce("expandKnob",this._expandKnob,60),s===this.ratio&&this._setTransiting(!1),this.async(function(){this.fire("change")}),t.preventDefault(),this.focus()},_knobTransitionEnd:function(t){t.target===this.$.sliderKnob&&this._setTransiting(!1)},_updateMarkers:function(t,e,i,s){s||this._setMarkers([]);var a=Math.round((i-e)/this.step);a>t&&(a=t),this._setMarkers(new Array(a))},_mergeClasses:function(t){return Object.keys(t).filter(function(e){return t[e]}).join(" ")},_getClassNames:function(){return this._mergeClasses({disabled:this.disabled,pin:this.pin,snaps:this.snaps,ring:this.immediateValue<=this.min,expand:this.expand,dragging:this.dragging,transiting:this.transiting,editable:this.editable})},_incrementKey:function(t){this.disabled||("end"===t.detail.key?this.value=this.max:this.increment(),this.fire("change"))},_decrementKey:function(t){this.disabled||("home"===t.detail.key?this.value=this.min:this.decrement(),this.fire("change"))},_changeValue:function(t){this.value=t.target.value,this.fire("change")},_inputKeyDown:function(t){t.stopPropagation()},_createRipple:function(){return this._rippleContainer=this.$.sliderKnob,Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this)},_focusedChanged:function(t){t&&this.ensureRipple(),this.hasRipple()&&(t?this._ripple.style.display="":this._ripple.style.display="none",this._ripple.holdDown=t)}});</script>
+</dom-module>
+<dom-module id="chris-plugin-ds" assetpath="../../chris-components/chris-plugin-ds/">
+  <template>
+    <style>paper-slider{width:100%;}.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);padding:16px;font-size:24px;font-weight:400;color:#737373;}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-card{width:800px;}@media (max-width: 800px){paper-card{width:100%;}}paper-card{color:var(--primary-text-color);--paper-card-header-color:var(--secondary-text-color);--paper-card-background-color:var(--paper-grey-100);background:var(--paper-grey-100);}.group{border-bottom:1px solid rgba(0, 0, 0, 0.1);padding:8px 0;position:relative;}.item{padding:10px 72px;color:rgb(102, 102, 102);}.item iron-icon{position:absolute;left:16px;top:24px;color:rgb(33, 33, 33);}.double-line-1{margin-top:5px;margin-bottom:6px;}.double-line-2{font-size:13px;line-height:13px;color:rgba(0, 0, 0, 0.4);}.border-wrap{font-size:64px;text-align:center;position:relative;width:96px;height:96px;border-radius:50%;margin:auto;margin-top:32px;margin-bottom:-20px;background:#FFFFFF;}.check{display:flex;position:absolute;right:20px;bottom:0;margin-bottom:-10px;}.center{@apply (--layout-horizontal);@apply (--layout-wrap);@apply (--layout-center-justified);}.colored{position:relative;}.done{background-color:var(--paper-light-green-500);}.running{background-color:var(--paper-light-blue-500);}.error{background-color:var(--paper-red-500);}.fab{margin:4px;}paper-swatch-picker{margin:0 10px;}#favorite[icon="icons:favorite"]{background-color:var(--accent-color);}#favorite[icon="icons:favorite-border"]{background-color:var(--disabled-text-color);}paper-fab{z-index:10;position:fixed;bottom:16px;right:16px;}paper-fab#create{--paper-fab-background:var(--accent-color);}</style>
+
+    <paper-card>
+
+      <div class="toolbar">
+
+        <div class="title" title="">[[pluginId]]</div>
+
+        <div class="spacer"></div>
+
+        <a href="/detail/[[feedId]]/workflow/[[workId]]">
+          Back to data
+          <paper-icon-button icon="icons:close"></paper-icon-button>
+        </a>
+
+      </div>
+
+      <div class="card-content">
+
+        
+          I am Plugin DS... [[feedId]] = [[workId]] = [[pluginId]]
+
+
+           
+           <template is="dom-repeat" items="{{plugin.data.groups}}" as="group">
+             <div class="group">
+               <div class="group-title">[[group.title]]</div>
+               <div class="group-content">
+                 
+                 <template is="dom-repeat" items="{{plugin.data.parameters}}" as="parameter">
+
+                   <template is="dom-if" if="{{_parameterInGroup(parameter,group)}}">
+
+                    <template is="dom-if" if="{{_isCheckbox(parameter)}}">
+
+                      <paper-checkbox value="{{parameter.value}}">[[parameter.title]]</paper-checkbox>
+
+                    </template>
+
+                    <template is="dom-if" if="{{_isSlider(parameter)}}">
+
+                      <div>[[parameter.title]]</div>
+                      <paper-slider min="{{parameter.min}}" max="{{parameter.max}}" value="{{parameter.value}}"></paper-slider>
+
+                    </template>
+
+                  </template>
+
+                 </template>
+
+               </div>
+             </div>
+           </template>
+
+      </div>
+
+    </paper-card>
+
+    <a href="/home">
+      <paper-fab icon="av:play-arrow" title="run"></paper-fab>
+    </a>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"chris-plugin-ds",properties:{feedId:{type:String},workId:{type:String},pluginId:{type:String,observer:"_pluginIDChanged"},plugin:{type:Object,value:{href:"plugin/href/etc.",template:"<template obj>",data:{name:"iamthename",title:"I am the TITLE!",color:"#123456",icon:"icons:favorite",groups:[{name:"simple",title:"Simple params",visible:!0},{name:"advanced",title:"Advanced params",visible:!1}],parameters:[{group:"simple",type:"checkbox",title:"I am a check check box..!","default":!1,value:!1},{group:"advanced",type:"slider",title:"I am a slider..!","default":50,min:0,max:100,value:50}]}}}},_isCheckbox:function(e){return"checkbox"===e.type},_isSlider:function(e){return"slider"===e.type},_parameterInGroup:function(e,t){return e.group===t.name},_pluginIDChanged:function(e){console.log(e)},_setBackgroundColor:function(e){return"background-color: "+e+";"},_setColor:function(e){return"color: "+e+";"}})}();</script>
+</dom-module></div><dom-module id="chris-detail">
 
   <template>
 
@@ -561,7 +661,8 @@
       <app-location id="location" route="{{feedRoute}}"></app-location>
       <app-route route="{{feedRoute}}" pattern="/detail/:index" data="{{feedRouteData}}" tail="{{pageRoute}}"></app-route>
       <app-route route="{{pageRoute}}" pattern="/:page" data="{{pageRouteData}}" tail="{{pluginRoute}}"></app-route>
-      <app-route route="{{pluginRoute}}" pattern="/:index" data="{{pluginRouteData}}"></app-route>
+      <app-route route="{{pluginRoute}}" pattern="/:index" data="{{pluginRouteData}}" tail="{{pluginDSRoute}}"></app-route>
+      <app-route route="{{pluginDSRoute}}" pattern="/plugin/:id" data="{{pluginDSRouteData}}"></app-route>
 
       
       <chris-api id="ItemAPI" api="Item" ,="" content-type="application/json" error="{{error}}">
@@ -602,7 +703,7 @@
               <chris-note name="note" note="{{note}}"></chris-note>
               <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
               <chris-plugin name="workflow" feed-index="[[feedRouteData.index]]" plugin="[[_targetPlugin(pluginRouteData.index)]]"></chris-plugin>
-
+              <chris-plugin-ds name="plugin" feed-id="[[feedRouteData.index]]" work-id="[[pluginRouteData.index]]" plugin-id="[[pluginDSRouteData.id]]"></chris-plugin-ds>
             </iron-pages>
 
           </div>
@@ -615,6 +716,6 @@
 
   </template>
 
-  <script>Polymer({is:"chris-detail",properties:{feed:{type:Object,observer:"_feedChanged"},workflow:{type:Array},note:{type:Object},comments:{type:Object},details:{type:Object},feedRoute:{type:Object},feedRouteData:{type:Object},pageRoute:{type:Object},pageRouteData:{type:Object},pluginRoute:{type:Object},pluginRouteData:{type:Object},error:{type:Object},page:{type:String}},observers:["_feedIndexChanged(feedRouteData.index)","_pageDataChanged(pageRouteData.page)","_pluginIndexChanged(pluginRouteData.index)"],ready:function(e){},_targetPlugin:function(e){if(e){console.log(this.workflow);for(var t=0;t<this.workflow.data.length;t++)if(this.workflow.data[t].data.id===e)return this.workflow.data[t];return 0}},_feedIndexChanged:function(e){console.log("_feedIndexChanged "),console.log(e)},_pageDataChanged:function(e){console.log("_pageDataChanged"),console.log(e),this.page=e||"about"},_pluginIndexChanged:function(e){console.log("_pluginIndexChanged"),console.log(e)},_feedChanged:function(){console.log(this.feed);var e=this.$.ItemAPI.request("GET",this.feed.links.comments);e.then(this.handleItem.bind(this))["catch"](this.handleError.bind(this));var t=this.$.ItemAPI.request("GET",this.feed.links.note);t.then(this.handleItem.bind(this))["catch"](this.handleError.bind(this));var n=this.$.ItemAPI.request("GET",this.feed.links.plugins);n.then(this.handleItem.bind(this))["catch"](this.handleError.bind(this))},_reset:function(){console.log("reset"),this.page="about"},handleItem:function(e){if(this.$.adl.resetLayout(),e){var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("comments",e);break;case"note":this.set("note",e);break;case"plugins":this.set("workflow",e)}}},handleError:function(e){console.error(e)},_setLayoutStyle:function(e){e=e.replace("#","");var t=parseInt(e.substring(0,2),16),n=parseInt(e.substring(2,4),16),o=parseInt(e.substring(4,6),16);return"background-color: rgba("+t+","+n+","+o+", 0.5);"},_setToolbarStyle:function(e){return"background-color: "+e+";"}});</script>
+  <script>Polymer({is:"chris-detail",properties:{feed:{type:Object,observer:"_feedChanged"},workflow:{type:Array},note:{type:Object},comments:{type:Object},details:{type:Object},feedRoute:{type:Object},feedRouteData:{type:Object},pageRoute:{type:Object},pageRouteData:{type:Object},pluginRoute:{type:Object},pluginRouteData:{type:Object},pluginDSRoute:{type:Object},pluginDSRouteData:{type:Object},error:{type:Object},page:{type:String}},observers:["_feedIndexChanged(feedRouteData.index)","_pageDataChanged(pageRouteData.page)","_pluginIndexChanged(pluginRouteData.index)","_pluginDSIdChanged(pluginDSRouteData.id)"],ready:function(e){},_targetPlugin:function(e){if(e){for(var t=0;t<this.workflow.data.length;t++)if(this.workflow.data[t].data.id===e)return this.workflow.data[t];return 0}},_feedIndexChanged:function(e){console.log("_feedIndexChanged "),console.log(e)},_pageDataChanged:function(e){console.log("_pageDataChanged"),console.log(e),"workflow"===e&&console.log(this.pluginDSRouteData),this.page=e||"about"},_pluginIndexChanged:function(e){console.log("_pluginIndexChanged"),console.log(e)},_pluginDSIdChanged:function(e){console.log("_pluginDSIdChanged"),console.log(e),e&&(this.page="plugin")},_feedChanged:function(){console.log(this.feed);var e=this.$.ItemAPI.request("GET",this.feed.links.comments);e.then(this.handleItem.bind(this))["catch"](this.handleError.bind(this));var t=this.$.ItemAPI.request("GET",this.feed.links.note);t.then(this.handleItem.bind(this))["catch"](this.handleError.bind(this));var n=this.$.ItemAPI.request("GET",this.feed.links.plugins);n.then(this.handleItem.bind(this))["catch"](this.handleError.bind(this))},_reset:function(){console.log("reset"),this.page="about"},handleItem:function(e){if(this.$.adl.resetLayout(),e){var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("comments",e);break;case"note":this.set("note",e);break;case"plugins":this.set("workflow",e)}}},handleError:function(e){console.error(e)},_setLayoutStyle:function(e){e=e.replace("#","");var t=parseInt(e.substring(0,2),16),n=parseInt(e.substring(2,4),16),o=parseInt(e.substring(4,6),16);return"background-color: rgba("+t+","+n+","+o+", 0.5);"},_setToolbarStyle:function(e){return"background-color: "+e+";"}});</script>
 </dom-module>
 </body></html>
