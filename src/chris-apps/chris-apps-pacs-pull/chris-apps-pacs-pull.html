@@ -7,13 +7,17 @@
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../../bower_components/paper-tabs/paper-tab.html">
 
 <!-- EXTERNAL ELEMENTS -->
 <link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../bower_components/paper-date-picker/paper-date-picker.html">
 
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../../chris-api/chris-api.html">
 
 <!--
 Chris app pacs-pull element!
@@ -50,7 +54,57 @@ Chris app pacs-pull element!
 
       }
 
+      paper-dialog {
+
+        --paper-date-picker-dialog: {
+        margin: 0;
+        max-height: 520px !important;
+        overflow: hidden;
+
+      };
+
+      --paper-date-picker-dialog-picker: {
+
+        margin-top: 0 !important;
+        padding: 0;
+
+      };
+
+      --paper-date-picker-dialog-calendar: {
+
+        padding-bottom: 0;
+
+      };
+      
+      --paper-date-picker-dialog-heading: {
+
+        margin-bottom: -62px;
+
+      };
+
+      /* Application of mixins to local .paper-date-picker-dialog elements */
+      .paper-date-picker-dialog {
+        @apply(--paper-date-picker-dialog);
+      }
+      .paper-date-picker-dialog > paper-date-picker {
+        --paper-calendar: {
+          @apply(--paper-date-picker-dialog-calendar);
+        };
+        @apply(--paper-date-picker-dialog-picker);
+      }
+      .paper-date-picker-dialog > paper-date-picker:not([narrow]) {
+        --paper-date-picker-heading: {
+          @apply(--paper-date-picker-dialog-heading);
+        };
+      }
+
     </style>
+
+      <chris-api id="ItemAPI"
+        api="Item",
+        content-type="application/json",
+        error="{{error}}">
+      </chris-api>
 
       <div class="container" >
 
@@ -63,11 +117,23 @@ Chris app pacs-pull element!
         <iron-pages selected="{{selected}}">
           <div>
 
+            <paper-button raised>Search</paper-button>
+
             <paper-input label="Patient MRN"></paper-input>
             <paper-input label="Date"></paper-input>
             <paper-input label="Modality"></paper-input>
 
-            <paper-checkbox>Anonymize response</paper-checkbox>
+            <paper-checkbox>Anonymize results</paper-checkbox>
+
+            <paper-button class="btn" on-tap="showDialog" raised>Change Date</paper-button>
+
+            <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
+              <paper-date-picker id="picker" date="[[date]]" ></paper-date-picker>
+              <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm>OK</paper-button>
+              </div>
+            </paper-dialog>
 
           </div>
 
@@ -193,7 +259,24 @@ Chris app pacs-pull element!
           // let plugin-fs know the parameters are ready
           this.fire( 'parameters-changed' );
 
+        },
+
+        showDialog: function() {
+
+          this.$.dialog.toggle();
+          this.$.dialog.updateStyles();
+
+        },
+
+        patchOverlay: function ( e ) {
+
+        if ( e.currentTarget.backdropElement ) {
+
+          e.currentTarget.parentNode.insertBefore( e.currentTarget.backdropElement, e.currentTarget );
+
         }
+
+      }
     });
   </script>
 </dom-module>

@@ -24,10 +24,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
+    
     :host{
 
-        background-color: var(--dark-primary-color);
-        --paper-input-container-focus-color: var(--accent-color);
+      background-color: var(--dark-primary-color);
+      --paper-input-container-focus-color: var(--accent-color);
 
     }
 
@@ -84,24 +85,24 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     }
 
 
-      /* responsive layout */
+    /* responsive layout */
 
-      @media all and (max-width: 800px) {
+    @media all and (max-width: 800px) {
 
-        #card {
+      #card {
 
-          margin: 0;
-
-        }
+        margin: 0;
 
       }
+
+    }
     
     </style>
 
-    <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(pluginFs.color)]]">
+    <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(pluginFs.data.color)]]">
       <app-header fixed condenses effects="waterfall">
-        <app-toolbar style$="[[_setToolbarStyle(pluginFs.color)]]">
-          <div title>[[pluginFs.name]]</div>
+        <app-toolbar style$="[[_setToolbarStyle(pluginFs.data.color)]]">
+          <div title>[[pluginFs.data.name]]</div>
           <a class="back" href="/home">
             <paper-icon-button icon="icons:clear"></paper-icon-button>
           </a>
@@ -150,15 +151,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             node.removeEventListener( 'parameters-changed', this._createFeed );
 
           }
-
-          console.log(this.pluginFs.name);
           
           // fetch the plugin!
           Polymer.Base.importHref(
-            this.resolveUrl( '../../chris-apps/chris-apps-' + this.pluginFs.name + '/chris-apps-' + this.pluginFs.name + '.html' ),
+            this.resolveUrl( '../../chris-apps/chris-apps-' + this.pluginFs.data.name + '/chris-apps-' + this.pluginFs.data.name + '.html' ),
             function( evt ){
 
-              var plugin = document.createElement( 'chris-apps-' + this.pluginFs.name );
+              var plugin = document.createElement( 'chris-apps-' + this.pluginFs.data.name );
               plugin.classList.add( 'plugin' );
               Polymer.dom( this.$.card ).appendChild( plugin );
 
@@ -196,34 +195,34 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.feed = {};
           this.feed.details = {
             id: '', // will be overwritten
-            name: 'created by ' + this.pluginFs.name,
+            name: 'created by ' + this.pluginFs.data.name,
             opened: false,
             checked: false,
-            color: this.pluginFs.color,
+            color: this.pluginFs.data.color,
             favorite: false,
             status: 'running',
             tags: [],
             selected: false,
-            letter: this.pluginFs.name.charAt(0).toUpperCase(),
+            letter: this.pluginFs.data.name.charAt(0).toUpperCase(),
             date: ( new Date() ).toString()
           }
           this.feed.plugins = [{
-            label: this.pluginFs.name,
-            color: this.pluginFs.color,
+            label: this.pluginFs.data.name,
+            color: this.pluginFs.data.color,
             id: 0,
             parentID: 0,
             depth: 0,
             icon: 'icons:cloud-queue',
             workflow: [{
-              color: this.pluginFs.color,
+              color: this.pluginFs.data.color,
               icon: 'icons:cloud-queue',
-              label: this.pluginFs.name
+              label: this.pluginFs.data.name
             }]
           }];
           this.feed.comments = [];
 
           this.feed.note = '\
-# Note about ' + this.pluginFs.name + '\n\
+# Note about ' + this.pluginFs.data.name + '\n\
 \n\
 ---\n\
 ### parameters\n\
