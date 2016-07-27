@@ -2,10 +2,9 @@
 <link rel="import" href="../iron-scroll-target-behavior.html">
 
 </head><body><dom-module id="x-scrollable">
-
-  <style>:host{display:block;font:14px arial;}.item{border-bottom:1px solid #ccc;background-color:white;padding:20px;width:200%;}</style>
-
   <template>
+    <style>:host{display:block;font:14px arial;}.item{border-bottom:1px solid #ccc;background-color:white;padding:20px;width:200%;}</style>
+
     <template is="dom-repeat" items="[[_getItems(itemCount)]]">
       <div class="item">[[index]]</div>
     </template>

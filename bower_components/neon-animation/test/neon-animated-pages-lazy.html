@@ -32,7 +32,7 @@
     </template>
   </test-fixture>
 
-  <script>suite("animations found when `lazRegister` setting is true",function(){test("animations are registered",function(e){var i=fixture("animate-initial-selection");i._completeAnimations=sinon.spy(),assert.isUndefined(i.selected);var t=Polymer.dom(i).children;i.addEventListener("neon-animation-finish",function(n){if(0===i.selected)return void(i.selected=1);assert.strictEqual(i.selected,1),assert.equal(n.detail.fromPage,t[0]),assert.equal(n.detail.toPage,t[1]),assert.isTrue(i._completeAnimations.calledTwice);var a=i._completeAnimations.getCall(1).args[0];assert.isTrue(a[0].animation.isNeonAnimation,"entry animation is not a registered animation"),assert.isTrue(a[1].animation.isNeonAnimation,"exit animation is not a registered animation"),e()}),i.selected=0})});</script>
+  <script>suite("animations found when `lazRegister` setting is true",function(){test("animations are registered",function(e){var i=fixture("animate-initial-selection");i._complete=sinon.spy(i._complete),assert.isUndefined(i.selected);var t=Polymer.dom(i).children;i.addEventListener("neon-animation-finish",function(n){if(0===i.selected)return void(i.selected=1);assert.strictEqual(i.selected,1),assert.equal(n.detail.fromPage,t[0]),assert.equal(n.detail.toPage,t[1]),assert.isTrue(i._complete.calledTwice);var a=i._complete.getCall(1).args[0];assert.isTrue(a[0].neonAnimation.isNeonAnimation,"entry animation is not a registered animation"),assert.isTrue(a[1].neonAnimation.isNeonAnimation,"exit animation is not a registered animation"),e()}),i.selected=0})});</script>
 
 
 

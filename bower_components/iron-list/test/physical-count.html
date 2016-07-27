@@ -24,7 +24,8 @@
     </template>
   </test-fixture>
 
-  <script>suite("dynamic physical count",function(){var t,e;setup(function(){e=fixture("trivialList"),t=e.list,t.items=buildDataSet(200)}),test("increase pool size",function(s){setTimeout(function(){t.scrollTop=0;var i=getLastItemFromList(t),n=i.offsetHeight,o=e.listHeight/n-1;assert.equal(t.offsetHeight,e.listHeight),assert.equal(n,2),assert.isTrue(isFullOfItems(t)),assert.equal(i.textContent,o),s()},100)})}),suite("iron-resize",function(){var t,e;setup(function(){e=fixture("trivialListSmall"),t=e.list,t.style.display="none",t.items=buildDataSet(200)}),test("increase pool size after resizing the list",function(e){flush(function(){t.style.display="",assert.notEqual(getFirstItemFromList(t).textContent,"0","Item should not be rendered"),t.fire("iron-resize"),flush(function(){assert.equal(getFirstItemFromList(t).textContent,"0","Item should be rendered"),e()})})}),test("pool should not increase if the list has no size",function(s){e.style.display="none",t.fire("iron-resize"),flush(function(){assert.isFalse(t._increasePoolIfNeeded()),s()})})});</script>
+
+  <script>suite("dynamic physical count",function(){var t,e;setup(function(){e=fixture("trivialList"),t=e.list,t.items=buildDataSet(200)}),test("increase pool size",function(i){setTimeout(function(){var s=getLastItemFromList(t),a=s.offsetHeight,n=e.listHeight/a;assert.equal(t.offsetHeight,e.listHeight),assert.equal(a,2),assert.equal(getLastItemFromList(t).textContent,n),i()},100)})}),suite("iron-resize",function(){var t,e;setup(function(){e=fixture("trivialListSmall"),t=e.list,t.items=buildDataSet(200)}),test("increase pool size after resizing the list",function(i){flush(function(){t.fire("iron-resize"),setTimeout(function(){var s=getLastItemFromList(t),a=s.offsetHeight,n=e.listHeight/a;assert.equal(t.offsetHeight,e.listHeight),assert.equal(a,2),assert.equal(getLastItemFromList(t).textContent,n),i()},100)})})});</script>
 
 
 

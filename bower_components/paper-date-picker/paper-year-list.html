@@ -1,0 +1,21 @@
+<html><head><link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-list/iron-list.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../polymer/polymer.html">
+
+</head><body><dom-module id="paper-year-list">
+  <template>
+    <style>:host{display:block;box-sizing:border-box;height:100%;@apply (--paper-font-common-base);position:relative;}.year{cursor:pointer;height:var(--paper-year-list-item-height, 44px);line-height:var(--paper-year-list-item-height, 44px);text-align:center;vertical-align:middle;}.selected{color:var(--default-primary-color);font-size:24px;}iron-list{@apply (--layout-fit);}</style>
+    <iron-list id="yearList" items="[[_years]]">
+      <template>
+        <div class$="year{{_addSelectedClass(selected)}}" on-tap="_tappedYearHandler">
+          [[item.year]]
+        </div>
+      </template>
+    </iron-list>
+  </template>
+  <script>Polymer({is:"paper-year-list",properties:{date:{type:Date,notify:!0,observer:"_dateChange"},max:{type:Number,value:2100,observer:"_maxChange"},min:{type:Number,value:1900,observer:"_minChange"},selected:{type:Number,notify:!0,observer:"_selectedChange"},_years:{type:Array,computed:"_computeYears(min, max)",readOnly:!0,value:function(){return Date.now().getFullYear}}},ready:function(){this.$.yearList._resizeHandler=function(){this.debounce("resize",function(){this._render(),this._itemsRendered&&this._physicalItems&&this._isVisible&&(this._resetAverage(),this.updateViewportBoundaries())})}.bind(this.$.yearList)},centerSelected:function(){if(null!==this.selected){var e=this.selected-this.min;this.$.yearList.scrollToIndex(e),this.$.yearList._render(),this.async(function(){var t=e*this._physicalAverage+1;t!==this.scrollTop&&(this._update(),this.scrollTop=t,this._refresh()),this.scrollHeight-this.offsetHeight!==this.scrollTop&&(this.scrollTop+=(this._physicalAverage-this.offsetHeight)/2,this._refresh())}.bind(this.$.yearList))}},_addSelectedClass:function(e){return e?" selected":void 0},_computeYears:function(e,t){if("number"==typeof e&&"number"==typeof t){for(var i=[];t>=e;e++)i.push({year:e});return i}},_dateChange:function(e){var t=e.getFullYear();this.selected=this._withinRange(t)?t:null},_maxChange:function(e){"number"!=typeof e&&(this.max=2100)},_minChange:function(e){"number"!=typeof e&&(this.min=1900)},_selectedChange:function(e){return null===e?void this.$.yearList.clearSelection():(e!==this.date.getFullYear()&&(this.date=new Date(this.date.setFullYear(e))),void this._selectYearInList(e))},_selectYearInList:function(e){var t=e-this.min;this.$.yearList.selectItem(t)},_tappedYearHandler:function(e){var t=e.model.__data__.item,i=t.year;this.selected!==i&&(this.$.yearList.selectItem(t),this.selected=i)},_withinRange:function(e){return!(this.min&&e<this.min||this.max&&e>this.max)},behaviors:[Polymer.IronResizableBehavior]});</script>
+</dom-module>
+</body></html>

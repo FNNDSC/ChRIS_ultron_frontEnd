@@ -27,7 +27,7 @@
           <div>Two</div>
           <div>Three</div>
         </iron-pages>
-        <script>document.addEventListener("click",function(e){var t=document.querySelector("iron-pages");t.selectNext()});</script>
+        <script>var pages=document.querySelector("iron-pages");pages.addEventListener("click",function(e){pages.selectNext()});</script>
       </template>
     </demo-snippet>
   </div>

@@ -4,14 +4,13 @@
 
 </head><body><dom-module id="x-list">
 
-  <style>:host{@apply (--layout-fit);@apply (--layout-vertical);display:block;}.item{color:white;}.item:nth-child(odd){background-color:green;}.item:nth-child(even){background-color:red;}iron-list{overflow:hidden;}</style>
+  <style>:host{@apply (--layout-fit);@apply (--layout-vertical);display:block;}.item{color:white;}.item:nth-child(odd){background-color:green;}.item:nth-child(even){background-color:red;}</style>
 
   <template>
     <iron-list style$="[[_computedListHeight(listHeight)]]" items="[[data]]" as="item" id="list">
       <template>
-        <div class="item" tabindex$="[[tabIndex]]">
-          <div style$="[[_computedItemHeight(item)]]" tabindex="0" hidden$="[[primitive]]">[[item.index]]</div>
-          <div style$="[[_computedItemHeight(item)]]" tabindex="0" hidden$="[[!primitive]]">[[item]]</div>
+        <div class="item">
+          <div style$="[[_computedItemHeight(item)]]">[[item.index]]</div>
         </div>
       </template>
     </iron-list>
@@ -19,5 +18,5 @@
 
 </dom-module>
 
-<script>Polymer({is:"x-list",properties:{data:{type:Array},itemHeight:{type:Number,value:100},listHeight:{type:Number,value:300},pre:{type:Boolean},primitive:{value:!1,type:Boolean}},get list(){return this.$.list},_computedItemHeight:function(e){var t=this.pre?"white-space:pre;":"";return e.height?t+=0===this.itemHeight?"":"height: "+e.height+"px;":this.itemHeight&&(t+="height: "+this.itemHeight+"px;"),t},_computedListHeight:function(e){return"height: "+e+"px;"}});</script>
+<script>Polymer({is:"x-list",properties:{data:{type:Array},itemHeight:{type:Number,value:100},listHeight:{type:Number,value:300},pre:{type:Boolean}},get list(){return this.$.list},_computedItemHeight:function(t){var e=this.pre?"white-space:pre;":"";return t.height?e+=0===this.itemHeight?"":"height: "+t.height+"px;":this.itemHeight&&(e+="height: "+this.itemHeight+"px;"),e},_computedListHeight:function(t){return"height: "+t+"px"}});</script>
 </body></html>

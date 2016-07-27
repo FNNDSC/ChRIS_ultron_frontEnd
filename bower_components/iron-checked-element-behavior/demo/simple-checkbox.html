@@ -3,8 +3,9 @@
 <link rel="import" href="../iron-checked-element-behavior.html">
 
 </head><body><dom-module id="simple-checkbox">
-  <style>:host{display:block;}:host([invalid]) span{color:red;}#labelText{display:inline-block;width:100px;}</style>
   <template>
+    <style>:host{display:block;}:host([invalid]) span{color:red;}#labelText{display:inline-block;width:100px;}</style>
+
     <input type="checkbox" id="checkbox" on-tap="_onCheckTap">
     <span id="labelText">{{label}}</span>
     <paper-button raised="" on-click="_onClick">validate</paper-button>

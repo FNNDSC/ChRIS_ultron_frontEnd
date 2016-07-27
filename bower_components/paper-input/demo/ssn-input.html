@@ -6,7 +6,7 @@
 </head><body><dom-module id="ssn-input">
   <template>
 
-    <style>:host{display:inline-block;}input[is="iron-input"]{font:inherit;outline:none;box-shadow:none;border:none;width:auto;text-align:center;}.container{@apply (--layout-horizontal);}</style>
+    <style>:host{display:inline-block;}:host([hidden]){display:none !important;}input[is="iron-input"]{font:inherit;outline:none;box-shadow:none;border:none;width:auto;text-align:center;}.container{@apply (--layout-horizontal);}</style>
 
     <ssn-validator></ssn-validator>
 
