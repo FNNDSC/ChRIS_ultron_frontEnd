@@ -14,7 +14,7 @@
 
   <template>
 
-    <style>:host{display:block;}iron-list{padding-top:16px;padding-bottom:64px;--iron-list-items-container:{max-width:800px;margin:auto;margin-top:30px;margin-bottom:60px;border-bottom:1px solid var(--accent-color);};}a{color:inherit;}</style>
+    <style>:host{display:block;}iron-list{@apply (--layout-fit);padding-top:16px;padding-bottom:64px;--iron-list-items-container:{max-width:800px;margin:auto;margin-top:30px;margin-bottom:60px;border-bottom:1px solid var(--accent-color);};}a{color:inherit;}</style>
 
     <iron-list id="feeds" items="[[feeds.data]]" as="feed" selection-enabled="" on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
 

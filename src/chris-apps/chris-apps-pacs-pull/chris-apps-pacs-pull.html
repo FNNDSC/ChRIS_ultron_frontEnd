@@ -229,20 +229,17 @@ return 1===e?a[0]:e>=2&&4>=e?a[1]:a[2]},translate:function(e,a,t){var s=Md.words
             <paper-input label="Date"></paper-input>
             <paper-input label="Modality"></paper-input>
 
-            <paper-checkbox>Anonymize response</paper-checkbox>
+            <paper-checkbox>Anonymize results</paper-checkbox>
 
-                  <paper-button class="btn" on-tap="showDialog" raised="">Change Date</paper-button>
+            <paper-button class="btn" on-tap="showDialog" raised="">Change Date</paper-button>
 
-                  <paper-dialog id="dialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay">
-  <paper-date-picker id="picker" date="[[date]]"></paper-date-picker>
-  <div class="buttons">
-    <paper-button dialog-dismiss="">Cancel</paper-button>
-    <paper-button dialog-confirm="">OK</paper-button>
-  </div>
-</paper-dialog>
-
-
-
+            <paper-dialog id="dialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay">
+              <paper-date-picker id="picker" date="[[date]]"></paper-date-picker>
+              <div class="buttons">
+                <paper-button dialog-dismiss="">Cancel</paper-button>
+                <paper-button dialog-confirm="">OK</paper-button>
+              </div>
+            </paper-dialog>
 
           </div>
 
