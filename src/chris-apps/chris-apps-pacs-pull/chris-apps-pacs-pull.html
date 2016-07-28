@@ -1,6 +1,9 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 
 
@@ -8,7 +11,12 @@
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../../bower_components/paper-tabs/paper-tab.html">
 
@@ -33,6 +41,12 @@ Chris app pacs-pull element!
       host {
 
         display: block;
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
 
       }
 
@@ -101,6 +115,75 @@ Chris app pacs-pull element!
         };
       }
 
+      .form {
+
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding-top: 24px;
+
+      }
+
+      .item {
+
+        @apply(--layout-horizontal);
+        padding: 10px 72px;
+
+      }
+
+      .group {
+
+        @apply(--layout-vertical);
+        position: relative;
+        padding: 8px 0;
+
+      }
+
+      .flex {
+
+        @apply(--layout-flex);
+        @apply(--layout-horizontal);
+        align-items: center;
+        justify-content: flex-start;
+        /*flex: 1;*/
+
+      }
+
+      .help {
+        /*flex: 0;*/
+      }
+
+      paper-textarea, paper-input {
+        width: 100%;
+      }
+
+      .name {
+
+        font-size: 22px;
+        font-weight: 400;
+        color: #737373;
+
+      }
+
+      .submit {
+
+        padding: 16px;
+        font-size: 18px;
+        font-weight: 400;
+        background-color: var(--accent-color);
+        color: #ffffff;
+        margin-top: 24px;
+
+      }
+
+      .tool {
+
+        @apply(--layout-horizontal);
+        cursor: pointer;
+        padding: 8px 14px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+      }
+
     </style>
 
       <chris-api id="ItemAPI"
@@ -112,42 +195,152 @@ Chris app pacs-pull element!
       <div class="container" >
 
         <paper-tabs selected="{{selected}}">
-          <paper-tab>Search</paper-tab>
-          <paper-tab>Results</paper-tab>
-          <paper-tab>Settings</paper-tab>
+          <paper-tab class="name">Search</paper-tab>
+          <paper-tab class="name">Results</paper-tab>
         </paper-tabs>
 
         <iron-pages selected="{{selected}}">
-          <div>
+          <div class="form">
 
-            <paper-button raised>Search</paper-button>
+          <div class="group">
 
-            <paper-input label="Patient MRN"></paper-input>
-            <paper-input label="Date"></paper-input>
-            <paper-input label="Modality"></paper-input>
+            <div class="name tool" on-tap="_toggleSimple">Simple search <div class="spacer"></div> <paper-icon-button id="simpleIcon" icon="icons:expand-less"></paper-icon-button></div>
 
-            <paper-checkbox>Anonymize results</paper-checkbox>
+            <iron-collapse id="simple" opened>
 
-            <paper-button class="btn" on-tap="showDialog" raised>Change Date</paper-button>
+              <div class="item large">
+                <div class="flex">
+                  <paper-textarea label="Patient MRN(s)"></paper-textarea>
+                </div>
 
-            <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
-              <paper-date-picker id="picker" date="[[date]]" ></paper-date-picker>
-              <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm>OK</paper-button>
+                <div class="help">
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
               </div>
-            </paper-dialog>
+
+            </iron-collapse>
+
+          </div>
+
+          <div class="group">
+
+            <div class="name tool" on-tap="_toggleAdvanced">Advanced search <div class="spacer"></div> <paper-icon-button id="advancedIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+            <iron-collapse id="advanced">
+
+              <div class="item large">
+
+                <div class="flex">
+                  <paper-input label="Start Date" value="[[date]]"></paper-input>
+                  <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+                <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
+                  <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
+                  <div class="buttons">
+                    <paper-button dialog-dismiss>Cancel</paper-button>
+                    <paper-button dialog-confirm>OK</paper-button>
+                  </div>
+                </paper-dialog>
+
+              </div>
+
+              <div class="item large">
+
+                <div class="flex">
+                  <paper-input label="End Date" value="[[date]]"></paper-input>
+                  <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+                <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
+                  <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
+                  <div class="buttons">
+                    <paper-button dialog-dismiss>Cancel</paper-button>
+                    <paper-button dialog-confirm>OK</paper-button>
+                  </div>
+                </paper-dialog>
+
+              </div>
+
+              <div class="item small">
+                
+                <div class="flex">
+                  <paper-input label="Modality"></paper-input>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+              </div>
+
+              <div class="item large">
+                
+                <div class="flex">
+                  <paper-checkbox>Anonymize results</paper-checkbox>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+              </div>
+
+            </iron-collapse>
+
+            </div>
+
+
+          <div class="group">
+
+            <div class="name tool" on-tap="_toggleSettings">PACS settings <div class="spacer"></div> <paper-icon-button id="settingsIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+            <iron-collapse id="settings">
+
+              <div class="item large">
+                <div class="flex">
+                  <paper-input label="PACS IP"></paper-input>
+                </div>
+
+                <div class="help">
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+              </div>
+
+              <div class="item large">
+                <div class="flex">
+                  <paper-input label="AETITLE"></paper-input>
+                </div>
+
+                <div class="help">
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+              </div>
+
+            </iron-collapse>
+
+          </div>
+
+            <paper-button class="submit" raised>Search on the PACS</paper-button>
 
           </div>
 
           <div>
-            <div id="vad" style="display: flex; flex-direction: column">
+            <div id="vad">
             <!-- https://vaadin.com/elements/-/element/vaadin-grid -->
             <!-- https://github.com/vaadin/vaadin-grid -->
 
             <paper-input id="filter" label="Filter by first name"></paper-input>
 
-            <vaadin-grid id="sort" selection-mode="multi" style="flex: 1">
+            <vaadin-grid id="sort" selection-mode="multi" style="height:100%">
               <table>
                 <colgroup>
                   <col name="firstName" sortable/>
@@ -159,11 +352,6 @@ Chris app pacs-pull element!
 
             </div>
 
-          </div>
-
-          <div>
-            <paper-input label="PACS IP"></paper-input>
-            <paper-input label="AETITLE"></paper-input>
           </div>
 
         </iron-pages>
@@ -273,13 +461,34 @@ Chris app pacs-pull element!
 
         patchOverlay: function ( e ) {
 
-        if ( e.currentTarget.backdropElement ) {
+          if ( e.currentTarget.backdropElement ) {
 
-          e.currentTarget.parentNode.insertBefore( e.currentTarget.backdropElement, e.currentTarget );
+            e.currentTarget.parentNode.insertBefore( e.currentTarget.backdropElement, e.currentTarget );
+
+          }
+
+        },
+
+        _toggleAdvanced: function(){
+
+          this.$.advanced.toggle();
+          this.$.advancedIcon.icon = this.$.advanced.opened ? 'icons:expand-less' : 'icons:expand-more';
+
+        },
+
+        _toggleSimple: function(){
+
+          this.$.simple.toggle();
+          this.$.simpleIcon.icon = this.$.simple.opened ? 'icons:expand-less' : 'icons:expand-more';
+
+        },
+
+        _toggleSettings: function(){
+
+          this.$.settings.toggle();
+          this.$.settingsIcon.icon = this.$.settings.opened ? 'icons:expand-less' : 'icons:expand-more';
 
         }
-
-      }
     });
   </script>
 </dom-module>
