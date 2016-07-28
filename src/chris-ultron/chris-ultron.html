@@ -973,6 +973,39 @@
 </dom-module>
 
 <script>Polymer({is:"paper-input",behaviors:[Polymer.IronFormElementBehavior,Polymer.PaperInputBehavior]});</script>
+<dom-module id="iron-collapse" assetpath="../../bower_components/iron-collapse/">
+
+  <template>
+
+    <style>:host{display:block;transition-duration:var(--iron-collapse-transition-duration, 300ms);overflow:visible;}:host(.iron-collapse-closed){display:none;}:host(:not(.iron-collapse-opened)){overflow:hidden;}</style>
+
+    <content></content>
+
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"iron-collapse",behaviors:[Polymer.IronResizableBehavior],properties:{horizontal:{type:Boolean,value:!1,observer:"_horizontalChanged"},opened:{type:Boolean,value:!1,notify:!0,observer:"_openedChanged"},noAnimation:{type:Boolean}},get dimension(){return this.horizontal?"width":"height"},get _dimensionMax(){return this.horizontal?"maxWidth":"maxHeight"},get _dimensionMaxCss(){return this.horizontal?"max-width":"max-height"},hostAttributes:{role:"group","aria-hidden":"true","aria-expanded":"false"},listeners:{transitionend:"_transitionEnd"},attached:function(){this._transitionEnd()},toggle:function(){this.opened=!this.opened},show:function(){this.opened=!0},hide:function(){this.opened=!1},updateSize:function(t,i){var e=this.style[this._dimensionMax];if(e!==t&&("auto"!==t||e)){if(this._updateTransition(!1),i&&!this.noAnimation&&this._isDisplayed){var n=this._calcSize();"auto"===t&&(this.style[this._dimensionMax]="",t=this._calcSize()),this.style[this._dimensionMax]=n,this.scrollTop=this.scrollTop,this._updateTransition(!0)}"auto"===t?this.style[this._dimensionMax]="":this.style[this._dimensionMax]=t}},enableTransition:function(t){Polymer.Base._warn("`enableTransition()` is deprecated, use `noAnimation` instead."),this.noAnimation=!t},_updateTransition:function(t){this.style.transitionDuration=t&&!this.noAnimation?"":"0s"},_horizontalChanged:function(){this.style.transitionProperty=this._dimensionMaxCss;var t="maxWidth"===this._dimensionMax?"maxHeight":"maxWidth";this.style[t]="",this.updateSize(this.opened?"auto":"0px",!1)},_openedChanged:function(){this.setAttribute("aria-expanded",this.opened),this.setAttribute("aria-hidden",!this.opened),this.toggleClass("iron-collapse-closed",!1),this.toggleClass("iron-collapse-opened",!1),this.updateSize(this.opened?"auto":"0px",!0),this.opened&&this.focus(),this.noAnimation&&this._transitionEnd()},_transitionEnd:function(){this.opened&&(this.style[this._dimensionMax]=""),this.toggleClass("iron-collapse-closed",!this.opened),this.toggleClass("iron-collapse-opened",this.opened),this._updateTransition(!1),this.notifyResize()},get _isDisplayed(){var t=this.getBoundingClientRect();for(var i in t)if(0!==t[i])return!0;return!1},_calcSize:function(){return this.getBoundingClientRect()[this.dimension]+"px"}});</script>
+<script>Polymer({is:"paper-menu-grow-height-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(e){var i=e.node,t=i.getBoundingClientRect(),n=t.height;return this._effect=new KeyframeEffect(i,[{height:n/2+"px"},{height:n+"px"}],this.timingFromConfig(e)),this._effect}}),Polymer({is:"paper-menu-grow-width-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(e){var i=e.node,t=i.getBoundingClientRect(),n=t.width;return this._effect=new KeyframeEffect(i,[{width:n/2+"px"},{width:n+"px"}],this.timingFromConfig(e)),this._effect}}),Polymer({is:"paper-menu-shrink-width-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(e){var i=e.node,t=i.getBoundingClientRect(),n=t.width;return this._effect=new KeyframeEffect(i,[{width:n+"px"},{width:n-n/20+"px"}],this.timingFromConfig(e)),this._effect}}),Polymer({is:"paper-menu-shrink-height-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(e){var i=e.node,t=i.getBoundingClientRect(),n=t.height;t.top;return this.setPrefixedProperty(i,"transformOrigin","0 0"),this._effect=new KeyframeEffect(i,[{height:n+"px",transform:"translateY(0)"},{height:n/2+"px",transform:"translateY(-20px)"}],this.timingFromConfig(e)),this._effect}});</script>
+
+
+<dom-module id="paper-menu-button" assetpath="../../bower_components/paper-menu-button/">
+  <template>
+    <style>:host{display:inline-block;position:relative;padding:8px;outline:none;@apply (--paper-menu-button);}:host([disabled]){cursor:auto;color:var(--disabled-text-color);@apply (--paper-menu-button-disabled);}iron-dropdown{@apply (--paper-menu-button-dropdown);}.dropdown-content{@apply (--shadow-elevation-2dp);position:relative;border-radius:2px;background-color:var(--paper-menu-button-dropdown-background, --primary-background-color);@apply (--paper-menu-button-content);}:host([vertical-align="top"]) .dropdown-content{margin-bottom:20px;margin-top:-10px;top:10px;}:host([vertical-align="bottom"]) .dropdown-content{bottom:10px;margin-bottom:-10px;margin-top:20px;}</style>
+
+    <div id="trigger" on-tap="toggle">
+      <content select=".dropdown-trigger"></content>
+    </div>
+
+    <iron-dropdown id="dropdown" opened="{{opened}}" horizontal-align="[[horizontalAlign]]" vertical-align="[[verticalAlign]]" dynamic-align="[[dynamicAlign]]" horizontal-offset="[[horizontalOffset]]" vertical-offset="[[verticalOffset]]" no-overlap="[[noOverlap]]" open-animation-config="[[openAnimationConfig]]" close-animation-config="[[closeAnimationConfig]]" no-animations="[[noAnimations]]" focus-target="[[_dropdownContent]]" allow-outside-scroll="[[allowOutsideScroll]]" restore-focus-on-close="[[restoreFocusOnClose]]" on-iron-overlay-canceled="__onIronOverlayCanceled">
+      <div class="dropdown-content">
+        <content id="content" select=".dropdown-content"></content>
+      </div>
+    </iron-dropdown>
+  </template>
+
+  <script>!function(){"use strict";var e={ANIMATION_CUBIC_BEZIER:"cubic-bezier(.3,.95,.5,1)",MAX_ANIMATION_TIME_MS:400},n=Polymer({is:"paper-menu-button",behaviors:[Polymer.IronA11yKeysBehavior,Polymer.IronControlState],properties:{opened:{type:Boolean,value:!1,notify:!0,observer:"_openedChanged"},horizontalAlign:{type:String,value:"left",reflectToAttribute:!0},verticalAlign:{type:String,value:"top",reflectToAttribute:!0},dynamicAlign:{type:Boolean},horizontalOffset:{type:Number,value:0,notify:!0},verticalOffset:{type:Number,value:0,notify:!0},noOverlap:{type:Boolean},noAnimations:{type:Boolean,value:!1},ignoreSelect:{type:Boolean,value:!1},closeOnActivate:{type:Boolean,value:!1},openAnimationConfig:{type:Object,value:function(){return[{name:"fade-in-animation",timing:{delay:100,duration:200}},{name:"paper-menu-grow-width-animation",timing:{delay:100,duration:150,easing:e.ANIMATION_CUBIC_BEZIER}},{name:"paper-menu-grow-height-animation",timing:{delay:100,duration:275,easing:e.ANIMATION_CUBIC_BEZIER}}]}},closeAnimationConfig:{type:Object,value:function(){return[{name:"fade-out-animation",timing:{duration:150}},{name:"paper-menu-shrink-width-animation",timing:{delay:100,duration:50,easing:e.ANIMATION_CUBIC_BEZIER}},{name:"paper-menu-shrink-height-animation",timing:{duration:200,easing:"ease-in"}}]}},allowOutsideScroll:{type:Boolean,value:!1},restoreFocusOnClose:{type:Boolean,value:!0},_dropdownContent:{type:Object}},hostAttributes:{role:"group","aria-haspopup":"true"},listeners:{"iron-activate":"_onIronActivate","iron-select":"_onIronSelect"},get contentElement(){return Polymer.dom(this.$.content).getDistributedNodes()[0]},toggle:function(){this.opened?this.close():this.open()},open:function(){this.disabled||this.$.dropdown.open()},close:function(){this.$.dropdown.close()},_onIronSelect:function(e){this.ignoreSelect||this.close()},_onIronActivate:function(e){this.closeOnActivate&&this.close()},_openedChanged:function(e,n){e?(this._dropdownContent=this.contentElement,this.fire("paper-dropdown-open")):null!=n&&this.fire("paper-dropdown-close")},_disabledChanged:function(e){Polymer.IronControlState._disabledChanged.apply(this,arguments),e&&this.opened&&this.close()},__onIronOverlayCanceled:function(e){var n=e.detail,t=(Polymer.dom(n).rootTarget,this.$.trigger),o=Polymer.dom(n).path;o.indexOf(t)>-1&&e.preventDefault()}});Object.keys(e).forEach(function(t){n[t]=e[t]}),Polymer.PaperMenuButton=n}();</script>
+</dom-module>
 <dom-module id="paper-listbox" assetpath="../../bower_components/paper-listbox/">
   <template>
     <style>:host{display:block;padding:8px 0;background:var(--paper-listbox-background-color, --primary-background-color);color:var(--paper-listbox-color, --primary-text-color);@apply (--paper-listbox);}</style>
@@ -992,6 +1025,22 @@
 
   <script>Polymer({is:"paper-item",behaviors:[Polymer.PaperItemBehavior]});</script>
 </dom-module>
+<dom-module id="iron-autogrow-textarea" assetpath="../../bower_components/iron-autogrow-textarea/">
+  <template>
+    <style>:host{display:inline-block;position:relative;width:400px;border:1px solid;padding:2px;-moz-appearance:textarea;-webkit-appearance:textarea;overflow:hidden;}.mirror-text{visibility:hidden;word-wrap:break-word;}.fit{@apply (--layout-fit);}textarea{position:relative;outline:none;border:none;resize:none;background:inherit;color:inherit;width:100%;height:100%;font-size:inherit;font-family:inherit;line-height:inherit;text-align:inherit;@apply (--iron-autogrow-textarea);}::content textarea:invalid{box-shadow:none;}textarea::-webkit-input-placeholder{@apply (--iron-autogrow-textarea-placeholder);}textarea:-moz-placeholder{@apply (--iron-autogrow-textarea-placeholder);}textarea::-moz-placeholder{@apply (--iron-autogrow-textarea-placeholder);}textarea:-ms-input-placeholder{@apply (--iron-autogrow-textarea-placeholder);}</style>
+
+    
+    
+    <div id="mirror" class="mirror-text" aria-hidden="true">&nbsp;</div>
+
+    
+    <div class="textarea-container fit">
+      <textarea id="textarea" name$="[[name]]" autocomplete$="[[autocomplete]]" autofocus$="[[autofocus]]" inputmode$="[[inputmode]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]" required$="[[required]]" disabled$="[[disabled]]" rows$="[[rows]]" maxlength$="[[maxlength]]"></textarea>
+    </div>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"iron-autogrow-textarea",behaviors:[Polymer.IronFormElementBehavior,Polymer.IronValidatableBehavior,Polymer.IronControlState],properties:{bindValue:{observer:"_bindValueChanged",type:String},rows:{type:Number,value:1,observer:"_updateCached"},maxRows:{type:Number,value:0,observer:"_updateCached"},autocomplete:{type:String,value:"off"},autofocus:{type:Boolean,value:!1},inputmode:{type:String},placeholder:{type:String},readonly:{type:String},required:{type:Boolean},maxlength:{type:Number}},listeners:{input:"_onInput"},observers:["_onValueChanged(value)"],get textarea(){return this.$.textarea},get selectionStart(){return this.$.textarea.selectionStart},get selectionEnd(){return this.$.textarea.selectionEnd},set selectionStart(e){this.$.textarea.selectionStart=e},set selectionEnd(e){this.$.textarea.selectionEnd=e},validate:function(){if(!this.required&&""==this.value)return this.invalid=!1,!0;var e;return this.hasValidator()?e=Polymer.IronValidatableBehavior.validate.call(this,this.value):(e=this.$.textarea.validity.valid,this.invalid=!e),this.fire("iron-input-validate"),e},_bindValueChanged:function(){var e=this.textarea;e&&(e.value!==this.bindValue&&(e.value=this.bindValue||0===this.bindValue?this.bindValue:""),this.value=this.bindValue,this.$.mirror.innerHTML=this._valueForMirror(),this.fire("bind-value-changed",{value:this.bindValue}))},_onInput:function(e){this.bindValue=e.path?e.path[0].value:e.target.value},_constrain:function(e){var t;for(e=e||[""],t=this.maxRows>0&&e.length>this.maxRows?e.slice(0,this.maxRows):e.slice(0);this.rows>0&&t.length<this.rows;)t.push("");return t.join("<br/>")+"&#160;"},_valueForMirror:function(){var e=this.textarea;if(e)return this.tokens=e&&e.value?e.value.replace(/&/gm,"&amp;").replace(/"/gm,"&quot;").replace(/'/gm,"&#39;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;").split("\n"):[""],this._constrain(this.tokens)},_updateCached:function(){this.$.mirror.innerHTML=this._constrain(this.tokens)},_onValueChanged:function(){this.bindValue=this.value}});</script>
 <script>Polymer({is:"iron-selector",behaviors:[Polymer.IronMultiSelectableBehavior]});</script>
 <iron-iconset-svg name="av" size="24">
 <svg><defs>

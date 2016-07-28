@@ -12,6 +12,29 @@
 </dom-module>
 
 <script>!function(){Polymer({is:"paper-dialog",behaviors:[Polymer.PaperDialogBehavior,Polymer.NeonAnimationRunnerBehavior],listeners:{"neon-animation-finish":"_onNeonAnimationFinish"},_renderOpened:function(){this.cancelAnimation(),this.playAnimation("entry")},_renderClosed:function(){this.cancelAnimation(),this.playAnimation("exit")},_onNeonAnimationFinish:function(){this.opened?this._finishRenderOpened():this._finishRenderClosed()}})}();</script>
+<dom-module id="paper-textarea" assetpath="../../../bower_components/paper-input/">
+  <template>
+    <style>:host{display:block;}:host([hidden]){display:none !important;}</style>
+
+    <paper-input-container no-label-float$="[[noLabelFloat]]" always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]" auto-validate$="[[autoValidate]]" disabled$="[[disabled]]" invalid="[[invalid]]">
+
+      <label hidden$="[[!label]]" aria-hidden="true">[[label]]</label>
+
+      <iron-autogrow-textarea id="input" class="paper-input-input" bind-value="{{value}}" disabled$="[[disabled]]" autocomplete$="[[autocomplete]]" autofocus$="[[autofocus]]" inputmode$="[[inputmode]]" name$="[[name]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]" required$="[[required]]" maxlength$="[[maxlength]]" autocapitalize$="[[autocapitalize]]" rows$="[[rows]]" max-rows$="[[maxRows]]" on-change="_onChange"></iron-autogrow-textarea>
+
+      <template is="dom-if" if="[[errorMessage]]">
+        <paper-input-error>[[errorMessage]]</paper-input-error>
+      </template>
+
+      <template is="dom-if" if="[[charCounter]]">
+        <paper-input-char-counter></paper-input-char-counter>
+      </template>
+
+    </paper-input-container>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"paper-textarea",behaviors:[Polymer.PaperInputBehavior,Polymer.IronFormElementBehavior],properties:{_ariaLabelledBy:{observer:"_ariaLabelledByChanged",type:String},_ariaDescribedBy:{observer:"_ariaDescribedByChanged",type:String},rows:{type:Number,value:1},maxRows:{type:Number,value:0}},_ariaLabelledByChanged:function(e){this.$.input.textarea.setAttribute("aria-labelledby",e)},_ariaDescribedByChanged:function(e){this.$.input.textarea.setAttribute("aria-describedby",e)},get _focusableElement(){return this.$.input.textarea}});</script>
 <script>Polymer.IronMenubarBehaviorImpl={hostAttributes:{role:"menubar"},keyBindings:{left:"_onLeftKey",right:"_onRightKey"},_onUpKey:function(e){this.focusedItem.click(),e.detail.keyboardEvent.preventDefault()},_onDownKey:function(e){this.focusedItem.click(),e.detail.keyboardEvent.preventDefault()},get _isRTL(){return"rtl"===window.getComputedStyle(this).direction},_onLeftKey:function(e){this._isRTL?this._focusNext():this._focusPrevious(),e.detail.keyboardEvent.preventDefault()},_onRightKey:function(e){this._isRTL?this._focusPrevious():this._focusNext(),e.detail.keyboardEvent.preventDefault()},_onKeydown:function(e){this.keyboardEventMatchesKeys(e,"up down left right esc")||this._focusWithKeyboardEvent(e)}},Polymer.IronMenubarBehavior=[Polymer.IronMenuBehavior,Polymer.IronMenubarBehaviorImpl];</script>
 <iron-iconset-svg name="paper-tabs" size="24">
 <svg><defs>
@@ -207,7 +230,7 @@ return 1===e?a[0]:e>=2&&4>=e?a[1]:a[2]},translate:function(e,a,t){var s=Md.words
 
   <template>
 
-    <style>host{display:block;}.container{padding:10px;}paper-tabs{--paper-tabs-selection-bar-color:var(--accent-color);}paper-tab{--paper-tab-ink:var(--accent-color);}paper-dialog{--paper-date-picker-dialog:{margin:0;max-height:520px !important;overflow:hidden;};--paper-date-picker-dialog-picker:{margin-top:0 !important;padding:0;};--paper-date-picker-dialog-calendar:{padding-bottom:0;};--paper-date-picker-dialog-heading:{margin-bottom:-62px;};}.paper-date-picker-dialog{@apply (--paper-date-picker-dialog);}.paper-date-picker-dialog > paper-date-picker{--paper-calendar:{@apply (--paper-date-picker-dialog-calendar);};@apply (--paper-date-picker-dialog-picker);}.paper-date-picker-dialog > paper-date-picker:not([narrow]){--paper-date-picker-heading:{@apply (--paper-date-picker-dialog-heading);};}</style>
+    <style>host{display:block;}.spacer{@apply (--layout-flex);}.container{padding:10px;}paper-tabs{--paper-tabs-selection-bar-color:var(--accent-color);}paper-tab{--paper-tab-ink:var(--accent-color);}paper-dialog{--paper-date-picker-dialog:{margin:0;max-height:520px !important;overflow:hidden;};--paper-date-picker-dialog-picker:{margin-top:0 !important;padding:0;};--paper-date-picker-dialog-calendar:{padding-bottom:0;};--paper-date-picker-dialog-heading:{margin-bottom:-62px;};}.paper-date-picker-dialog{@apply (--paper-date-picker-dialog);}.paper-date-picker-dialog > paper-date-picker{--paper-calendar:{@apply (--paper-date-picker-dialog-calendar);};@apply (--paper-date-picker-dialog-picker);}.paper-date-picker-dialog > paper-date-picker:not([narrow]){--paper-date-picker-heading:{@apply (--paper-date-picker-dialog-heading);};}.form{@apply (--layout-vertical);@apply (--layout-wrap);padding-top:24px;}.item{@apply (--layout-horizontal);padding:10px 72px;}.group{@apply (--layout-vertical);position:relative;padding:8px 0;}.flex{@apply (--layout-flex);@apply (--layout-horizontal);align-items:center;justify-content:flex-start;}.help{}paper-textarea, paper-input{width:100%;}.name{font-size:22px;font-weight:400;color:#737373;}.submit{padding:16px;font-size:18px;font-weight:400;background-color:var(--accent-color);color:#ffffff;margin-top:24px;}.tool{@apply (--layout-horizontal);cursor:pointer;padding:8px 14px;border-bottom:1px solid rgba(0, 0, 0, 0.1);}</style>
 
       <chris-api id="ItemAPI" api="Item" ,="" content-type="application/json" error="{{error}}">
       </chris-api>
@@ -215,42 +238,152 @@ return 1===e?a[0]:e>=2&&4>=e?a[1]:a[2]},translate:function(e,a,t){var s=Md.words
       <div class="container">
 
         <paper-tabs selected="{{selected}}">
-          <paper-tab>Search</paper-tab>
-          <paper-tab>Results</paper-tab>
-          <paper-tab>Settings</paper-tab>
+          <paper-tab class="name">Search</paper-tab>
+          <paper-tab class="name">Results</paper-tab>
         </paper-tabs>
 
         <iron-pages selected="{{selected}}">
-          <div>
+          <div class="form">
 
-            <paper-button raised="">Search</paper-button>
+          <div class="group">
 
-            <paper-input label="Patient MRN"></paper-input>
-            <paper-input label="Date"></paper-input>
-            <paper-input label="Modality"></paper-input>
+            <div class="name tool" on-tap="_toggleSimple">Simple search <div class="spacer"></div> <paper-icon-button id="simpleIcon" icon="icons:expand-less"></paper-icon-button></div>
 
-            <paper-checkbox>Anonymize results</paper-checkbox>
+            <iron-collapse id="simple" opened="">
 
-            <paper-button class="btn" on-tap="showDialog" raised="">Change Date</paper-button>
+              <div class="item large">
+                <div class="flex">
+                  <paper-textarea label="Patient MRN(s)"></paper-textarea>
+                </div>
 
-            <paper-dialog id="dialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay">
-              <paper-date-picker id="picker" date="[[date]]"></paper-date-picker>
-              <div class="buttons">
-                <paper-button dialog-dismiss="">Cancel</paper-button>
-                <paper-button dialog-confirm="">OK</paper-button>
+                <div class="help">
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
               </div>
-            </paper-dialog>
+
+            </iron-collapse>
+
+          </div>
+
+          <div class="group">
+
+            <div class="name tool" on-tap="_toggleAdvanced">Advanced search <div class="spacer"></div> <paper-icon-button id="advancedIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+            <iron-collapse id="advanced">
+
+              <div class="item large">
+
+                <div class="flex">
+                  <paper-input label="Start Date" value="[[date]]"></paper-input>
+                  <paper-button class="btn" on-tap="showDialog" raised="">Change</paper-button>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+                <paper-dialog id="dialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay">
+                  <paper-date-picker id="picker" date="{{date}}"></paper-date-picker>
+                  <div class="buttons">
+                    <paper-button dialog-dismiss="">Cancel</paper-button>
+                    <paper-button dialog-confirm="">OK</paper-button>
+                  </div>
+                </paper-dialog>
+
+              </div>
+
+              <div class="item large">
+
+                <div class="flex">
+                  <paper-input label="End Date" value="[[date]]"></paper-input>
+                  <paper-button class="btn" on-tap="showDialog" raised="">Change</paper-button>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+                <paper-dialog id="dialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay">
+                  <paper-date-picker id="picker" date="{{date}}"></paper-date-picker>
+                  <div class="buttons">
+                    <paper-button dialog-dismiss="">Cancel</paper-button>
+                    <paper-button dialog-confirm="">OK</paper-button>
+                  </div>
+                </paper-dialog>
+
+              </div>
+
+              <div class="item small">
+                
+                <div class="flex">
+                  <paper-input label="Modality"></paper-input>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+              </div>
+
+              <div class="item large">
+                
+                <div class="flex">
+                  <paper-checkbox>Anonymize results</paper-checkbox>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+              </div>
+
+            </iron-collapse>
+
+            </div>
+
+
+          <div class="group">
+
+            <div class="name tool" on-tap="_toggleSettings">PACS settings <div class="spacer"></div> <paper-icon-button id="settingsIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+            <iron-collapse id="settings">
+
+              <div class="item large">
+                <div class="flex">
+                  <paper-input label="PACS IP"></paper-input>
+                </div>
+
+                <div class="help">
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+              </div>
+
+              <div class="item large">
+                <div class="flex">
+                  <paper-input label="AETITLE"></paper-input>
+                </div>
+
+                <div class="help">
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+              </div>
+
+            </iron-collapse>
+
+          </div>
+
+            <paper-button class="submit" raised="">Search on the PACS</paper-button>
 
           </div>
 
           <div>
-            <div id="vad" style="display: flex; flex-direction: column">
+            <div id="vad">
             
             
 
             <paper-input id="filter" label="Filter by first name"></paper-input>
 
-            <vaadin-grid id="sort" selection-mode="multi" style="flex: 1">
+            <vaadin-grid id="sort" selection-mode="multi" style="height:100%">
               <table>
                 <colgroup>
                   <col name="firstName" sortable="">
@@ -264,16 +397,11 @@ return 1===e?a[0]:e>=2&&4>=e?a[1]:a[2]},translate:function(e,a,t){var s=Md.words
 
           </div>
 
-          <div>
-            <paper-input label="PACS IP"></paper-input>
-            <paper-input label="AETITLE"></paper-input>
-          </div>
-
         </iron-pages>
          
       </div>
 
   </template>
 
-  <script>Polymer({is:"chris-apps-pacs-pull",properties:{selected:{type:Number,value:0},parameters:{type:Object}},ready:function(){var e=this.$.sort,t=[];this.getJSON("https://demo.vaadin.com/demo-data/1.0/people",function(r){t=r.result,e.items=t}),e.addEventListener("sort-order-changed",function(){var t=e.sortOrder[0],r=e.columns[t.column].name,a=t.direction;e.items.sort(function(e,t){for(var n,s=r.split("."),o=0;o<s.length;o++)e=e[s[o]],t=t[s[o]];return n=isNaN(e)?e.localeCompare(t):parseInt(e,10)-parseInt(t,10),"desc"===a&&(n*=-1),n})});var r=this.$.filter;r.addEventListener("value-changed",function(){var a=r.value.toLowerCase();e.items=t.filter(function(e){return a?e.firstName.toLowerCase().indexOf(a)>-1:!0})})},getJSON:function(e,t){var r=new XMLHttpRequest;r.onreadystatechange=function(){r.readyState===XMLHttpRequest.DONE&&200===r.status&&t(JSON.parse(r.responseText))},r.open("GET",e,!0),r.send()},generateParameters:function(){this.parameters={hello:"from",the:"pacs_pull"},this.fire("parameters-changed")},showDialog:function(){this.$.dialog.toggle(),this.$.dialog.updateStyles()},patchOverlay:function(e){e.currentTarget.backdropElement&&e.currentTarget.parentNode.insertBefore(e.currentTarget.backdropElement,e.currentTarget)}});</script>
+  <script>Polymer({is:"chris-apps-pacs-pull",properties:{selected:{type:Number,value:0},parameters:{type:Object}},ready:function(){var e=this.$.sort,t=[];this.getJSON("https://demo.vaadin.com/demo-data/1.0/people",function(n){t=n.result,e.items=t}),e.addEventListener("sort-order-changed",function(){var t=e.sortOrder[0],n=e.columns[t.column].name,s=t.direction;e.items.sort(function(e,t){for(var a,o=n.split("."),r=0;r<o.length;r++)e=e[o[r]],t=t[o[r]];return a=isNaN(e)?e.localeCompare(t):parseInt(e,10)-parseInt(t,10),"desc"===s&&(a*=-1),a})});var n=this.$.filter;n.addEventListener("value-changed",function(){var s=n.value.toLowerCase();e.items=t.filter(function(e){return s?e.firstName.toLowerCase().indexOf(s)>-1:!0})})},getJSON:function(e,t){var n=new XMLHttpRequest;n.onreadystatechange=function(){n.readyState===XMLHttpRequest.DONE&&200===n.status&&t(JSON.parse(n.responseText))},n.open("GET",e,!0),n.send()},generateParameters:function(){this.parameters={hello:"from",the:"pacs_pull"},this.fire("parameters-changed")},showDialog:function(){this.$.dialog.toggle(),this.$.dialog.updateStyles()},patchOverlay:function(e){e.currentTarget.backdropElement&&e.currentTarget.parentNode.insertBefore(e.currentTarget.backdropElement,e.currentTarget)},_toggleAdvanced:function(){this.$.advanced.toggle(),this.$.advancedIcon.icon=this.$.advanced.opened?"icons:expand-less":"icons:expand-more"},_toggleSimple:function(){this.$.simple.toggle(),this.$.simpleIcon.icon=this.$.simple.opened?"icons:expand-less":"icons:expand-more"},_toggleSettings:function(){this.$.settings.toggle(),this.$.settingsIcon.icon=this.$.settings.opened?"icons:expand-less":"icons:expand-more"}});</script>
 </dom-module></body></html>
