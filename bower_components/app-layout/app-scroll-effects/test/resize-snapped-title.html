@@ -22,7 +22,7 @@
     </template>
   </test-fixture>
 
-  <script>suite("basic features",function(){var e;setup(function(){e=fixture("testHeader")}),test("effect outputs",function(t){flush(function(){e._updateScrollState(0),assert.isTrue(sameCSS(e.$.title,"transition-property: opacity; transition-duration: 0.2s; opacity: 1;"),"title when progress = 0"),assert.isTrue(sameCSS(e.$.condensedTitle,"transition-property: opacity; transition-duration: 0.2s;"),"condensed-title when progress = 0"),e.$.title.style.transition="none",e.$.condensedTitle.style.transition="none",assert.isTrue(sameCSS(e.$.condensedTitle,"opacity: 0"),"condensed-title when progress = 0"),e._updateScrollState(e.offsetHeight),assert.isTrue(sameCSS(e.$.title,"opacity: 0;"),"title when progress = 1"),assert.isTrue(sameCSS(e.$.condensedTitle,"opacity: 1;"),"condensed-title when progress = 1"),t()})})});</script>
+  <script>suite("basic features",function(){var e;setup(function(){e=fixture("testHeader")}),test("effect outputs",function(t){flush(function(){e._updateScrollState(0),assert.isTrue(sameCSS(e.$.mainTitle,"transition-property: opacity; transition-duration: 0.2s; opacity: 1;"),"main-title when progress = 0"),assert.isTrue(sameCSS(e.$.condensedTitle,"transition-property: opacity; transition-duration: 0.2s;"),"condensed-title when progress = 0"),e.$.mainTitle.style.transition="none",e.$.condensedTitle.style.transition="none",assert.isTrue(sameCSS(e.$.condensedTitle,"opacity: 0"),"condensed-title when progress = 0"),e._updateScrollState(e.offsetHeight),assert.isTrue(sameCSS(e.$.mainTitle,"opacity: 0;"),"main-title when progress = 1"),assert.isTrue(sameCSS(e.$.condensedTitle,"opacity: 1;"),"condensed-title when progress = 1"),t()})})});</script>
 
 
 

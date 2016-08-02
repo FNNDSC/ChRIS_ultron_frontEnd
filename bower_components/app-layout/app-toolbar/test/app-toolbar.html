@@ -9,7 +9,7 @@
   <link rel="import" href="../../../test-fixture/test-fixture.html">
   <link rel="import" href="../app-toolbar.html">
 
-  <style>body{margin:0;padding:0;}app-toolbar{height:50px;background-color:gray;}[top-item]{height:10px;background-color:green;}[bottom-item]{height:10px;background-color:green;}[title]{background-color:red;}</style>
+  <style>body{margin:0;padding:0;}app-toolbar{height:50px;background-color:gray;}[top-item]{height:10px;background-color:green;}[bottom-item]{height:10px;background-color:green;}[main-title]{background-color:red;}</style>
 </head>
 <body>
 
@@ -17,13 +17,13 @@
     <template>
       <app-toolbar>
         <div top-item=""></div>
-        <div title="">Title</div>
+        <div main-title="">Title</div>
         <div bottom-item=""></div>
       </app-toolbar>
     </template>
   </test-fixture>
 
-  <script>suite("basic features",function(){var t;setup(function(){t=fixture("trivialToolbar")}),test("Items",function(){var e=t.offsetHeight,o=document.elementFromPoint(0,0),i=Polymer.dom(t).querySelector("[title]"),r=i.getBoundingClientRect(),n=t.getBoundingClientRect(),s=document.elementFromPoint(0,e-1);assert.isTrue(o.hasAttribute("top-item")),assert.isTrue(s.hasAttribute("bottom-item")),assert.isTrue(r.top>0&&n.bottom-r.bottom>0)})});</script>
+  <script>suite("basic features",function(){var t;setup(function(){t=fixture("trivialToolbar")}),test("Items",function(){var e=t.offsetHeight,o=document.elementFromPoint(0,0),i=Polymer.dom(t).querySelector("[main-title]"),n=i.getBoundingClientRect(),r=t.getBoundingClientRect(),s=document.elementFromPoint(0,e-1);assert.isTrue(o.hasAttribute("top-item")),assert.isTrue(s.hasAttribute("bottom-item")),assert.isTrue(n.top>0&&r.bottom-n.bottom>0)})});</script>
 
 
 
