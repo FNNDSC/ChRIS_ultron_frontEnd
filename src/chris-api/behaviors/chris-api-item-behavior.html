@@ -113,6 +113,11 @@
           itemCJ = this.generatePluginFSCollectionCJ( response.data);
 
         }
+        else if( this.method === 'GET' && response.type === 'pacsquery' ){
+
+          itemCJ = this.generatePacsqueryCJ( response.data);
+
+        }
 
         // Simulate POST/PUT
         if( this.method !== 'GET' ){

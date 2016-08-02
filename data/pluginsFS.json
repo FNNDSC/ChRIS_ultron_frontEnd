@@ -4,7 +4,7 @@
     {
       "name": "pacs-pull",
       "label": "Pacs Pull",
-      "color": "#3F51B5",
+      "color": "#009688",
       "icon": "icons:cloud-queue"
     }
   ]

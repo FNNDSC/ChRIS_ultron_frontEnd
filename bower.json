@@ -13,7 +13,8 @@
     "paper-fab-transitions": "GabiAxel/paper-fab-transitions#master",
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#master",
     "ami-viewer": "FNNDSC/ami-viewer#master",
-    "vaadin-grid": "vaadin/vaadin-grid#master"
+    "vaadin-grid": "vaadin/vaadin-grid#master",
+    "app-layout": "0.10.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

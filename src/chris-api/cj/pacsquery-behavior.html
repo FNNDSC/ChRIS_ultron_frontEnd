@@ -1,0 +1,61 @@
+<script>
+  /** @polymerBehavior PacsqueryCJ */
+  PacsqueryCJ = {
+
+    /**
+     */
+    generatePacsqueryCJ: function( data ){
+
+      var cj = {};
+      cj.collection = {};
+
+      // create the href field
+      cj.collection.href = this.apiRoot + '/pacsquery';
+
+      // create the template field
+      var template = [
+        {'name' : 'PatientID', 'value' : ''},
+        {'name' : 'PatientName', 'value' : ''},
+        {'name' : 'PatientBirthDate', 'value' : ''},
+        {'name' : 'PatientSex', 'value' : ''},
+        {'name' : 'StudyInstanceUID', 'value' : ''},
+        {'name' : 'StudyDescription', 'value' : ''},
+        {'name' : 'StudyDate', 'value' : ''},
+        {'name' : 'PerformedStationAETitle', 'value' : ''},
+        {'name' : 'ModalitiesInStudy', 'value' : ''},
+        {'name' : 'SeriesInstanceUID', 'value' : ''},
+        {'name' : 'SeriesDescription', 'value' : ''},
+        {'name' : 'NumberOfSeriesRelatedInstances', 'value' : ''}
+      ];
+      cj.collection.template = {};
+      cj.collection.template.data = template;
+
+      // create the items
+      cj.collection.items = [];
+      var items = cj.collection.items;
+
+      for( var i = 0; i< data.length; i++){
+
+        var item = {};
+        item.href = this.apiRoot + '/pacsquery/' + i;
+
+        // create the links field
+        item.links = [];
+
+        item.data = this.generateItemDataCJ( cj.collection.template.data, data[i] ).data;
+        // hack to convert to a string
+        // PatientID
+        item.data[0].value = item.data[0].value.toString();
+        // NumberOfSeriesRelatedInstances
+        item.data[11].value = item.data[11].value.toString();
+
+        items.push(item);
+
+      }
+
+      return cj;
+
+    }
+
+  }
+</script>

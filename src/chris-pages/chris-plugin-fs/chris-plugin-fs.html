@@ -51,7 +51,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     .content {
 
-      min-height: 110vh;
+      /*min-height: 110vh;*/
 
     }
 
@@ -63,15 +63,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     #card {
 
-      position: relative;
+/*      position: relative;
       max-width: 800px;
       margin: auto;
       margin-top: 64px;
-      margin-bottom: 100px;
+      margin-bottom: 100px;*/
       /*min-height: 100vh;*/
       /*height: 500px;*/
       /*height: 100%;*/
-      background-color: var(--paper-grey-50);
+     /* background-color: var(--paper-grey-50);*/
 
     }
 
@@ -102,19 +102,22 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(pluginFs.data.color)]]">
       <app-header fixed condenses effects="waterfall">
         <app-toolbar style$="[[_setToolbarStyle(pluginFs.data.color)]]">
-          <div title>[[pluginFs.data.name]]</div>
+          <div main-title>[[pluginFs.data.name]]</div>
           <a class="back" href="/home">
             <paper-icon-button icon="icons:clear"></paper-icon-button>
           </a>
+        </app-toolbar>
+        <app-toolbar id="appToolbar" style$="[[_setToolbarStyle(pluginFs.data.color)]]" sticky>
+
         </app-toolbar>
       </app-header>
       <div class="content">
         <div id="card">
         </div>
 
-        <a href="/home">
+<!--         <a href="/home">
           <paper-fab icon="av:play-arrow" title="play-arrow" on-tap="_getParamters"></paper-fab>
-        </a>
+        </a> -->
 
       </div>
     </app-header-layout>
@@ -146,6 +149,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           if( node ){
 
             Polymer.dom( this.$.card ).removeChild( node );
+            Polymer.dom( this.$.appToolbar ).removeChild( Polymer.dom(this.$.appToolbar).firstChild );
 
             // remove event listener
             node.removeEventListener( 'parameters-changed', this._createFeed );
@@ -160,6 +164,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
               var plugin = document.createElement( 'chris-apps-' + this.pluginFs.data.name );
               plugin.classList.add( 'plugin' );
               Polymer.dom( this.$.card ).appendChild( plugin );
+
+              // attach toolbar
+              Polymer.dom( this.$.appToolbar ).appendChild( plugin.toolbar );
 
               // add event listener
               plugin.addEventListener( 'parameters-changed', this._createFeed.bind( this ) );
