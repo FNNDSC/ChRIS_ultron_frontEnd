@@ -7,6 +7,7 @@
     "src/chris-pages/chris-detail/chris-detail.html",
   	"src/chris-pages/chris-app/chris-app.html",
   	"src/chris-apps/chris-apps-pacs-pull/chris-apps-pacs-pull.html",
+    "src/chris-apps/chris-apps-viewer/chris-apps-viewer.html",
   	"src/chris-components/chris-dataviews/chris-dataviews-rows/chris-dataviews-rows.html",
     "src/chris-components/chris-dataviews/chris-dataviews-columns/chris-dataviews-columns.html"
   ]
