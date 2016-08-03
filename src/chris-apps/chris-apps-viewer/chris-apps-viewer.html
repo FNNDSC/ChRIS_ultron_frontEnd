@@ -1,7 +1,17 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../bower_components/paper-slider/paper-slider.html">
+
+<!-- EXTERNAL ELEMENTS -->
 <link rel="import" href="../../../bower_components/ami-loader/ami-loader.html">
 <link rel="import" href="../../../bower_components/ami-viewer/ami-viewer.html">
+<link rel="import" href="../../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
 
 <!--
 Chris app pacs-pull element!
@@ -20,13 +30,65 @@ Chris app pacs-pull element!
 
       }
 
-      ami-viewer{
+      .container {
 
         position: fixed;
         top: 128px;
         bottom: 0;
         left: 0;
         right: 0;
+        display: flex;
+        flex-flow: row wrap;
+
+      }
+      @media ( max-width: 800px ) {
+
+        .container {
+          flex-flow: column wrap;
+        }
+
+      }
+
+      #viewer{
+
+        flex:2;
+        height: 100%;
+        min-width: 200px;
+        background-color: #212121;
+
+      }
+      .controls{
+
+        flex: 1;
+        min-width: 100px;
+        padding: 8px;
+        background-color: var(--paper-grey-50);
+
+      }
+      #filesinput {
+
+        display: none;
+
+      }
+      paper-button, paper-dropdown-menu, paper-slider {
+
+        width:100%;
+
+      }
+
+      paper-button {
+
+        background-color: var(--paper-pink-a200);
+        color: #FFF;
+
+      }
+
+      .group {
+
+        @apply(--layout-vertical);
+        position: relative;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
       }
 
@@ -34,12 +96,77 @@ Chris app pacs-pull element!
 
       <!-- Toolbar -->
       <div id="toolbar">
-        No toolbar or some widgets?
       </div>
 
-      <ami-loader urls="{{urls}}" series="{{series}}"></ami-loader>
+      <ami-loader files="{{files}}" series="{{series}}"></ami-loader>
 
-      <ami-viewer id="viewer" series="[[series]]"> </ami-viewer>
+      <div class="container">
+
+        <ami-viewer id="viewer"
+          series="[[series]]"
+          index="{{index}}"
+          orientation="{{orientation}}"
+          flip-rows="{{flipRows}}"
+          flip-columns="{{flipColumns}}"
+          index-max="{{indexMax}}"
+          border-color="[[borderColor]]"
+          angle="{{rotation}}"></ami-viewer>
+
+        <div class="controls">
+
+          <div class="group">
+
+            <paper-button raised on-tap="_load">Load data</paper-button>
+            <input type="file" id="filesinput" on-change="localFS_load" multiple="">
+
+          </div>
+
+          <div class="group">
+
+            Controls
+
+            <div>
+              Border Color
+              <paper-swatch-picker column-count=5 color="{{borderColor}}" color-list='["#65a5f2", "#83be54", "#f0d551", "#e5943c", "#a96ddb"]'></paper-swatch-picker>
+            </div>
+
+            
+            <paper-dropdown-menu label="Orientation">
+              <paper-listbox class="dropdown-content" selected="{{orientation}}">
+                <paper-item>Acquisition</paper-item>
+                <paper-item>Next</paper-item>
+                <paper-item>Last</paper-item>
+              </paper-listbox>
+            </paper-dropdown-menu>
+            
+            <div> Index </div>
+            <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable></paper-slider>
+            
+            <div> Rotate </div>
+            <paper-slider id="rotation" step="1" min="0" max="360" value="{{rotation}}" immediate-value="{{rotation}}" editable></paper-slider>
+            
+            <div>
+              Flip
+              <paper-checkbox checked="{{flipRows}}">Horizontal</paper-checkbox>
+              <paper-checkbox checked="{{flipColumns}}">Vertical</paper-checkbox>
+            </div>
+          
+        </div>
+
+        <div class="group">
+
+          Information
+
+          <div>Frames: [[stack._numberOfFrames]]</div>
+          <div>Rows: [[stack._rows]]</div>
+          <div>Columns: [[stack._columns]]</div>
+          <div>Min / Max: [[stack._minMax.0]] / [[stack._minMax.1]]</div>
+
+        </div>
+
+      </div>
+
+
 
   </template>
 
@@ -56,10 +183,50 @@ Chris app pacs-pull element!
             observer: '_seriesChanged'
           },
 
-          urls: {
+          files: {
             type: Array,
             value: [],
-            observer: '_urlsChanged'
+            observer: '_filesChanged'
+          },
+
+          index: {
+            type: Number,
+            value: 0
+          },
+          
+          indexMax: {
+            type: Number,
+            value: 0
+          },
+          
+          orientation: {
+            type:Number,
+            value: 0
+          },
+          
+          rotation: {
+            type:Number,
+            value: 0
+          },
+          
+          flipRows: {
+            type: Boolean,
+            value: false
+          },
+          
+          flipColumns: {
+            type: Boolean,
+            value: false
+          },
+          
+          borderColor: {
+            type: String,
+            value: '#65a5f2'
+          },
+
+          stack: {
+            type: Array,
+            value: []
           }
 
         },
@@ -68,12 +235,29 @@ Chris app pacs-pull element!
 
           this.toolbar = this.$.toolbar;
 
-          // files to be loaded
-          var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
-          var urls = t2.map(function(v) {
-            return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
-          });
-          this.set('urls', urls);
+        },
+
+        attached: function(){
+        
+          console.log('hi viewer');
+
+        },
+
+        init: function(){
+
+          // reset files
+          this.files = [];
+
+          // turn on rendering loop
+          // turn on event listeners
+          //...
+
+        },
+
+        free: function(){
+
+          // turn off rendering loop
+          // event listeners
 
         },
 
@@ -95,12 +279,37 @@ Chris app pacs-pull element!
 
           console.log( this.series);
 
+          if(this.series.length > 0){
+
+            this.set( 'stack', this.series[0].stack[0] );
+            console.log( this.stack );
+
+          }
+
         },
 
-        _urlsChanged: function(){
+        _filesChanged: function(){
 
-          console.log( this.urls);
+          console.log( this.files);
           
+        },
+
+        _load: function( evt ){
+
+          this.$.filesinput.click();
+          
+        },
+
+        localFS_load: function( evt ){
+
+            // convert files object to an array
+            var files = [];
+            for ( var i = 0; i < evt.target.files.length; i++ ) {
+              files.push( evt.target.files[i] );
+            }
+
+            this.set( 'files', files );
+
         }
 
     });

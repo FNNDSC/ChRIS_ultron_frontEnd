@@ -60,7 +60,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(app.data.color)]]">
       <app-header fixed condenses effects="waterfall">
         <app-toolbar style$="[[_setToolbarStyle(app.data.color)]]">
-          <div main-title>[[app.data.name]]</div>
+          <div main-title>[[app.data.label]]</div>
           <a class="back" href="/home">
             <paper-icon-button icon="icons:clear"></paper-icon-button>
           </a>
@@ -98,11 +98,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // remove child if any
           // maybe better to hide?
-          var node = Polymer.dom(this.$.content).querySelector( '.plugin' );
+          var node = Polymer.dom(this.$.content).firstElementChild;
+
           if( node ){
 
             Polymer.dom( this.$.content ).removeChild( node );
-            Polymer.dom( this.$.appToolbar ).removeChild( Polymer.dom(this.$.appToolbar).firstChild );
+            Polymer.dom( this.$.appToolbar ).removeChild( Polymer.dom(this.$.appToolbar).firstElementChild );
 
             // remove event listener
             node.removeEventListener( 'parameters-changed', this._createFeed );
@@ -115,7 +116,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             function( evt ){
 
               var plugin = document.createElement( 'chris-apps-' + this.app.data.name );
-              plugin.classList.add( 'plugin' );
+
+              // attach app
               Polymer.dom( this.$.content ).appendChild( plugin );
 
               // attach toolbar
@@ -137,7 +139,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _getParamters: function(){
 
-          var node = Polymer.dom(this.$.content).querySelector( '.plugin' );
+          var node = Polymer.dom(this.$.content).firstElementChild;
           node.generateParameters();
 
         },
@@ -146,7 +148,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // push to the API
           // print plugin command line paramters
-          var node = Polymer.dom(this.$.content).querySelector( '.plugin' );
+          var node = Polymer.dom(this.$.content).firstElementChild;
 
           // feed created
           // ask for feed ID # through API...
