@@ -31,7 +31,7 @@
       <h3>A paper-card with a simple heading, header image, body content, and actions</h3>
       <demo-snippet>
         <template>
-          <paper-card heading="Emmental" image="http://placehold.it/350x150/FFC107/000000">
+          <paper-card heading="Emmental" image="http://placehold.it/350x150/FFC107/000000" alt="Emmental">
             <div class="card-content">
               Emmentaler or Emmental is a yellow, medium-hard cheese that originated in the area around Emmental, Switzerland. It is one of the cheeses of Switzerland, and is sometimes known as Swiss cheese.
             </div>
@@ -47,7 +47,7 @@
       <demo-snippet>
         <template>
           <style is="custom-style">.cafe-header{@apply (--paper-font-headline);}.cafe-light{color:var(--paper-grey-600);}.cafe-location{float:right;font-size:15px;vertical-align:middle;}.cafe-reserve{color:var(--google-blue-500);}iron-icon.star{--iron-icon-width:16px;--iron-icon-height:16px;color:var(--paper-amber-500);}iron-icon.star:last-of-type{color:var(--paper-grey-500);}</style>
-            <paper-card image="./donuts.png">
+            <paper-card image="./donuts.png" alt="Donuts">
               <div class="card-content">
                 <div class="cafe-header">Cafe Basilico
                   <div class="cafe-location cafe-light">
@@ -106,7 +106,7 @@
       <h3>Paper-cards can have expanded supporting text</h3>
       <demo-snippet>
         <template>
-          <paper-card heading="Top western road trips" image="./trip.png" class="white">
+          <paper-card heading="Top western road trips" image="./trip.png" alt="Sailboat Harbor" class="white">
             <div class="card-content">1,000 miles of wonder</div>
             <div class="card-actions">
               <paper-button>Share</paper-button>
@@ -128,7 +128,7 @@
       <demo-snippet>
         <template>
           <style is="custom-style">paper-card.white{--paper-card-header-color:#fff;}</style>
-          <paper-card heading="Pre-fab homes" image="./house.png" class="white" style="margin-bottom:8px">
+          <paper-card heading="Pre-fab homes" image="./house.png" alt="House" class="white" style="margin-bottom:8px">
             <div class="card-actions">
               <paper-icon-button icon="favorite"></paper-icon-button>
               <paper-icon-button icon="bookmark"></paper-icon-button>
@@ -136,14 +136,14 @@
             </div>
           </paper-card>
           <div class="horizontal">
-            <paper-card heading="Favorite trips" image="./trip.png" class="white" style="margin-right:4px">
+            <paper-card heading="Favorite trips" image="./trip.png" alt="Trip" class="white" style="margin-right:4px">
               <div class="card-actions horizontal justified">
                 <paper-icon-button icon="favorite"></paper-icon-button>
                 <paper-icon-button icon="bookmark"></paper-icon-button>
                 <paper-icon-button icon="social:share"></paper-icon-button>
               </div>
             </paper-card>
-            <paper-card heading="Best airlines" image="./travel.png" class="white" style="margin-left:4px">
+            <paper-card heading="Best airlines" image="./travel.png" alt="Travel" class="white" style="margin-left:4px">
               <div class="card-actions horizontal justified">
                 <paper-icon-button icon="favorite"></paper-icon-button>
                 <paper-icon-button icon="bookmark"></paper-icon-button>
@@ -179,7 +179,7 @@
               </div>
             </paper-card>
             <paper-card heading="clean desk" class="lime"></paper-card>
-            <paper-card image="./donuts.png" class="amber">
+            <paper-card image="./donuts.png" alt="Donuts" class="amber">
               <div class="card-content">New cafe opened on Valencia St.</div>
             </paper-card>
             <paper-card heading="Yuna tickets on sale 6/24" class="cyan">

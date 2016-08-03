@@ -206,7 +206,10 @@
     <p>Columns can be hidden or visible.
       By default none of the columns are user-hidable. Setting a column's <code>hidable</code> property
       true appends it to the dropdown menu on the right where individual columns can be toggled
-      hidden/visible by the user.</p>
+      hidden/visible by the user.
+      When a column is is set as <code>hidden</code> but is not <code>hidable</code>, it will no appear
+      in the dropdown menu.
+    </p>
     <code-example source="">
       <vaadin-grid demo="">
         <table>
@@ -220,8 +223,8 @@
             <tr>
               <th>Name</th>
               <th>Surname</th>
-              <th>Activity</th>
-              <th>Target</th>
+              <th>Team Activity</th>
+              <th>Project Target</th>
             </tr>
           </thead>
         </table>
@@ -257,6 +260,52 @@
       </code>
     </code-example>
   </section>
+
+  <section>
+    <h3>Column Reordering</h3>
+    <p>Non frozen columns can be reordered by dragging header cells. By default reordering is disabled, thus
+      you have either to set the <code>columnReorderingAllowed</code> property, or to add the <code>column-reordering-allowed</code> attribute to enable it.</p>
+    <code-example source="">
+      <vaadin-grid demo="" column-reordering-allowed="" frozen-columns="1">
+        <table>
+          <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+          </colgroup>
+          <thead>
+          <tr>
+            <th>Frozen First column</th>
+            <th>Second column</th>
+            <th>Third column</th>
+            <th>Fourth column</th>
+            <th>Fifth column</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>One</td>
+            <td>Two</td>
+            <td>Three</td>
+            <td>Four</td>
+            <td>Five</td>
+          </tr>
+          <tr>
+            <td>Six</td>
+            <td>Seven</td>
+            <td>Eight</td>
+            <td>Nine</td>
+            <td>Tne</td>
+          </tr>
+          </tbody>
+        </table>
+      </vaadin-grid>
+    </code-example>
+
+  </section>
+
 
 
 

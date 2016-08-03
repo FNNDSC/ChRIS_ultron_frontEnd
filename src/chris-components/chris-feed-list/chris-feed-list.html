@@ -8,7 +8,7 @@
 
 
 
-<link rel="import" href="../chris-feed/chris-feed.html">
+<link rel="import" href="../chris-feed-preview/chris-feed-preview.html">
 
 </head><body><dom-module id="chris-feed-list">
 
@@ -20,9 +20,9 @@
 
       <template>
 
-        <a href="/detail/{{index}}/">
+        <a href="/feed/{{index}}/">
 
-          <chris-feed index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed>
+          <chris-feed-preview index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed-preview>
 
         </a>
 
