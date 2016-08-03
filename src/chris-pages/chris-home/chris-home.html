@@ -146,8 +146,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
               <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
               <div class="dropdown-content">
                 <template is="dom-repeat" items="{{plugins.data}}">
-                  <a href="/plugin-fs">
-                    <paper-fab mini id="[[item.data.name]]" icon="[[item.data.icon]]" item="[[item]]" style$="[[_setPluginFSStyle(item.data.color)]]" on-tap="_openPluginFS"></paper-fab>
+                  <a href="/app/[[item.data.name]]">
+                    <paper-fab mini id="[[item.data.name]]" icon="[[item.data.icon]]" item="[[item]]" style$="[[_setAppStyle(item.data.color)]]" on-tap="_openApp"></paper-fab>
                     <paper-tooltip for="[[item.data.name]]" position="left" animation-delay="0">[[item.data.label]]</paper-tooltip>
                     </a>
                 </template>
@@ -191,7 +191,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           type: Array
         },
 
-        pluginFs: {
+        app: {
           type: Object,
           notify: true
         },
@@ -315,20 +315,20 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         
       },
 
-      _setPluginFSStyle: function( color ){
+      _setAppStyle: function( color ){
 
           return 'background-color: ' + color + ';';
 
         },
 
-      _openPluginFS: function( event ){
+      _openApp: function( event ){
 
         // set the plugin FS
         if( event ){
 
           console.log( event.model.__data__.item );
 
-          this.set( 'pluginFs', event.model.__data__.item );
+          this.set( 'app', event.model.__data__.item );
 
         }
 

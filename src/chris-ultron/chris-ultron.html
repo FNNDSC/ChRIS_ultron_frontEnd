@@ -46,13 +46,11 @@
 
       <chris-login name="login" logged="{{loggedIn}}"></chris-login>
 
-      <chris-home name="home" plugin-fs="{{pluginFs}}" feed-opened="{{feedOpened}}"></chris-home>
+      <chris-home name="home" app="{{app}}" feed-opened="{{feedOpened}}"></chris-home>
 
-      <chris-plugin-fs name="plugin-fs" plugin-fs="[[pluginFs]]" feed="{{feed}}"></chris-plugin-fs>
+      <chris-app name="app" app="[[app]]" feed="{{feed}}"></chris-app>
 
-      <chris-feed-detail name="feed-detail" feed="{{feedOpened}}"></chris-feed-detail>
-
-      <chris-detail name="detail" feed="{{feedOpened}}"></chris-detail>
+      <chris-feed name="feed" feed="{{feedOpened}}"></chris-feed>
 
     </iron-pages>
 
@@ -92,7 +90,7 @@
           type: Object
         },
 
-        pluginFs: {
+        app: {
           type: Object
         },
 

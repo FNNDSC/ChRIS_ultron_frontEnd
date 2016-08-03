@@ -19,7 +19,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 
-<dom-module id="chris-plugin-fs">
+<dom-module id="chris-app">
 
   <template>
 
@@ -49,77 +49,30 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     }
 
-    .content {
-
-      /*min-height: 110vh;*/
-
-    }
-
     a {
 
       color: #ffffff;
 
     }
 
-    #card {
-
-/*      position: relative;
-      max-width: 800px;
-      margin: auto;
-      margin-top: 64px;
-      margin-bottom: 100px;*/
-      /*min-height: 100vh;*/
-      /*height: 500px;*/
-      /*height: 100%;*/
-     /* background-color: var(--paper-grey-50);*/
-
-    }
-
-    paper-fab {
-
-      z-index:10;
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-
-    }
-
-
-    /* responsive layout */
-
-    @media all and (max-width: 800px) {
-
-      #card {
-
-        margin: 0;
-
-      }
-
-    }
-    
     </style>
 
-    <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(pluginFs.data.color)]]">
+    <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(app.data.color)]]">
       <app-header fixed condenses effects="waterfall">
-        <app-toolbar style$="[[_setToolbarStyle(pluginFs.data.color)]]">
-          <div main-title>[[pluginFs.data.name]]</div>
+        <app-toolbar style$="[[_setToolbarStyle(app.data.color)]]">
+          <div main-title>[[app.data.name]]</div>
           <a class="back" href="/home">
             <paper-icon-button icon="icons:clear"></paper-icon-button>
           </a>
         </app-toolbar>
-        <app-toolbar id="appToolbar" style$="[[_setToolbarStyle(pluginFs.data.color)]]" sticky>
+        <app-toolbar id="appToolbar" style$="[[_setToolbarStyle(app.data.color)]]" sticky>
 
         </app-toolbar>
       </app-header>
-      <div class="content">
-        <div id="card">
-        </div>
 
-<!--         <a href="/home">
-          <paper-fab icon="av:play-arrow" title="play-arrow" on-tap="_getParamters"></paper-fab>
-        </a> -->
-
+      <div id="content" class="content">
       </div>
+
     </app-header-layout>
 
   </template>
@@ -127,12 +80,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
   <script>
     Polymer({
-        is: 'chris-plugin-fs',
+        is: 'chris-app',
         properties: {
 
-          pluginFs: {
+          app: {
             type: Object,
-            observer: '_pluginFSChanged'
+            observer: '_appChanged'
           },
 
           feed:{
@@ -141,14 +94,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        _pluginFSChanged: function( ){
+        _appChanged: function( ){
 
           // remove child if any
           // maybe better to hide?
-          var node = Polymer.dom(this.$.card).querySelector( '.plugin' );
+          var node = Polymer.dom(this.$.content).querySelector( '.plugin' );
           if( node ){
 
-            Polymer.dom( this.$.card ).removeChild( node );
+            Polymer.dom( this.$.content ).removeChild( node );
             Polymer.dom( this.$.appToolbar ).removeChild( Polymer.dom(this.$.appToolbar).firstChild );
 
             // remove event listener
@@ -158,12 +111,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           
           // fetch the plugin!
           Polymer.Base.importHref(
-            this.resolveUrl( '../../chris-apps/chris-apps-' + this.pluginFs.data.name + '/chris-apps-' + this.pluginFs.data.name + '.html' ),
+            this.resolveUrl( '../../chris-apps/chris-apps-' + this.app.data.name + '/chris-apps-' + this.app.data.name + '.html' ),
             function( evt ){
 
-              var plugin = document.createElement( 'chris-apps-' + this.pluginFs.data.name );
+              var plugin = document.createElement( 'chris-apps-' + this.app.data.name );
               plugin.classList.add( 'plugin' );
-              Polymer.dom( this.$.card ).appendChild( plugin );
+              Polymer.dom( this.$.content ).appendChild( plugin );
 
               // attach toolbar
               Polymer.dom( this.$.appToolbar ).appendChild( plugin.toolbar );
@@ -184,7 +137,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _getParamters: function(){
 
-          var node = Polymer.dom(this.$.card).querySelector( '.plugin' );
+          var node = Polymer.dom(this.$.content).querySelector( '.plugin' );
           node.generateParameters();
 
         },
@@ -193,7 +146,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // push to the API
           // print plugin command line paramters
-          var node = Polymer.dom(this.$.card).querySelector( '.plugin' );
+          var node = Polymer.dom(this.$.content).querySelector( '.plugin' );
 
           // feed created
           // ask for feed ID # through API...
@@ -202,34 +155,34 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.feed = {};
           this.feed.details = {
             id: '', // will be overwritten
-            name: 'created by ' + this.pluginFs.data.name,
+            name: 'created by ' + this.app.data.name,
             opened: false,
             checked: false,
-            color: this.pluginFs.data.color,
+            color: this.app.data.color,
             favorite: false,
             status: 'running',
             tags: [],
             selected: false,
-            letter: this.pluginFs.data.name.charAt(0).toUpperCase(),
+            letter: this.app.data.name.charAt(0).toUpperCase(),
             date: ( new Date() ).toString()
           }
           this.feed.plugins = [{
-            label: this.pluginFs.data.name,
-            color: this.pluginFs.data.color,
+            label: this.app.data.name,
+            color: this.app.data.color,
             id: 0,
             parentID: 0,
             depth: 0,
             icon: 'icons:cloud-queue',
             workflow: [{
-              color: this.pluginFs.data.color,
+              color: this.app.data.color,
               icon: 'icons:cloud-queue',
-              label: this.pluginFs.data.name
+              label: this.app.data.name
             }]
           }];
           this.feed.comments = [];
 
           this.feed.note = '\
-# Note about ' + this.pluginFs.data.name + '\n\
+# Note about ' + this.app.data.name + '\n\
 \n\
 ---\n\
 ### parameters\n\

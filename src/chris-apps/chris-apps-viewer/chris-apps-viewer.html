@@ -1,0 +1,108 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/ami-loader/ami-loader.html">
+<link rel="import" href="../../../bower_components/ami-viewer/ami-viewer.html">
+
+<!--
+Chris app pacs-pull element!
+@demo demo/index.html
+-->
+
+<dom-module id="chris-apps-viewer">
+
+  <template>
+
+    <style>
+
+      host {
+
+        display: block;
+
+      }
+
+      ami-viewer{
+
+        position: fixed;
+        top: 128px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+      }
+
+    </style>
+
+      <!-- Toolbar -->
+      <div id="toolbar">
+        No toolbar or some widgets?
+      </div>
+
+      <ami-loader urls="{{urls}}" series="{{series}}"></ami-loader>
+
+      <ami-viewer id="viewer" series="[[series]]"> </ami-viewer>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-apps-viewer',
+        properties: {
+
+          toolbar: HTMLElement,
+
+          series: {
+            type: Array,
+            value: [],
+            observer: '_seriesChanged'
+          },
+
+          urls: {
+            type: Array,
+            value: [],
+            observer: '_urlsChanged'
+          }
+
+        },
+
+        ready: function(){
+
+          this.toolbar = this.$.toolbar;
+
+          // files to be loaded
+          var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
+          var urls = t2.map(function(v) {
+            return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
+          });
+          this.set('urls', urls);
+
+        },
+
+        generateParameters: function(){
+
+          // get parameters
+          //
+          this.parameters = {
+            hello: 'from',
+            the: 'pacs_pull'
+          }
+
+          // let plugin-fs know the parameters are ready
+          this.fire( 'parameters-changed' );
+
+        },
+
+        _seriesChanged: function(){
+
+          console.log( this.series);
+
+        },
+
+        _urlsChanged: function(){
+
+          console.log( this.urls);
+          
+        }
+
+    });
+  </script>
+</dom-module>

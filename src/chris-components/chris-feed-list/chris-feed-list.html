@@ -13,7 +13,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <!-- <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html"> -->
 <!-- <link rel="import" href="../../bower_components/paper-material/paper-material.html"> -->
 
-<link rel="import" href="../chris-feed/chris-feed.html">
+<link rel="import" href="../chris-feed-preview/chris-feed-preview.html">
 
 <dom-module id="chris-feed-list">
 
@@ -53,9 +53,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <template>
 
-        <a href="/detail/{{index}}/">
+        <a href="/feed/{{index}}/">
 
-          <chris-feed index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed>
+          <chris-feed-preview index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed-preview>
 
         </a>
 

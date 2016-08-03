@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+fee<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
@@ -7,10 +7,11 @@
 
 
 <!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
 
-<dom-module id="chris-detail-nav">
+<dom-module id="chris-feed-nav">
 
   <template>
 
@@ -57,27 +58,23 @@
 
     <paper-menu id="labels" class="layout vertical" attr-for-selected="value" on-iron-select="handleSelect">
 
-      <a href="/detail/[[feed]]/about">
+      <a href="/feed/[[feed]]/about">
         <paper-icon-item value="all" role="menuitem">
           <iron-icon icon="icons:list" item-icon></iron-icon>About
         </paper-icon-item>
       </a>
-      <a href="/detail/[[feed]]/note">
+
+      <a href="/feed/[[feed]]/note">
         <paper-icon-item value="favorite" role="menuitem">
           <iron-icon  icon="icons:create" item-icon></iron-icon>Note
         </paper-icon-item>
       </a>
-      <a href="/detail/[[feed]]/comments">
+
+      <a href="/feed/[[feed]]/comments">
         <paper-icon-item value="running" role="menuitem">
           <iron-icon icon="icons:question-answer" item-icon></iron-icon>Discussion ([[comments.data.length]])
         </paper-icon-item>
       </a>
-<!--            <paper-icon-item role="menuitem">
-        <iron-icon icon="social:people" item-icon></iron-icon>Shared
-      </paper-icon-item>
-      <paper-icon-item role="menuitem">
-        <iron-icon icon="icons:visibility-off" item-icon></iron-icon>Hidden
-      </paper-icon-item> -->
 
     </paper-menu>
 
@@ -95,19 +92,20 @@
 
       <template is="dom-repeat" items="{{workflow.data}}">
 
-        <a href="/detail/[[feed]]/workflow/[[item.data.id]]">
+        <a href="/feed/[[feed]]/workflow/[[item.data.id]]">
 
-
-        
           <!-- <div class="title" title>[[plugin.data.label]]</div> -->
 
           <paper-item id="{{item.data.label}}">
-<template is="dom-repeat" items="{{item.data.workflow}}" as="wf"><div class="thread">.</div><!--             <iron-icon icon="[[wf.icon]]" style$="{{_setPluginStyle(wf.color)}}"></iron-icon> --></template>
+            <template is="dom-repeat" items="{{item.data.workflow}}" as="wf">
+              <div class="thread">.</div>
+              <!--             <iron-icon icon="[[wf.icon]]" style$="{{_setPluginStyle(wf.color)}}"></iron-icon> -->
+            </template>
 
-                    <span class="title">{{item.data.label}}</span>
-
+            <span class="title">{{item.data.label}}</span>
 
           </paper-item>
+
         </a>
 
       </template>
@@ -119,7 +117,7 @@
 
   <script>
     Polymer({
-        is: 'chris-detail-nav',
+        is: 'chris-feed-nav',
 
         properties: {
 

@@ -26,12 +26,12 @@
 <link rel="import" href="../../chris-api/chris-api.html">
 <link rel="import" href="../../chris-components/chris-feed-about/chris-feed-about.html">
 <link rel="import" href="../../chris-components/chris-comment-list/chris-comment-list.html">
-<link rel="import" href="../../chris-components/chris-detail-nav/chris-detail-nav.html">
+<link rel="import" href="../../chris-components/chris-feed-nav/chris-feed-nav.html">
 <link rel="import" href="../../chris-components/chris-note/chris-note.html">
 <link rel="import" href="../../chris-components/chris-plugin/chris-plugin.html">
 <link rel="import" href="../../chris-components/chris-plugin-ds/chris-plugin-ds.html">
 
-<dom-module id="chris-detail">
+<dom-module id="chris-feed">
 
   <template>
 
@@ -116,7 +116,7 @@
       <app-location id="location" route="{{feedRoute}}"></app-location>
       <app-route
         route="{{feedRoute}}"
-        pattern="/detail/:index"
+        pattern="/feed/:index"
         data="{{feedRouteData}}"
         tail="{{pageRoute}}"></app-route>
       <app-route
@@ -149,7 +149,7 @@
           <div class="drawer content">
 
             <app-toolbar>[[feed.data.name]]</app-toolbar>
-            <chris-detail-nav feed="[[feedRouteData.index]]" workflow="[[workflow]]" comments="[[comments]]"></chris-detail-nav>
+            <chris-feed-nav feed="[[feedRouteData.index]]" workflow="[[workflow]]" comments="[[comments]]"></chris-feed-nav>
 
           </div>
 
@@ -161,7 +161,7 @@
           <app-header id="header" fixed effects="waterfall" style$="[[_setToolbarStyle(feed.data.color)]]">
             <app-toolbar>
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <div title>[[feed.data.name]]</div>
+              <div main-title>[[feed.data.name]]</div>
               <a class="back" href="/home" on-tap="_reset">
                 <paper-icon-button icon="icons:clear"></paper-icon-button>
               </a>
@@ -172,11 +172,12 @@
 
           <iron-pages selected="[[page]]" attr-for-selected="name">
 
-              <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
-              <chris-note name="note" note="{{note}}"></chris-note>
-              <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
-              <chris-plugin name="workflow" feed-index="[[feedRouteData.index]]" plugin="[[_targetPlugin(pluginRouteData.index)]]"></chris-plugin>
-              <chris-plugin-ds name="plugin" feed-id="[[feedRouteData.index]]" work-id="[[pluginRouteData.index]]" plugin-id="[[pluginDSRouteData.id]]"></chris-plugin-ds>
+            <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
+            <chris-note name="note" note="{{note}}"></chris-note>
+            <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
+            <chris-plugin name="workflow" feed-index="[[feedRouteData.index]]" plugin="[[_targetPlugin(pluginRouteData.index)]]"></chris-plugin>
+            <chris-plugin-ds name="plugin" feed-id="[[feedRouteData.index]]" work-id="[[pluginRouteData.index]]" plugin-id="[[pluginDSRouteData.id]]"></chris-plugin-ds>
+            
             </iron-pages>
 
           <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
@@ -193,7 +194,7 @@
 
   <script>
     Polymer({
-      is: 'chris-detail',
+      is: 'chris-feed',
       properties: {
 
         feed: {

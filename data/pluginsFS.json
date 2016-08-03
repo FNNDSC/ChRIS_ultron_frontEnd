@@ -2,6 +2,12 @@
   "type": "pluginsFS",
   "data": [
     {
+      "name": "viewer",
+      "label": "AMI Viewer",
+      "color": "#607D8B",
+      "icon": "icons:view-array"
+    },
+    {
       "name": "pacs-pull",
       "label": "Pacs Pull",
       "color": "#009688",

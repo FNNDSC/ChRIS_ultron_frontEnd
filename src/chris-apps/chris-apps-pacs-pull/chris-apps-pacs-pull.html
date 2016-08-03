@@ -54,12 +54,6 @@ Chris app pacs-pull element!
 
       }
 
-      .container {
-
-        /*padding: 10px;*/
-
-      }
-
       paper-tabs {
 
         --paper-tabs-selection-bar-color: var(--accent-color);
@@ -221,11 +215,9 @@ Chris app pacs-pull element!
       #vad{
 
         background-color: var(--paper-grey-50);
-        position: absolute;
-        top: 128px;
-        right: 0;
-        bottom: 128px; /* 64 filter + 64 footer*/
-        left: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
 
       }
 
@@ -247,6 +239,18 @@ Chris app pacs-pull element!
 
       }
 
+      .results {
+
+        position: fixed;
+        top: 128px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+
+      }
+
     </style>
 
       <!-- API connection -->
@@ -264,203 +268,193 @@ Chris app pacs-pull element!
         </paper-tabs>
       </div>
 
-      <div class="container" >
+      <iron-pages selected="{{selected}}">
 
-        <iron-pages selected="{{selected}}">
+        <!-- Query page -->
+        <div class="form">
 
-          <div class="form">
+          <div class="group">
 
-            <div class="group">
+            <div class="name tool" on-tap="_toggleSimple">Simple search <div class="spacer"></div> <paper-icon-button id="simpleIcon" icon="icons:expand-less"></paper-icon-button></div>
 
-              <div class="name tool" on-tap="_toggleSimple">Simple search <div class="spacer"></div> <paper-icon-button id="simpleIcon" icon="icons:expand-less"></paper-icon-button></div>
+            <iron-collapse id="simple" opened>
 
-              <iron-collapse id="simple" opened>
-
-                <div class="item large">
-                  <div class="flex">
-                    <paper-textarea label="Patient MRN(s)"></paper-textarea>
-                  </div>
-
-                  <div class="help">
-                    <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                  </div>
+              <div class="item large">
+                <div class="flex">
+                  <paper-textarea label="Patient MRN(s)"></paper-textarea>
                 </div>
 
-              </iron-collapse>
-
-            </div>
-
-            <div class="group">
-
-              <div class="name tool" on-tap="_toggleAdvanced">Advanced search <div class="spacer"></div> <paper-icon-button id="advancedIcon" icon="icons:expand-more"></paper-icon-button></div>
-
-              <iron-collapse id="advanced">
-
-                <div class="item large">
-
-                  <div class="flex">
-                    <paper-input label="Start Date" value="[[date]]"></paper-input>
-                    <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
-                  </div>
-
-                  <div>
-                    <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                  </div>
-
-                  <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
-                    <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
-                    <div class="buttons">
-                      <paper-button dialog-dismiss>Cancel</paper-button>
-                      <paper-button dialog-confirm>OK</paper-button>
-                    </div>
-                  </paper-dialog>
-
+                <div class="help">
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
                 </div>
+              </div>
 
-                <div class="item large">
-
-                  <div class="flex">
-                    <paper-input label="End Date" value="[[date]]"></paper-input>
-                    <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
-                  </div>
-
-                  <div>
-                    <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                  </div>
-
-                  <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
-                    <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
-                    <div class="buttons">
-                      <paper-button dialog-dismiss>Cancel</paper-button>
-                      <paper-button dialog-confirm>OK</paper-button>
-                    </div>
-                  </paper-dialog>
-
-                </div>
-
-                <div class="item small">
-                  
-                  <div class="flex">
-                    <paper-input label="Modality"></paper-input>
-                  </div>
-
-                  <div>
-                    <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                  </div>
-
-                </div>
-
-                <div class="item large">
-                  
-                  <div class="flex">
-                    <paper-checkbox>Anonymize results</paper-checkbox>
-                  </div>
-
-                  <div>
-                    <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                  </div>
-
-                </div>
-
-              </iron-collapse>
-
-            </div>
-
-
-            <div class="group">
-
-              <div class="name tool" on-tap="_toggleSettings">PACS settings <div class="spacer"></div> <paper-icon-button id="settingsIcon" icon="icons:expand-more"></paper-icon-button></div>
-
-              <iron-collapse id="settings">
-
-                <div class="item large">
-                  <div class="flex">
-                    <paper-input label="PACS IP"></paper-input>
-                  </div>
-
-                  <div class="help">
-                    <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                  </div>
-                </div>
-
-                <div class="item large">
-                  <div class="flex">
-                    <paper-input label="AETITLE"></paper-input>
-                  </div>
-
-                  <div class="help">
-                    <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                  </div>
-                </div>
-
-              </iron-collapse>
-
-            </div>
-
-            <paper-button class="submit" raised on-tap="_pacsQuery">Search on the PACS</paper-button>
+            </iron-collapse>
 
           </div>
 
-          <div class="results">
+          <div class="group">
 
-            <paper-fab-speed-dial direction="top">
-              <!-- update icon nd color depending on if there is something to get or not. -->
-              <paper-fab id="create" icon="icons:add" class="dropdown-trigger" disabled></paper-fab>
-              <div class="dropdown-content">
-                <a href="/plugin-fs">
-                  <paper-fab mini id="export" icon="icons:subject"></paper-fab>
-                  <paper-tooltip for="export" position="left" animation-delay="0">Selection to CVS</paper-tooltip>
-                </a>
-                <a href="/plugin-fs">
-                  <paper-fab mini id="download" icon="icons:cloud-download"></paper-fab>
-                  <paper-tooltip for="download" position="left" animation-delay="0">Selection to ChRIS</paper-tooltip>
-                </a>
+            <div class="name tool" on-tap="_toggleAdvanced">Advanced search <div class="spacer"></div> <paper-icon-button id="advancedIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+            <iron-collapse id="advanced">
+
+              <div class="item large">
+
+                <div class="flex">
+                  <paper-input label="Start Date" value="[[date]]"></paper-input>
+                  <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+                <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
+                  <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
+                  <div class="buttons">
+                    <paper-button dialog-dismiss>Cancel</paper-button>
+                    <paper-button dialog-confirm>OK</paper-button>
+                  </div>
+                </paper-dialog>
+
               </div>
-            </paper-fab-speed-dial>
 
-            <!-- <paper-fab icon="icons:cloud-download" title="play-arrow" on-tap="_getParamters"></paper-fab> -->
+              <div class="item large">
 
-            <div id="vad">
+                <div class="flex">
+                  <paper-input label="End Date" value="[[date]]"></paper-input>
+                  <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
+                </div>
 
-              <paper-progress id="progress" indeterminate></paper-progress>
-              <!-- https://vaadin.com/elements/-/element/vaadin-grid -->
-              <!-- https://github.com/vaadin/vaadin-grid -->
-              <paper-input id="filter" label="Filter results ([[filterResponse.length]])" value="{{filter}}"></paper-input>
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
 
-              <vaadin-grid id="sort" selection-mode="multi" style="height:100%">
-                <table>
-                  <colgroup>
+                <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
+                  <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
+                  <div class="buttons">
+                    <paper-button dialog-dismiss>Cancel</paper-button>
+                    <paper-button dialog-confirm>OK</paper-button>
+                  </div>
+                </paper-dialog>
 
-                    <col name="PatientID" sortable hidable/>
-                    <col name="PatientName" max-width="250" sortable hidable/>
-                    <col name="StudyDescription" max-width="250" sortable hidable/>
-                    <col name="SeriesDescription" max-width="250" sortable hidable/>
-                    <col name="NumberOfSeriesRelatedInstances" sortable max-width="200" hidable/>
-                    
-                  </colgroup>
-<!-- 
-                  <tfoot>
-                    <tr>
-                      <th colspan="2">Number of selected series:
-                        <span id="selected-counter">0</span>
-                      </th>
-                    </tr>
-                  </tfoot> -->
+              </div>
 
-                </table>
-              </vaadin-grid>
+              <div class="item small">
+                
+                <div class="flex">
+                  <paper-input label="Modality"></paper-input>
+                </div>
 
-              <div class="vaadinfoot">
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+              </div>
+
+              <div class="item large">
+                
+                <div class="flex">
+                  <paper-checkbox>Anonymize results</paper-checkbox>
+                </div>
+
+                <div>
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+
+              </div>
+
+            </iron-collapse>
+
+          </div>
+
+
+          <div class="group">
+
+            <div class="name tool" on-tap="_toggleSettings">PACS settings <div class="spacer"></div> <paper-icon-button id="settingsIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+            <iron-collapse id="settings">
+
+              <div class="item large">
+                <div class="flex">
+                  <paper-input label="PACS IP"></paper-input>
+                </div>
+
+                <div class="help">
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+              </div>
+
+              <div class="item large">
+                <div class="flex">
+                  <paper-input label="AETITLE"></paper-input>
+                </div>
+
+                <div class="help">
+                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+                </div>
+              </div>
+
+            </iron-collapse>
+
+          </div>
+
+          <paper-button class="submit" raised on-tap="_pacsQuery">Search on the PACS</paper-button>
+
+        </div>
+
+
+        <!-- Retrieve page -->
+        <div class="results">
+
+          <paper-fab-speed-dial direction="top">
+
+            <!-- update icon nd color depending on if there is something to get or not. -->
+            <paper-fab id="create" icon="icons:add" class="dropdown-trigger" disabled></paper-fab>
+            <div class="dropdown-content">
+              <a href="/home">
+                <paper-fab mini id="export" icon="icons:subject" on-tap="_export"></paper-fab>
+                <paper-tooltip for="export" position="left" animation-delay="0">Selection to CSV</paper-tooltip>
+              </a>
+              <a href="/home">
+                <paper-fab mini id="download" icon="icons:cloud-download" on-tap="_retrieve"></paper-fab>
+                <paper-tooltip for="download" position="left" animation-delay="0">Selection to ChRIS</paper-tooltip>
+              </a>
+            </div>
+          </paper-fab-speed-dial>
+
+          <div id="vad">
+
+            <paper-progress id="progress" indeterminate></paper-progress>
+            <!-- https://vaadin.com/elements/-/element/vaadin-grid -->
+            <!-- https://github.com/vaadin/vaadin-grid -->
+            <paper-input id="filter" label="Filter results ([[filterResponse.length]])" value="{{filter}}"></paper-input>
+
+            <vaadin-grid id="sort" selection-mode="multi" style="height:100%">
+              <table>
+                <colgroup>
+
+                  <col name="PatientID" sortable hidable/>
+                  <col name="PatientName" max-width="250" sortable hidable/>
+                  <col name="StudyDescription" max-width="250" sortable hidable/>
+                  <col name="SeriesDescription" max-width="250" sortable hidable/>
+                  <col name="NumberOfSeriesRelatedInstances" sortable max-width="200" hidable/>
+                  
+                </colgroup>
+
+              </table>
+            </vaadin-grid>
+
+            <div class="vaadinfoot">
               Selected files: [[selectedFiles.length]]
-              </div>
-
             </div>
 
           </div>
 
-        </iron-pages>
-         
-      </div>
+        </div>
+
+      </iron-pages>
 
   </template>
 
@@ -697,6 +691,20 @@ Chris app pacs-pull element!
           // update color of FAB
           this.$.create.disabled = this.selectedFiles.length > 0 ? false : true;
 
+        },
+
+        _export: function(){
+
+          // convert selection to csv file
+          console.log('_export');
+
+        },
+
+        _retrieve: function(){
+
+          console.log('_retrieve');
+          // go pacs retrieve
+          // 1- post + update optimistic results
 
         }
     });
