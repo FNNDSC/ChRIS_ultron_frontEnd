@@ -44,18 +44,75 @@ n["default"]={DataUniforms:o["default"],DataVertex:c,DataFragment:f,LayerUniform
 
   <template>
 
-    <style>host{display:block;}ami-viewer{position:fixed;top:128px;bottom:0;left:0;right:0;}</style>
+    <style>host{display:block;}.container{position:fixed;top:128px;bottom:0;left:0;right:0;display:flex;flex-flow:row wrap;}@media ( max-width: 800px ){.container{flex-flow:column wrap;}}#viewer{flex:2;height:100%;min-width:200px;background-color:#212121;}.controls{flex:1;min-width:100px;padding:8px;background-color:var(--paper-grey-50);}#filesinput{display:none;}paper-button, paper-dropdown-menu, paper-slider{width:100%;}paper-button{background-color:var(--paper-pink-a200);color:#FFF;}.group{@apply (--layout-vertical);position:relative;padding:8px 0;border-bottom:1px solid rgba(0, 0, 0, 0.1);}</style>
 
       
       <div id="toolbar">
-        No toolbar or some widgets?
       </div>
 
-      <ami-loader urls="{{urls}}" series="{{series}}"></ami-loader>
+      <ami-loader files="{{files}}" series="{{series}}"></ami-loader>
 
-      <ami-viewer id="viewer" series="[[series]]"> </ami-viewer>
+      <div class="container">
 
-  </template>
+        <ami-viewer id="viewer" series="[[series]]" index="{{index}}" orientation="{{orientation}}" flip-rows="{{flipRows}}" flip-columns="{{flipColumns}}" index-max="{{indexMax}}" border-color="[[borderColor]]" angle="{{rotation}}"></ami-viewer>
 
-  <script>Polymer({is:"chris-apps-viewer",properties:{toolbar:HTMLElement,series:{type:Array,value:[],observer:"_seriesChanged"},urls:{type:Array,value:[],observer:"_urlsChanged"}},ready:function(){this.toolbar=this.$.toolbar;var e=["36444280","36444294","36444308","36444322","36444336"],r=e.map(function(e){return"https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/"+e});this.set("urls",r)},generateParameters:function(){this.parameters={hello:"from",the:"pacs_pull"},this.fire("parameters-changed")},_seriesChanged:function(){console.log(this.series)},_urlsChanged:function(){console.log(this.urls)}});</script>
+        <div class="controls">
+
+          <div class="group">
+
+            <paper-button raised="" on-tap="_load">Load data</paper-button>
+            <input type="file" id="filesinput" on-change="localFS_load" multiple="">
+
+          </div>
+
+          <div class="group">
+
+            Controls
+
+            <div>
+              Border Color
+              <paper-swatch-picker column-count="5" color="{{borderColor}}" color-list="[&quot;#65a5f2&quot;, &quot;#83be54&quot;, &quot;#f0d551&quot;, &quot;#e5943c&quot;, &quot;#a96ddb&quot;]"></paper-swatch-picker>
+            </div>
+
+            
+            <paper-dropdown-menu label="Orientation">
+              <paper-listbox class="dropdown-content" selected="{{orientation}}">
+                <paper-item>Acquisition</paper-item>
+                <paper-item>Next</paper-item>
+                <paper-item>Last</paper-item>
+              </paper-listbox>
+            </paper-dropdown-menu>
+            
+            <div> Index </div>
+            <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable=""></paper-slider>
+            
+            <div> Rotate </div>
+            <paper-slider id="rotation" step="1" min="0" max="360" value="{{rotation}}" immediate-value="{{rotation}}" editable=""></paper-slider>
+            
+            <div>
+              Flip
+              <paper-checkbox checked="{{flipRows}}">Horizontal</paper-checkbox>
+              <paper-checkbox checked="{{flipColumns}}">Vertical</paper-checkbox>
+            </div>
+          
+        </div>
+
+        <div class="group">
+
+          Information
+
+          <div>Frames: [[stack._numberOfFrames]]</div>
+          <div>Rows: [[stack._rows]]</div>
+          <div>Columns: [[stack._columns]]</div>
+          <div>Min / Max: [[stack._minMax.0]] / [[stack._minMax.1]]</div>
+
+        </div>
+
+      </div>
+
+
+
+  </div></template>
+
+  <script>Polymer({is:"chris-apps-viewer",properties:{toolbar:HTMLElement,series:{type:Array,value:[],observer:"_seriesChanged"},files:{type:Array,value:[],observer:"_filesChanged"},index:{type:Number,value:0},indexMax:{type:Number,value:0},orientation:{type:Number,value:0},rotation:{type:Number,value:0},flipRows:{type:Boolean,value:!1},flipColumns:{type:Boolean,value:!1},borderColor:{type:String,value:"#65a5f2"},stack:{type:Array,value:[]}},ready:function(){this.toolbar=this.$.toolbar},attached:function(){console.log("hi viewer")},init:function(){this.files=[]},free:function(){},generateParameters:function(){this.parameters={hello:"from",the:"pacs_pull"},this.fire("parameters-changed")},_seriesChanged:function(){console.log(this.series),this.series.length>0&&(this.set("stack",this.series[0].stack[0]),console.log(this.stack))},_filesChanged:function(){console.log(this.files)},_load:function(e){this.$.filesinput.click()},localFS_load:function(e){for(var t=[],s=0;s<e.target.files.length;s++)t.push(e.target.files[s]);this.set("files",t)}});</script>
 </dom-module></body></html>
