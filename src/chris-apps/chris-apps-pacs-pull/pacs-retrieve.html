@@ -1,0 +1,298 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<!-- EXTERNAL ELEMENTS -->
+<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
+
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../../chris-api/chris-api.html">
+
+<dom-module id="pacs-retrieve">
+
+  <template>
+    <style>
+
+      host {
+
+        display: block;
+
+      }
+
+
+      paper-input {
+
+        padding: 0 16px;
+
+      }
+
+      #grid{
+
+        background-color: var(--paper-grey-50);
+
+      }
+
+      #vad{
+
+        background-color: var(--paper-grey-50);
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+      }
+
+      paper-fab-speed-dial{
+
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+
+      }
+
+      .vaadinfoot {
+
+        border: 1px solid #e3e3e3;
+        font-size: 18px;
+        padding: 16px;
+        background-color: var(--paper-grey-50);
+
+      }
+
+      .content {
+
+        position: fixed;
+        top: 128px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+
+      }
+
+    </style>
+
+    <!-- API connection -->
+    <chris-api id="API"
+      api="Item",
+      content-type="application/json",
+      error="{{error}}">
+    </chris-api>
+
+    <div class="content">
+
+      <paper-fab-speed-dial direction="top">
+
+        <!-- update icon nd color depending on if there is something to get or not. -->
+        <paper-fab id="create" icon="icons:add" class="dropdown-trigger" disabled></paper-fab>
+        <div class="dropdown-content">
+          <a href="/home">
+            <paper-fab mini id="export" icon="icons:subject" on-tap="_export"></paper-fab>
+            <paper-tooltip for="export" position="left" animation-delay="0">Selection to CSV</paper-tooltip>
+          </a>
+          <a href="/home">
+            <paper-fab mini id="download" icon="icons:cloud-download" on-tap="_retrieve"></paper-fab>
+            <paper-tooltip for="download" position="left" animation-delay="0">Selection to ChRIS</paper-tooltip>
+          </a>
+        </div>
+      </paper-fab-speed-dial>
+
+      <div id="vad">
+
+
+        <!-- https://vaadin.com/elements/-/element/vaadin-grid -->
+        <!-- https://github.com/vaadin/vaadin-grid -->
+        <paper-input id="filter" label="Filter results ([[filter.length]])" value="{{filterExp}}"></paper-input>
+
+        <vaadin-grid id="grid" selection-mode="multi" style="height:100%">
+          <table>
+            <colgroup>
+
+              <col name="PatientID" sortable hidable/>
+              <col name="PatientName" max-width="250" sortable hidable/>
+              <col name="StudyDescription" max-width="250" sortable hidable/>
+              <col name="SeriesDescription" max-width="250" sortable hidable/>
+              <col name="NumberOfSeriesRelatedInstances" sortable max-width="200" hidable/>
+              
+            </colgroup>
+
+          </table>
+        </vaadin-grid>
+
+        <div class="vaadinfoot">
+          Selected files: [[selection.length]]
+        </div>
+
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'pacs-retrieve',
+      properties: {
+
+        query: {
+          type: Array,
+          value: [],
+          observer: '_queryChanged'
+        },
+
+        filterExp: {
+          type: String,
+          value: '',
+          observer: '_filterExpChanged'
+        },
+
+        filter: {
+          type: Array,
+          value: []
+        },
+
+        selection: {
+          type: Array,
+          value: [],
+          observer: '_selectionChanged'
+        }
+      },
+
+      ready: function(){
+          
+        var grid = this.$.grid;
+
+        grid.addEventListener('sort-order-changed', function() {
+
+          var sortOrder = grid.sortOrder[0];
+          var sortProperty = grid.columns[sortOrder.column].name;
+          var sortDirection = sortOrder.direction;
+          grid.items.sort(function(a, b) {
+            var res;
+            var path = sortProperty.split('.');
+            for (var i = 0; i < path.length; i++) {
+              a = a[path[i]];
+              b = b[path[i]];
+            }
+            if (!isNaN(a)) {
+              res = parseInt(a, 10) - parseInt(b, 10);
+            } else {
+              res = a.localeCompare(b);
+            }
+
+            if ('desc' === sortDirection) {
+              res *= -1;
+            }
+            return res;
+          });
+
+        });
+
+        var self = this;
+        grid.addEventListener('selected-items-changed', function(e) {
+
+          var selection = [];
+
+          for (var i = 0; i < grid.selection.size; i += 1) {
+
+            selection.push( grid.items[i] );
+          }
+
+          self.set('selection', selection );
+
+        });
+
+      },
+
+      _queryChanged: function(){
+
+        this.set('filter', this.query);
+
+        // fill table
+        this.$.grid.items = this.query;
+
+      },
+
+      _filterExpChanged: function( value ){
+
+        var filterResponse = this.query.filter(function(val) {
+
+          if ( value ) {
+
+            // split on white space
+            var values = value.split(" ");
+            var match = 0;
+
+            for( var i = 0; i< values.length; i++ ){
+
+              if(
+                ((val.PatientID.toLowerCase()).indexOf(values[i]) > -1) ||
+                ((val.PatientName.toLowerCase()).indexOf(values[i]) > -1) ||
+                ((val.StudyDescription.toLowerCase()).indexOf(values[i]) > -1) ||
+                ((val.SeriesDescription.toLowerCase()).indexOf(values[i]) > -1) ||
+                ((val.NumberOfSeriesRelatedInstances.toLowerCase()).indexOf(values[i]) > -1) ){
+                match += 1;
+              }
+
+            }
+
+            if( match === values.length ){
+
+              return true
+
+            }
+            else{
+
+              return false;
+
+            }
+
+          } else {
+            return true;
+          }
+        });
+
+        this.set( 'filter', filterResponse );
+
+        // fill table
+        this.$.grid.items = this.filter;
+
+      },
+
+      _selectionChanged: function(){
+
+        // update color of FAB
+        this.$.create.disabled = this.selection.length > 0 ? false : true;
+
+      },
+
+      _export: function(){
+
+        // convert selection to csv file
+        console.log('_export');
+        this.reset();
+
+      },
+
+      _retrieve: function(){
+
+        console.log('_retrieve');
+
+        // go API with selection!
+        
+        this.reset();
+        // go pacs retrieve
+        // 1- post + update optimistic results
+
+      }
+    });
+    
+  </script>
+
+</dom-module>

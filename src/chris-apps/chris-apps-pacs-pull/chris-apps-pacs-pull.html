@@ -1,36 +1,19 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 
-
 <!-- PAPER ELEMENTS -->
-<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../../bower_components/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
-<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../../bower_components/paper-tabs/paper-tab.html">
-<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
-
-<!-- EXTERNAL ELEMENTS -->
-<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
-<link rel="import" href="../../../bower_components/paper-date-picker/paper-date-picker.html">
-<link rel="import" href="../../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../chris-apps-behavior.html">
-<link rel="import" href="../../chris-api/chris-api.html">
+
+<!-- BASE ELEMENTS -->
+<link rel="import" href="pacs-query.html">
+<link rel="import" href="pacs-retrieve.html">
 
 <!--
 Chris app pacs-pull element!
@@ -49,12 +32,6 @@ Chris app pacs-pull element!
 
       }
 
-      .spacer {
-
-        @apply(--layout-flex);
-
-      }
-
       paper-tabs {
 
         --paper-tabs-selection-bar-color: var(--accent-color);
@@ -67,393 +44,20 @@ Chris app pacs-pull element!
 
       }
 
-      paper-dialog {
-
-        --paper-date-picker-dialog: {
-
-          margin: 0;
-          max-height: 520px !important;
-          overflow: hidden;
-
-        };
-
-        --paper-date-picker-dialog-picker: {
-
-          margin-top: 0 !important;
-          padding: 0;
-
-        };
-
-        --paper-date-picker-dialog-calendar: {
-
-          padding-bottom: 0;
-
-        };
-
-        --paper-date-picker-dialog-heading: {
-
-          margin-bottom: -62px;
-
-        };
-        
-      }
-
-      /* Application of mixins to local .paper-date-picker-dialog elements */
-      .paper-date-picker-dialog {
-        @apply(--paper-date-picker-dialog);
-      }
-      .paper-date-picker-dialog > paper-date-picker {
-        --paper-calendar: {
-          @apply(--paper-date-picker-dialog-calendar);
-        };
-        @apply(--paper-date-picker-dialog-picker);
-      }
-      .paper-date-picker-dialog > paper-date-picker:not([narrow]) {
-        --paper-date-picker-heading: {
-          @apply(--paper-date-picker-dialog-heading);
-        };
-      }
-
-      .form {
-
-        background-color: var(--paper-grey-50);
-        @apply(--layout-vertical);
-        @apply(--layout-wrap);
-        padding: 24px;
-        max-width: 800px;
-        margin: auto;
-        margin-top: 24px;
-        margin-bottom: 100px;
-
-      }
-
-      .item {
-
-        @apply(--layout-horizontal);
-        padding: 10px 72px;
-
-      }
-
-      .group {
-
-        @apply(--layout-vertical);
-        position: relative;
-        padding: 8px 0;
-
-      }
-
-      .flex {
-
-        @apply(--layout-flex);
-        @apply(--layout-horizontal);
-        align-items: center;
-        justify-content: flex-start;
-        /*flex: 1;*/
-
-      }
-
-      .help {
-        /*flex: 0;*/
-      }
-
-      paper-textarea {
-        width: 100%;
-      }
-
-      .form paper-input {
-        width: 100%;
-      }
-
-      .results paper-input {
-
-        /*width: inherit;*/
-        padding: 0 16px;
-
-      }
-
-      .name {
-
-        font-size: 18px;
-        font-weight: 400;
-        color: #737373;
-
-      }
-
-      .submit {
-
-        padding: 16px;
-        font-size: 18px;
-        font-weight: 400;
-        background-color: var(--accent-color);
-        color: #ffffff;
-        margin-top: 24px;
-
-      }
-
-      .tool {
-
-        @apply(--layout-horizontal);
-        cursor: pointer;
-        /*padding: 8px 14px;*/
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
-      }
-
-      #progress {
-
-        display: none;
-        width: 100%;
-        --paper-progress-active-color: var(--accent-color);
-
-      }
-
-      #sort{
-
-        background-color: var(--paper-grey-50);
-
-      }
-
-      #vad{
-
-        background-color: var(--paper-grey-50);
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-
-      }
-
-      paper-fab-speed-dial{
-
-        z-index:10;
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
-
-      }
-
-      .vaadinfoot {
-
-        border: 1px solid #e3e3e3;
-        font-size: 18px;
-        padding: 16px;
-        background-color: var(--paper-grey-50);
-
-      }
-
-      .results {
-
-        position: fixed;
-        top: 128px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-
-      }
-
     </style>
-
-      <!-- API connection -->
-      <chris-api id="ItemAPI"
-        api="Item",
-        content-type="application/json",
-        error="{{error}}">
-      </chris-api>
 
       <!-- Toolbar -->
       <div id="toolbar">
         <paper-tabs selected="{{selected}}">
-          <paper-tab class="name">Search</paper-tab>
-          <paper-tab class="name">Results ([[queryResponse.length]])</paper-tab>
+          <paper-tab>Search</paper-tab>
+          <paper-tab>Results ([[query.length]])</paper-tab>
         </paper-tabs>
       </div>
 
       <iron-pages selected="{{selected}}">
 
-        <!-- Query page -->
-        <div class="form">
-
-          <div class="group">
-
-            <div class="name tool" on-tap="_toggleSimple">Simple search <div class="spacer"></div> <paper-icon-button id="simpleIcon" icon="icons:expand-less"></paper-icon-button></div>
-
-            <iron-collapse id="simple" opened>
-
-              <div class="item large">
-                <div class="flex">
-                  <paper-textarea label="Patient MRN(s)"></paper-textarea>
-                </div>
-
-                <div class="help">
-                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                </div>
-              </div>
-
-            </iron-collapse>
-
-          </div>
-
-          <div class="group">
-
-            <div class="name tool" on-tap="_toggleAdvanced">Advanced search <div class="spacer"></div> <paper-icon-button id="advancedIcon" icon="icons:expand-more"></paper-icon-button></div>
-
-            <iron-collapse id="advanced">
-
-              <div class="item large">
-
-                <div class="flex">
-                  <paper-input label="Start Date" value="[[date]]"></paper-input>
-                  <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
-                </div>
-
-                <div>
-                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                </div>
-
-                <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
-                  <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
-                  <div class="buttons">
-                    <paper-button dialog-dismiss>Cancel</paper-button>
-                    <paper-button dialog-confirm>OK</paper-button>
-                  </div>
-                </paper-dialog>
-
-              </div>
-
-              <div class="item large">
-
-                <div class="flex">
-                  <paper-input label="End Date" value="[[date]]"></paper-input>
-                  <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
-                </div>
-
-                <div>
-                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                </div>
-
-                <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
-                  <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
-                  <div class="buttons">
-                    <paper-button dialog-dismiss>Cancel</paper-button>
-                    <paper-button dialog-confirm>OK</paper-button>
-                  </div>
-                </paper-dialog>
-
-              </div>
-
-              <div class="item small">
-                
-                <div class="flex">
-                  <paper-input label="Modality"></paper-input>
-                </div>
-
-                <div>
-                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                </div>
-
-              </div>
-
-              <div class="item large">
-                
-                <div class="flex">
-                  <paper-checkbox>Anonymize results</paper-checkbox>
-                </div>
-
-                <div>
-                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                </div>
-
-              </div>
-
-            </iron-collapse>
-
-          </div>
-
-
-          <div class="group">
-
-            <div class="name tool" on-tap="_toggleSettings">PACS settings <div class="spacer"></div> <paper-icon-button id="settingsIcon" icon="icons:expand-more"></paper-icon-button></div>
-
-            <iron-collapse id="settings">
-
-              <div class="item large">
-                <div class="flex">
-                  <paper-input label="PACS IP"></paper-input>
-                </div>
-
-                <div class="help">
-                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                </div>
-              </div>
-
-              <div class="item large">
-                <div class="flex">
-                  <paper-input label="AETITLE"></paper-input>
-                </div>
-
-                <div class="help">
-                  <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-                </div>
-              </div>
-
-            </iron-collapse>
-
-          </div>
-
-          <paper-button class="submit" raised on-tap="_pacsQuery">Search on the PACS</paper-button>
-
-        </div>
-
-
-        <!-- Retrieve page -->
-        <div class="results">
-
-          <paper-fab-speed-dial direction="top">
-
-            <!-- update icon nd color depending on if there is something to get or not. -->
-            <paper-fab id="create" icon="icons:add" class="dropdown-trigger" disabled></paper-fab>
-            <div class="dropdown-content">
-              <a href="/home">
-                <paper-fab mini id="export" icon="icons:subject" on-tap="_export"></paper-fab>
-                <paper-tooltip for="export" position="left" animation-delay="0">Selection to CSV</paper-tooltip>
-              </a>
-              <a href="/home">
-                <paper-fab mini id="download" icon="icons:cloud-download" on-tap="_retrieve"></paper-fab>
-                <paper-tooltip for="download" position="left" animation-delay="0">Selection to ChRIS</paper-tooltip>
-              </a>
-            </div>
-          </paper-fab-speed-dial>
-
-          <div id="vad">
-
-            <paper-progress id="progress" indeterminate></paper-progress>
-            <!-- https://vaadin.com/elements/-/element/vaadin-grid -->
-            <!-- https://github.com/vaadin/vaadin-grid -->
-            <paper-input id="filter" label="Filter results ([[filterResponse.length]])" value="{{filter}}"></paper-input>
-
-            <vaadin-grid id="sort" selection-mode="multi" style="height:100%">
-              <table>
-                <colgroup>
-
-                  <col name="PatientID" sortable hidable/>
-                  <col name="PatientName" max-width="250" sortable hidable/>
-                  <col name="StudyDescription" max-width="250" sortable hidable/>
-                  <col name="SeriesDescription" max-width="250" sortable hidable/>
-                  <col name="NumberOfSeriesRelatedInstances" sortable max-width="200" hidable/>
-                  
-                </colgroup>
-
-              </table>
-            </vaadin-grid>
-
-            <div class="vaadinfoot">
-              Selected files: [[selectedFiles.length]]
-            </div>
-
-          </div>
-
-        </div>
+        <pacs-query query="{{query}}" on-query-changed="_queryChanged"></pacs-query>
+        <pacs-retrieve query="[[query]]"></pacs-retrieve>
 
       </iron-pages>
 
@@ -471,30 +75,19 @@ Chris app pacs-pull element!
             value: 0
           },
 
+          query: {
+            type: Array,
+            value: []
+            //,
+            // we do no use observer in the properties
+            // because if so the callback is called at creation time.
+            //observer: '_queryChanged'
+          },
+
           parameters: {
             type: Object
-          },
-
-          queryResponse: {
-            type: Array,
-            value: []
-          },
-
-          filter: {
-            type:String,
-            observer: '_filterChanged'
-          },
-
-          filterResponse: {
-            type: Array,
-            value: []
-          },
-
-          selectedFiles:{
-            type: Array,
-            value: [],
-            observer: '_selectedFilesChanged'
           }
+
         },
 
         behaviors: [
@@ -505,53 +98,13 @@ Chris app pacs-pull element!
 
           this.toolbar = this.$.toolbar;
 
-          var grid = this.$.sort;
-
-          grid.addEventListener('sort-order-changed', function() {
-
-            var sortOrder = grid.sortOrder[0];
-            var sortProperty = grid.columns[sortOrder.column].name;
-            var sortDirection = sortOrder.direction;
-            grid.items.sort(function(a, b) {
-              var res;
-              var path = sortProperty.split('.');
-              for (var i = 0; i < path.length; i++) {
-                a = a[path[i]];
-                b = b[path[i]];
-              }
-              if (!isNaN(a)) {
-                res = parseInt(a, 10) - parseInt(b, 10);
-              } else {
-                res = a.localeCompare(b);
-              }
-
-              if ('desc' === sortDirection) {
-                res *= -1;
-              }
-              return res;
-            });
-
-          });
-
-          var self = this;
-          grid.addEventListener('selected-items-changed', function(e) {
-
-            var selection = [];
-
-            for (var i = 0; i < grid.selection.size; i += 1) {
-
-              selection.push( grid.items[i] );
-            }
-
-            self.set('selectedFiles', selection );
-
-          });
-
         },
 
-        attached: function(){
-        
-          console.log('hi pacs_pull');
+        // we do no use observer in the properties
+        // because if so the callback is called at creation time.
+        _queryChanged: function( value ){
+
+          this.selected = 1;
 
         },
 
@@ -566,158 +119,6 @@ Chris app pacs-pull element!
 
           // let plugin-fs know the parameters are ready
           this.fire( 'parameters-changed' );
-
-        },
-
-        showDialog: function() {
-
-          this.$.dialog.toggle();
-          this.$.dialog.updateStyles();
-
-        },
-
-        patchOverlay: function ( e ) {
-
-          if ( e.currentTarget.backdropElement ) {
-
-            e.currentTarget.parentNode.insertBefore( e.currentTarget.backdropElement, e.currentTarget );
-
-          }
-
-        },
-
-        _toggleAdvanced: function(){
-
-          this.$.advanced.toggle();
-          this.$.advancedIcon.icon = this.$.advanced.opened ? 'icons:expand-less' : 'icons:expand-more';
-
-        },
-
-        _toggleSimple: function(){
-
-          this.$.simple.toggle();
-          this.$.simpleIcon.icon = this.$.simple.opened ? 'icons:expand-less' : 'icons:expand-more';
-
-        },
-
-        _toggleSettings: function(){
-
-          this.$.settings.toggle();
-          this.$.settingsIcon.icon = this.$.settings.opened ? 'icons:expand-less' : 'icons:expand-more';
-
-        },
-
-        _pacsQuery: function(){
-
-          // get parameters
-
-          // show loading icon
-          this.$.progress.style.display = 'block';
-
-          // go to results pages
-          this.selected = 1;
-
-          // trigger ajax call
-          var request = this.$.ItemAPI.request('GET', '/pacsquery');
-          request
-          .then( this.handlePacsQuery.bind(this) )
-          .catch( this.handlePacsQueryError.bind(this) );
-
-        },
-
-        handlePacsQuery: function( response ){
-
-          console.log( response );
-          var data = [];
-
-          for( var i = 0; i < response.data.length; i++ ){
-
-            data.push( response.data[i].data );
-
-          }
-
-          this.set('queryResponse', data);
-          this.set('filterResponse', data);
-
-          // hide loading
-          this.$.progress.style.display = 'none';
-
-          // fill table
-          this.$.sort.items = this.queryResponse;
-
-        },
-
-        handlePacsQueryError: function( response ){
-
-          console.log( response );
-
-        },
-
-        _filterChanged: function( value ){
-
-          var filterResponse = this.queryResponse.filter(function(val) {
-              if (value) {
-                // split on white space
-                var values = value.split(" ");
-                var match = 0;
-
-                for( var i = 0; i< values.length; i++ ){
-
-                  if(
-                    ((val.PatientID.toLowerCase()).indexOf(values[i]) > -1) ||
-                    ((val.PatientName.toLowerCase()).indexOf(values[i]) > -1) ||
-                    ((val.StudyDescription.toLowerCase()).indexOf(values[i]) > -1) ||
-                    ((val.SeriesDescription.toLowerCase()).indexOf(values[i]) > -1) ||
-                    ((val.NumberOfSeriesRelatedInstances.toLowerCase()).indexOf(values[i]) > -1) ){
-                    match += 1;
-                  }
-
-                }
-
-                if( match === values.length ){
-
-                  return true
-
-                }
-                else{
-
-                  return false;
-
-                }
-
-              } else {
-                return true;
-              }
-            });
-
-          this.set( 'filterResponse', filterResponse );
-
-          // fill table
-          this.$.sort.items = this.filterResponse;
-
-        },
-
-        _selectedFilesChanged: function(){
-
-          // update color of FAB
-          this.$.create.disabled = this.selectedFiles.length > 0 ? false : true;
-
-        },
-
-        _export: function(){
-
-          // convert selection to csv file
-          console.log('_export');
-          this.reset();
-
-        },
-
-        _retrieve: function(){
-
-          console.log('_retrieve');
-          this.reset();
-          // go pacs retrieve
-          // 1- post + update optimistic results
 
         }
     });
