@@ -1,0 +1,23 @@
+<script>
+    /** @polymerBehavior ChrisApps */
+    ChrisApps = {
+
+      // Helper to reset proiperties to original value
+      // Called automatically when hit the "X" icon.
+      reset: function(){
+
+        for (var key in this.properties ) {
+
+          if ( ( this.properties.hasOwnProperty( key ) ) &&
+               ( this.properties[key].hasOwnProperty( 'value' ) ) ){
+
+            this[key] = this.properties[key].value;
+
+          }
+
+        }
+
+      }
+
+    }
+</script>

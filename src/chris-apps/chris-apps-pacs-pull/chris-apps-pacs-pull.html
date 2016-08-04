@@ -29,6 +29,7 @@
 <link rel="import" href="../../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
 
 <!-- CHRIS ELEMENTS -->
+<link rel="import" href="../chris-apps-behavior.html">
 <link rel="import" href="../../chris-api/chris-api.html">
 
 <!--
@@ -496,6 +497,10 @@ Chris app pacs-pull element!
           }
         },
 
+        behaviors: [
+          ChrisApps
+        ],
+
         ready: function(){
 
           this.toolbar = this.$.toolbar;
@@ -703,12 +708,14 @@ Chris app pacs-pull element!
 
           // convert selection to csv file
           console.log('_export');
+          this.reset();
 
         },
 
         _retrieve: function(){
 
           console.log('_retrieve');
+          this.reset();
           // go pacs retrieve
           // 1- post + update optimistic results
 

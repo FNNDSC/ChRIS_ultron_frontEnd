@@ -61,7 +61,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <app-header fixed condenses effects="waterfall">
         <app-toolbar style$="[[_setToolbarStyle(app.data.color)]]">
           <div main-title>[[app.data.label]]</div>
-          <a class="back" href="/home">
+          <a class="back" href="/home" on-tap="_reset">
             <paper-icon-button icon="icons:clear"></paper-icon-button>
           </a>
         </app-toolbar>
@@ -88,25 +88,32 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             observer: '_appChanged'
           },
 
+          appElt: HTMLElement,
+
           feed:{
             type: Object
           }
 
         },
 
+        attached: function(){
+
+          console.log( 'got attached' );
+
+        },
+
         _appChanged: function( ){
 
-          // remove child if any
-          // maybe better to hide?
-          var node = Polymer.dom(this.$.content).firstElementChild;
+          if( this.appElt ){
 
-          if( node ){
-
-            Polymer.dom( this.$.content ).removeChild( node );
+            Polymer.dom( this.$.content ).removeChild( this.appElt );
             Polymer.dom( this.$.appToolbar ).removeChild( Polymer.dom(this.$.appToolbar).firstElementChild );
 
             // remove event listener
-            node.removeEventListener( 'parameters-changed', this._createFeed );
+            this.appElt.removeEventListener( 'parameters-changed', this._createFeed );
+
+            // remove reference if any
+            this.appElt = null;
 
           }
           
@@ -115,16 +122,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             this.resolveUrl( '../../chris-apps/chris-apps-' + this.app.data.name + '/chris-apps-' + this.app.data.name + '.html' ),
             function( evt ){
 
-              var plugin = document.createElement( 'chris-apps-' + this.app.data.name );
+              this.appElt = document.createElement( 'chris-apps-' + this.app.data.name );
 
               // attach app
-              Polymer.dom( this.$.content ).appendChild( plugin );
+              Polymer.dom( this.$.content ).appendChild( this.appElt );
 
               // attach toolbar
-              Polymer.dom( this.$.appToolbar ).appendChild( plugin.toolbar );
+              Polymer.dom( this.$.appToolbar ).appendChild( this.appElt.toolbar );
 
               // add event listener
-              plugin.addEventListener( 'parameters-changed', this._createFeed.bind( this ) );
+              this.appElt.addEventListener( 'parameters-changed', this._createFeed.bind( this ) );
 
             }.bind( this ),
 
@@ -137,10 +144,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             true );
         },
 
+        _reset: function(){
+
+          this.appElt.reset();
+
+        },
+
         _getParamters: function(){
 
-          var node = Polymer.dom(this.$.content).firstElementChild;
-          node.generateParameters();
+          this.appElt.generateParameters();
 
         },
 
@@ -148,7 +160,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // push to the API
           // print plugin command line paramters
-          var node = Polymer.dom(this.$.content).firstElementChild;
 
           // feed created
           // ask for feed ID # through API...
@@ -191,11 +202,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 ';
 
         // add parameters to the note
-        var parametersKeys = Object.keys( node.parameters );
+        var parametersKeys = Object.keys( this.appElt.parameters );
         for( var i = 0; i < parametersKeys.length; i++ ){
 
           var key = parametersKeys[i];
-          this.feed.note += '*' + key + '* : ' + node.parameters[key] + '\n\n';
+          this.feed.note += '*' + key + '* : ' + this.appElt.parameters[key] + '\n\n';
 
         }
 
