@@ -247,21 +247,21 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
           else{
 
-            // Author is a <string>
-            if( !( this.comments.data && this.comments.template.constructor === Array ) ){
+            // Template is an <object>
+            if( !( typeof this.comments.template === 'object' ) ){
 
-              error.push( 'template:Array' );
+              error.push( 'template:Object' );
 
             }
 
-            // Color is a <string>
+            // Href is a <string>
             if( !( typeof this.comments.href === 'string' ) ){
 
               error.push( 'href:String' );
 
             }
 
-            // Content is a <string>
+            // Data is an <array>
             if( !( this.comments.data && this.comments.data.constructor === Array ) ){
 
               error.push( 'data:Array' );

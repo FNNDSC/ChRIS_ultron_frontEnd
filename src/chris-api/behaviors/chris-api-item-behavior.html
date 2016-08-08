@@ -10,29 +10,36 @@
 
           case 'url':
 
-            // get last part of url for now
-
-            console.log( this.url );
-
             var url = '';
+            if( !this.fakeAPI ){
 
-            if( this.method === 'POST' ){
-
-              url = 'https://httpbin.org/post';
-
-            }
-            else if( this.method === 'PUT' ){
-
-              url = 'https://httpbin.org/put';
+              url = this.url;
 
             }
             else{
 
-              url = '/data/';
-              url += this.url.split(/[/]+/).pop();
-              if( url.indexOf('.json') === -1 ){
+              // get last part of url for now
+              console.log( 'Fake API for: ' + this.url );
 
-                url += '.json';
+              if( this.method === 'POST' ){
+
+                url = 'https://httpbin.org/post';
+
+              }
+              else if( this.method === 'PUT' ){
+
+                url = 'https://httpbin.org/put';
+
+              }
+              else{
+
+                url = '/data/';
+                url += this.url.split(/[/]+/).pop();
+                if( url.indexOf('.json') === -1 ){
+
+                  url += '.json';
+
+                }
 
               }
 
@@ -54,7 +61,7 @@
               bodyCJ = this.formatQueryCJ( this.body.template, this.body.data );
 
             }
-            
+
             return bodyCJ;
 
           default:
@@ -71,77 +78,82 @@
 
         var response = request.response;
         var cache = request.cache;
-
-        //
-        // TO BE REMOVED WHEN CONNECTED TO REAL API?
-        // STILL GOD FOR TESTING
-        // NEED SWITCH?
-        //
-        // FROM HERE
-        //.....................................
-
         var itemCJ = {};
 
-        // Simulate GET
-        if( this.method === 'GET' && response.type === 'comments' ){
+        if( !this.fakeAPI ){
 
-          itemCJ = this.generateCommentCollectionCJ();
-
-        }
-        else if( this.method === 'GET' && response.type === 'feeds' ){
-
-          itemCJ = this.generateFeedCollectionCJ( response.data );
+          itemCJ = request.response;
 
         }
-        else if( this.method === 'GET' && response.type === 'labels' ){
+        else{
 
-          itemCJ = this.generateLabelCollectionCJ();
+          //
+          // TO BE REMOVED WHEN CONNECTED TO REAL API?
+          // STILL GOD FOR TESTING
+          // NEED SWITCH?
+          //
+          // FROM HERE
+          //.....................................
+
+          // Simulate GET
+          if( this.method === 'GET' && response.type === 'comments' ){
+
+            itemCJ = this.generateCommentCollectionCJ();
+
+          }
+          else if( this.method === 'GET' && response.type === 'feeds' ){
+
+            itemCJ = this.generateFeedCollectionCJ( response.data );
+
+          }
+          else if( this.method === 'GET' && response.type === 'labels' ){
+
+            itemCJ = this.generateLabelCollectionCJ();
+
+          }
+          else if( this.method === 'GET' && response.type === 'note' ){
+
+            itemCJ = this.generateNoteCJ();
+
+          }
+          else if( this.method === 'GET' && response.type === 'plugins' ){
+
+            itemCJ = this.generatePluginCollectionCJ();
+
+          }
+          else if( this.method === 'GET' && response.type === 'pluginsFS' ){
+
+            itemCJ = this.generatePluginFSCollectionCJ( response.data);
+
+          }
+          else if( this.method === 'GET' && response.type === 'pacsquery' ){
+
+            itemCJ = this.generatePacsqueryCJ( response.data);
+
+          }
+
+          // Simulate POST/PUT
+          if( this.method !== 'GET' ){
+
+            itemCJ.collection = {};
+            itemCJ.collection.href = response.json.href;
+
+          }
+
+          // Generate errors...
+          if( this.fakeAPIError ){
+
+            itemCJ.collection.error = {
+              'title'   : 'API Error',
+              'code'    : 'X1234',
+              'message' : this.method + ' : ' + itemCJ.collection.href + ' could not be processed.'
+            };
+
+          }
+
+          itemCJ = JSON.stringify( itemCJ );
 
         }
-        else if( this.method === 'GET' && response.type === 'note' ){
-
-          itemCJ = this.generateNoteCJ();
-
-        }
-        else if( this.method === 'GET' && response.type === 'plugins' ){
-
-          itemCJ = this.generatePluginCollectionCJ();
-
-        }
-        else if( this.method === 'GET' && response.type === 'pluginsFS' ){
-
-          itemCJ = this.generatePluginFSCollectionCJ( response.data);
-
-        }
-        else if( this.method === 'GET' && response.type === 'pacsquery' ){
-
-          itemCJ = this.generatePacsqueryCJ( response.data);
-
-        }
-
-        // Simulate POST/PUT
-        if( this.method !== 'GET' ){
-
-          itemCJ.collection = {};
-          itemCJ.collection.href = response.json.href;
-
-        }
-
-        // Generate random errors...
-        // if( Math.random() > 0.75 ){
-
-        //   itemCJ.collection.error = {
-        //     'title'   : 'API Error',
-        //     'code'    : 'X1234',
-        //     'message' : this.method + ' : ' + itemCJ.collection.href + ' could not be processed.'
-        //   };
-          
-        // }
-
-        itemCJ = JSON.stringify( itemCJ );
-
-        // TO HERE
-        //.....................................
 
         // format the response
         var item = this.formatItemCJ( itemCJ );
@@ -161,7 +173,7 @@
 
 
       formatItemCJ: function( feedCJ ){
-      
+
         var itemObj = JSON.parse( feedCJ );
         // debug here why template...
 
@@ -189,7 +201,7 @@
 
           // attach items if any
           item.data = [];
-          
+
           for( var i = 0; i < itemObj.collection.items.length; i++ ){
 
             var data = {};

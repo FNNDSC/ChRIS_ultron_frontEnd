@@ -27,17 +27,19 @@
         setup(function(){
 
           element = fixture('basic');
+          element.$.API.fakeAPI = true;
 
           comments = {};
           comments.href = '/someurl/comments';
-          comments.template = element.$.API.commentTemplate();
-          console.log( comments );
+          comments.template = {};
+          comments.template.data = element.$.API.commentTemplate();
           comments.data = [];
 
           commentsWithNoData = {};
 
           commentsWithNoHref = {};
-          commentsWithNoHref.template = element.$.API.commentTemplate();
+          commentsWithNoHref.template = {};
+          commentsWithNoHref.template.data = element.$.API.commentTemplate();
           commentsWithNoHref.data = [];
 
         });
@@ -95,20 +97,87 @@
 
           }
 
+        });
+
+        test('save comment', function( done ) {
+
+          element.comments = comments;
+          element.$.API.fakeAPI = true;
+          element.$.API.fakeAPIError = false;
+
+          element.addEventListener( 'comments-changed', commentsChanged );
+          element.$.comment.value = 'Save comment';
+
+          MockInteractions.pressEnter( element.$.comment );
+
+          function commentsChanged( event ){
+
+            assert.equal( element.comments.data.length, 1 );
+            assert.equal( element.comments.data[0].data.content, 'Save comment' );
+
+            done();
+            element.removeEventListener( 'comments-changed', commentsChanged );
+
+          }
 
         });
 
-        test('save comment', function() {
+        test('restore comment', function( done ) {
 
-          // set value
-          // "save comment"
-          assert.equal( element.is, 'chris-comment-list' );
+          element.comments = comments;
+          element.$.API.fakeAPI = true;
+          element.$.API.fakeAPIError = true;
+
+          let count = 0;
+
+          element.addEventListener( 'comments-changed', commentsChanged );
+          element.$.comment.value = 'Save comment';
+
+          MockInteractions.pressEnter( element.$.comment );
+
+          function commentsChanged( event ){
+
+            if( count === 0){
+
+              assert.equal( element.comments.data.length, 1 );
+              assert.equal( element.comments.data[0].data.content, 'Save comment' );
+
+            }
+            else if( count === 2){
+
+              // why 2...?
+              // ideally just 1...
+
+              assert.equal( element.comments.data.length, 0 );
+              done();
+              element.removeEventListener( 'comments-changed', commentsChanged );
+
+            }
+
+            count++;
+
+          }
 
         });
 
-        test('restore comment', function() {
+        test('restore comment fires notification', function( done ) {
 
-          assert.equal( element.is, 'chris-comment-list' );
+          element.comments = comments;
+          element.$.API.fakeAPI = true;
+          element.$.API.fakeAPIError = true;
+
+          element.addEventListener( 'notification', onNotification );
+          element.$.comment.value = 'Save comment';
+
+          MockInteractions.pressEnter( element.$.comment );
+
+          function onNotification( event ){
+
+            assert.equal( element.comments.data.length, 0 );
+            done();
+            element.removeEventListener( 'notification', onNotification );
+
+          }
 
         });
 
