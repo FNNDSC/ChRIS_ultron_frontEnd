@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head>
+    <title>chris-ultron test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/chris-ultron/chris-ultron.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-ultron></chris-ultron>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('chris-ultron', function() {
+
+        let element, templates;
+
+        setup(function(){
+
+          element = fixture('basic');
+
+        });
+
+        test('instantiating the element works', function() {
+
+          assert.equal(element.is, 'chris-ultron');
+
+        });
+
+      });
+    </script>
+  
+
+</body></html>

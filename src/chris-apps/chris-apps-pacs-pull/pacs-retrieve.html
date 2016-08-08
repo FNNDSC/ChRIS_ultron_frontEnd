@@ -1,0 +1,76 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+
+
+<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
+
+
+<link rel="import" href="../../chris-api/chris-api.html">
+
+</head><body><dom-module id="pacs-retrieve">
+
+  <template>
+    <style>host{display:block;}paper-input{padding:0 16px;}#grid{background-color:var(--paper-grey-50);}#vad{background-color:var(--paper-grey-50);display:flex;flex-direction:column;flex:1;}paper-fab-speed-dial{z-index:10;position:fixed;bottom:16px;right:16px;}.vaadinfoot{border:1px solid #e3e3e3;font-size:18px;padding:16px;background-color:var(--paper-grey-50);}.content{position:fixed;top:128px;bottom:0;left:0;right:0;display:flex;flex-direction:column;}</style>
+
+    
+    <chris-api id="API" api="Item" ,="" content-type="application/json" error="{{error}}">
+    </chris-api>
+
+    <div class="content">
+
+      <paper-fab-speed-dial direction="top">
+
+        
+        <paper-fab id="create" icon="icons:add" class="dropdown-trigger" disabled=""></paper-fab>
+        <div class="dropdown-content">
+          <div>
+            <paper-fab mini="" id="export" icon="icons:file-download" on-tap="_getCSV"></paper-fab>
+            <paper-tooltip for="export" position="left" animation-delay="0">Selection to CSV</paper-tooltip>
+          </div>
+          <div>
+            <paper-fab mini="" id="download" icon="icons:save" on-tap="_retrieve"></paper-fab>
+            <paper-tooltip for="download" position="left" animation-delay="0">Selection to ChRIS</paper-tooltip>
+          </div>
+        </div>
+      </paper-fab-speed-dial>
+
+      <div id="vad">
+
+
+        
+        
+        <paper-input id="filter" label="Filter results ([[filter.length]])" value="{{filterExp}}"></paper-input>
+
+        <vaadin-grid id="grid" selection-mode="multi" style="height:100%">
+          <table>
+            <colgroup>
+
+              <col name="PatientID" sortable="" hidable="">
+              <col name="PatientName" max-width="250" sortable="" hidable="">
+              <col name="StudyDescription" max-width="250" sortable="" hidable="">
+              <col name="SeriesDescription" max-width="250" sortable="" hidable="">
+              <col name="NumberOfSeriesRelatedInstances" sortable="" max-width="200" hidable="">
+              
+            </colgroup>
+
+          </table>
+        </vaadin-grid>
+
+        <div class="vaadinfoot">
+          Selected files: [[selection.length]]
+        </div>
+
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"pacs-retrieve",properties:{query:{type:Array,value:[],observer:"_queryChanged"},filterExp:{type:String,value:"",observer:"_filterExpChanged"},filter:{type:Array,value:[]},selection:{type:Array,value:[],observer:"_selectionChanged"}},ready:function(){var e=this.$.grid;e.addEventListener("sort-order-changed",function(){var t=e.sortOrder[0],r=e.columns[t.column].name,i=t.direction;e.items.sort(function(e,t){for(var n,s=r.split("."),o=0;o<s.length;o++)e=e[s[o]],t=t[s[o]];return n=isNaN(e)?e.localeCompare(t):parseInt(e,10)-parseInt(t,10),"desc"===i&&(n*=-1),n})});var t=this;e.addEventListener("selected-items-changed",function(r){var i=[];e.selection.selected(function(t){i.push(e.items[t])}),t.set("selection",i)})},_queryChanged:function(){console.log(this.query),this.set("filter",this.query),this.$.grid.items=this.query},_filterExpChanged:function(e){var t=this.query.filter(function(t){if(e){for(var r=e.split(" "),i=0,n=0;n<r.length;n++)(t.PatientID.toLowerCase().indexOf(r[n])>-1||t.PatientName.toLowerCase().indexOf(r[n])>-1||t.StudyDescription.toLowerCase().indexOf(r[n])>-1||t.SeriesDescription.toLowerCase().indexOf(r[n])>-1||t.NumberOfSeriesRelatedInstances.toLowerCase().indexOf(r[n])>-1)&&(i+=1);return i===r.length}return!0});this.set("filter",t),this.$.grid.items=this.filter},_selectionChanged:function(){this.$.create.disabled=!(this.selection.length>0)},_getCSV:function(){var e=this.toCSV(this.selection);this.downloadCSV(e)},toCSV:function(e){var t="";for(var r in e[0])e[0].hasOwnProperty(r)&&(t+='"'+r+'",');t+="\r\n";for(var i=0;i<e.length;i++){for(var r in e[i])t+=e[i].hasOwnProperty(r)?'"'+e[i][r]+'",':'"no value provided",';t+="\r\n"}return t},downloadCSV:function(e){if(null!=e){var t=new Date;filename="pacs_pull-"+("0"+t.getFullYear()).slice(-2)+("0"+t.getMonth()).slice(-2)+("0"+t.getDate()).slice(-2)+"-"+("0"+t.getHours()).slice(-2)+("0"+t.getMinutes()).slice(-2)+("0"+t.getSeconds()).slice(-2)+".csv",e.match(/^data:text\/csv/i)||(e="data:text/csv;charset=utf-8,"+e),data=encodeURI(e),link=document.createElement("a"),link.setAttribute("href",data),link.setAttribute("download",filename),document.body.appendChild(link),link.click(),document.body.removeChild(link)}},_retrieve:function(){console.log("_retrieve");var e=this.$.API.request("PUT","/pacsquery");e.then(this.handleRetrieve.bind(this))["catch"](this.handleRetrieveError.bind(this))},handleRetrieve:function(e){console.log("retrieve returned")},handleRetrieveError:function(e){console.log("retrieve errored")}});</script>
+
+</dom-module></body></html>

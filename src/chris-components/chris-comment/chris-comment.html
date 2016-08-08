@@ -6,13 +6,13 @@
 
     <style>:host{display:block;}.container{min-height:64px;display:flex;flex-direction:row;align-items:center;border-bottom:1px solid var(--paper-grey-300);}.name{padding:8px;font-style:bold;font-size:smaller;}.content{padding:8px;}</style>
 
-    <div class="container" style$="{{_setCommentStyle(comment.data.color)}}">
-      <div class="name">[[comment.data.author]]</div>
-      <div class="content">[[comment.data.content]]</div>
+    <div class="container" style$="[[_setCommentStyle(comment.data.color)]]">
+      <div class="name pad8">[[comment.data.author]]</div>
+      <div class="content pad8">[[comment.data.content]]</div>
     </div>
 
   </template>
 
-  <script>Polymer({is:"chris-comment",properties:{comment:{type:Object}},_setCommentStyle:function(e){return"border-left: 1px solid "+e}});</script>
+  <script>Polymer({is:"chris-comment",properties:{comment:{type:Object,observer:"_commentChanged"},valid:{type:Boolean}},isValid:function(t){if(this.comment){var e=[];return this.comment.data?("string"!=typeof this.comment.data.author&&e.push("author:String"),"string"!=typeof this.comment.data.color&&e.push("color:String"),"string"!=typeof this.comment.data.content&&e.push("content:String"),"string"!=typeof this.comment.data.date&&e.push("date:String"),"string"!=typeof this.comment.data.id&&e.push("id:String")):e.push("comment.data doesn't exist"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_setCommentStyle:function(t){return"border-left: 1px solid "+t},_commentChanged:function(t){!this.isValid(this.comment)}});</script>
 </dom-module>
 </body></html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html><html><head>
+    <title>chris-comment-list test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+    <script src="../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../web-component-tester/browser.js"></script>
+    <script src="../../../../iron-test-helpers/mock-interactions.js"></script>
+
+    <link rel="import" href="../../../src/chris-components/chris-comment-list/chris-comment-list.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-comment-list></chris-comment-list>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite( '<chris-comment-list>', function() {
+
+        let element, comments, commentsWithNoData, commentsWithNoHref;
+
+        setup(function(){
+
+          element = fixture('basic');
+
+          comments = {};
+          comments.href = '/someurl/comments';
+          comments.template = element.$.API.commentTemplate();
+          console.log( comments );
+          comments.data = [];
+
+          commentsWithNoData = {};
+
+          commentsWithNoHref = {};
+          commentsWithNoHref.template = element.$.API.commentTemplate();
+          commentsWithNoHref.data = [];
+
+        });
+
+        test('instantiating the element works', function() {
+
+          assert.equal( element.is, 'chris-comment-list' );
+
+        });
+
+        test('valid comment-list sets valid to true', function( done ) {
+
+
+          element.addEventListener( 'valid-changed', validChanged );
+          element.comments = comments;
+
+          function validChanged( event ){
+
+            assert.equal( element.valid, true );
+
+            done();
+            element.removeEventListener( 'valid-changed', validChanged );
+
+          }
+
+        });
+
+        test('invalid comment-list sets valid to false', function( done ) {
+
+          element.addEventListener( 'valid-changed', validChanged );
+          element.comments = commentsWithNoData;
+
+          function validChanged( event ){
+
+            assert.equal( element.valid, false );
+
+            done();
+            element.removeEventListener( 'valid-changed', validChanged );
+
+          }
+
+        });
+
+        test('invalid comment-list fires error', function( done ) {
+
+          element.addEventListener( 'error', errorFired );
+          element.comments = commentsWithNoHref;
+
+          function errorFired( event ){
+
+            assert.equal( element.valid, false );
+
+            done();
+            element.removeEventListener( 'error', errorFired );
+
+          }
+
+
+        });
+
+        test('save comment', function() {
+
+          // set value
+          // "save comment"
+          assert.equal( element.is, 'chris-comment-list' );
+
+        });
+
+        test('restore comment', function() {
+
+          assert.equal( element.is, 'chris-comment-list' );
+
+        });
+
+      } );
+    </script>
+
+  
+
+</body></html>

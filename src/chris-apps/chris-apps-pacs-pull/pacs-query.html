@@ -1,0 +1,170 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+
+
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+
+
+<link rel="import" href="../../../bower_components/paper-date-picker/paper-date-picker.html">
+
+
+<link rel="import" href="../../chris-api/chris-api.html">
+
+</head><body><dom-module id="pacs-query">
+
+  <template>
+    <style>host{display:block;}.spacer{@apply (--layout-flex);}paper-dialog{--paper-date-picker-dialog:{margin:0;max-height:520px !important;overflow:hidden;};--paper-date-picker-dialog-picker:{margin-top:0 !important;padding:0;};--paper-date-picker-dialog-calendar:{padding-bottom:0;};--paper-date-picker-dialog-heading:{margin-bottom:-62px;};}.paper-date-picker-dialog{@apply (--paper-date-picker-dialog);}.paper-date-picker-dialog > paper-date-picker{--paper-calendar:{@apply (--paper-date-picker-dialog-calendar);};@apply (--paper-date-picker-dialog-picker);}.paper-date-picker-dialog > paper-date-picker:not([narrow]){--paper-date-picker-heading:{@apply (--paper-date-picker-dialog-heading);};}.content{background-color:var(--paper-grey-50);@apply (--layout-vertical);@apply (--layout-wrap);padding:24px;max-width:800px;margin:auto;margin-top:24px;margin-bottom:100px;}.item{@apply (--layout-horizontal);padding:10px 72px;}.group{@apply (--layout-vertical);position:relative;padding:8px 0;}.name{font-size:18px;font-weight:400;color:#737373;}.submit{padding:16px;font-size:18px;font-weight:400;background-color:var(--accent-color);color:#ffffff;margin-top:24px;}.tool{@apply (--layout-horizontal);cursor:pointer;border-bottom:1px solid rgba(0, 0, 0, 0.1);}paper-textarea{width:100%;}paper-input{width:100%;}.flex{@apply (--layout-flex);@apply (--layout-horizontal);align-items:center;justify-content:flex-start;}paper-progress{display:none;width:100%;--paper-progress-active-color:var(--accent-color);}</style>
+
+    
+    <chris-api id="API" api="Item" ,="" content-type="application/json" error="{{error}}">
+    </chris-api>
+
+    
+    <paper-progress id="progressBar" indeterminate=""></paper-progress>
+
+    <div class="content">
+
+      <div class="group">
+
+        <div class="name tool" on-tap="_toggleSimple">Simple search <div class="spacer"></div> <paper-icon-button id="simpleIcon" icon="icons:expand-less"></paper-icon-button></div>
+
+        <iron-collapse id="simple" opened="">
+
+          <div class="item large">
+            <div class="flex">
+              <paper-textarea id="mrns" label="Patient MRN(s)"></paper-textarea>
+            </div>
+
+            <div class="help">
+              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+            </div>
+          </div>
+
+        </iron-collapse>
+
+      </div>
+
+      <div class="group">
+
+        <div class="name tool" on-tap="_toggleAdvanced">Advanced search <div class="spacer"></div> <paper-icon-button id="advancedIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+        <iron-collapse id="advanced">
+
+          <div class="item large">
+
+            <div class="flex">
+              <paper-input id="startDate" label="Start Date" value="[[date]]"></paper-input>
+              <paper-button class="btn" on-tap="showDialog" raised="">Change</paper-button>
+            </div>
+
+            <div>
+              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+            </div>
+
+            <paper-dialog id="dialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay">
+              <paper-date-picker id="picker" date="{{date}}"></paper-date-picker>
+              <div class="buttons">
+                <paper-button dialog-dismiss="">Cancel</paper-button>
+                <paper-button dialog-confirm="">OK</paper-button>
+              </div>
+            </paper-dialog>
+
+          </div>
+
+          <div class="item large">
+
+            <div class="flex">
+              <paper-input id="endDate" label="End Date" value="[[date]]"></paper-input>
+              <paper-button class="btn" on-tap="showDialog" raised="">Change</paper-button>
+            </div>
+
+            <div>
+              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+            </div>
+
+            <paper-dialog id="dialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay">
+              <paper-date-picker id="picker" date="{{date}}"></paper-date-picker>
+              <div class="buttons">
+                <paper-button dialog-dismiss="">Cancel</paper-button>
+                <paper-button dialog-confirm="">OK</paper-button>
+              </div>
+            </paper-dialog>
+
+          </div>
+
+          <div class="item small">
+            
+            <div class="flex">
+              <paper-input label="Modality"></paper-input>
+            </div>
+
+            <div>
+              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+            </div>
+
+          </div>
+
+          <div class="item large">
+            
+            <div class="flex">
+              <paper-checkbox id="anonymize">Anonymize results</paper-checkbox>
+            </div>
+
+            <div>
+              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+            </div>
+
+          </div>
+
+        </iron-collapse>
+
+      </div>
+
+
+      <div class="group">
+
+        <div class="name tool" on-tap="_toggleSettings">PACS settings <div class="spacer"></div> <paper-icon-button id="settingsIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+        <iron-collapse id="settings">
+
+          <div class="item large">
+            <div class="flex">
+              <paper-input label="PACS IP"></paper-input>
+            </div>
+
+            <div class="help">
+              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+            </div>
+          </div>
+
+          <div class="item large">
+            <div class="flex">
+              <paper-input label="AETITLE"></paper-input>
+            </div>
+
+            <div class="help">
+              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+            </div>
+          </div>
+
+        </iron-collapse>
+
+      </div>
+
+      <paper-button class="submit" raised="" on-tap="_query">Search on the PACS</paper-button>
+
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"pacs-query",properties:{query:{type:Array,value:[]}},showDialog:function(){this.$.dialog.toggle(),this.$.dialog.updateStyles()},patchOverlay:function(e){e.currentTarget.backdropElement&&e.currentTarget.parentNode.insertBefore(e.currentTarget.backdropElement,e.currentTarget)},dismissDialog:function(e){},_toggleAdvanced:function(){this.$.advanced.toggle(),this.$.advancedIcon.icon=this.$.advanced.opened?"icons:expand-less":"icons:expand-more"},_toggleSimple:function(){this.$.simple.toggle(),this.$.simpleIcon.icon=this.$.simple.opened?"icons:expand-less":"icons:expand-more"},_toggleSettings:function(){this.$.settings.toggle(),this.$.settingsIcon.icon=this.$.settings.opened?"icons:expand-less":"icons:expand-more"},_query:function(){this.$.progressBar.style.display="block";var e={mrns:this.$.mrns.value,startDate:this.$.startDate.value,endDate:this.$.endDate.value,anonymize:this.$.anonymize.checked},t=this.$.API.request("GET","/pacsquery",{params:e});t.then(this.handlePacsQuery.bind(this))["catch"](this.handlePacsQueryError.bind(this))},handlePacsQuery:function(e){this.$.progressBar.style.display="none";for(var t=[],s=0;s<e.data.length;s++)t.push(e.data[s].data);this.set("query",t),this.fire("query-changed")},handlePacsQueryError:function(e){console.log("error:"+e)}});</script>
+
+</dom-module></body></html>

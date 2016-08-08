@@ -141,54 +141,54 @@
 
     <style>:host{display:block;}.container{min-height:64px;display:flex;flex-direction:row;align-items:center;border-bottom:1px solid var(--paper-grey-300);}.name{padding:8px;font-style:bold;font-size:smaller;}.content{padding:8px;}</style>
 
-    <div class="container" style$="{{_setCommentStyle(comment.data.color)}}">
-      <div class="name">[[comment.data.author]]</div>
-      <div class="content">[[comment.data.content]]</div>
+    <div class="container" style$="[[_setCommentStyle(comment.data.color)]]">
+      <div class="name pad8">[[comment.data.author]]</div>
+      <div class="content pad8">[[comment.data.content]]</div>
     </div>
 
   </template>
 
-  <script>Polymer({is:"chris-comment",properties:{comment:{type:Object}},_setCommentStyle:function(e){return"border-left: 1px solid "+e}});</script>
+  <script>Polymer({is:"chris-comment",properties:{comment:{type:Object,observer:"_commentChanged"},valid:{type:Boolean}},isValid:function(t){if(this.comment){var e=[];return this.comment.data?("string"!=typeof this.comment.data.author&&e.push("author:String"),"string"!=typeof this.comment.data.color&&e.push("color:String"),"string"!=typeof this.comment.data.content&&e.push("content:String"),"string"!=typeof this.comment.data.date&&e.push("date:String"),"string"!=typeof this.comment.data.id&&e.push("id:String")):e.push("comment.data doesn't exist"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_setCommentStyle:function(t){return"border-left: 1px solid "+t},_commentChanged:function(t){!this.isValid(this.comment)}});</script>
 </dom-module>
 <dom-module id="chris-comment-list" assetpath="../../chris-components/chris-comment-list/">
   <template>
     <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{}paper-card{width:800px;}@media (max-width: 800px){paper-card{width:100%;}}paper-card{color:var(--primary-text-color);--paper-card-header-color:var(--secondary-text-color);--paper-card-background-color:var(--paper-grey-100);background:var(--paper-grey-100);}</style>
 
-            <paper-card heading="Discussion">
-      <div class="card-content">
-
-    <chris-api id="ItemAPI" api="Item" ,="" content-type="application/json" response="{{response}}" on-response="handleItem" error="{{error}}" on-error="handleError">
+    <chris-api id="API" api="Item" ,="" content-type="application/json" response="{{response}}" on-response="handleItem" error="{{error}}" on-error="handleError">
     </chris-api>
 
-    <div id="commentList" class="comment-list">
+    <paper-card heading="Discussion">
 
-      <div id="content" class="content">
+      <div class="card-content">
 
-        
+        <div id="commentList" class="comment-list">
 
+          <div id="content" class="content">
 
-        
-        <template is="dom-repeat" items="[[comments.data]]">
+            
+            <template is="dom-repeat" items="[[comments.data]]">
 
-          <chris-comment comment="[[item]]"></chris-comment>
+              <chris-comment comment="[[item]]"></chris-comment>
 
-        </template>
+            </template>
 
-        
+            
 
-        <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter="" maxlength="120">
-          <paper-icon-button suffix="" icon="icons:clear" on-tap="clear"></paper-icon-button>
-        </paper-input>
+            <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter="" maxlength="120">
+              <paper-icon-button suffix="" icon="icons:clear" on-tap="clear"></paper-icon-button>
+            </paper-input>
+
+          </div>
+
+        </div>
 
       </div>
 
-    </div>
-    </div>
     </paper-card>
 
   </template>
 
-  <script>Polymer({is:"chris-comment-list",properties:{comments:{type:Object}},clear:function(){this.$.comment.value=""},save:function(e){if(13===e.keyCode&&(e.stopPropagation(),e.preventDefault(),""!==this.$.comment.value)){var t={weekday:"long",year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"},o={};o.data={author:"Nicolas Rannou",color:"blue",content:this.$.comment.value,index:this.comments.length+1,date:(new Date).toLocaleTimeString("en-us",t)},o.template=this.comments.template,o.href=this.comments.href,this.push("comments.data",o),this.clear(),this.$.ItemAPI.request("POST",this.comments.href,o)}},handleItem:function(e){if(e.preventDefault(),e.stopPropagation(),e.detail){var t=e.detail;t.error&&t.error.code&&(this.pop("comments.data"),this.fire("notification",t.error))}},handleError:function(){}});</script>
+  <script>Polymer({is:"chris-comment-list",properties:{comments:{type:Object,observer:"_commentsChanged"},valid:{type:Boolean}},clear:function(){this.$.comment.value=""},save:function(t){if(13===t.keyCode&&(t.stopPropagation(),t.preventDefault(),""!==this.$.comment.value)){var e={weekday:"long",year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"},i={};i.data={author:"Nicolas Rannou",color:"blue",content:this.$.comment.value,index:this.comments.length+1,date:(new Date).toLocaleTimeString("en-us",e)},i.template=this.comments.template,i.href=this.comments.href,this.push("comments.data",i),this.clear(),this.$.API.request("POST",this.comments.href,{body:i})}},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.pop("comments.data"),this.fire("notification",e.error))}},handleError:function(){},isValid:function(t){if(this.comments){var e=[];return this.comments.data?(this.comments.data&&this.comments.template.constructor===Array||e.push("template:Array"),"string"!=typeof this.comments.href&&e.push("href:String"),this.comments.data&&this.comments.data.constructor===Array||e.push("data:Array")):e.push("comments.data doesn't exist"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_commentsChanged:function(t){!this.isValid(this.comments)}});</script>
 </dom-module>
 fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-nav/">
 
@@ -327,7 +327,7 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
 
   </template>
 
-  <script>Polymer({is:"chris-note",properties:{note:{type:Object},previousContent:{type:String},editing:{type:Boolean,value:!1},error:{type:Object}},_stopEventPropagation:function(t){t.stopPropagation()},edit:function(t){this._stopEventPropagation(t),this.editing=!0,this.previousContent=this.note.data[0].data.content,this.$.editor.style.display="block"},close:function(t){this._stopEventPropagation(t),this.editing=!1,this.note.data[0].data.content=this.previousContent,this.$.editor.value=this.previousContent,this.$.md.markdown=this.previousContent,this.$.editor.style.display="none"},save:function(t){this._stopEventPropagation(t),this.editing=!1,this.$.editor.style.display="none";var e=this.note.data[0];e.template=this.note.template,e.href=this.note.href,e.cache=[{name:"content",value:this.previousContent}],this.$.ItemAPI.request("PUT",e.href,e)},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.note.data[0].data.content=e.cache[0].value,this.$.editor.value=e.cache[0].value,this.$.md.markdown=e.cache[0].value,this.fire("notification",e.error))}},handleError:function(){console.log(this.error)},_updateContent:function(){this.$.md.markdown=this.$.editor.value}});</script>
+  <script>Polymer({is:"chris-note",properties:{note:{type:Object},previousContent:{type:String},editing:{type:Boolean,value:!1},error:{type:Object}},_stopEventPropagation:function(t){t.stopPropagation()},edit:function(t){this._stopEventPropagation(t),this.editing=!0,this.previousContent=this.note.data[0].data.content,this.$.editor.style.display="block"},close:function(t){this._stopEventPropagation(t),this.editing=!1,this.note.data[0].data.content=this.previousContent,this.$.editor.value=this.previousContent,this.$.md.markdown=this.previousContent,this.$.editor.style.display="none"},save:function(t){this._stopEventPropagation(t),this.editing=!1,this.$.editor.style.display="none";var e=this.note.data[0];e.template=this.note.template,e.href=this.note.href;var o=[{name:"content",value:this.previousContent}];this.$.ItemAPI.request("PUT",e.href,{body:e,cache:o})},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.note.data[0].data.content=e.cache[0].value,this.$.editor.value=e.cache[0].value,this.$.md.markdown=e.cache[0].value,this.fire("notification",e.error))}},handleError:function(){console.log(this.error)},_updateContent:function(){this.$.md.markdown=this.$.editor.value}});</script>
 </dom-module>
 <iron-iconset-svg name="communication" size="24">
 <svg><defs>
