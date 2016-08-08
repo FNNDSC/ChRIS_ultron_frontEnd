@@ -2,63 +2,57 @@
 
 <html>
   <head>
-    <title>chris-comment test</title>
+    <title>chris-comment-list test</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../../../web-component-tester/browser.js"></script>
     <script src="../../../../iron-test-helpers/mock-interactions.js"></script>
 
-    <link rel="import" href="../../../src/chris-components/chris-comment/chris-comment.html">
+    <link rel="import" href="../../../src/chris-components/chris-comment-list/chris-comment-list.html">
   </head>
   <body>
 
     <test-fixture id="basic">
       <template>
-        <chris-comment></chris-comment>
+        <chris-comment-list></chris-comment-list>
       </template>
     </test-fixture>
 
     <script>
-      suite( '<chris-comment>', function() {
+      suite( '<chris-comment-list>', function() {
 
-        let element, comment, commentWithNoData, commentWithNoColor;
+        let element, comments, commentsWithNoData, commentsWithNoHref;
 
         setup(function(){
 
           element = fixture('basic');
 
-          comment = {};
-          comment.data = {
-            author: 'Nicolas',
-            color: '#E91E63',
-            content: 'Content of my comment',
-            date: 'Jun 06, 2016',
-            id: '1234'
-          };
+          comments = {};
+          comments.href = '/someurl/comments';
+          comments.template = element.$.API.commentTemplate();
+          console.log( comments );
+          comments.data = [];
 
-          commentWithNoData = {};
+          commentsWithNoData = {};
 
-          commentWithNoColor = {};
-          commentWithNoColor.data = {
-            author: 'Nicolas',
-            content: 'Content of my comment',
-            date: 'Jun 06, 2016',
-            id: '1234'
-          };
+          commentsWithNoHref = {};
+          commentsWithNoHref.template = element.$.API.commentTemplate();
+          commentsWithNoHref.data = [];
 
         });
 
         test('instantiating the element works', function() {
 
-          assert.equal( element.is, 'chris-comment' );
+          assert.equal( element.is, 'chris-comment-list' );
 
         });
 
-        test('valid comment sets valid to true', function( done ) {
+        test('valid comment-list sets valid to true', function( done ) {
+
 
           element.addEventListener( 'valid-changed', validChanged );
-          element.comment = comment;
+          element.comments = comments;
 
           function validChanged( event ){
 
@@ -71,10 +65,10 @@
 
         });
 
-        test('invalid comment sets valid to false', function( done ) {
+        test('invalid comment-list sets valid to false', function( done ) {
 
           element.addEventListener( 'valid-changed', validChanged );
-          element.comment = commentWithNoData;
+          element.comments = commentsWithNoData;
 
           function validChanged( event ){
 
@@ -87,10 +81,10 @@
 
         });
 
-        test('invalid comment fires error', function( done ) {
+        test('invalid comment-list fires error', function( done ) {
 
           element.addEventListener( 'error', errorFired );
-          element.comment = commentWithNoColor;
+          element.comments = commentsWithNoHref;
 
           function errorFired( event ){
 
@@ -101,6 +95,20 @@
 
           }
 
+
+        });
+
+        test('save comment', function() {
+
+          // set value
+          // "save comment"
+          assert.equal( element.is, 'chris-comment-list' );
+
+        });
+
+        test('restore comment', function() {
+
+          assert.equal( element.is, 'chris-comment-list' );
 
         });
 

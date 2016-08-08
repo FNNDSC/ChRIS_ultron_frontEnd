@@ -59,30 +59,34 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
-          paper-card {
+      paper-card {
+
         width: 800px;
+
       }
 
     @media (max-width: 800px) {
+
       paper-card {
+
         width: 100%;
+
       }
     }
 
 
     paper-card{
+
       color: var(--primary-text-color);
       --paper-card-header-color: var(--secondary-text-color);
       --paper-card-background-color: var(--paper-grey-100);
       background: var(--paper-grey-100);
+
     }
 
     </style>
 
-            <paper-card heading="Discussion">
-      <div class="card-content">
-
-    <chris-api id="ItemAPI"
+    <chris-api id="API"
       api="Item",
       content-type="application/json",
       response="{{response}}"
@@ -91,30 +95,33 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       on-error="handleError">
     </chris-api>
 
-    <div id="commentList" class="comment-list">
+    <paper-card heading="Discussion">
 
-      <div id="content" class="content">
+      <div class="card-content">
 
-        <!-- First comment -->
+        <div id="commentList" class="comment-list">
 
+          <div id="content" class="content">
 
-        <!-- Middle comments -->
-        <template is="dom-repeat" items="[[comments.data]]">
+            <!-- Comments -->
+            <template is="dom-repeat" items="[[comments.data]]">
 
-          <chris-comment comment="[[item]]"></chris-comment>
+              <chris-comment comment="[[item]]"></chris-comment>
 
-        </template>
+            </template>
 
-        <!-- Last comment -->
+            <!-- Add comments -->
 
-        <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter maxlength="120">
-          <paper-icon-button suffix icon="icons:clear" on-tap="clear"></paper-icon-button>
-        </paper-input>
+            <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter maxlength="120">
+              <paper-icon-button suffix icon="icons:clear" on-tap="clear"></paper-icon-button>
+            </paper-input>
+
+          </div>
+
+        </div>
 
       </div>
 
-    </div>
-    </div>
     </paper-card>
 
   </template>
@@ -126,7 +133,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         properties: {
 
           comments: {
-            type: Object
+            type: Object,
+            observer: '_commentsChanged'
+          },
+
+          valid: {
+            type: Boolean
           }
 
         },
@@ -138,7 +150,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         save: function ( evt ) {
-          
+
           // save comment only if
           // - "enter" was pressed
           // - comment not empty
@@ -173,7 +185,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
               this.clear();
 
-              this.$.ItemAPI.request( 'POST', this.comments.href, { body: comment } );
+              this.$.API.request( 'POST', this.comments.href, { body: comment } );
 
             }
 
@@ -215,6 +227,77 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         handleError: function(){
+
+        },
+
+        isValid: function( comments ){
+
+          if( !this.comments ){
+
+            return;
+
+          }
+
+          var error = [];
+
+          if( !this.comments.data ){
+
+            error.push( 'comments.data doesn\'t exist' );
+
+          }
+          else{
+
+            // Author is a <string>
+            if( !( this.comments.data && this.comments.template.constructor === Array ) ){
+
+              error.push( 'template:Array' );
+
+            }
+
+            // Color is a <string>
+            if( !( typeof this.comments.href === 'string' ) ){
+
+              error.push( 'href:String' );
+
+            }
+
+            // Content is a <string>
+            if( !( this.comments.data && this.comments.data.constructor === Array ) ){
+
+              error.push( 'data:Array' );
+
+            }
+
+          }
+
+          this.valid = ( error.length <= 0 );
+          this.fire( 'valid-changed');
+
+          if( !this.valid ){
+
+            console.log( error );
+
+            // fire error here because firefox complains if we do it before...?
+            this.fire( 'error', error );
+
+          }
+
+          return this.valid;
+
+        },
+
+        _commentsChanged: function( event ){
+
+          if( !this.isValid( this.comments ) ){
+
+            // if not valid
+
+          }
+          else{
+
+            // if valid
+
+          }
 
         }
 
