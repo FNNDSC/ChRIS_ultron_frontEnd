@@ -1,0 +1,197 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>chris-feed test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+    <script src="../../../iron-test-helpers/mock-interactions.js"></script>
+
+    <link rel="import" href="../../src/chris-feed/chris-feed.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-feed></chris-feed>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite( '<chris-feed>', function() {
+
+        let element, validFeed;
+
+        setup(function(){
+
+          element = fixture('basic');
+          
+          validFeed = {};
+          validFeed.details = {
+            id: '1234',
+            name: 'My Analysis',
+            letter: 'N',
+            color: '#E91E63',
+            date: 'Jun 06, 2016',
+            status: 'running',
+            favorite: true,
+            checked: false,
+            tags: [{
+              name: 'HIE Study',
+              color: '#673AB7'
+            }]
+          };
+
+        });
+
+        test('instantiating the element works', function() {
+
+          assert.equal( element.is, 'chris-feed' );
+
+        });
+
+        test('valid feed sets valid to true', function( done ) {
+
+          element.addEventListener( 'valid-changed', validChanged );
+
+          element.feed = validFeed;
+
+          function validChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.valid, true );
+            
+            done();
+            element.removeEventListener( 'valid-changed', validChanged );
+
+          }
+
+        });
+
+        test('set favorite when select favorite', function( done ) {
+
+          element.addEventListener( 'feed-changed', feedChanged );
+
+          element.feed = validFeed;
+
+          MockInteractions.tap( element.$.favorite );
+
+          function feedChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.feed.details.favorite, false );
+            
+            done();
+            element.removeEventListener( 'feed-changed', feedChanged );
+
+          }
+
+        });
+
+        test('unset favorite when deselect favorite', function( done ) {
+
+          element.addEventListener( 'feed-changed', feedChanged );
+
+          validFeed.details.favorite = false;
+          element.feed = validFeed;
+
+          MockInteractions.tap( element.$.favorite );
+
+          function feedChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.feed.details.favorite, true );
+            
+            done();
+            element.removeEventListener( 'feed-changed', feedChanged );
+
+          }
+
+        });
+
+        test('invalid feed sets valid to false', function( done ) {
+
+          element.addEventListener( 'valid-changed', validChanged );
+
+          var invalidFeed = validFeed;
+          invalidFeed.details.name = true;
+          invalidFeed.details.checked = 'String';
+          element.feed = invalidFeed;
+
+          function validChanged( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.valid, false );
+            assert.equal( element.error.length, 2 );
+            assert.equal( element.error[0], 'name:String' );
+            assert.equal( element.error[1], 'checked:Boolean' );
+            // check error message too
+            
+            done();
+            element.removeEventListener( 'valid-changed', validChanged );
+
+          }
+
+        });
+
+        test('invalid feed fires error', function( done ) {
+
+          element.addEventListener( 'error', onError );
+
+          var invalidFeed = validFeed;
+          invalidFeed.details.color = true;
+          invalidFeed.details.tags = 'String';
+          element.feed = invalidFeed;
+
+          function onError( event ) {
+
+            // expect response to be false because no params provided
+            assert.equal( element.valid, false );
+            assert.equal( element.error.length, 2 );
+            assert.equal( element.error[0], 'color:String' );
+            assert.equal( element.error[1], 'tags:Array' );
+            // check error message too
+            
+            done();
+            element.removeEventListener( 'error', onError );
+
+          }
+
+        });
+
+        test('open feed is false', function() {
+
+          assert.equal( element.open , false );
+
+        });
+
+
+        test('open feed shows content', function() {
+
+          element.feed = validFeed;
+          element.open = true;
+
+          assert.equal( element.$.feed.classList.contains('open') , true );
+          assert.equal( getComputedStyle(element.$.content).display , 'block' );
+
+        });
+
+        test('close feed hides content', function() {
+
+          element.feed = validFeed;
+          element.open = true;
+          element.open = false;
+
+          assert.equal( element.$.feed.classList.contains('open') , false );
+          assert.equal( getComputedStyle(element.$.content).display , 'none' );
+
+        });
+
+
+      } );
+    </script>
+
+  </body>
+</html>
