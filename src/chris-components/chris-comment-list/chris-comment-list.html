@@ -173,7 +173,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
               this.clear();
 
-              this.$.ItemAPI.request( 'POST', this.comments.href, comment );
+              this.$.ItemAPI.request( 'POST', this.comments.href, { body: comment } );
 
             }
 

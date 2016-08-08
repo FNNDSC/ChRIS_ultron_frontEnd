@@ -198,28 +198,36 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        request: function( action, url, data ){
+        request: function( action, url, data){
 
+          // handle parameters
           var params = {
               auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
           };
 
-          this.params = params;
-          this.method = action;
-          this.url = url;
+          if( data && data.params ){
 
-          if( action !== 'GET' ){
-            
-            // attach template to data
-            this.body = data;
+            data.params.auth = params.auth;
+            params = data.params;
 
           }
 
+          this.params = params;
+
+          // handle body
+          if( data && data.body ){
+
+            this.body = data.body;
+
+          }
+
+          this.method = action;
+          this.url = url;
+
           var request = this.generateRequest();
 
-          // cache data!
-          var cache = '';
-          if( action !== 'GET' ){
+          // handle cache
+          if( data && data.cache){
 
             request.cache = data.cache;
 

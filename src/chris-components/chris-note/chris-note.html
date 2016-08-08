@@ -258,9 +258,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           var note = this.note.data[0];
           note.template = this.note.template;
           note.href = this.note.href;
-          note.cache = [{ 'name': 'content', 'value': this.previousContent }]
+          var cache = [{ 'name': 'content', 'value': this.previousContent }]
 
-          this.$.ItemAPI.request( 'PUT', note.href, note);
+          this.$.ItemAPI.request( 'PUT', note.href, { body: note, cache: cache } );
 
         },
 

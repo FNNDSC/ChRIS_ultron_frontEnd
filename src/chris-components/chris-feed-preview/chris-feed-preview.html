@@ -494,9 +494,8 @@
           var feed = this.feed.data;
           feed.template = this.feed.template;
           feed.href = this.feed.href;
-          feed.cache = cache;
 
-          var request = this.$.FeedAPI.request('PUT', this.feed.href, feed);
+          var request = this.$.FeedAPI.request('PUT', this.feed.href, { body: feed, cache: cache } );
 
         },
 

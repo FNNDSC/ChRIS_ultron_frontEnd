@@ -91,14 +91,14 @@
         <!-- update icon nd color depending on if there is something to get or not. -->
         <paper-fab id="create" icon="icons:add" class="dropdown-trigger" disabled></paper-fab>
         <div class="dropdown-content">
-          <a href="/home">
-            <paper-fab mini id="export" icon="icons:subject" on-tap="_export"></paper-fab>
+          <div>
+            <paper-fab mini id="export" icon="icons:file-download" on-tap="_getCSV"></paper-fab>
             <paper-tooltip for="export" position="left" animation-delay="0">Selection to CSV</paper-tooltip>
-          </a>
-          <a href="/home">
-            <paper-fab mini id="download" icon="icons:cloud-download" on-tap="_retrieve"></paper-fab>
+          </div>
+          <div>
+            <paper-fab mini id="download" icon="icons:save" on-tap="_retrieve"></paper-fab>
             <paper-tooltip for="download" position="left" animation-delay="0">Selection to ChRIS</paper-tooltip>
-          </a>
+          </div>
         </div>
       </paper-fab-speed-dial>
 
@@ -199,10 +199,16 @@
 
           var selection = [];
 
-          for (var i = 0; i < grid.selection.size; i += 1) {
+          // for (var i = 0; i < grid.selection.size; i += 1) {
 
-            selection.push( grid.items[i] );
-          }
+          //   selection.push( grid.items[i] );
+
+          // }
+          grid.selection.selected(function(index) {
+
+            selection.push( grid.items[index] );
+
+          });
 
           self.set('selection', selection );
 
@@ -211,6 +217,9 @@
       },
 
       _queryChanged: function(){
+
+        // sanitize
+        console.log( this.query );
 
         this.set('filter', this.query);
 
@@ -272,24 +281,121 @@
 
       },
 
-      _export: function(){
+      _getCSV: function(){
 
-        // convert selection to csv file
-        console.log('_export');
-        this.reset();
+        // convert selection to csv
+        var csv = this.toCSV( this.selection );
+
+        // download CSV
+        this.downloadCSV( csv );
 
       },
+
+      toCSV: function( data ){
+
+        var csv = '';
+
+        // fill headers
+        for( var key in data[0] ){
+
+          if (data[0].hasOwnProperty(key)) {
+
+            csv += '"' + key + '",';
+
+          }
+          
+
+        }
+
+        csv += '\r\n';
+
+        // fill content
+        for( var i = 0; i<data.length; i++){
+
+          for( var key in data[i] ){
+
+            if (data[i].hasOwnProperty(key)) {
+
+              csv += '"' + data[i][key] + '",';
+            
+            }
+            else{
+
+              csv += '"no value provided",';
+
+            }
+
+          }
+
+          csv += '\r\n';
+
+        }
+
+        return csv;
+
+      },
+
+      // http://halistechnology.com/2015/05/28/use-javascript-to-export-your-data-as-csv/
+      downloadCSV: function( csv ) {  
+
+
+        if (csv == null) return;
+
+        var now = new Date();
+        filename = "pacs_pull-" +( "0" + now.getFullYear()).slice(-2) + ("0" + now.getMonth()).slice(-2) + ("0" + now.getDate()).slice(-2) + "-" + ("0" + now.getHours()).slice(-2) + ("0" + now.getMinutes()).slice(-2) + ("0" + now.getSeconds()).slice(-2) +  ".csv";
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+        }
+
+        data = encodeURI(csv);
+        // console.log( data )
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },
 
       _retrieve: function(){
 
         console.log('_retrieve');
 
         // go API with selection!
+
+
+        // debug;
+
+        // var params = {
+        //   mrns: this.$.mrns.value,
+        //   startDate: this.$.startDate.value,
+        //   endDate: this.$.endDate.value,
+        //   anonymize: this.$.anonymize.checked
+        // }
+
+        var request = this.$.API.request( 'PUT', '/pacsquery');
+        request
+          .then( this.handleRetrieve.bind(this) )
+          .catch( this.handleRetrieveError.bind(this) );
         
-        this.reset();
+        // this.reset();
         // go pacs retrieve
         // 1- post + update optimistic results
 
+      },
+
+      handleRetrieve: function( response ){
+
+        console.log( 'retrieve returned' );
+
+      },
+
+      handleRetrieveError: function( response ){
+
+        console.log( 'retrieve errored' );
+        
       }
     });
     

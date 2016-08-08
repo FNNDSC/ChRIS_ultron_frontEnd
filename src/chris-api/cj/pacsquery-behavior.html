@@ -43,11 +43,19 @@
         item.links = [];
 
         item.data = this.generateItemDataCJ( cj.collection.template.data, data[i] ).data;
-        // hack to convert to a string
-        // PatientID
-        item.data[0].value = item.data[0].value.toString();
-        // NumberOfSeriesRelatedInstances
-        item.data[11].value = item.data[11].value.toString();
+        // hack to convert to a string without #
+        item.data[0].value = item.data[0].value ? item.data[0].value.toString().replace('#', '_') : '';
+        item.data[1].value = item.data[1].value ? item.data[1].value.toString().replace('#', '_') : '';
+        item.data[2].value = item.data[2].value ? item.data[2].value.toString().replace('#', '_') : '';
+        item.data[3].value = item.data[3].value ? item.data[3].value.toString().replace('#', '_') : '';
+        item.data[4].value = item.data[4].value ? item.data[4].value.toString().replace('#', '_') : '';
+        item.data[5].value = item.data[5].value ? item.data[5].value.toString().replace('#', '_') : '';
+        item.data[6].value = item.data[6].value ? item.data[6].value.toString().replace('#', '_') : '';
+        item.data[7].value = item.data[7].value ? item.data[7].value.toString().replace('#', '_') : '';
+        item.data[8].value = item.data[8].value ? item.data[8].value.toString().replace('#', '_') : '';
+        item.data[9].value = item.data[9].value ? item.data[9].value.toString().replace('#', '_') : '';
+        item.data[10].value = item.data[10].value ? item.data[10].value.toString().replace('#', '_') : '';
+        item.data[11].value = item.data[11].value ? item.data[11].value.toString().replace('#', '_') : '';
 
         items.push(item);
 

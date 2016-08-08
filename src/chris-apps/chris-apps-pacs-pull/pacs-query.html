@@ -189,7 +189,7 @@
 
           <div class="item large">
             <div class="flex">
-              <paper-textarea label="Patient MRN(s)"></paper-textarea>
+              <paper-textarea id="mrns" label="Patient MRN(s)"></paper-textarea>
             </div>
 
             <div class="help">
@@ -210,7 +210,7 @@
           <div class="item large">
 
             <div class="flex">
-              <paper-input label="Start Date" value="[[date]]"></paper-input>
+              <paper-input id="startDate" label="Start Date" value="[[date]]"></paper-input>
               <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
             </div>
 
@@ -231,7 +231,7 @@
           <div class="item large">
 
             <div class="flex">
-              <paper-input label="End Date" value="[[date]]"></paper-input>
+              <paper-input id="endDate" label="End Date" value="[[date]]"></paper-input>
               <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
             </div>
 
@@ -264,7 +264,7 @@
           <div class="item large">
             
             <div class="flex">
-              <paper-checkbox>Anonymize results</paper-checkbox>
+              <paper-checkbox id="anonymize">Anonymize results</paper-checkbox>
             </div>
 
             <div>
@@ -373,12 +373,18 @@
 
       _query: function(){
 
-        // get parameters
-
-
-        // show loading icon
+        // show loading progress bar
         this.$.progressBar.style.display = 'block';
-        var request = this.$.API.request('GET', '/pacsquery');
+
+        // get parameters for pacs pull
+        var params = {
+          mrns: this.$.mrns.value,
+          startDate: this.$.startDate.value,
+          endDate: this.$.endDate.value,
+          anonymize: this.$.anonymize.checked
+        }
+
+        var request = this.$.API.request( 'GET', '/pacsquery', { params: params } );
         request
           .then( this.handlePacsQuery.bind(this) )
           .catch( this.handlePacsQueryError.bind(this) );
