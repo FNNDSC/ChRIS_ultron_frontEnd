@@ -10,6 +10,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
+
     :host{
 
       display: block;
@@ -42,9 +43,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <div class="container" style$="{{_setCommentStyle(comment.data.color)}}">
-      <div class="name">[[comment.data.author]]</div>
-      <div class="content">[[comment.data.content]]</div>
+    <div class="container" style$="[[_setCommentStyle(comment.data.color)]]">
+      <div class="name pad8">[[comment.data.author]]</div>
+      <div class="content pad8">[[comment.data.content]]</div>
     </div>
 
   </template>
@@ -56,8 +57,83 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         properties: {
 
           comment: {
-            type: Object
+            type: Object,
+            observer: '_commentChanged'
+          },
+
+          valid: {
+            type: Boolean
           }
+
+        },
+
+        isValid: function( comment ){
+
+          if( !this.comment ){
+
+            return;
+
+          }
+
+          var error = [];
+
+          if( !this.comment.data ){
+
+            error.push( 'comment.data doesn\'t exist' );
+
+          }
+          else{
+
+            // Author is a <string>
+            if( !( typeof this.comment.data.author === 'string' ) ){
+
+              error.push( 'author:String' );
+
+            }
+
+            // Color is a <string>
+            if( !( typeof this.comment.data.color === 'string' ) ){
+
+              error.push( 'color:String' );
+
+            }
+
+            // Content is a <string>
+            if( !( typeof this.comment.data.content === 'string' ) ){
+
+              error.push( 'content:String' );
+
+            }
+
+            // Date is a <string>
+            if( !( typeof this.comment.data.date === 'string' ) ){
+
+              error.push( 'date:String' );
+
+            }
+
+            // Id is a <string>
+            if( !( typeof this.comment.data.id === 'string' ) ){
+
+              error.push( 'id:String' );
+
+            }
+
+          }
+
+          this.valid = ( error.length <= 0 );
+          this.fire( 'valid-changed');
+
+          if( !this.valid ){
+
+            console.log( error );
+
+            // fire error here because firefox complains if we do it before...?
+            this.fire( 'error', error );
+
+          }
+
+          return this.valid;
 
         },
 
@@ -65,7 +141,23 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           return 'border-left: 1px solid ' + color;
 
+        },
+
+        _commentChanged: function( event ){
+
+          if( !this.isValid( this.comment ) ){
+
+            // if not valid
+
+          }
+          else{
+
+            // if valid
+
+          }
+
         }
+
     });
   </script>
 </dom-module>

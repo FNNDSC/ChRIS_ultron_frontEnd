@@ -8,7 +8,7 @@
         {'name' : 'color', 'value' : ''},
         {'name' : 'content', 'value' : ''},
         {'name' : 'date', 'value' : ''},
-        {'name' : 'index', 'value' : ''},
+        {'name' : 'id', 'value' : ''},
         {'name' : 'author', 'value' : ''}
       ];
 
@@ -20,7 +20,7 @@
 
       var fakeComments = this.comments();
       var comment = fakeComments[Math.floor(Math.random() * fakeComments.length)];
-      comment.index = index;
+      comment.id = String(index);
       var options = {
         weekday: "long", year: "numeric", month: "short",
         day: "numeric", hour: "2-digit", minute: "2-digit"
