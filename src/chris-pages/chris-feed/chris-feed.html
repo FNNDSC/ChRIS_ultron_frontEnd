@@ -188,7 +188,7 @@
 
   </template>
 
-  <script>Polymer({is:"chris-comment-list",properties:{comments:{type:Object,observer:"_commentsChanged"},valid:{type:Boolean}},clear:function(){this.$.comment.value=""},save:function(t){if(13===t.keyCode&&(t.stopPropagation(),t.preventDefault(),""!==this.$.comment.value)){var e={weekday:"long",year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"},i={};i.data={author:"Nicolas Rannou",color:"blue",content:this.$.comment.value,index:this.comments.length+1,date:(new Date).toLocaleTimeString("en-us",e)},i.template=this.comments.template,i.href=this.comments.href,this.push("comments.data",i),this.clear(),this.$.API.request("POST",this.comments.href,{body:i})}},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.pop("comments.data"),this.fire("notification",e.error))}},handleError:function(){},isValid:function(t){if(this.comments){var e=[];return this.comments.data?(this.comments.data&&this.comments.template.constructor===Array||e.push("template:Array"),"string"!=typeof this.comments.href&&e.push("href:String"),this.comments.data&&this.comments.data.constructor===Array||e.push("data:Array")):e.push("comments.data doesn't exist"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_commentsChanged:function(t){!this.isValid(this.comments)}});</script>
+  <script>Polymer({is:"chris-comment-list",properties:{comments:{type:Object,observer:"_commentsChanged"},valid:{type:Boolean}},clear:function(){this.$.comment.value=""},save:function(t){if(13===t.keyCode&&(t.stopPropagation(),t.preventDefault(),""!==this.$.comment.value)){var e={weekday:"long",year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"},i={};i.data={author:"Nicolas Rannou",color:"blue",content:this.$.comment.value,index:this.comments.length+1,date:(new Date).toLocaleTimeString("en-us",e)},i.template=this.comments.template,i.href=this.comments.href,this.push("comments.data",i),this.clear(),this.$.API.request("POST",this.comments.href,{body:i})}},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.pop("comments.data"),this.fire("notification",e.error))}},handleError:function(){},isValid:function(t){if(this.comments){var e=[];return"object"!=typeof this.comments.template&&e.push("template:Object"),"string"!=typeof this.comments.href&&e.push("href:String"),this.comments.data&&this.comments.data.constructor===Array||e.push("data:Array"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_commentsChanged:function(t){!this.isValid(this.comments)}});</script>
 </dom-module>
 fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-nav/">
 
@@ -275,59 +275,56 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
   <template>
     <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);padding:16px;font-size:24px;font-weight:400;color:#737373;}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{border-bottom:1px solid var(--accent-color);color:var(--secondary-text-color);}.content{}#editor{display:none;width:inherit;}.markdown-html pre code{display:flex;padding:10px;color:#ffffff;background-color:var(--paper-grey-800);}.markdown-html code{padding:10px;background-color:#ffffff;color:var(--accent-color);font-weight:bold;}.markdown-html blockquote p{background-color:#ffffff;padding:8px;}.markdown-html table{border-collapse:collapse;}.markdown-html table, .markdown-html th, .markdown-html td{border:1px solid black;}paper-card{width:800px;}@media (max-width: 800px){paper-card{width:100%;}}paper-card{color:var(--primary-text-color);--paper-card-header-color:var(--secondary-text-color);--paper-card-background-color:var(--paper-grey-100);background:var(--paper-grey-100);}</style>
 
-        <paper-card>
+    <chris-api id="API" api="Item" ,="" content-type="application/json" on-response="handleItem" error="{{error}}" on-error="handleError">
+    </chris-api>
 
-              <div class="toolbar">
+    <paper-card>
 
- <div class="title" title="">Note</div>
+      <div class="toolbar">
 
-      <div class="spacer"></div>
+        <div class="title" title="">Note</div>
 
-      <template is="dom-if" if="{{!editing}}">
-        <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
-      </template>
-      <template is="dom-if" if="{{editing}}">
-        <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
-        <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
-      </template>
+        <div class="spacer"></div>
 
-      <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet" target="_blank">
-        <paper-icon-button icon="help-outline"></paper-icon-button>
-      </a>
+        <template is="dom-if" if="{{!editing}}">
+          <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
+        </template>
+
+        <template is="dom-if" if="{{editing}}">
+          <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
+          <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
+        </template>
+
+        <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet" target="_blank">
+          <paper-icon-button icon="help-outline"></paper-icon-button>
+        </a>
 
       </div>
 
       <div class="card-content">
 
+        <div id="note" class="note">
 
-    <chris-api id="ItemAPI" api="Item" ,="" content-type="application/json" on-response="handleItem" error="{{error}}" on-error="handleError">
-    </chris-api>
+          
 
-    <div id="note" class="note">
+          <div class="content">
 
-      
+            <iron-autogrow-textarea id="editor" value="{{notes.data.0.data.content}}" on-input="_updateContent"></iron-autogrow-textarea>
 
+            <marked-element id="md" markdown="[[notes.data.0.data.content]]">
+              <div class="markdown-html"></div>
+            </marked-element>
+          </div>
 
+        </div>
 
-      
-
-      <div class="content">
-
-        <iron-autogrow-textarea id="editor" value="{{note.data.0.data.content}}" on-input="_updateContent"></iron-autogrow-textarea>
-        
-        <marked-element id="md" markdown="[[note.data.0.data.content]]">
-          <div class="markdown-html"></div>
-        </marked-element>
       </div>
 
-    </div>
-
-          </div>
     </paper-card>
 
   </template>
 
-  <script>Polymer({is:"chris-note",properties:{note:{type:Object},previousContent:{type:String},editing:{type:Boolean,value:!1},error:{type:Object}},_stopEventPropagation:function(t){t.stopPropagation()},edit:function(t){this._stopEventPropagation(t),this.editing=!0,this.previousContent=this.note.data[0].data.content,this.$.editor.style.display="block"},close:function(t){this._stopEventPropagation(t),this.editing=!1,this.note.data[0].data.content=this.previousContent,this.$.editor.value=this.previousContent,this.$.md.markdown=this.previousContent,this.$.editor.style.display="none"},save:function(t){this._stopEventPropagation(t),this.editing=!1,this.$.editor.style.display="none";var e=this.note.data[0];e.template=this.note.template,e.href=this.note.href;var o=[{name:"content",value:this.previousContent}];this.$.ItemAPI.request("PUT",e.href,{body:e,cache:o})},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.note.data[0].data.content=e.cache[0].value,this.$.editor.value=e.cache[0].value,this.$.md.markdown=e.cache[0].value,this.fire("notification",e.error))}},handleError:function(){console.log(this.error)},_updateContent:function(){this.$.md.markdown=this.$.editor.value}});</script>
+  <script>Polymer({is:"chris-note",properties:{notes:{type:Object,observer:"_notesChanged"},previousContent:{type:String},editing:{type:Boolean,value:!1},error:{type:Object},valid:{type:Boolean}},_stopEventPropagation:function(t){t.stopPropagation()},edit:function(t){t&&this._stopEventPropagation(t),this.editing=!0,this.previousContent=this.notes.data[0].data.content,this.$.editor.style.display="block"},close:function(t){this._stopEventPropagation(t),this.editing=!1,this.notes.data[0].data.content=this.previousContent,this.$.editor.value=this.previousContent,this.$.md.markdown=this.previousContent,this.$.editor.style.display="none"},save:function(t){t&&this._stopEventPropagation(t),this.editing=!1,this.$.editor.style.display="none";var e=this.notes.data[0];e.template=this.notes.template,e.href=this.notes.href;var i=[{name:"content",value:this.previousContent}];this.$.API.request("PUT",e.href,{body:e,cache:i})},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.notes.data[0].data.content=e.cache[0].value,this.fire("notes-changed"),this.$.editor.value=e.cache[0].value,this.$.md.markdown=e.cache[0].value,this.fire("notification",e.error))}},handleError:function(){console.log(this.error)},_updateContent:function(){this.$.md.markdown=this.$.editor.value},isValid:function(t){if(this.notes){var e=[];return"object"!=typeof this.notes.template&&e.push("template:Object"),"string"!=typeof this.notes.href&&e.push("href:String"),this.notes.data&&this.notes.data.constructor===Array||e.push("data:Array"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_notesChanged:function(t){!this.isValid(this.notes)}});</script>
 </dom-module>
 <iron-iconset-svg name="communication" size="24">
 <svg><defs>
@@ -569,11 +566,11 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
           <iron-pages selected="[[page]]" attr-for-selected="name">
 
             <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
-            <chris-note name="note" note="{{note}}"></chris-note>
+            <chris-note name="note" notes="{{note}}"></chris-note>
             <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
             <chris-plugin name="workflow" feed-index="[[feedRouteData.index]]" plugin="[[_targetPlugin(pluginRouteData.index)]]"></chris-plugin>
             <chris-plugin-ds name="plugin" feed-id="[[feedRouteData.index]]" work-id="[[pluginRouteData.index]]" plugin-id="[[pluginDSRouteData.id]]"></chris-plugin-ds>
-            
+
             </iron-pages>
 
           </div>
