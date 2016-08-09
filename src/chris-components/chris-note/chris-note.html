@@ -103,59 +103,42 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         border-collapse: collapse;
 
       }
-      
+
       .markdown-html table, .markdown-html th, .markdown-html td {
 
         border: 1px solid black;
 
       }
 
-    paper-card {
-        width: 800px;
-      }
-
-    @media (max-width: 800px) {
       paper-card {
-        width: 100%;
+
+          width: 800px;
+
+        }
+
+      @media (max-width: 800px) {
+
+        paper-card {
+
+          width: 100%;
+
+        }
+
       }
-    }
 
 
-    paper-card{
-      color: var(--primary-text-color);
-      --paper-card-header-color: var(--secondary-text-color);
-      --paper-card-background-color: var(--paper-grey-100);
-      background: var(--paper-grey-100);
-    }
+      paper-card{
+
+        color: var(--primary-text-color);
+        --paper-card-header-color: var(--secondary-text-color);
+        --paper-card-background-color: var(--paper-grey-100);
+        background: var(--paper-grey-100);
+
+      }
 
     </style>
 
-        <paper-card>
-
-              <div class="toolbar">
-
- <div class="title" title>Note</div>
-
-      <div class="spacer"></div>
-
-      <template is="dom-if" if="{{!editing}}" >
-        <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
-      </template>
-      <template is="dom-if" if="{{editing}}" >
-        <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
-        <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
-      </template>
-
-      <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet" target="_blank">
-        <paper-icon-button icon="help-outline"></paper-icon-button>
-      </a>
-
-      </div>
-
-      <div class="card-content">
-
-
-    <chris-api id="ItemAPI"
+    <chris-api id="API"
       api="Item",
       content-type="application/json",
       on-response="handleItem"
@@ -163,26 +146,48 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       on-error="handleError">
     </chris-api>
 
-    <div id="note" class="note">
+    <paper-card>
 
-      <!-- Toolbar -->
+      <div class="toolbar">
 
+        <div class="title" title>Note</div>
 
+        <div class="spacer"></div>
 
-      <!-- Content -->
+        <template is="dom-if" if="{{!editing}}" >
+          <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
+        </template>
 
-      <div class="content">
+        <template is="dom-if" if="{{editing}}" >
+          <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
+          <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
+        </template>
 
-        <iron-autogrow-textarea id="editor" value="{{note.data.0.data.content}}" on-input="_updateContent"></iron-autogrow-textarea>
-        
-        <marked-element id="md" markdown="[[note.data.0.data.content]]">
-          <div class="markdown-html"></div>
-        </marked-element>
+        <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet" target="_blank">
+          <paper-icon-button icon="help-outline"></paper-icon-button>
+        </a>
+
       </div>
 
-    </div>
+      <div class="card-content">
 
+        <div id="note" class="note">
+
+          <!-- Content -->
+
+          <div class="content">
+
+            <iron-autogrow-textarea id="editor" value="{{notes.data.0.data.content}}" on-input="_updateContent"></iron-autogrow-textarea>
+
+            <marked-element id="md" markdown="[[notes.data.0.data.content]]">
+              <div class="markdown-html"></div>
+            </marked-element>
           </div>
+
+        </div>
+
+      </div>
+
     </paper-card>
 
   </template>
@@ -193,8 +198,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         properties: {
 
-          note: {
-            type: Object
+          notes: {
+            type: Object,
+            observer: '_notesChanged'
           },
 
           previousContent: {
@@ -208,6 +214,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           error: {
             type: Object
+          },
+
+          valid: {
+            type: Boolean
           }
 
         },
@@ -220,12 +230,16 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         edit: function( event ){
 
-          this._stopEventPropagation( event );
+          if( event ){
+
+            this._stopEventPropagation( event );
+
+          }
 
           // start editing (will show related buttons)
           this.editing = true;
           // save current content
-          this.previousContent = this.note.data[0].data.content;
+          this.previousContent = this.notes.data[0].data.content;
 
           this.$.editor.style.display = 'block';
 
@@ -239,7 +253,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.editing = false;
 
           // restore previous content
-          this.note.data[0].data.content = this.previousContent;
+          this.notes.data[0].data.content = this.previousContent;
           this.$.editor.value = this.previousContent;
           this.$.md.markdown = this.previousContent;
 
@@ -249,18 +263,22 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         save: function( event ){
 
-          this._stopEventPropagation( event );
+          if( event ){
+
+            this._stopEventPropagation( event );
+
+          }
 
           this.editing = false;
 
           this.$.editor.style.display = 'none';
 
-          var note = this.note.data[0];
-          note.template = this.note.template;
-          note.href = this.note.href;
+          var note = this.notes.data[0];
+          note.template = this.notes.template;
+          note.href = this.notes.href;
           var cache = [{ 'name': 'content', 'value': this.previousContent }]
 
-          this.$.ItemAPI.request( 'PUT', note.href, { body: note, cache: cache } );
+          this.$.API.request( 'PUT', note.href, { body: note, cache: cache } );
 
         },
 
@@ -282,9 +300,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // if feed was not updated, fire notification message
           if( response.error && response.error.code ){
 
-            // restore cache, not good solution
             // restore previous content
-            this.note.data[0].data.content = response.cache[0].value;
+            this.notes.data[0].data.content = response.cache[0].value;
+            this.fire('notes-changed');
+
             this.$.editor.value = response.cache[0].value;
             this.$.md.markdown = response.cache[0].value;
 
@@ -305,6 +324,68 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _updateContent: function(){
 
           this.$.md.markdown = this.$.editor.value;
+
+        },
+
+        isValid: function( notes ){
+
+          if( !this.notes ){
+
+            return;
+
+          }
+
+          var error = [];
+
+          // Template is an <object>
+          if( !( typeof this.notes.template === 'object' ) ){
+
+            error.push( 'template:Object' );
+
+          }
+
+          // Href is a <string>
+          if( !( typeof this.notes.href === 'string' ) ){
+
+            error.push( 'href:String' );
+
+          }
+
+          // Data is an <array>
+          if( !( this.notes.data && this.notes.data.constructor === Array ) ){
+
+            error.push( 'data:Array' );
+
+          }
+
+          this.valid = ( error.length <= 0 );
+          this.fire( 'valid-changed');
+
+          if( !this.valid ){
+
+            console.log( error );
+
+            // fire error here because firefox complains if we do it before...?
+            this.fire( 'error', error );
+
+          }
+
+          return this.valid;
+
+        },
+
+        _notesChanged: function( event ){
+
+          if( !this.isValid( this.notes ) ){
+
+            // if not valid
+
+          }
+          else{
+
+            // if valid
+
+          }
 
         }
     });

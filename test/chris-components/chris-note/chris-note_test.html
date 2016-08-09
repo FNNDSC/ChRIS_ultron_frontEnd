@@ -1,0 +1,195 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>chris-note test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../web-component-tester/browser.js"></script>
+    <script src="../../../../iron-test-helpers/mock-interactions.js"></script>
+
+    <link rel="import" href="../../../src/chris-components/chris-note/chris-note.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-note></chris-note>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite( '<chris-note>', function() {
+
+        let element, comments, commentsWithNoData, commentsWithNoHref;
+
+        setup(function(){
+
+          element = fixture('basic');
+          element.$.API.fakeAPI = true;
+
+          notes = {};
+          notes.href = '/someurl/note';
+          notes.template = {};
+          notes.template.data = element.$.API.noteTemplate();
+          notes.data = [];
+
+          note = {};
+          note.data = {};
+          note.data.content = 'A note';
+
+          notes.data.push( note );
+
+          notesWithNothing = {};
+
+          notesWithNoHref = {};
+          notesWithNoHref.template = {};
+          notesWithNoHref.template.data = element.$.API.noteTemplate();
+          notesWithNoHref.data = [];
+
+        });
+
+        test('instantiating the element works', function() {
+
+          assert.equal( element.is, 'chris-note' );
+
+        });
+
+        test('valid note sets valid to true', function( done ) {
+
+
+          element.addEventListener( 'valid-changed', validChanged );
+          element.notes = notes;
+
+          function validChanged( event ){
+
+            assert.equal( element.valid, true );
+
+            done();
+            element.removeEventListener( 'valid-changed', validChanged );
+
+          }
+
+        });
+
+        test('invalid note sets valid to false', function( done ) {
+
+          element.addEventListener( 'valid-changed', validChanged );
+          element.notes = notesWithNothing;
+
+          function validChanged( event ){
+
+            assert.equal( element.valid, false );
+
+            done();
+            element.removeEventListener( 'valid-changed', validChanged );
+
+          }
+
+        });
+
+        test('invalid note fires error', function( done ) {
+
+          element.addEventListener( 'error', errorFired );
+          element.notes = notesWithNoHref;
+
+          function errorFired( event ){
+
+            assert.equal( element.valid, false );
+
+            done();
+            element.removeEventListener( 'error', errorFired );
+
+          }
+
+        });
+
+        test('save notes', function( done ) {
+
+          element.notes = notes;
+          element.$.API.fakeAPI = true;
+          element.$.API.fakeAPIError = false;
+
+          element.addEventListener( 'notes-changed', notesChanged );
+          element.$.editor.value = 'Save note';
+          element.save();
+
+          function notesChanged( event ){
+
+            assert.equal( element.notes.data.length, 1 );
+            assert.equal( element.notes.data[0].data.content, 'Save note' );
+
+            done();
+            element.removeEventListener( 'notes-changed', notesChanged );
+
+          }
+
+        });
+
+        test('restore notes', function( done ) {
+
+          element.notes = notes;
+          element.$.API.fakeAPI = true;
+          element.$.API.fakeAPIError = true;
+          element.edit();
+
+          let count = 0;
+
+          element.addEventListener( 'notes-changed', notesChanged );
+          element.$.editor.value = 'Save note';
+
+          element.save();
+
+          function notesChanged( event ){
+
+            if( count === 0){
+
+              assert.equal( element.notes.data.length, 1 );
+              assert.equal( element.notes.data[0].data.content, 'Save note' );
+
+            }
+            else if( count === 1){
+
+              assert.equal( element.notes.data.length, 1 );
+              assert.equal( element.notes.data[0].data.content, 'A note' );
+
+              done();
+              element.removeEventListener( 'notes-changed', notesChanged );
+
+            }
+
+            count++;
+
+          }
+
+        });
+
+        test('restore notes fires notification', function( done ) {
+
+          element.notes = notes;
+          element.$.API.fakeAPI = true;
+          element.$.API.fakeAPIError = true;
+          element.edit();
+
+          element.addEventListener( 'notification', onNotification );
+          element.$.editor.value = 'Save note';
+          element.save();
+
+          function onNotification( event ){
+
+            assert.equal( element.notes.data.length, 1 );
+            assert.equal( element.notes.data[0].data.content, 'A note' );
+
+            done();
+            element.removeEventListener( 'notification', onNotification );
+
+          }
+
+        });
+
+      } );
+    </script>
+
+  </body>
+</html>

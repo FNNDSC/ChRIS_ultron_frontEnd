@@ -240,33 +240,24 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           var error = [];
 
-          if( !this.comments.data ){
+          // Template is an <object>
+          if( !( typeof this.comments.template === 'object' ) ){
 
-            error.push( 'comments.data doesn\'t exist' );
+            error.push( 'template:Object' );
 
           }
-          else{
 
-            // Template is an <object>
-            if( !( typeof this.comments.template === 'object' ) ){
+          // Href is a <string>
+          if( !( typeof this.comments.href === 'string' ) ){
 
-              error.push( 'template:Object' );
+            error.push( 'href:String' );
 
-            }
+          }
 
-            // Href is a <string>
-            if( !( typeof this.comments.href === 'string' ) ){
+          // Data is an <array>
+          if( !( this.comments.data && this.comments.data.constructor === Array ) ){
 
-              error.push( 'href:String' );
-
-            }
-
-            // Data is an <array>
-            if( !( this.comments.data && this.comments.data.constructor === Array ) ){
-
-              error.push( 'data:Array' );
-
-            }
+            error.push( 'data:Array' );
 
           }
 

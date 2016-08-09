@@ -173,11 +173,11 @@
           <iron-pages selected="[[page]]" attr-for-selected="name">
 
             <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
-            <chris-note name="note" note="{{note}}"></chris-note>
+            <chris-note name="note" notes="{{note}}"></chris-note>
             <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
             <chris-plugin name="workflow" feed-index="[[feedRouteData.index]]" plugin="[[_targetPlugin(pluginRouteData.index)]]"></chris-plugin>
             <chris-plugin-ds name="plugin" feed-id="[[feedRouteData.index]]" work-id="[[pluginRouteData.index]]" plugin-id="[[pluginDSRouteData.id]]"></chris-plugin-ds>
-            
+
             </iron-pages>
 
           <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
@@ -361,7 +361,7 @@
       },
 
       _reset: function(){
-        
+
         console.log( 'reset' );
         this.page = 'about';
 
