@@ -10,21 +10,17 @@
 
           case 'url':
 
-            var url = '/data/feeds.json';
+            var url = this.apiRoot;
+
+            if( this.fakeAPI ){
+
+              url = '/data/login.json';
+
+            }
 
             return url;
 
           case 'params':
-
-            // create new DB if flag on (could be on the login page)
-            if( this.createDB ){
-
-              this.params.createNewDB = 1;
-
-            }
-
-            // always add db path
-            this.params.DBpath = this.dbPath;
 
             return this.params;
 
@@ -41,6 +37,8 @@
       },
 
       handleLogin: function( request ){
+
+        console.log( request );
 
         var response = {};
         // ChRIS API login not working so dummy check

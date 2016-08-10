@@ -7,6 +7,9 @@
 <!-- IRON ELEMENTS -->
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
+<!--  CHRIS ELEMENTS -->
+<link rel="import" href="../chris-ultron-config.html">
+
 <dom-module id="chris-ultron">
   <template>
 
@@ -27,13 +30,15 @@
         --primary-color: var(--paper-blue-500);
         --light-primary-color: var(--paper-blue-100);
         --dark-primary-color: var(--paper-blue-700);
-        
+
         --accent-color: var(--paper-pink-a200);
         --light-accent-color: var(--paper-pink-a100);
         --dark-accent-color: var(--paper-pink-a400);
       }
 
     </style>
+
+    <chris-ultron-config></chris-ultron-config>
 
     <app-location id="location" route="{{route}}"></app-location>
     <app-route

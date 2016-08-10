@@ -7,6 +7,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <!-- IRON -->
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-meta/iron-meta.html">
 
 <!-- BEHAVIORS -->
 <link rel="import" href="behaviors/chris-api-login-behavior.html">
@@ -32,6 +33,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <dom-module id="chris-api">
 
   <template>
+
+    <iron-meta id="meta"></iron-meta>
 
     <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" last-error="{{error}}" handle-as="[[handleAs]]" auto="[[auto]]"></iron-ajax>
 
@@ -99,16 +102,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           },
 
           apiRoot:{
-            type: String,
-            value: ''
+            type: String
           },
 
-          fakeAPI: {
-            type: Boolean,
-            value: true
-          },
-
-          fakeAPIError: {
+          apiError: {
             type: Boolean,
             value: false
           }
@@ -143,7 +140,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         ready: function(){
 
-          //console.log( window.CollectionJSON );
+          this.apiRoot = this.$.meta.byKey('cu-api-root');
 
         },
 

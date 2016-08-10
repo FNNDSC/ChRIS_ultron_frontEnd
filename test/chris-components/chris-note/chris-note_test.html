@@ -27,7 +27,6 @@
         setup(function(){
 
           element = fixture('basic');
-          element.$.API.fakeAPI = true;
 
           notes = {};
           notes.href = '/someurl/note';
@@ -108,8 +107,7 @@
         test('save notes', function( done ) {
 
           element.notes = notes;
-          element.$.API.fakeAPI = true;
-          element.$.API.fakeAPIError = false;
+          element.$.API.apiError = false;
 
           element.addEventListener( 'notes-changed', notesChanged );
           element.$.editor.value = 'Save note';
@@ -130,8 +128,7 @@
         test('restore notes', function( done ) {
 
           element.notes = notes;
-          element.$.API.fakeAPI = true;
-          element.$.API.fakeAPIError = true;
+          element.$.API.apiError = true;
           element.edit();
 
           let count = 0;
@@ -168,8 +165,7 @@
         test('restore notes fires notification', function( done ) {
 
           element.notes = notes;
-          element.$.API.fakeAPI = true;
-          element.$.API.fakeAPIError = true;
+          element.$.API.apiError = true;
           element.edit();
 
           element.addEventListener( 'notification', onNotification );

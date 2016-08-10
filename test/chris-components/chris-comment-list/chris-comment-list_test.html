@@ -27,7 +27,6 @@
         setup(function(){
 
           element = fixture('basic');
-          element.$.API.fakeAPI = true;
 
           comments = {};
           comments.href = '/someurl/comments';
@@ -102,8 +101,7 @@
         test('save comment', function( done ) {
 
           element.comments = comments;
-          element.$.API.fakeAPI = true;
-          element.$.API.fakeAPIError = false;
+          element.$.API.apiError = true;
 
           element.addEventListener( 'comments-changed', commentsChanged );
           element.$.comment.value = 'Save comment';
@@ -125,8 +123,7 @@
         test('restore comment', function( done ) {
 
           element.comments = comments;
-          element.$.API.fakeAPI = true;
-          element.$.API.fakeAPIError = true;
+          element.$.API.apiError = true;
 
           let count = 0;
 
@@ -163,8 +160,7 @@
         test('restore comment fires notification', function( done ) {
 
           element.comments = comments;
-          element.$.API.fakeAPI = true;
-          element.$.API.fakeAPIError = true;
+          element.$.API.apiError = true;
 
           element.addEventListener( 'notification', onNotification );
           element.$.comment.value = 'Save comment';

@@ -11,9 +11,9 @@
           case 'url':
 
             var url = '';
-            if( !this.fakeAPI ){
+            if( this.apiRoot ){
 
-              url = this.url;
+              url = this.apiRoot;
 
             }
             else{
@@ -80,7 +80,7 @@
         var cache = request.cache;
         var itemCJ = {};
 
-        if( !this.fakeAPI ){
+        if( this.apiRoot ){
 
           itemCJ = request.response;
 
@@ -141,7 +141,7 @@
           }
 
           // Generate errors...
-          if( this.fakeAPIError ){
+          if( this.apiError ){
 
             itemCJ.collection.error = {
               'title'   : 'API Error',
