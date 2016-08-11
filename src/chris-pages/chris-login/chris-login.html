@@ -131,22 +131,22 @@
             </div>
           </section>
 
-          <section> 
+          <section>
             <div>
-              <paper-input id="username" 
-                type="username" 
-                value="{{_username}}" 
-                required 
-                error-message="Username is required" 
-                label="Username" 
+              <paper-input id="username"
+                type="username"
+                value="{{_username}}"
+                required
+                error-message="Username is required"
+                label="Username"
                 onfocusout="validate()"
                 on-keypress="keypressHandler">
               </paper-input>
-              <paper-input id="password" 
-                type="password" 
-                value="{{_password}}" 
-                required 
-                error-message="Password is required" 
+              <paper-input id="password"
+                type="password"
+                value="{{_password}}"
+                required
+                error-message="Password is required"
                 label="Password"
                 onfocusout="validate()"
                 on-keypress="keypressHandler">
@@ -154,7 +154,7 @@
             </div>
           </section>
 
-          <section> 
+          <section>
             <paper-button id="login" on-click="login"><div id="loginLabel">Log In</div> <paper-spinner active id="loginSpinner"></paper-spinner></paper-button>
 
           </section>
@@ -178,7 +178,7 @@
 
     <paper-toast id="loginError" text=""></paper-toast>
 
-    <paper-toast id="serverError" duration="0" text="An error occured while connecting to the server. Please contact dev@babymri.org.">
+    <paper-toast id="serverError" duration="0">
       <paper-button on-tap="_closeToast" class="yellow-button">Close now!</paper-button>
     </paper-toast>
 
@@ -208,7 +208,7 @@
           response: {
             type: Object
           },
-          
+
           error: {
             type: Object
           }
@@ -241,8 +241,8 @@
 
               // call API
               // set params first
-              this.$.LoginAPI.params = {
-                auth: 'user=' + this._username + ',passwd=' + this._password,
+              this.$.LoginAPI.auth = {
+                type: 'basic',
                 username: this._username,
                 password: this._password
               };
@@ -289,6 +289,7 @@
           this.$.loginSpinner.style.display = 'none';
 
           // show error message
+          this.$.serverError.text= this._username + " could not connect to ChRIS. Please contact dev@babymri.org if the problem persists.";
           this.$.serverError.open( );
 
           // log error

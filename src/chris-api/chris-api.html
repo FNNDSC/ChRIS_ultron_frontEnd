@@ -36,7 +36,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <iron-meta id="meta"></iron-meta>
 
-    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" last-error="{{error}}" handle-as="[[handleAs]]" auto="[[auto]]"></iron-ajax>
+    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" last-error="{{error}}" handle-as="[[handleAs]]" auto="[[auto]]" headers="{{headers}}"></iron-ajax>
 
   </template>
 
@@ -53,6 +53,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           auto: {
             type:Boolean,
             value: false
+          },
+
+          auth: {
+            type: Object,
+            observer: '_authChanged'
           },
 
           response: {
@@ -87,6 +92,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           },
 
           params:{
+            type: Object
+          },
+
+          headers: {
             type: Object
           },
 
@@ -141,6 +150,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         ready: function(){
 
           this.apiRoot = this.$.meta.byKey('cu-api-root');
+          //this.$.ironAjax.withCredentials = true;
 
         },
 
@@ -207,11 +217,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         request: function( action, url, data){
 
-          // handle parameters
-          var params = {
-              auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
-          };
+          // this.headers = this._computeHeaders();
 
+          // handle parameters
+          var params = {};
           if( data && data.params ){
 
             data.params.auth = params.auth;
@@ -309,6 +318,21 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
 
           return true;
+
+        },
+
+        _authChanged: function(){
+
+          if( this.auth.type ){
+
+            if( this.auth.type === 'basic' ){
+
+              var authorization = window.btoa( unescape( encodeURIComponent( this.auth.username + ':' + this.auth.password ) ) );
+              this.headers = {"Authorization": "Basic " + authorization};;
+
+            }
+
+          }
 
         }
     });
