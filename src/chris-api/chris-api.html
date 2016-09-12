@@ -10,25 +10,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/iron-meta/iron-meta.html">
 
 <!-- BEHAVIORS -->
-<link rel="import" href="behaviors/chris-api-login-behavior.html">
 <link rel="import" href="behaviors/chris-api-helper-behavior.html">
-<link rel="import" href="behaviors/chris-api-plugin-pacspull-behavior.html">
-<link rel="import" href="behaviors/chris-api-plugin-create-behavior.html">
 <link rel="import" href="behaviors/chris-api-item-behavior.html">
 
-<link rel="import" href="cj/helper-behavior.html">
-<link rel="import" href="cj/comment-collection-behavior.html">
-<link rel="import" href="cj/comment-behavior.html">
-<link rel="import" href="cj/feed-collection-behavior.html">
-<link rel="import" href="cj/feed-behavior.html">
-<link rel="import" href="cj/label-collection-behavior.html">
-<link rel="import" href="cj/label-behavior.html">
-<link rel="import" href="cj/note-behavior.html">
-<link rel="import" href="cj/pacsquery-behavior.html">
-<link rel="import" href="cj/plugin-collection-behavior.html">
-<link rel="import" href="cj/plugin-behavior.html">
-<link rel="import" href="cj/pluginfs-collection-behavior.html">
-<link rel="import" href="cj/pluginfs-behavior.html">
+<link rel="import" href="apis/fake/fake.html">
+<link rel="import" href="apis/ultron/ultron.html">
 
 <dom-module id="chris-api">
 
@@ -36,7 +22,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <iron-meta id="meta"></iron-meta>
 
-    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" last-error="{{error}}" handle-as="[[handleAs]]" auto="[[auto]]" headers="{{headers}}"></iron-ajax>
+    <iron-ajax id="ironAjax" url="[[getUrl(apiRoot, api, target)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" last-error="{{error}}" handle-as="[[handleAs]]" auto="[[auto]]" headers="{{headers}}"></iron-ajax>
 
   </template>
 
@@ -99,15 +85,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             type: Object
           },
 
-          api: {
-            type: String,
-            value: '',
-            observer: '_validAPI'
-          },
-
           handleAs :{
             type: String,
             value: 'json'
+          },
+
+          target: {
+            type: String
+          },
+
+          api: {
+            type: String
           },
 
           apiRoot:{
@@ -128,43 +116,32 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         behaviors: [
           Helper,
-          HelperCJ,
-          CommentCollectionCJ,
-          CommentCJ,
-          FeedCollectionCJ,
-          FeedCJ,
-          LabelCollectionCJ,
-          LabelCJ,
-          NoteCJ,
-          PacsqueryCJ,
-          PluginCollectionCJ,
-          PluginCJ,
-          PluginFSCollectionCJ,
-          PluginFSCJ,
           Item,
-          Login,
-          PluginCreate,
-          PluginPacspull
+          FakeAPI,
+          UltronAPI
         ],
 
         ready: function(){
 
           this.apiRoot = this.$.meta.byKey('cu-api-root');
-          //this.$.ironAjax.withCredentials = true;
+          this.api = this.$.meta.byKey('cu-api');
+          this.headers = {
+            "Content-Type": "application/vnd.collection+json",
+            "Accept": "application/vnd.collection+json"
+          };
 
         },
 
         generateRequest: function() {
 
           this.url = this.getUrl();
-
           return this.$.ironAjax.generateRequest();
 
         },
 
         handleResponse: function( request ){
 
-          var response = this[ 'handle' + this.api ]( request );
+          var response = this.handleItem( request );
           // should fire instead!
           this._setResponse( response );
           return response;
@@ -173,7 +150,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         handleError: function( request ){
 
-          var error = this[ 'handleError' + this.api ]( request );
+          var error = this.handleErrorItem( request );
           this._setError( error );
           return error;
 
@@ -181,41 +158,23 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         getUrl: function(){
 
-          if( !this._validAPI() ){
-
-            return;
-
-          }
-
-          return this['prepare' + this.api ]( 'url' );
+          return this.prepareItem( 'target' );
 
         },
 
         getBody: function(){
 
-          if( !this._validAPI() ){
-
-            return;
-
-          }
-
-          return this['prepare' + this.api ]( 'body' );
+          return this.prepareItem( 'body' );
 
         },
 
         getParams: function(){
 
-          if( !this._validAPI() ){
-
-            return;
-
-          }
-
-          return this['prepare' + this.api ]( 'params' );
+          return this.prepareItem( 'params' );
 
         },
 
-        request: function( action, url, data){
+        request: function( action, target, data){
 
           // this.headers = this._computeHeaders();
 
@@ -223,7 +182,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           var params = {};
           if( data && data.params ){
 
-            data.params.auth = params.auth;
+            // AUTH done at HEADER level
+            // data.params.auth = params.auth;
             params = data.params;
 
           }
@@ -238,7 +198,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
 
           this.method = action;
-          this.url = url;
+          this.target = target;
 
           var request = this.generateRequest();
 
@@ -248,6 +208,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             request.cache = data.cache;
 
           }
+
+          request.target = target;
 
           return request.completes
             .then( this.handleResponse.bind(this) )
@@ -284,26 +246,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // to be valid, API must provide
           var missing = '';
 
-          // prepare
-          if( !this['prepare' + this.api ] ){
-
-            missing += ' prepare' + this.api;
-
-          }
-
-          // handle
-          if( !this['handle' + this.api ] ){
-
-            missing += ' handle' + this.api;
-
-          }
-
-          // handleError
-          if( !this['handleError' + this.api ] ){
-
-            missing += ' handleError' + this.api;
-
-          }
+          // make sure this.API exists in available APIs
+          //
+          //
+          //
 
           if( missing !== '' ){
 
@@ -328,7 +274,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             if( this.auth.type === 'basic' ){
 
               var authorization = window.btoa( unescape( encodeURIComponent( this.auth.username + ':' + this.auth.password ) ) );
-              this.headers = {"Authorization": "Basic " + authorization};;
+              this.headers['Authorization'] = "Basic " + authorization;
+
+            }
+            else if( this.auth.type === 'token'){
+
+              //python manage.py runmodwsgi --host 0.0.0.0 --port 8001 --https-port 80 --ssl-certificate-file ../utils/ssl_cert/local.crt --ssl-certificate-key-file ../utils/ssl_cert/local.key --processes 8 --server-name localhost --https-only --reload-on-changes
+              // http  --verify=../utils/ssl_cert/local.crt https://localhost:8000/api/v1/plugins/ "Authorization: Token 1612a857a43c21d688ccbe849dbfbf078cef8cc7"
+              this.headers['Authorization'] = "Token " + this.auth.token;
 
             }
 

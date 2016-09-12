@@ -61,7 +61,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 
       </template>
-      
+
     </iron-list>
 
 
@@ -91,10 +91,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         _showDetails: function( event ){
-          
+
           // attach to event instead of linking?
           this.set( 'feedOpened', event.model.__data__.feed );
           this.fire( 'feed-opened-changed', event.model.__data__.feed );
+
+          // use the <app-route> instead of link wrapp
 
         }
 

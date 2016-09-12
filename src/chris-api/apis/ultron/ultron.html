@@ -1,0 +1,25 @@
+<script>
+    /** @polymerBehavior UltronAPI */
+    UltronAPI = {
+
+      urlUltronAPI: function( what ){
+        switch( what ){
+          case 'login':
+            // remove when login API hook ready
+            return '/';
+            return '/login';
+          case 'feeds':
+            return '/';
+          case 'plugins':
+            return '/plugins/';
+          default:
+            return what;
+          }
+        },
+
+        prepareUltronAPIResponse: function(response){
+          return response;
+        }
+
+      }
+</script>

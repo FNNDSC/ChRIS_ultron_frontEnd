@@ -110,15 +110,8 @@
 
     </style>
 
-    <chris-api id="LoginAPI"
-      api="Login"
-      response="{{response}}"
-      on-response="handleResponse"
-      error="{{error}}"
-      on-error="handleError">
-    </chris-api>
-
-
+<!--  Use ITEM API -->
+    <chris-api id="LoginAPI"></chris-api>
     <div class="container">
 
       <paper-material elevation=5>
@@ -226,6 +219,8 @@
         },
 
         login: function(){
+            // make sure logged is false
+            this.logged = false;
 
             // validate inputs
             this.$.username.validate();
@@ -246,16 +241,18 @@
                 username: this._username,
                 password: this._password
               };
-              this.$.LoginAPI.request('GET', '/data/feeds.json');
+              var request = this.$.LoginAPI.request('GET', 'login');
+              request
+                .then( this.handleResponse.bind(this) )
+                .catch( this.handleError.bind(this) );
 
             }
 
         },
 
-        handleResponse: function(){
+        handleResponse: function( response ){
 
-          console.log( this.response );
-          if( ! this.response ){
+          if( ! response ){
 
             return;
 
@@ -265,24 +262,22 @@
           this.$.loginLabel.style.display = 'block';
           this.$.loginSpinner.style.display = 'none';
 
-          if( this.response.status ){
+          if( response.status ){
 
             sessionStorage.setItem('username', this._username);
-            sessionStorage.setItem('token', this.response.token);
+            sessionStorage.setItem('token', this._password);
             this.logged = true;
             return;
 
           }
 
-          //
-          this.logged = false;
           // show error message
-          this.$.loginError.text = this.response.message;
+          this.$.loginError.text = response.message;
           this.$.loginError.show();
 
         },
 
-        handleError: function(){
+        handleError: function( error ){
 
           this.$.login.disabled = false;
           this.$.loginLabel.style.display = 'block';
@@ -293,7 +288,7 @@
           this.$.serverError.open( );
 
           // log error
-          console.log( this.error );
+          console.log( error );
 
         },
 

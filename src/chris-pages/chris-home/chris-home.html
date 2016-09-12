@@ -12,6 +12,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../bower_components/app-route/app-location.html">
 
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
@@ -107,12 +108,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     <div id="home">
 
+      <!-- Route -->
+      <app-location route="{{route}}"></app-location>
+
       <!-- API Calls -->
-      <chris-api id="FeedsAPI"
-        api="Item",
-        content-type="application/json",
-        error="{{error}}">
-      </chris-api>
+      <chris-api id="FeedsAPI" error="{{error}}" handle-as="jsonC"></chris-api>
 
       <app-drawer-layout fullbleed>
 
@@ -134,7 +134,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           <app-header id="header" fixed effects="waterfall">
             <app-toolbar>
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <div title>ChRIS 3.0 - Ultrøn</div>
+              <div main-title>ChRIS 3.0 - Ultrøn</div>
+              <paper-icon-button icon="icons:exit-to-app" on-tap="_logout"></paper-icon-button>
             </app-toolbar>
           </app-header>
 
@@ -202,26 +203,42 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         error: {
           type: Object
-        } 
+        }
 
       },
 
       ready: function( event ){
 
+        // for development
+        sessionStorage.setItem('username', 'chris');
+        sessionStorage.setItem('token', 'Chris1234');
+
         // logged in
         // prepare parameters for API call
-        var params = {
-          auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+        this.$.FeedsAPI.auth = {
+          type: 'basic',
+          username: sessionStorage.getItem('username'),
+          password: sessionStorage.getItem('token')
         };
 
+        // var params = {
+        //   auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
+        // };
+
         // fetch the feeds
-        var request =this.$.FeedsAPI.request('GET', '/feeds');
+        // fetch at / level
+        // color/icons/etc are BE or FE params?
+        // in the plugin args could be
+        var request =this.$.FeedsAPI.request('GET', 'feeds');
         request
           .then( this.handleFeeds.bind(this) )
           .catch( this.handleError.bind(this) );
 
         // fetch the plugins that can create a feed
-        var request3 = this.$.FeedsAPI.request('GET', '/pluginsFS');
+        // those are defined in the JSON directly
+        // plugonFS = APP -> to be renamed
+        // /plugins needed to find the id<->name pair
+        var request3 = this.$.FeedsAPI.request('GET', 'plugins');
         request3
           .then( this.handlePlugins.bind(this) )
           .catch( this.handleError.bind(this) );
@@ -232,10 +249,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       // </chris-api>
 
         // fetch the labels
-        var request2 = this.$.FeedsAPI.request('GET', '/labels');
-        request2
-          .then( this.handleLabels.bind(this) )
-          .catch( this.handleError.bind(this) );
+        // var request2 = this.$.FeedsAPI.request('GET', '/labels');
+        // request2
+        //   .then( this.handleLabels.bind(this) )
+        //   .catch( this.handleError.bind(this) );
 
         // anchor toast to the chris-feed-list
         this.$.notification.fitInto = this.$.layout;
@@ -272,7 +289,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           notification.fitInto = this.$.layout;
           this.$.content.appendChild(notification);
           notification.show();
-// dynamicEl.regions = this.officesRegions;    
+// dynamicEl.regions = this.officesRegions;
 // dynamicEl.cities = this.officesCities;
 
           //this._showNotification( { detail: error });
@@ -312,7 +329,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       _getScrollTarget: function() {
 
         return this.$.header.scrollTarget;
-        
+
       },
 
       _setAppStyle: function( color ){
@@ -340,6 +357,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.feed.id = this.feed.details.id = ( this.feeds.length + 1 ).toString();
           this.unshift( 'feeds', this.feed );
 
+      },
+
+      _logout: function(){
+        // update session
+        sessionStorage.removeItem('username');
+        sessionStorage.removeItem('token');
+
+        this.set('route.path', '/');
       }
 
     });

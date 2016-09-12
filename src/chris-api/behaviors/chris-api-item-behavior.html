@@ -8,44 +8,8 @@
 
         switch( what ){
 
-          case 'url':
-
-            var url = '';
-            if( this.apiRoot ){
-
-              url = this.apiRoot;
-
-            }
-            else{
-
-              // get last part of url for now
-              console.log( 'Fake API for: ' + this.url );
-
-              if( this.method === 'POST' ){
-
-                url = 'https://httpbin.org/post';
-
-              }
-              else if( this.method === 'PUT' ){
-
-                url = 'https://httpbin.org/put';
-
-              }
-              else{
-
-                url = '/data/';
-                url += this.url.split(/[/]+/).pop();
-                if( url.indexOf('.json') === -1 ){
-
-                  url += '.json';
-
-                }
-
-              }
-
-            }
-
-            return url;
+          case 'target':
+            return this.apiRoot + this[ 'url' + this.api + 'API' ](this.target);
 
           case 'params':
 
@@ -76,84 +40,20 @@
 
       handleItem: function( request ){
 
-        var response = request.response;
+        console.log(request.response);
+
+        // should rework the login handle
+        if( request.target === 'login'){
+          return {
+            status: true,
+            message: 'Successful login.',
+            token: 'ABCDEF123456789'
+          };
+        }
+
+        var itemCJ = this[ 'prepare' + this.api + 'APIResponse' ](request.response);
+        console.log(itemCJ);
         var cache = request.cache;
-        var itemCJ = {};
-
-        if( this.apiRoot ){
-
-          itemCJ = request.response;
-
-        }
-        else{
-
-          //
-          // TO BE REMOVED WHEN CONNECTED TO REAL API?
-          // STILL GOD FOR TESTING
-          // NEED SWITCH?
-          //
-          // FROM HERE
-          //.....................................
-
-          // Simulate GET
-          if( this.method === 'GET' && response.type === 'comments' ){
-
-            itemCJ = this.generateCommentCollectionCJ();
-
-          }
-          else if( this.method === 'GET' && response.type === 'feeds' ){
-
-            itemCJ = this.generateFeedCollectionCJ( response.data );
-
-          }
-          else if( this.method === 'GET' && response.type === 'labels' ){
-
-            itemCJ = this.generateLabelCollectionCJ();
-
-          }
-          else if( this.method === 'GET' && response.type === 'note' ){
-
-            itemCJ = this.generateNoteCJ();
-
-          }
-          else if( this.method === 'GET' && response.type === 'plugins' ){
-
-            itemCJ = this.generatePluginCollectionCJ();
-
-          }
-          else if( this.method === 'GET' && response.type === 'pluginsFS' ){
-
-            itemCJ = this.generatePluginFSCollectionCJ( response.data);
-
-          }
-          else if( this.method === 'GET' && response.type === 'pacsquery' ){
-
-            itemCJ = this.generatePacsqueryCJ( response.data);
-
-          }
-
-          // Simulate POST/PUT
-          if( this.method !== 'GET' ){
-
-            itemCJ.collection = {};
-            itemCJ.collection.href = response.json.href;
-
-          }
-
-          // Generate errors...
-          if( this.apiError ){
-
-            itemCJ.collection.error = {
-              'title'   : 'API Error',
-              'code'    : 'X1234',
-              'message' : this.method + ' : ' + itemCJ.collection.href + ' could not be processed.'
-            };
-
-          }
-
-          itemCJ = JSON.stringify( itemCJ );
-
-        }
 
         // format the response
         var item = this.formatItemCJ( itemCJ );
@@ -165,21 +65,15 @@
 
         }
 
-        console.log( response );
-
         return response;
 
       },
 
 
-      formatItemCJ: function( feedCJ ){
-
-        var itemObj = JSON.parse( feedCJ );
-        // debug here why template...
+      formatItemCJ: function( itemObj ){
 
         var item = {
 
-          template: itemObj.collection.template,
           href: itemObj.collection.href
 
         }
@@ -187,7 +81,7 @@
         if( itemObj.collection.template && itemObj.collection.template.data && itemObj.collection.template.data.length >0 ){
 
           // attach template if any
-          item['template'] = itemObj.collection.template;
+          item.template = itemObj.collection.template;
 
         }
 

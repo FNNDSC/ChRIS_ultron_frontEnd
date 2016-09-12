@@ -1,0 +1,109 @@
+<link rel="import" href="cj/helper-behavior.html">
+<link rel="import" href="cj/comment-collection-behavior.html">
+<link rel="import" href="cj/comment-behavior.html">
+<link rel="import" href="cj/feed-collection-behavior.html">
+<link rel="import" href="cj/feed-behavior.html">
+<link rel="import" href="cj/label-collection-behavior.html">
+<link rel="import" href="cj/label-behavior.html">
+<link rel="import" href="cj/note-behavior.html">
+<link rel="import" href="cj/pacsquery-behavior.html">
+<link rel="import" href="cj/plugin-collection-behavior.html">
+<link rel="import" href="cj/plugin-behavior.html">
+<link rel="import" href="cj/pluginfs-collection-behavior.html">
+<link rel="import" href="cj/pluginfs-behavior.html">
+
+<script>
+    /** @polymerBehavior UltronAPI */
+    FakeAPI = {
+
+      behaviors: [
+        HelperCJ,
+        CommentCollectionCJ,
+        CommentCJ,
+        FeedCollectionCJ,
+        FeedCJ,
+        LabelCollectionCJ,
+        LabelCJ,
+        NoteCJ,
+        PacsqueryCJ,
+        PluginCollectionCJ,
+        PluginCJ,
+        PluginFSCollectionCJ,
+        PluginFSCJ
+      ],
+
+      urlFakeAPI: function( what ){
+        // might need to take this.method into account too
+        switch( what ){
+          case 'login':
+            return '/data/login.json';
+          default:
+            return what;
+          }
+        },
+
+      prepareFakeAPIResponse: function(response){
+        //
+        var itemCJ = {};
+
+        // Simulate GET
+        if( this.method === 'GET' && response.type === 'comments' ){
+
+          itemCJ = this.generateCommentCollectionCJ();
+
+        }
+        else if( this.method === 'GET' && response.type === 'feeds' ){
+
+          itemCJ = this.generateFeedCollectionCJ( response.data );
+
+        }
+        else if( this.method === 'GET' && response.type === 'labels' ){
+
+          itemCJ = this.generateLabelCollectionCJ();
+
+        }
+        else if( this.method === 'GET' && response.type === 'note' ){
+
+          itemCJ = this.generateNoteCJ();
+
+        }
+        else if( this.method === 'GET' && response.type === 'plugins' ){
+
+          itemCJ = this.generatePluginCollectionCJ();
+
+        }
+        else if( this.method === 'GET' && response.type === 'pluginsFS' ){
+
+          itemCJ = this.generatePluginFSCollectionCJ( response.data);
+
+        }
+        else if( this.method === 'GET' && response.type === 'pacsquery' ){
+
+          itemCJ = this.generatePacsqueryCJ( response.data);
+
+        }
+
+        // Simulate POST/PUT
+        if( this.method !== 'GET' ){
+
+          itemCJ.collection = {};
+          itemCJ.collection.href = response.json.href;
+
+        }
+
+        // Generate errors...
+        if( this.apiError ){
+
+          itemCJ.collection.error = {
+            'title'   : 'API Error',
+            'code'    : 'X1234',
+            'message' : this.method + ' : ' + itemCJ.collection.href + ' could not be processed.'
+          };
+
+        }
+
+        return itemCJ;
+      }
+
+    }
+</script>
