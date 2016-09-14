@@ -41,11 +41,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             value: false
           },
 
-          auth: {
-            type: Object,
-            observer: '_authChanged'
-          },
-
           response: {
             type: Object
             // do not use notify true
@@ -82,7 +77,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           },
 
           headers: {
-            type: Object
+            type: Object,
+            value: {}
           },
 
           handleAs :{
@@ -95,7 +91,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           },
 
           api: {
-            type: String
+            type: String,
+            observer: '_validateAPI'
           },
 
           apiRoot:{
@@ -110,9 +107,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         observers: [
-         'getBody(body, body.*)',
-         'getParams(params, params.*)'
+         'getBody(body, body.*)'
         ],
+
 
         behaviors: [
           Helper,
@@ -125,10 +122,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           this.apiRoot = this.$.meta.byKey('cu-api-root');
           this.api = this.$.meta.byKey('cu-api');
-          this.headers = {
-            "Content-Type": "application/vnd.collection+json",
-            "Accept": "application/vnd.collection+json"
-          };
 
         },
 
@@ -156,60 +149,59 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
+        _validateAPI: function(){
+
+          // url<this.api>API
+
+          // prepare<this.api>APIResponse
+
+        },
+
         getUrl: function(){
 
-          return this.prepareItem( 'target' );
+          return this.apiRoot + this[ 'url' + this.api + 'API' ](this.target);
 
         },
 
         getBody: function(){
 
-          return this.prepareItem( 'body' );
+          // format body for proper Collection+JSON POST
+          var bodyCJ = this.body;
+
+          // if( this.body.template && this.body.data ){
+          //
+          //   bodyCJ = this.formatQueryCJ( this.body.template, this.body.data );
+          //
+          // }
+
+          return {};
 
         },
 
         getParams: function(){
 
-          return this.prepareItem( 'params' );
+          return this.params;
 
         },
 
         request: function( action, target, data){
 
-          // this.headers = this._computeHeaders();
-
-          // handle parameters
-          var params = {};
-          if( data && data.params ){
-
-            // AUTH done at HEADER level
-            // data.params.auth = params.auth;
-            params = data.params;
-
-          }
-
-          this.params = params;
-
-          // handle body
-          if( data && data.body ){
-
-            this.body = data.body;
-
-          }
-
+          // action and target
           this.method = action;
           this.target = target;
 
+          // handle data
+          this._handleParameters( data.params );
+          this._handleBody( data.body );
+          this._handleAuthorization( data.auth );
+          this._handleType( target );
+
           var request = this.generateRequest();
 
-          // handle cache
-          if( data && data.cache){
-
-            request.cache = data.cache;
-
-          }
-
-          request.target = target;
+          // attach extra data to the request that can be accessed in response
+          this._attachToRequest(request, 'cache', data.cache);
+          this._attachToRequest(request, 'target', target);
+          // also attach method? GET/POST/PUT/DELETE?
 
           return request.completes
             .then( this.handleResponse.bind(this) )
@@ -241,52 +233,77 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        _validAPI: function(){
+        _handleParameters: function( params ){
 
-          // to be valid, API must provide
-          var missing = '';
+          if( params ){
 
-          // make sure this.API exists in available APIs
-          //
-          //
-          //
+            this.params = params;
 
-          if( missing !== '' ){
+          }
+          else{
 
-            // fire error
-            var error = this.api + ' is not valid. ( Missing ' + missing + ' )';
-            this._setError(error);
+            this.params = {};
 
-            // reset API
-            this.api = '';
-
-            return false;
           }
 
-          return true;
+          this.params = params;
 
         },
 
-        _authChanged: function(){
+        _handleBody: function( body ){
 
-          if( this.auth.type ){
+          if( body ){
 
-            if( this.auth.type === 'basic' ){
+            this.body = body;
 
-              var authorization = window.btoa( unescape( encodeURIComponent( this.auth.username + ':' + this.auth.password ) ) );
+          }
+
+        },
+
+        _handleType: function( target ){
+
+          if( target === 'login'){
+
+            this.headers["Content-Type"] = "application/json";
+            this.headers["Accept"] = "application/json";
+
+          }
+          else{
+
+            this.headers["Content-Type"] = "application/vnd.collection+json";
+            this.headers["Accept"] = "application/vnd.collection+json";
+
+          }
+
+        },
+
+        _handleAuthorization: function( auth ){
+
+          if( auth.type ){
+
+            if( auth.type === 'basic' ){
+
+              var authorization = window.btoa( unescape( encodeURIComponent( auth.username + ':' + auth.password ) ) );
               this.headers['Authorization'] = "Basic " + authorization;
 
             }
-            else if( this.auth.type === 'token'){
+            else if( auth.type === 'token'){
 
-              //python manage.py runmodwsgi --host 0.0.0.0 --port 8001 --https-port 80 --ssl-certificate-file ../utils/ssl_cert/local.crt --ssl-certificate-key-file ../utils/ssl_cert/local.key --processes 8 --server-name localhost --https-only --reload-on-changes
-              // http  --verify=../utils/ssl_cert/local.crt https://localhost:8000/api/v1/plugins/ "Authorization: Token 1612a857a43c21d688ccbe849dbfbf078cef8cc7"
               this.headers['Authorization'] = "Token " + this.auth.token;
 
             }
 
           }
 
+        },
+
+        _attachToRequest: function( request, label, value ){
+
+          if( value ){
+
+            request[label] = value;
+
+          }
         }
     });
   </script>

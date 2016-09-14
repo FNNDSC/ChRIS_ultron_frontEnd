@@ -234,14 +234,20 @@
               this.$.loginLabel.style.display = 'none';
               this.$.loginSpinner.style.display = 'block';
 
-              // call API
-              // set params first
-              this.$.LoginAPI.auth = {
-                type: 'basic',
-                username: this._username,
-                password: this._password
+              // prepare data
+              data = {};
+
+              data.auth = {
+                type: 'none'
               };
-              var request = this.$.LoginAPI.request('GET', 'login');
+
+              data.body = {
+                'username': this._username,
+                'password': this._password
+              }
+
+              // need to pass username and password
+              var request = this.$.LoginAPI.request('POST', 'login', data );
               request
                 .then( this.handleResponse.bind(this) )
                 .catch( this.handleError.bind(this) );
