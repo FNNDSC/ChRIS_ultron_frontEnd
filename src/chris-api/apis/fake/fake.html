@@ -36,13 +36,27 @@
         // might need to take this.method into account too
         switch( type ){
           case 'login':
-            return '/data/login.json';
+            // something that allows POST
+            return 'https://httpbin.org/post';
           default:
             return type;
           }
         },
 
       formatFakeAPIResponse: function(type, response){
+
+        switch( type ){
+          case 'login':
+            return {
+              status: true,
+              message: 'Successful login.',
+              token: 'kjASD12dasS'
+            };
+          default:
+            // to nothing yet.
+            break;
+        }
+
         //
         var itemCJ = {};
 
