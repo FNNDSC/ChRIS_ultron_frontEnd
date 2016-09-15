@@ -2,8 +2,8 @@
     /** @polymerBehavior UltronAPI */
     UltronAPI = {
 
-      urlUltronAPI: function( what ){
-        switch( what ){
+      urlUltronAPI: function( type ){
+        switch( type ){
           case 'login':
             return '/auth-token/';
           case 'feeds':
@@ -11,12 +11,21 @@
           case 'plugins':
             return '/plugins/';
           default:
-            return what;
+            return type;
           }
         },
 
-        prepareUltronAPIResponse: function(response){
-          return response;
+        formatUltronAPIResponse: function(type, response){
+          switch( type ){
+            case 'login':
+              return {
+                status: true,
+                message: 'Successful login.',
+                token: response.token
+              };
+          default:
+            return response;
+          }
         }
 
       }

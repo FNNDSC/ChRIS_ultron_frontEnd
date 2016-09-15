@@ -235,7 +235,7 @@
               this.$.loginSpinner.style.display = 'block';
 
               // prepare data
-              data = {};
+              var data = {};
 
               data.auth = {
                 type: 'none'
@@ -268,10 +268,10 @@
           this.$.loginLabel.style.display = 'block';
           this.$.loginSpinner.style.display = 'none';
 
-          if( response.status ){
+          if( response.token ){
 
             sessionStorage.setItem('username', this._username);
-            sessionStorage.setItem('token', this._password);
+            sessionStorage.setItem('token', response.token);
             this.logged = true;
             return;
 

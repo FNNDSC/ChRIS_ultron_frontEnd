@@ -10,9 +10,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../bower_components/iron-meta/iron-meta.html">
 
 <!-- BEHAVIORS -->
-<link rel="import" href="behaviors/chris-api-helper-behavior.html">
-<link rel="import" href="behaviors/chris-api-item-behavior.html">
-
+<link rel="import" href="chris-api-helper-behavior.html">
+<!-- APIS BEHAVIORS -->
 <link rel="import" href="apis/fake/fake.html">
 <link rel="import" href="apis/ultron/ultron.html">
 
@@ -113,7 +112,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         behaviors: [
           Helper,
-          Item,
           FakeAPI,
           UltronAPI
         ],
@@ -134,26 +132,133 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         handleResponse: function( request ){
 
-          var response = this.handleItem( request );
+          var response = this.formatResponse( request );
           // should fire instead!
           this._setResponse( response );
           return response;
 
         },
 
+        formatResponse: function( request ){
+
+          var response = this[ 'format' + this.api + 'APIResponse' ](request.type, request.response);
+
+          // extra formating for Collection + JSON objects
+          response = this.formatJsonCollectionResponse( response );
+
+          var cache = request.cache;
+          if( cache ){
+
+            response.cache = cache;
+
+          }
+
+          return response;
+
+        },
+
+        formatJsonCollectionResponse: function( itemObj ){
+
+          // if no . collection, just return
+          // we just have a regular object
+          if( !itemObj.collection ){
+
+            return itemObj;
+
+          }
+
+          var item = {
+
+            href: itemObj.collection.href
+
+          }
+
+          if( itemObj.collection.template && itemObj.collection.template.data && itemObj.collection.template.data.length >0 ){
+
+            // attach template if any
+            item.template = itemObj.collection.template;
+
+          }
+
+          if( itemObj.collection.error ){
+
+            // attach only error if any
+            item.error = itemObj.collection.error;
+
+          }
+          else if( itemObj.collection.items ){
+
+            // attach items if any
+            item.data = [];
+
+            for( var i = 0; i < itemObj.collection.items.length; i++ ){
+
+              var data = {};
+              data.data = {};
+              for( var j=0; j < itemObj.collection.items[i].data.length; j++ ){
+
+                data.data[ itemObj.collection.items[i].data[j].name ] = itemObj.collection.items[i].data[j].value;
+
+              }
+
+              if( itemObj.collection.items[i].links && itemObj.collection.items[i].links.length > 0){
+
+                data.links = {};
+                for( var j=0; j < itemObj.collection.items[i].links.length; j++ ){
+
+                  data.links[ itemObj.collection.items[i].links[j].rel ] = itemObj.collection.items[i].links[j].href;
+
+                }
+
+              }
+
+              data.href = itemObj.collection.items[i].href;
+
+              item.data.push( data);
+
+            }
+
+          }
+
+          return item;
+
+        },
+
         handleError: function( request ){
 
-          var error = this.handleErrorItem( request );
+          var error = this.formatError( request );
           this._setError( error );
           return error;
 
         },
 
+        formatError: function( request ){
+
+          return request;
+
+        },
+
         _validateAPI: function(){
 
-          // url<this.api>API
+          var error = [];
 
-          // prepare<this.api>APIResponse
+          if (typeof this[ 'url' + this.api + 'API' ] != "function") {
+
+            error.push( 'url' + this.api + 'API() function not declared.' );
+
+          }
+
+          if (typeof this[ 'format' + this.api + 'APIResponse' ] != "function") {
+
+            error.push( 'format' + this.api + 'APIResponse() function not declared.' );
+
+          }
+
+          if( error.length > 0){
+
+            console.log( error );
+
+          }
 
         },
 
@@ -289,7 +394,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             }
             else if( auth.type === 'token'){
 
-              this.headers['Authorization'] = "Token " + this.auth.token;
+              this.headers['Authorization'] = "Token " + auth.token;
+
+            }
+            else {
+
+              this.headers['Authorization'] = ""
 
             }
 

@@ -112,7 +112,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <app-location route="{{route}}"></app-location>
 
       <!-- API Calls -->
-      <chris-api id="FeedsAPI" error="{{error}}" handle-as="jsonC"></chris-api>
+      <chris-api id="FeedsAPI" error="{{error}}"></chris-api>
 
       <app-drawer-layout fullbleed>
 
@@ -209,16 +209,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       ready: function( event ){
 
-        // for development
-        sessionStorage.setItem('username', 'chris');
-        sessionStorage.setItem('token', 'Chris1234');
-
         // logged in
         // prepare parameters for API call
-        this.$.FeedsAPI.auth = {
-          type: 'basic',
-          username: sessionStorage.getItem('username'),
-          password: sessionStorage.getItem('token')
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
         };
 
         // var params = {
@@ -229,7 +225,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         // fetch at / level
         // color/icons/etc are BE or FE params?
         // in the plugin args could be
-        var request =this.$.FeedsAPI.request('GET', 'feeds');
+        var request =this.$.FeedsAPI.request('GET', 'feeds', data);
         request
           .then( this.handleFeeds.bind(this) )
           .catch( this.handleError.bind(this) );
@@ -238,7 +234,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         // those are defined in the JSON directly
         // plugonFS = APP -> to be renamed
         // /plugins needed to find the id<->name pair
-        var request3 = this.$.FeedsAPI.request('GET', 'plugins');
+        var request3 = this.$.FeedsAPI.request('GET', 'plugins', data);
         request3
           .then( this.handlePlugins.bind(this) )
           .catch( this.handleError.bind(this) );
