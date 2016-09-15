@@ -13,37 +13,43 @@
 <link rel="import" href="cj/pluginfs-behavior.html">
 
 <script>
-    /** @polymerBehavior UltronAPI */
-    FakeAPI = {
+    /** @polymerBehavior FakeAPI */
+    // extending behaviors
+    // https://www.polymer-project.org/1.0/docs/devguide/behaviors
+    FakeAPI = [
+      HelperCJ,
+      CommentCollectionCJ,
+      CommentCJ,
+      FeedCollectionCJ,
+      FeedCJ,
+      LabelCollectionCJ,
+      LabelCJ,
+      NoteCJ,
+      PacsqueryCJ,
+      PluginCollectionCJ,
+      PluginCJ,
+      PluginFSCollectionCJ,
+      PluginFSCJ,
+      FakeAPIImpl
+    ]
 
-      behaviors: [
-        HelperCJ,
-        CommentCollectionCJ,
-        CommentCJ,
-        FeedCollectionCJ,
-        FeedCJ,
-        LabelCollectionCJ,
-        LabelCJ,
-        NoteCJ,
-        PacsqueryCJ,
-        PluginCollectionCJ,
-        PluginCJ,
-        PluginFSCollectionCJ,
-        PluginFSCJ
-      ],
+    FakeAPIImpl = {
 
       urlFakeAPI: function( type ){
+
         // might need to take this.method into account too
         switch( type ){
           case 'login':
             // something that allows POST
             return 'https://httpbin.org/post';
           default:
-            return type;
+            return 'data/' + type + '.json';
           }
         },
 
       formatFakeAPIResponse: function(type, response){
+
+        console.log( response );
 
         switch( type ){
           case 'login':
@@ -120,4 +126,5 @@
       }
 
     }
+
 </script>
