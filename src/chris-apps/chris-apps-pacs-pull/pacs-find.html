@@ -188,7 +188,7 @@
 
           <div class="item large">
             <div class="flex">
-              <paper-textarea id="mrns" label="Patient MRN(s)"></paper-textarea>
+              <paper-textarea id="mrns" label="Patient MRN(s)" value="{{patientID}}"></paper-textarea>
             </div>
 
             <div class="help">
@@ -368,6 +368,11 @@
         aec: {
           type: String,
           value: 'CHRIS-ULTRON-AEC'
+        },
+
+        patientID: {
+          type: String,
+          value: ''
         }
 
       },
@@ -436,21 +441,23 @@
           {name: 'aec', value: ''},
           {name: 'server_ip', value: ''},
           {name: 'server_port', value: ''},
-          {name: 'patientName', value: ''},
-          {name: 'patientSex', value: ''},
-          {name: 'studyDescription', value: ''},
-          {name: 'studyDate', value: ''},
-          {name: 'patientID', value: ''},
-          {name: 'performedStationAETitle', value: ''},
-          {name: 'seriesDescription', value: ''}
+          {name: 'PatientName', value: ''},
+          {name: 'PatientSex', value: ''},
+          {name: 'StudyDescription', value: ''},
+          {name: 'StudyDate', value: ''},
+          {name: 'PatientID', value: ''},
+          {name: 'PerformedStationAETitle', value: ''},
+          {name: 'SeriesDescription', value: ''}
         ];
+
+
 
         data.body.data = {
           aet: this.aet,
           aec: this.aec,
           server_ip: this.serverIP,
           server_port: this.serverPort,
-          mrns: this.$.mrns.value,
+          PatientID: this.patientID,
           startDate: this.$.startDate.value,
           endDate: this.$.endDate.value,
           anonymize: this.$.anonymize.checked
@@ -471,27 +478,6 @@
 
         // new feed
         console.log( response );
-
-        // make a get to the feed to access the file
-        // response.links.feed
-
-        // new data...
-
-        // or need to ping api until there?
-
-        this.$.progressBar.style.display = 'none';
-
-        // change update results
-        var data = [];
-
-        for( var i = 0; i < response.data.length; i++ ){
-
-          data.push( response.data[i].data );
-
-        }
-
-        this.set('query', data);
-        this.fire('query-changed');
 
         return response.data[0].links.feed;
 
@@ -530,6 +516,11 @@
       handleFileContent: function( response ){
 
         console.log( response );
+
+        this.$.progressBar.style.display = 'none';
+
+        this.set('query', response.data);
+        this.fire('query-changed');
 
         return 'Done'
 

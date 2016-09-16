@@ -222,13 +222,38 @@
 
       _queryChanged: function(){
 
-        // sanitize
+        // format query...
         console.log( this.query );
+        if( !this.query || !this.query.series){
+          return;
+        }
+        // loop through series
+        var fQuery = [];
+        for( var i=0; i<this.query.series.length; i++ ){
+          // find related study
+          var series = this.query.series[i];
+          var study = {};
+          for( var j=0; j<this.query.study.length; j++ ){
+            if( series.StudyInstanceUID.value === this.query.study[j].StudyInstanceUID.value ){
+              study = this.query.study[j];
+            }
 
-        this.set('filter', this.query);
+          }
+          // fill row (with extra info for move)
+          var row = {};
+          row.PatientID = study.PatientID.value;
+          row.PatientName = study.PatientName.value;
+          row.StudyDescription = study.StudyDescription.value;
+          row.SeriesDescription = series.SeriesDescription.value;
+          row.NumberOfSeriesRelatedInstances = series.NumberOfSeriesRelatedInstances.value;
+
+          fQuery.push( row );
+        }
+
+        this.set('filter', fQuery);
 
         // fill table
-        this.$.grid.items = this.query;
+        this.$.grid.items = fQuery;
 
       },
 
