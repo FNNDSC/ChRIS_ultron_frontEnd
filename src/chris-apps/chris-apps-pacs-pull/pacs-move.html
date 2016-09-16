@@ -12,7 +12,7 @@
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../chris-api/chris-api.html">
 
-<dom-module id="pacs-retrieve">
+<dom-module id="pacs-move">
 
   <template>
     <style>
@@ -118,7 +118,7 @@
               <col name="StudyDescription" max-width="250" sortable hidable/>
               <col name="SeriesDescription" max-width="250" sortable hidable/>
               <col name="NumberOfSeriesRelatedInstances" sortable max-width="200" hidable/>
-              
+
             </colgroup>
 
           </table>
@@ -137,13 +137,17 @@
   <script>
 
     Polymer({
-      is: 'pacs-retrieve',
+      is: 'pacs-move',
       properties: {
 
         query: {
           type: Array,
           value: [],
           observer: '_queryChanged'
+        },
+
+        href: {
+          type: String
         },
 
         filterExp: {
@@ -165,7 +169,7 @@
       },
 
       ready: function(){
-          
+
         var grid = this.$.grid;
 
         grid.addEventListener('sort-order-changed', function() {
@@ -303,7 +307,7 @@
             csv += '"' + key + '",';
 
           }
-          
+
 
         }
 
@@ -317,7 +321,7 @@
             if (data[i].hasOwnProperty(key)) {
 
               csv += '"' + data[i][key] + '",';
-            
+
             }
             else{
 
@@ -336,7 +340,7 @@
       },
 
       // http://halistechnology.com/2015/05/28/use-javascript-to-export-your-data-as-csv/
-      downloadCSV: function( csv ) {  
+      downloadCSV: function( csv ) {
 
 
         if (csv == null) return;
@@ -379,7 +383,7 @@
         request
           .then( this.handleRetrieve.bind(this) )
           .catch( this.handleRetrieveError.bind(this) );
-        
+
         // this.reset();
         // go pacs retrieve
         // 1- post + update optimistic results
@@ -395,10 +399,10 @@
       handleRetrieveError: function( response ){
 
         console.log( 'retrieve errored' );
-        
+
       }
     });
-    
+
   </script>
 
 </dom-module>

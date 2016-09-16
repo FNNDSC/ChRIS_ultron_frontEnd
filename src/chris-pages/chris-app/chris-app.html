@@ -24,7 +24,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
   <template>
 
     <style>
-    
+
     :host{
 
       background-color: var(--dark-primary-color);
@@ -57,15 +57,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(app.data.color)]]">
+    <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(app.color)]]">
       <app-header fixed condenses effects="waterfall">
-        <app-toolbar style$="[[_setToolbarStyle(app.data.color)]]">
+        <app-toolbar style$="[[_setToolbarStyle(app.color)]]">
           <div main-title>[[app.data.label]]</div>
           <a class="back" href="/home" on-tap="_reset">
             <paper-icon-button icon="icons:clear"></paper-icon-button>
           </a>
         </app-toolbar>
-        <app-toolbar id="appToolbar" style$="[[_setToolbarStyle(app.data.color)]]" sticky>
+        <app-toolbar id="appToolbar" style$="[[_setToolbarStyle(app.color)]]" sticky>
 
         </app-toolbar>
       </app-header>
@@ -116,13 +116,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             this.appElt = null;
 
           }
-          
+
           // fetch the plugin!
           Polymer.Base.importHref(
-            this.resolveUrl( '../../chris-apps/chris-apps-' + this.app.data.name + '/chris-apps-' + this.app.data.name + '.html' ),
+            this.resolveUrl( '../../chris-apps/chris-apps-' + this.app.name + '/chris-apps-' + this.app.name + '.html' ),
             function( evt ){
 
-              this.appElt = document.createElement( 'chris-apps-' + this.app.data.name );
+              this.appElt = document.createElement( 'chris-apps-' + this.app.name );
 
               // attach app
               Polymer.dom( this.$.content ).appendChild( this.appElt );
@@ -168,28 +168,28 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           this.feed = {};
           this.feed.details = {
             id: '', // will be overwritten
-            name: 'created by ' + this.app.data.name,
+            name: 'created by ' + this.app.name,
             opened: false,
             checked: false,
-            color: this.app.data.color,
+            color: this.app.color,
             favorite: false,
             status: 'running',
             tags: [],
             selected: false,
-            letter: this.app.data.name.charAt(0).toUpperCase(),
+            letter: this.app.name.charAt(0).toUpperCase(),
             date: ( new Date() ).toString()
           }
           this.feed.plugins = [{
-            label: this.app.data.name,
-            color: this.app.data.color,
+            label: this.app.name,
+            color: this.app.color,
             id: 0,
             parentID: 0,
             depth: 0,
             icon: 'icons:cloud-queue',
             workflow: [{
-              color: this.app.data.color,
+              color: this.app.color,
               icon: 'icons:cloud-queue',
-              label: this.app.data.name
+              label: this.app.name
             }]
           }];
           this.feed.comments = [];

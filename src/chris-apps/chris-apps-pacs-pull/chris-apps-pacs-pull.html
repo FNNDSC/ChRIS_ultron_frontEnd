@@ -10,10 +10,11 @@
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../chris-apps-behavior.html">
+<link rel="import" href="../../chris-api/chris-api.html">
 
 <!-- BASE ELEMENTS -->
-<link rel="import" href="pacs-query.html">
-<link rel="import" href="pacs-retrieve.html">
+<link rel="import" href="pacs-find.html">
+<link rel="import" href="pacs-move.html">
 
 <!--
 Chris app pacs-pull element!
@@ -46,6 +47,9 @@ Chris app pacs-pull element!
 
     </style>
 
+      <!-- API connection -->
+      <chris-api id="API" api="Item"></chris-api>
+
       <!-- Toolbar -->
       <div id="toolbar">
         <paper-tabs selected="{{selected}}">
@@ -56,8 +60,8 @@ Chris app pacs-pull element!
 
       <iron-pages selected="{{selected}}">
 
-        <pacs-query query="{{query}}" on-query-changed="_queryChanged"></pacs-query>
-        <pacs-retrieve query="[[query]]"></pacs-retrieve>
+        <pacs-find id="find" query="{{query}}" on-query-changed="_queryChanged"></pacs-find>
+        <pacs-move id="move" query="[[query]]"></pacs-move>
 
       </iron-pages>
 
@@ -97,6 +101,44 @@ Chris app pacs-pull element!
         ready: function(){
 
           this.toolbar = this.$.toolbar;
+
+          // fetch pacsquery and pacsmove ids from the REST API
+          //
+          var data = {};
+          data.auth = {
+            type: 'token',
+            token: sessionStorage.getItem('token')
+          };
+
+          // fetch the feeds
+          // color/icons/etc are BE or FE params?
+          // in the plugin args could be
+          var request =this.$.API.request('GET', 'plugins', data);
+          request
+            .then( this.handlePlugins.bind(this) )
+            .catch( this.handleError.bind(this) );
+
+        },
+
+        handlePlugins: function( response ){
+
+          for( var i = 0; i < response.data.length; i++ ){
+
+            if( response.data[i].data.name === 'pacsquery'){
+              this.$.find.href = response.data[i].links.instances
+            }
+
+            if( response.data[i].data.name === 'pacsmove'){
+              this.$.move.href = response.data[i].links.instances
+            }
+
+          }
+
+        },
+
+        handleError: function( error ){
+
+          console.log( error );
 
         },
 

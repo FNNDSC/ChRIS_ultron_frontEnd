@@ -146,11 +146,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             <paper-fab-speed-dial direction="top">
               <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
               <div class="dropdown-content">
-                <template is="dom-repeat" items="{{plugins.data}}">
-                  <a href="/app/[[item.data.name]]">
-                    <paper-fab mini id="[[item.data.name]]" icon="[[item.data.icon]]" item="[[item]]" style$="[[_setAppStyle(item.data.color)]]" on-tap="_openApp"></paper-fab>
-                    <paper-tooltip for="[[item.data.name]]" position="left" animation-delay="0">[[item.data.label]]</paper-tooltip>
-                    </a>
+                <template is="dom-repeat" items="{{apps}}">
+                  <paper-fab mini id="[[item.name]]" icon="[[item.icon]]" item="[[item]]" style$="[[_setAppStyle(item.color)]]" on-tap="_openApp"></paper-fab>
+                  <paper-tooltip for="[[item.name]]" position="left" animation-delay="0">[[item.label]]</paper-tooltip>
                 </template>
               </div>
             </paper-fab-speed-dial>
@@ -188,7 +186,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           notify: true
         },
 
-        plugins:{
+        apps:{
           type: Array
         },
 
@@ -217,12 +215,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           token: sessionStorage.getItem('token')
         };
 
-        // var params = {
-        //   auth: 'user=' + sessionStorage.getItem( 'username' ) + ',hash=' + sessionStorage.getItem( 'token' )
-        // };
-
         // fetch the feeds
-        // fetch at / level
         // color/icons/etc are BE or FE params?
         // in the plugin args could be
         var request =this.$.FeedsAPI.request('GET', 'feeds', data);
@@ -230,25 +223,31 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           .then( this.handleFeeds.bind(this) )
           .catch( this.handleError.bind(this) );
 
-        // fetch the plugins that can create a feed
-        // those are defined in the JSON directly
-        // plugonFS = APP -> to be renamed
-        // /plugins needed to find the id<->name pair
-        var request3 = this.$.FeedsAPI.request('GET', 'plugins', data);
-        request3
-          .then( this.handlePlugins.bind(this) )
-          .catch( this.handleError.bind(this) );
-        //       <chris-api id="PluginsFeedAPI"
-        // api="PluginsFeed"
-        // response="{{plugins}}" on-response="handlePlugins"
-        // error="{{error}}" on-error="handleError">
-      // </chris-api>
-
         // fetch the labels
         // var request2 = this.$.FeedsAPI.request('GET', '/labels');
         // request2
         //   .then( this.handleLabels.bind(this) )
         //   .catch( this.handleError.bind(this) );
+
+        // set the apps
+        // pacsquery
+        // viewer
+        // file browser
+        var pacs_pull = {
+          'name': 'pacs-pull',
+          'color': '#000044',
+          'icon': 'icons:account-box',
+          'label': 'Pacs Pull'
+        };
+
+        var viewer = {
+          'name': 'viewer',
+          'color': '#123456',
+          'icon': 'icons:tab',
+          'label': 'Image Viewer'
+        };
+
+        this.set( 'apps', [pacs_pull, viewer] );
 
         // anchor toast to the chris-feed-list
         this.$.notification.fitInto = this.$.layout;
@@ -285,24 +284,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           notification.fitInto = this.$.layout;
           this.$.content.appendChild(notification);
           notification.show();
-// dynamicEl.regions = this.officesRegions;
-// dynamicEl.cities = this.officesCities;
 
           //this._showNotification( { detail: error });
 
         }
-
-      },
-
-      handlePlugins: function( response ){
-
-        console.log( response );
-
-        this.set( 'plugins', response );
-
-        this.showError( response.error );
-
-        this.$.content.classList.add('loaded');
 
       },
 
@@ -343,24 +328,29 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           this.set( 'app', event.model.__data__.item );
 
+          // update route
+          this.set('route.path', '/app/' + event.model.__data__.item.name);
+
         }
 
       },
 
       _feedChanged: function(){
 
-          // get the shell of the feed
-          this.feed.id = this.feed.details.id = ( this.feeds.length + 1 ).toString();
-          this.unshift( 'feeds', this.feed );
+        // get the shell of the feed
+        this.feed.id = this.feed.details.id = ( this.feeds.length + 1 ).toString();
+        this.unshift( 'feeds', this.feed );
 
       },
 
       _logout: function(){
+
         // update session
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('token');
 
-        this.set('route.path', '/');
+        this.set('route.path', '/login');
+
       }
 
     });

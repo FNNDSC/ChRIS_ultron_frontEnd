@@ -169,7 +169,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           var item = {
 
-            href: itemObj.collection.href
+            href: this._removeAPIRoot( itemObj.collection.href )
 
           }
 
@@ -206,13 +206,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
                 data.links = {};
                 for( var j=0; j < itemObj.collection.items[i].links.length; j++ ){
 
-                  data.links[ itemObj.collection.items[i].links[j].rel ] = itemObj.collection.items[i].links[j].href;
+                  data.links[ itemObj.collection.items[i].links[j].rel ] =
+                    this._removeAPIRoot( itemObj.collection.items[i].links[j].href );
 
                 }
 
               }
 
-              data.href = itemObj.collection.items[i].href;
+              data.href = this._removeAPIRoot( itemObj.collection.items[i].href );
 
               item.data.push( data);
 
@@ -221,6 +222,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
 
           return item;
+
+        },
+
+        _removeAPIRoot: function( value ){
+
+          return value.replace( this.apiRoot, '');
 
         },
 
@@ -297,7 +304,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           // handle data
           this._handleParameters( data.params );
-          this._handleBody( data.body );
+          this._handleBody( target, data.body );
           this._handleAuthorization( data.auth );
           this._handleType( target );
 
@@ -355,11 +362,34 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        _handleBody: function( body ){
+        _handleBody: function( target, body ){
 
-          if( body ){
+          if( target === 'login' ){
 
             this.body = body;
+
+          }
+          else if( body && body.template && body.data ){
+
+            // format body for proper json collection query
+            // body must contain template + data fields
+            var jsonCollectionBody = {};
+            jsonCollectionBody.template = body.template;
+
+            // fill the values...
+            for( var i=0; i < body.template.data.length; i++ ){
+
+              // ... if value is set in data
+              if( body.data[ body.template.data[i].name ] ){
+
+                jsonCollectionBody.template.data[i].value = body.data[ body.template.data[i].name ];
+
+              }
+
+
+            }
+
+            this.body = JSON.stringify( jsonCollectionBody );
 
           }
 

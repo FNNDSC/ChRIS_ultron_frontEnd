@@ -9,8 +9,6 @@
 <link rel="import" href="cj/pacsquery-behavior.html">
 <link rel="import" href="cj/plugin-collection-behavior.html">
 <link rel="import" href="cj/plugin-behavior.html">
-<link rel="import" href="cj/pluginfs-collection-behavior.html">
-<link rel="import" href="cj/pluginfs-behavior.html">
 
 <script>
     /** @polymerBehavior FakeAPI */
@@ -27,10 +25,7 @@
       NoteCJ,
       PacsqueryCJ,
       PluginCollectionCJ,
-      PluginCJ,
-      PluginFSCollectionCJ,
-      PluginFSCJ,
-      FakeAPIImpl
+      PluginCJ
     ]
 
     FakeAPIImpl = {
@@ -92,16 +87,6 @@
           itemCJ = this.generatePluginCollectionCJ();
 
         }
-        else if( this.method === 'GET' && type === 'pluginsFS' ){
-
-          itemCJ = this.generatePluginFSCollectionCJ( response.data);
-
-        }
-        else if( this.method === 'GET' && type === 'pacsquery' ){
-
-          itemCJ = this.generatePacsqueryCJ( response.data);
-
-        }
 
         // Simulate POST/PUT
         if( this.method !== 'GET' ){
@@ -125,6 +110,8 @@
         return itemCJ;
       }
 
-    }
+    },
+
+    FakeAPI.push(FakeAPIImpl)
 
 </script>
