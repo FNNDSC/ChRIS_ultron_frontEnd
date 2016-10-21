@@ -183,7 +183,7 @@
         updateCustomFilter: function(){
 
           this.customFilter = this.$.customLabels.selectedValues;
-          this.fire( 'custom-filter-changed');
+          this.fire( 'change-filter', this.customFilter);
 
         },
 

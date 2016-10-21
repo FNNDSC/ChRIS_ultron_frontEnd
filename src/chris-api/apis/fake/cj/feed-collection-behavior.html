@@ -4,7 +4,7 @@
 
     /**
      */
-    generateFeedCollectionCJ: function( rawDataCollection ){
+    generateFeedCollectionCJ: function( rawDataCollection, parameters ){
 
       var cj = {};
       cj.collection = {};
@@ -41,10 +41,23 @@
           'href' : this.apiRoot + '/' + rawDataCollection[i].index + '/plugins'
         });
 
-        // create the data field
         var data = this.generateFeedRawData( rawDataCollection[i] );
-        item.data = this.generateItemDataCJ( cj.collection.template.data, data ).data;
-        items.push(item);
+
+        // hack to filter out results
+        var skip = 0;
+
+        for(var j=0; j< data.tags.length; j++){
+          
+          if( parameters.filter && parameters.filter.indexOf( data.tags[j].name ) >= 0){
+            skip += 1;
+          }
+
+        }
+
+        if( skip === parameters.filter.length ){
+          item.data = this.generateItemDataCJ( cj.collection.template.data, data ).data;
+          items.push(item);
+        }
 
       }
 

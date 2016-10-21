@@ -141,7 +141,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         formatResponse: function( request ){
 
-          var response = this[ 'format' + this.api + 'APIResponse' ](request.target, request.response);
+          var response = this[ 'format' + this.api + 'APIResponse' ](request.target, request.params, request.response);
 
           // extra formating for Collection + JSON objects
           response = this.formatJsonCollectionResponse( response );
@@ -313,6 +313,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           // attach extra data to the request that can be accessed in response
           this._attachToRequest(request, 'cache', data.cache);
           this._attachToRequest(request, 'target', target);
+          this._attachToRequest(request, 'params', data.params);
           // also attach method? GET/POST/PUT/DELETE?
 
           return request.completes

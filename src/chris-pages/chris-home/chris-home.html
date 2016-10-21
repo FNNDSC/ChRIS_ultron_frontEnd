@@ -153,7 +153,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
               </div>
             </paper-fab-speed-dial>
 
-            <chris-feed-list id="feedList" feeds="[[feeds]]" on-notification="_showNotification" scroll-target="[[_getScrollTarget()]]" feed-opened={{feedOpened}}></chris-feed-list>
+            <chris-feed-list id="feedList" feeds="[[feeds]]" on-notification="_showNotification" scroll-target="[[_getScrollTarget()]]"></chris-feed-list>
 
             <paper-toast id="notification" text="This toast auto-closes after 3 seconds"></paper-toast>
 
@@ -173,17 +173,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       properties: {
 
         feeds: {
-          type: Array
+          type: Array,
+          value: [],
+          observer: '_feedsChanged'
         },
 
-        feed:{
-          type: Object,
-          observer: '_feedChanged'
-        },
-
-        feedOpened: {
-          type: Object,
-          notify: true
+        labels:{
+          type: Array,
+          value: [],
+          observer: '_labelsChanged'
         },
 
         apps:{
@@ -193,10 +191,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         app: {
           type: Object,
           notify: true
-        },
-
-        labels:{
-          type: Array
         },
 
         error: {
@@ -218,10 +212,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         // fetch the feeds
         // color/icons/etc are BE or FE params?
         // in the plugin args could be
-        var request =this.$.FeedsAPI.request('GET', 'feeds', data);
-        request
-          .then( this.handleFeeds.bind(this) )
-          .catch( this.handleError.bind(this) );
+        this.fire('fetch-feeds');
+        this.fire('fetch-labels');
 
         // fetch the labels
         // var request2 = this.$.FeedsAPI.request('GET', '/labels');
@@ -254,23 +246,33 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       },
 
-      handleFeeds: function( response ){
+      _feedsChanged: function(){
 
-        this.set( 'feeds', response );
+        if( this.feeds && this.feeds.data && this.feeds.data.length ){
 
-        this.showError( response.error );
+          this.$.content.classList.add( 'loaded' );
 
-        this.$.content.classList.add( 'loaded' );
+        }
+        else{
 
+          this.$.content.classList.remove( 'loaded' );
+
+        }
+        
       },
 
-      handleLabels: function( response ){
+      _labelsChanged: function(){
 
-        this.set( 'labels', response );
+        if( this.labels && this.labels.data && this.labels.data.length ){
 
-        this.showError( response.error );
+          this.$.content.classList.add( 'loaded' );
 
-        this.$.content.classList.add('loaded');
+        }
+        else{
+
+          this.$.content.classList.remove( 'loaded' );
+
+        }
 
       },
 

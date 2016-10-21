@@ -11,6 +11,7 @@
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- EXTERNAL ELEMENTS -->
 <link rel="import" href="../../../bower_components/paper-date-picker/paper-date-picker.html">
@@ -188,11 +189,8 @@
 
           <div class="item large">
             <div class="flex">
-              <paper-textarea id="mrns" label="Patient MRN(s)" value="{{patientID}}"></paper-textarea>
-            </div>
-
-            <div class="help">
-              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
+              <paper-textarea id="patientids" label='Patient IDs' value="{{patientID}}"></paper-textarea>
+              <paper-tooltip>Tooltip text</paper-tooltip>
             </div>
           </div>
 
@@ -209,66 +207,17 @@
           <div class="item large">
 
             <div class="flex">
-              <paper-input id="startDate" label="Start Date" value="[[date]]"></paper-input>
+              <paper-input label="Study Date (Format: MM-DD-YYYY)" value="[[studyDate]]"></paper-input>
               <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
             </div>
 
-            <div>
-              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-            </div>
-
             <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
-              <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
+              <paper-date-picker id="datePicker"></paper-date-picker>
               <div class="buttons">
                 <paper-button dialog-dismiss>Cancel</paper-button>
                 <paper-button dialog-confirm>OK</paper-button>
               </div>
             </paper-dialog>
-
-          </div>
-
-          <div class="item large">
-
-            <div class="flex">
-              <paper-input id="endDate" label="End Date" value="[[date]]"></paper-input>
-              <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
-            </div>
-
-            <div>
-              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-            </div>
-
-            <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
-              <paper-date-picker id="picker" date="{{date}}" ></paper-date-picker>
-              <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm>OK</paper-button>
-              </div>
-            </paper-dialog>
-
-          </div>
-
-          <div class="item small">
-
-            <div class="flex">
-              <paper-input label="Modality"></paper-input>
-            </div>
-
-            <div>
-              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-            </div>
-
-          </div>
-
-          <div class="item large">
-
-            <div class="flex">
-              <paper-checkbox id="anonymize">Anonymize results</paper-checkbox>
-            </div>
-
-            <div>
-              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-            </div>
 
           </div>
 
@@ -287,19 +236,11 @@
             <div class="flex">
               <paper-input label="PACS Server IP" value="{{serverIP}}"></paper-input>
             </div>
-
-            <div class="help">
-              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-            </div>
           </div>
 
           <div class="item large">
             <div class="flex">
               <paper-input label="PACS Server Port" value="{{serverPort}}"></paper-input>
-            </div>
-
-            <div class="help">
-              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
             </div>
           </div>
 
@@ -307,19 +248,11 @@
             <div class="flex">
               <paper-input label="AET" value="{{aet}}"></paper-input>
             </div>
-
-            <div class="help">
-              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
-            </div>
           </div>
 
           <div class="item large">
             <div class="flex">
               <paper-input label="AEC" value="{{aec}}"></paper-input>
-            </div>
-
-            <div class="help">
-              <paper-icon-button icon="icons:help-outline"></paper-icon-button>
             </div>
           </div>
 
@@ -346,7 +279,11 @@
           value: []
         },
 
-        href: {
+        instances: {
+          type: String
+        },
+
+        parameters: {
           type: String
         },
 
@@ -373,6 +310,11 @@
         patientID: {
           type: String,
           value: ''
+        },
+
+        studyDate: {
+          type: String,
+          value: ''
         }
 
       },
@@ -396,7 +338,15 @@
 
       dismissDialog: function( e ){
 
-        // not implemented
+        if( e && e.detail && e.detail.confirmed ){
+
+          var dateString = (this.$.datePicker.date.getFullYear()
+            + '-' + ('0' + (this.$.datePicker.date.getMonth() + 1)).slice(-2)
+            + '-' + ('0' + (this.$.datePicker.date.getDate())).slice(-2));
+
+          this.studyDate = dateString;
+
+        }
 
       },
 
@@ -441,13 +391,14 @@
           {name: 'aec', value: ''},
           {name: 'server_ip', value: ''},
           {name: 'server_port', value: ''},
-          {name: 'PatientName', value: ''},
-          {name: 'PatientSex', value: ''},
-          {name: 'StudyDescription', value: ''},
-          {name: 'StudyDate', value: ''},
-          {name: 'PatientID', value: ''},
-          {name: 'PerformedStationAETitle', value: ''},
-          {name: 'SeriesDescription', value: ''}
+          {name: 'modalities_in_study', value: ''},
+          {name: 'patient_name', value: ''},
+          {name: 'patient_sex', value: ''},
+          {name: 'patient_id', value: ''},
+          {name: 'study_description', value: ''},
+          {name: 'study_date', value: ''},
+          {name: 'series_description', value: ''},
+          {name: 'performed_station_aet', value: ''}
         ];
 
 
@@ -457,13 +408,20 @@
           aec: this.aec,
           server_ip: this.serverIP,
           server_port: this.serverPort,
-          PatientID: this.patientID,
-          startDate: this.$.startDate.value,
-          endDate: this.$.endDate.value,
-          anonymize: this.$.anonymize.checked
+          patient_id: this.patientID,
+          study_date: this.studyDate
         }
 
-        var request = this.$.API.request( 'POST', this.href, data );
+        console.log( this.instances );
+
+        // get parameters
+
+
+        var request1 = this.$.API.request( 'GET', this.instances, data );
+        request1
+          .then( function( response ){ console.log( response ); } )
+
+        var request = this.$.API.request( 'POST', this.instances, data );
         request
           .then( this.handlePacsQuery.bind(this) )
           .then( this.getFeedFiles.bind(this) )

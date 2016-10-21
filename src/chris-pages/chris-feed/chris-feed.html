@@ -136,8 +136,6 @@
 
       <!-- API Calls -->
       <chris-api id="ItemAPI"
-        api="Item",
-        content-type="application/json",
         error="{{error}}">
       </chris-api>
 
@@ -338,22 +336,26 @@
 
       _feedChanged: function(){
 
-        console.log( this.feed );
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
 
         // get comments
-        var requestComments = this.$.ItemAPI.request( 'GET', this.feed.links.comments );
+        var requestComments = this.$.ItemAPI.request( 'GET', this.feed.links.comments, data );
         requestComments
           .then( this.handleItem.bind(this) )
           .catch( this.handleError.bind(this) );
 
         // get note
-        var requestNote = this.$.ItemAPI.request( 'GET', this.feed.links.note );
+        var requestNote = this.$.ItemAPI.request( 'GET', this.feed.links.note, data );
         requestNote
           .then( this.handleItem.bind(this) )
           .catch( this.handleError.bind(this) );
 
         // get plugins/wokflow
-        var requestPlugins = this.$.ItemAPI.request( 'GET', this.feed.links.plugins );
+        var requestPlugins = this.$.ItemAPI.request( 'GET', this.feed.links.plugins, data );
         requestPlugins
           .then( this.handleItem.bind(this) )
           .catch( this.handleError.bind(this) );

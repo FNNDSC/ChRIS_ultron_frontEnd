@@ -15,8 +15,8 @@
           }
         },
 
-        formatUltronAPIResponse: function(type, response){
-          switch( type ){
+        formatUltronAPIResponse: function(target, params, response){
+          switch( target ){
             case 'login':
               return {
                 status: true,

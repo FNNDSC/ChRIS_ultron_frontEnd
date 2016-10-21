@@ -33,11 +33,9 @@
 
       .feed {
 
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
-        padding: 20px;
-        background-color: white;
-        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        width:100%;
 
       }
 
@@ -54,17 +52,7 @@
 
       }
 
-      /* Toolbar style */
-
-      .toolbar {
-
-        min-height: 64px;
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
-
-      }
-
-      /* Toolbar > Check area */
+      /* Check area */
 
       .check-area {
 
@@ -105,7 +93,7 @@
 
       }
 
-      /* Toolbar > Check area > Letter */
+      /* Check area > Letter */
 
       .letter {
 
@@ -119,43 +107,27 @@
 
       }
 
-      /* Toolbar > Check area > Checkbox */
-
-      .checkbox {
-
-        display: none;
-
-        --paper-checkbox-checked-color: var(--accent-color);
-        --paper-checkbox-checked-ink-color: var(--accent-color);
-        --paper-checkbox-unchecked-color: #ffffff;
-        --paper-checkbox-unchecked-ink-color: var(--dark-accent-color);
-        --paper-checkbox-size: 24px;
-        --paper-checkbox-label-spacing: 0px;
-
-      }
-
-      .check-area:hover .checkbox, .checked .checkbox {
-
-        display:block;
-
-      }
+      /* Check area > Checkbox */
 
 
-      /* Toolbar > Title area */
+
+
+
+      /* Title area */
 
       .title-area {
 
-        padding: 0 16px;
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
+        width:100%;
+        flex: 0;
+        padding: 8px 16px;
+        box-sizing: border-box;
+        color: #fff;
 
       }
 
       .name {
 
         font-size: 16px;
-        font-weight: bold;
-        color: var(--primary-text-color);
 
       }
 
@@ -166,37 +138,77 @@
 
       }
 
-      /* Toolbar > Action area */
+      /* Tags area */
+      .tags-area {
 
-      #favorite[icon="icons:favorite"]{
-
-        color: var(--accent-color);
-
-      }
-
-      .done{
-
-        color: var(--paper-light-green-500);
+        padding: 8px 16px;
+        flex: 1;
+        overflow-y: auto;
 
       }
 
-      .running{
+      .tag {
 
-        color: var(--paper-light-blue-500);
-
-      }
-
-      .error{
-
-        color: var(--paper-red-500);
+        opacity: 0.5;
 
       }
 
-      .action:hover{
+      .tag:hover {
 
-        color: var(--accent-color);
+        opacity: 1;
 
       }
+
+      /* Action area */
+     /* width vx flex 1 100%*/
+
+      .actions-area {
+
+          flex: 0;
+          color: var(--primary-text-color);
+          padding: 0 16px;
+          box-sizing: border-box;
+          width: 100%;
+          border-top: 1px solid var(--divider-color);
+
+        }
+
+        paper-icon-button, .checkbox{
+          opacity: 0.5;
+        }
+
+        paper-icon-button:hover, .checkbox:hover{
+          opacity: 1.0;
+        }
+
+        .checkbox {
+
+          --paper-checkbox-checked-color: var(--accent-color);
+          --paper-checkbox-checked-ink-color: var(--accent-color);
+          --paper-checkbox-unchecked-color: var(--primary-text-color);
+          --paper-checkbox-unchecked-ink-color: var(--accent-color);
+          --paper-checkbox-size: 24px;
+          --paper-checkbox-label-spacing: 0px;
+
+        }
+
+        .done{
+
+          color: var(--paper-light-green-500);
+
+        }
+
+        .running{
+
+          color: var(--paper-light-blue-500);
+
+        }
+
+        .error{
+
+          color: var(--paper-red-500);
+  
+        }
 
 
       /* Content */
@@ -216,45 +228,9 @@
       }
 
 
-      /* responsive layout */
-
-      @media all and (max-width: 800px) {
-
-        .toolbar {
-
-          @apply(--layout-justified);
-
-         }
-
-        .title-area { 
-
-          flex: 1 100%;
-          padding: 16px 0 0;
-
-        }
-        
-        .check-area {
-
-          order: 1;
-
-        }
-        .actions-area {
-
-          order: 2;
-
-        }
-
-        .title-area {
-
-          order: 3;
-        }
-
-      }
-
     </style>
 
     <chris-api id="FeedAPI"
-      api="Item",
       content-type="application/json",
       on-response="handleFeedDetails"
       error="{{error}}"
@@ -263,57 +239,37 @@
 
     <paper-material id="feed" class="feed" elevation=1>
 
-      <!-- Toolbar -->
-      <div class="toolbar">
+      <!-- Title Area -->
+      <div class="title-area" style$="{{_setBackgroundStyle(feed.data.color)}}">
 
-        <!-- Check Area -->
-        <div class="check-area" style$="[[_setStyle(feed.data.color)]]" on-tap="_blockEvents">
+        <div class="name">Feed [[feed.data.id]] - [[feed.data.name]]</div>
 
-          <template is="dom-if" if="{{!valid}}">
+      </div>
 
-            <paper-icon-button id="invalid" class="invalid" icon="icons:bug-report" disabled></paper-icon-button>
+      <!-- Tags area -->
+      <div class="tags-area">
 
-          </template>
+          <template is="dom-repeat" items="[[_validateTags(feed.data.tags)]]">
 
-          <template is="dom-if" if="{{valid}}">
-
-              <span class="letter">[[feed.data.letter]]</span>
-              <paper-checkbox class="checkbox" checked="{{checked}}"></paper-checkbox>
+            <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
 
           </template>
 
-        </div>
+      </div>
 
-        <!-- Title Area -->
-        <div class="title-area">
+      <!-- Actions Area -->
+      <div class="actions-area" on-tap="_blockEvents">
 
-          <div class="name">Feed [[feed.data.id]] - [[feed.data.name]]</div>
-          <div class="date">[[feed.data.date]]</div>
-          <div class="tags">
+        <paper-checkbox class="checkbox" checked="{{checked}}"></paper-checkbox>
 
-            <template is="dom-repeat" items="[[_validateTags(feed.data.tags)]]">
+        <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
+        <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
+        <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.data.favorite)]]" on-tap="favorite"></paper-icon-button>
+        <!--<paper-icon-button id="status" icon$="[[_setStatusIcon(feed.data.status)]]" class$="[[feed.data.status]]" disabled></paper-icon-button>-->
 
-              <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
-
-            </template>
-
-          </div>
-
-        </div>
-
-        <!-- Actions Area -->
-        <div class="actions-area" on-tap="_blockEvents">
-
-          <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
-          <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
-          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.data.favorite)]]" on-tap="favorite"></paper-icon-button>
-          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.data.status)]]" class$="[[feed.data.status]]" disabled></paper-icon-button>
-
-          <paper-tooltip for="share" offset="0">Share</paper-tooltip>
-          <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
-          <paper-tooltip for="favorite" offset="0">Favorite</paper-tooltip>
-
-        </div>
+        <paper-tooltip for="share" offset="0">Share</paper-tooltip>
+        <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
+        <paper-tooltip for="favorite" offset="0">Favorite</paper-tooltip>
 
       </div>
 
@@ -356,10 +312,18 @@
 
         },
 
+        observers: [
+          'updateFavorite(feed.data.favorite)'
+        ],
+
         _setStyle: function( color ){
 
           return 'border: 4px solid ' + color + ';';
 
+        },
+
+        updateFavorite(){
+         
         },
 
         _setStatusIcon: function( status ){
@@ -431,6 +395,12 @@
 
         },
 
+        _setBackgroundStyle: function( color ){
+
+          return 'background-color: ' + color + ';';
+
+        },
+
         favorite: function( event ){
 
           event.preventDefault();
@@ -442,10 +412,14 @@
 
           }
 
+          //console.log(this.feed.data.favorite);
+
           // update feed favorite
           var cache = [ { 'name': 'favorite', 'value': this.feed.data.favorite } ];
-          this.set('feed.data.favorite', !this.feed.data.favorite);
-          this._saveFeed( cache );
+          this.set(['feed', 'data', 'favorite'], !this.feed.data.favorite);
+
+          // fire save feed
+          this.fire( 'save-feed', {feed: this.feed, cache: cache} );
 
         },
 
@@ -485,17 +459,6 @@
             this.fire( 'notification', response.error );
 
           }
-
-        },
-
-        _saveFeed: function( cache ){
-
-          // attach template and href
-          var feed = this.feed.data;
-          feed.template = this.feed.template;
-          feed.href = this.feed.href;
-
-          var request = this.$.FeedAPI.request('PUT', this.feed.href, { body: feed, cache: cache } );
 
         },
 

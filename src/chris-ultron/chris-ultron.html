@@ -9,6 +9,7 @@
 
 <!--  CHRIS ELEMENTS -->
 <link rel="import" href="../chris-ultron-config.html">
+<link rel="import" href="../chris-api/chris-api.html">
 
 <dom-module id="chris-ultron">
   <template>
@@ -39,6 +40,7 @@
     </style>
 
     <chris-ultron-config></chris-ultron-config>
+    <chris-api id="ChrisAPI" error="{{error}}"></chris-api>
 
     <app-location id="location" route="{{route}}"></app-location>
     <app-route
@@ -51,11 +53,20 @@
 
       <chris-login name="login" logged="{{loggedIn}}"></chris-login>
 
-      <chris-home name="home" app="{{app}}" feed-opened="{{feedOpened}}"></chris-home>
+      <chris-home
+        name="home"
+        app="{{openApp}}"
+        feeds="[[feeds]]"
+        labels="[[labels]]"
+        on-change-filter="_changeFilter"
+        on-fetch-labels="_fetchLabels"
+        on-fetch-feeds='_fetchFeeds'
+        on-open-feed="_openFeed"
+        on-save-feed="_saveFeed"></chris-home>
 
-      <chris-app name="app" app="[[app]]" feed="{{feed}}"></chris-app>
+      <chris-app name="app" app="[[openApp]]"></chris-app>
 
-      <chris-feed name="feed" feed="{{feedOpened}}"></chris-feed>
+      <chris-feed name="feed" feed="[[openFeed]]"></chris-feed>
 
     </iron-pages>
 
@@ -95,16 +106,25 @@
           type: Object
         },
 
-        app: {
+        openApp: {
           type: Object
         },
 
-        feed: {
+        feeds: {
+          type: Array
+        },
+
+        openFeed: {
           type: Object
         },
 
-        feedOpened: {
-          type: Object
+        labels: {
+          type: Array
+        },
+
+        filter: {
+          type: Array,
+          value: []
         }
 
       },
@@ -112,6 +132,124 @@
       observers: [
         '_routePageChanged(routeData.page)'
       ],
+
+      _openFeed: function( event ){
+
+        this.openFeed = event.detail;
+
+        // update page
+        this.set('route.path', '/feed/' + this.openFeed.data.id);
+
+      },
+
+      _changeFilter: function( event ){
+
+        this.set('filter', event.detail);
+        this._fetchFeeds();
+
+      },
+
+      _fetchFeeds: function(){
+
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        data.params = {};
+        data.params.filter = this.filter;
+
+        var request =this.$.ChrisAPI.request('GET', 'feeds', data);
+        request
+          .then( this._handleFeeds.bind(this) );
+
+      },
+
+      _handleFeeds: function( response ){
+
+        this.set( 'feeds', response );
+
+      },
+
+      _fetchLabels: function(){
+
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        var request =this.$.ChrisAPI.request('GET', 'labels', data);
+        request
+          .then( this._handleLabels.bind(this) );
+
+      },
+
+      _handleLabels: function( response ){
+
+        this.set( 'labels', response );
+
+      },
+
+      _saveFeed: function( event ){
+
+        var feed = event.detail.feed;
+        var cache = event.detail.cache;
+
+        var data = {};
+        // authentification
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        // data and template
+        data.body = {};
+        data.body.data = feed.data;
+        data.body.template = {};
+        data.body.template.data = this.feeds.template.data;
+
+        // cache
+        data.cache = cache;
+
+        // save the feed
+        //this.$.ChrisAPI.apiError = true;
+        var request = this.$.ChrisAPI.request('PUT', feed.href, data);
+        request
+          .then( this.handleFeed.bind(this) );
+
+      },
+
+      handleFeed: function( response ){
+
+        if( response.error ){
+
+          // split "/123/" => ["", "123", ""]
+          var feedId = response.href.split('/')[1];
+
+          // update the right feed
+          for(var i = 0; i < this.feeds.data.length; i++){
+
+            if( this.feeds.data[i].data.id === feedId ){
+              // restore cache...
+              for( var j = 0; j < response.cache.length; j++ ){
+
+                this.set(['feeds', 'data', i, 'data', response.cache[j].name], response.cache[j].value );
+
+              }
+
+              break;
+
+            }
+
+          }
+
+          // notify user
+
+        }
+
+      },
 
       _routePageChanged: function( page ) {
 
@@ -122,9 +260,6 @@
       },
 
       _loggedInChanged: function( loggedIn ){
-
-        console.log( loggedIn );
-        console.log( this.loggedIn );
 
         if( loggedIn ){
 

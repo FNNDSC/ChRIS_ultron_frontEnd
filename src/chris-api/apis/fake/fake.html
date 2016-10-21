@@ -30,23 +30,27 @@
 
     FakeAPIImpl = {
 
-      urlFakeAPI: function( type ){
+      urlFakeAPI: function( target ){
 
-        // might need to take this.method into account too
-        switch( type ){
-          case 'login':
-            // something that allows POST
-            return 'https://httpbin.org/post';
-          default:
-            return 'data/' + type + '.json';
-          }
-        },
+        // POST AND PUT
+        if( this.method !== 'GET'){
+          return 'https://httpbin.org/' + this.method.toLowerCase();;
+        }
 
-      formatFakeAPIResponse: function(type, response){
+        // GET      
+        // url pattern: /<number>/ to be replaced by /feed/
+        var isFeedRegex = /^\/(\d+)\//;
+        if( isFeedRegex.test(target) ){
+          target = target.replace(isFeedRegex, '/feed/');
+        }
 
-        console.log( response );
+        return 'data/' + target + '.json';
 
-        switch( type ){
+      },
+
+      formatFakeAPIResponse: function(target, params, response){
+
+        switch( target ){
           case 'login':
             return {
               status: true,
@@ -62,27 +66,27 @@
         var itemCJ = {};
 
         // Simulate GET
-        if( this.method === 'GET' && type === 'comments' ){
+        if( this.method === 'GET' && target === 'comments' ){
 
           itemCJ = this.generateCommentCollectionCJ();
 
         }
-        else if( this.method === 'GET' && type === 'feeds' ){
+        else if( this.method === 'GET' && target === 'feeds' ){
 
-          itemCJ = this.generateFeedCollectionCJ( response.data );
+          itemCJ = this.generateFeedCollectionCJ( response.data, params );
 
         }
-        else if( this.method === 'GET' && type === 'labels' ){
+        else if( this.method === 'GET' && target === 'labels' ){
 
           itemCJ = this.generateLabelCollectionCJ();
 
         }
-        else if( this.method === 'GET' && type === 'note' ){
+        else if( this.method === 'GET' && target === 'note' ){
 
           itemCJ = this.generateNoteCJ();
 
         }
-        else if( this.method === 'GET' && type === 'plugins' ){
+        else if( this.method === 'GET' && target === 'plugins' ){
 
           itemCJ = this.generatePluginCollectionCJ();
 
@@ -92,7 +96,7 @@
         if( this.method !== 'GET' ){
 
           itemCJ.collection = {};
-          itemCJ.collection.href = response.json.href;
+          itemCJ.collection.href = target;
 
         }
 

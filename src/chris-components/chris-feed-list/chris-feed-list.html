@@ -5,13 +5,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
+<!--APP ELEMENTS -->
+<link rel="import" href="../../../bower_components/app-route/app-location.html">
+
 <!-- IRON ELEMENTS -->
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
-
-<!-- PAPER ELEMENTS -->
-<!-- <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html"> -->
-<!-- <link rel="import" href="../../bower_components/paper-material/paper-material.html"> -->
 
 <link rel="import" href="../chris-feed-preview/chris-feed-preview.html">
 
@@ -29,12 +28,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       iron-list {
 
-        @apply(--layout-fit);
-
         padding-top: 16px;
         padding-bottom: 64px;
         --iron-list-items-container: {
-          max-width: 800px;
+          max-width: 1200px;
           margin: auto;
           margin-top: 30px;
           margin-bottom: 60px;
@@ -43,22 +40,41 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
-      a {
-        color: inherit;
-      }
+        chris-feed-preview {
+          @apply(--layout);
+          background-color: #fff;
+          position: relative;
+          width: 250px;
+          height: 150px;
+          margin: 8px;
+        }
+
+        @media (max-width: 896px) {
+          .feedContainer {
+            width: 100%;
+          }
+
+          chris-feed-preview {
+            width: auto;
+          }
+
+          chris-feed-preview > .detail {
+            opacity: 1;
+          }
+        }      
 
     </style>
 
-    <iron-list id="feeds" items="[[feeds.data]]" as="feed" selection-enabled on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
+    <!-- Route -->
+    <app-location route="{{route}}"></app-location>
+
+    <iron-list id="feeds" items="[[feeds.data]]" as="feed" selection-enabled on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]" grid>
 
       <template>
 
-        <a href="/feed/{{index}}/">
-
-          <chris-feed-preview index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed-preview>
-
-        </a>
-
+        <div class="feedContainer">
+            <chris-feed-preview tabindex$="[[tabIndex]]" index="[[index]]" feed="[[feed]]" on-tap="_openFeed"></chris-feed-preview>
+        </div>
 
       </template>
 
@@ -76,10 +92,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             type: Array
           },
 
-          feedOpened: {
-            type: Object
-          },
-
           scrollTarget: HTMLElement
 
         },
@@ -90,13 +102,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        _showDetails: function( event ){
+        _openFeed: function( event ){
 
-          // attach to event instead of linking?
-          this.set( 'feedOpened', event.model.__data__.feed );
-          this.fire( 'feed-opened-changed', event.model.__data__.feed );
-
-          // use the <app-route> instead of link wrapp
+          this.fire( 'open-feed', event.model.__data__.feed );
 
         }
 

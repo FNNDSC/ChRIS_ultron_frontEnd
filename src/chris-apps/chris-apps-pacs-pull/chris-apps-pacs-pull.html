@@ -125,11 +125,13 @@ Chris app pacs-pull element!
           for( var i = 0; i < response.data.length; i++ ){
 
             if( response.data[i].data.name === 'pacsquery'){
-              this.$.find.href = response.data[i].links.instances
+              this.$.find.instances = response.data[i].links.instances;
+              this.$.find.parameters = response.data[i].links.parameters
             }
 
             if( response.data[i].data.name === 'pacsmove'){
-              this.$.move.href = response.data[i].links.instances
+              this.$.move.instances = response.data[i].links.instances;
+              this.$.move.parameters = response.data[i].links.instances
             }
 
           }
