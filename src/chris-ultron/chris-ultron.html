@@ -180,7 +180,7 @@
           token: sessionStorage.getItem('token')
         };
 
-        var request =this.$.ChrisAPI.request('GET', 'labels', data);
+        var request =this.$.ChrisAPI.request('GET', '/tags', data);
         request
           .then( this._handleLabels.bind(this) );
 

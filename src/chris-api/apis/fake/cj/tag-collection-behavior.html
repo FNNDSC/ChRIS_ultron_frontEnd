@@ -1,10 +1,10 @@
 <script>
-  /** @polymerBehavior LabelCollectionCJ */
-  LabelCollectionCJ = {
+  /** @polymerBehavior TagCollectionCJ */
+  TagCollectionCJ = {
 
     /**
      */
-    generateLabelCollectionCJ: function( ){
+    generateTagCollectionCJ: function( ){
 
       var cj = {};
       cj.collection = {};
@@ -14,7 +14,7 @@
 
       // create the template field
       cj.collection.template = {};
-      cj.collection.template.data = this.labelTemplate();
+      cj.collection.template.data = this.tagTemplate();
 
       // create the items
       cj.collection.items = [];

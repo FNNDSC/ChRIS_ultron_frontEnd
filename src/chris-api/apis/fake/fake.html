@@ -3,12 +3,12 @@
 <link rel="import" href="cj/comment-behavior.html">
 <link rel="import" href="cj/feed-collection-behavior.html">
 <link rel="import" href="cj/feed-behavior.html">
-<link rel="import" href="cj/label-collection-behavior.html">
-<link rel="import" href="cj/label-behavior.html">
 <link rel="import" href="cj/note-behavior.html">
 <link rel="import" href="cj/pacsquery-behavior.html">
 <link rel="import" href="cj/plugin-collection-behavior.html">
 <link rel="import" href="cj/plugin-behavior.html">
+<link rel="import" href="cj/tag-collection-behavior.html">
+<link rel="import" href="cj/tag-behavior.html">
 
 <script>
     /** @polymerBehavior FakeAPI */
@@ -20,12 +20,12 @@
       CommentCJ,
       FeedCollectionCJ,
       FeedCJ,
-      LabelCollectionCJ,
-      LabelCJ,
       NoteCJ,
       PacsqueryCJ,
       PluginCollectionCJ,
-      PluginCJ
+      PluginCJ,
+      TagCollectionCJ,
+      TagCJ
     ]
 
     FakeAPIImpl = {
@@ -76,9 +76,9 @@
           itemCJ = this.generateFeedCollectionCJ( response.data, params );
 
         }
-        else if( this.method === 'GET' && target === 'labels' ){
+        else if( this.method === 'GET' && target === 'tags' ){
 
-          itemCJ = this.generateLabelCollectionCJ();
+          itemCJ = this.generateTagCollectionCJ();
 
         }
         else if( this.method === 'GET' && target === 'note' ){
