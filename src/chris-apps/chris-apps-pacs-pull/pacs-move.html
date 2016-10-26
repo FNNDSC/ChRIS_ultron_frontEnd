@@ -212,9 +212,13 @@
         var self = this;
         grid.addEventListener('selected-items-changed', function(e) {
 
+          console.log('Selected: ' + grid.selection.selected());
+
           var selection = [];
           grid.selection.selected(function(index) {
 
+            // should fetch selection from the filter
+            // so indices match
             selection.push( self.query[index] );
 
           });
