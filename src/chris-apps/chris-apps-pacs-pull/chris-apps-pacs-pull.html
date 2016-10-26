@@ -60,7 +60,7 @@ Chris app pacs-pull element!
 
       <iron-pages selected="{{selected}}">
 
-        <pacs-find id="find" query="{{query}}" on-query-changed="_queryChanged"></pacs-find>
+        <pacs-find id="find" on-query-changed="_queryChanged"></pacs-find>
         <pacs-move id="move" query="[[query]]"></pacs-move>
 
       </iron-pages>
@@ -82,10 +82,6 @@ Chris app pacs-pull element!
           query: {
             type: Array,
             value: []
-            //,
-            // we do no use observer in the properties
-            // because if so the callback is called at creation time.
-            //observer: '_queryChanged'
           },
 
           parameters: {
@@ -124,7 +120,11 @@ Chris app pacs-pull element!
 
           for( var i = 0; i < response.data.length; i++ ){
 
+            console.log(response.data[i].data.name);
+            console.log(response.data[i].links.instances);
+
             if( response.data[i].data.name === 'pacsquery'){
+              console.log(response.data[i].links.instances);
               this.$.find.instances = response.data[i].links.instances;
               this.$.find.parameters = response.data[i].links.parameters
             }
@@ -144,10 +144,11 @@ Chris app pacs-pull element!
 
         },
 
-        // we do no use observer in the properties
         // because if so the callback is called at creation time.
-        _queryChanged: function( value ){
+        _queryChanged: function( event ){
 
+          console.log( event );
+          this.query = event.detail;
           this.selected = 1;
 
         },

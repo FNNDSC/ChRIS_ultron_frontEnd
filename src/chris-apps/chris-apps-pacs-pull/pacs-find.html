@@ -423,6 +423,7 @@
         var request = this.$.API.request( 'POST', this.instances, data );
         request
           .then( this.handlePacsQuery.bind(this) )
+          .then( this.waitUntilFinished.bind(this) )
           .then( this.getFeedFiles.bind(this) )
           .then( this.handleFeedFiles.bind(this) )
           .then( this.getFileContent.bind(this) )
@@ -431,16 +432,85 @@
 
       },
 
-      handlePacsQuery: function( response){
+      handlePacsQuery: function( response ){
 
-        // new feed
-        console.log( response );
+        let p1 = new Promise(
 
-        return response.data[0].links.feed;
+           function(resolve, reject){
+             window.setTimeout(
+               function(){resolve(response)},
+                  1000
+              );
+
+           }
+
+        );
+
+        return p1;
+        
 
       },
 
-      getFeedFiles: function( feed ){
+      waitUntilFinished: function( response ){
+
+        console.log( response );
+
+        // new feed
+        let data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem( 'token' )
+        };
+
+        let waitPromise = new Promise(
+
+           (resolve, reject) => {
+
+             var remaningAttemps = 6;
+
+             function run(){
+              //
+              this.$.API.request( 'GET', response.data[0].href , data ).
+              then( ( response2 ) => {
+                // check depdending on status
+                console.log( response2.data[0].data.status );
+                if( remaningAttemps < 5 && response2.data[0].data.status === 'finishedSuccessfully'){
+
+                  resolve(response2);
+
+                }
+                else{
+                  remaningAttemps--;
+                  if( remaningAttemps <= 0){
+                    reject(response2);
+                  }
+                  else{
+                    setTimeout(run, 1000);
+                  }
+                  
+
+                }
+                
+              });
+             }
+
+             run = run.bind(this);
+             run();
+
+
+
+           }
+
+
+        );
+
+        return waitPromise;
+
+      },
+
+      getFeedFiles: function( response ){
+
+        let feed = response.data[0].links.feed;
 
         var data = {};
         data.auth = {
@@ -448,7 +518,7 @@
           token: sessionStorage.getItem('token')
         };
 
-        return this.$.API.request( 'GET', feed + '/files/', data );
+        return this.$.API.request( 'GET', feed + 'files/', data );
 
       },
 
@@ -475,15 +545,13 @@
         console.log( response );
 
         this.$.progressBar.style.display = 'none';
-
-        this.set('query', response.data);
-        this.fire('query-changed');
+        this.fire( 'query-changed', response.data );
 
         return 'Done'
 
       },
 
-      handlePacsQueryError: function( response){
+      handlePacsQueryError: function( response ){
 
         console.log( 'error:' + response );
 

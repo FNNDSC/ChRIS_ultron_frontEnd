@@ -183,11 +183,6 @@
 
         properties: {
 
-          logged:{
-            type: Boolean,
-            notify: true
-          },
-
           _username: {
             type: String,
             value: ''
@@ -219,8 +214,6 @@
         },
 
         login: function(){
-            // make sure logged is false
-            this.logged = false;
 
             // validate inputs
             this.$.username.validate();
@@ -272,7 +265,8 @@
 
             sessionStorage.setItem('username', this._username);
             sessionStorage.setItem('token', response.token);
-            this.logged = true;
+            
+            this.fire('login', {success: true});
             return;
 
           }

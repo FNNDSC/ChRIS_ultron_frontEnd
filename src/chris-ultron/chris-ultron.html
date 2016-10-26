@@ -51,7 +51,7 @@
 
     <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
 
-      <chris-login name="login" logged="{{loggedIn}}"></chris-login>
+      <chris-login name="login" on-login="_login"></chris-login>
 
       <chris-home
         name="home"
@@ -132,6 +132,12 @@
       observers: [
         '_routePageChanged(routeData.page)'
       ],
+
+      _login: function( event ){
+
+        this.loggedIn = event.detail.success;
+        
+      },
 
       _openFeed: function( event ){
 

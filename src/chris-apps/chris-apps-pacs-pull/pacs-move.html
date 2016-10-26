@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-badge/paper-badge.html">
 <link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
@@ -75,6 +76,12 @@
 
       }
 
+      paper-badge {
+
+        z-index: 999;
+
+      }
+
     </style>
 
     <!-- API connection -->
@@ -85,10 +92,11 @@
 
     <div class="content">
 
-      <paper-fab-speed-dial direction="top">
+      <paper-fab-speed-dial id="fabspeed" direction="top">
 
         <!-- update icon nd color depending on if there is something to get or not. -->
         <paper-fab id="create" icon="icons:add" class="dropdown-trigger" disabled></paper-fab>
+
         <div class="dropdown-content">
           <div>
             <paper-fab mini id="export" icon="icons:file-download" on-tap="_getCSV"></paper-fab>
@@ -100,6 +108,8 @@
           </div>
         </div>
       </paper-fab-speed-dial>
+
+      <paper-badge id="fabspeedbadge" for="fabspeed" label="[[selection.length]]"></paper-badge>
 
       <!--small buble with nb of files to be pulled-->
 
@@ -203,15 +213,9 @@
         grid.addEventListener('selected-items-changed', function(e) {
 
           var selection = [];
-
-          // for (var i = 0; i < grid.selection.size; i += 1) {
-
-          //   selection.push( grid.items[i] );
-
-          // }
           grid.selection.selected(function(index) {
 
-            selection.push( grid.items[index] );
+            selection.push( self.query[index] );
 
           });
 
@@ -224,34 +228,22 @@
       _queryChanged: function(){
 
         // format query...
-        console.log( this.query );
-        if( !this.query || !this.query.series){
-          return;
-        }
         // loop through series
-        var fQuery = [];
-        for( var i=0; i<this.query.series.length; i++ ){
-          // find related study
-          var series = this.query.series[i];
-          var study = {};
-          for( var j=0; j<this.query.study.length; j++ ){
-            if( series.StudyInstanceUID.value === this.query.study[j].StudyInstanceUID.value ){
-              study = this.query.study[j];
-            }
+        let fQuery = [];
+        for( var i=0; i<this.query.length; i++ ){
 
-          }
           // fill row (with extra info for move)
-          var row = {};
-          row.PatientID = study.PatientID.value;
-          row.PatientName = study.PatientName.value;
-          row.StudyDescription = study.StudyDescription.value;
-          row.SeriesDescription = series.SeriesDescription.value;
-          row.NumberOfSeriesRelatedInstances = series.NumberOfSeriesRelatedInstances.value;
+          let row = {};
+          row.PatientID = this.query[i].PatientID.value;
+          row.PatientName = this.query[i].PatientName.value;
+          row.StudyDescription = this.query[i].StudyDescription.value;
+          row.SeriesDescription = this.query[i].SeriesDescription.value;
+          row.NumberOfSeriesRelatedInstances = this.query[i].NumberOfSeriesRelatedInstances.value;
 
           fQuery.push( row );
         }
 
-        this.set('filter', fQuery);
+        this.set( 'filter', fQuery );
 
         // fill table
         this.$.grid.items = fQuery;
@@ -271,11 +263,11 @@
             for( var i = 0; i< values.length; i++ ){
 
               if(
-                ((val.PatientID.toLowerCase()).indexOf(values[i]) > -1) ||
-                ((val.PatientName.toLowerCase()).indexOf(values[i]) > -1) ||
-                ((val.StudyDescription.toLowerCase()).indexOf(values[i]) > -1) ||
-                ((val.SeriesDescription.toLowerCase()).indexOf(values[i]) > -1) ||
-                ((val.NumberOfSeriesRelatedInstances.toLowerCase()).indexOf(values[i]) > -1) ){
+                ((val.PatientID.value.toLowerCase()).indexOf(values[i]) > -1) ||
+                ((val.PatientName.value.toLowerCase()).indexOf(values[i]) > -1) ||
+                ((val.StudyDescription.value.toLowerCase()).indexOf(values[i]) > -1) ||
+                ((val.SeriesDescription.value.toLowerCase()).indexOf(values[i]) > -1) ||
+                ((val.NumberOfSeriesRelatedInstances.value.toLowerCase()).indexOf(values[i]) > -1) ){
                 match += 1;
               }
 
@@ -297,7 +289,22 @@
           }
         });
 
-        this.set( 'filter', filterResponse );
+        var fQuery = [];
+        for( var i=0; i<filterResponse.length; i++ ){
+
+          // fill row (with extra info for move)
+          var row = {};
+          row.PatientID = filterResponse[i].PatientID.value;
+          row.PatientName = filterResponse[i].PatientName.value;
+          row.StudyDescription = filterResponse[i].StudyDescription.value;
+          row.SeriesDescription = filterResponse[i].SeriesDescription.value;
+          row.NumberOfSeriesRelatedInstances = filterResponse[i].NumberOfSeriesRelatedInstances.value;
+
+          fQuery.push( row );
+
+        }
+
+        this.set( 'filter', fQuery );
 
         // fill table
         this.$.grid.items = this.filter;
@@ -308,6 +315,7 @@
 
         // update color of FAB
         this.$.create.disabled = this.selection.length > 0 ? false : true;
+        this.$.fabspeedbadge.hidden = this.selection.length > 0 ? false : true;
 
       },
 
@@ -346,7 +354,7 @@
 
             if (data[i].hasOwnProperty(key)) {
 
-              csv += '"' + data[i][key] + '",';
+              csv += '"' + data[i][key].value + '",';
 
             }
             else{
