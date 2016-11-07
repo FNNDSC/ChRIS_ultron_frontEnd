@@ -462,6 +462,9 @@
           token: sessionStorage.getItem( 'token' )
         };
 
+        //
+        this.fire( 'previous-changed', response.data[0].data.id );
+
         let waitPromise = new Promise(
 
            (resolve, reject) => {

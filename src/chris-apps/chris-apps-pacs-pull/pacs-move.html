@@ -157,6 +157,11 @@
           observer: '_queryChanged'
         },
 
+        previous: {
+          type: Number,
+          value: 0
+        },
+
         href: {
           type: String
         },
@@ -416,8 +421,47 @@
         //   endDate: this.$.endDate.value,
         //   anonymize: this.$.anonymize.checked
         // }
+        // var request = this.$.API.request( 'POST', this.instances, data );
 
-        var request = this.$.API.request( 'PUT', '/pacsquery');
+                // get data for pacs find
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        //
+        data.body = {};
+        data.body.template = {};
+        data.body.template.data = [
+          {name: 'aet', value: ''},
+          {name: 'aec', value: ''},
+          {name: 'aet_listener', value: ''},
+          {name: 'server_ip', value: ''},
+          {name: 'server_port', value: ''},
+          {name: 'series_uids', value: ''},
+          {name: 'series_file', value: ''},
+          {name: 'data_location', value: ''},
+          {name: 'previous', value: ''}
+        ];
+
+
+
+        data.body.data = {
+          aet: 'CHRIS-ULTRON-AET',
+          aec: 'CHRIS-ULTRON-AEC',
+          aet_listener: 'CHRIS-ULTRON-LIS',
+          server_ip: '192.168.1.39',
+          server_port: '4242',
+          series_uids: '0,1',
+          previous: this.previous
+        }
+
+        console.log( this.instances );
+        console.log( this.previous );
+
+
+        var request = this.$.API.request( 'POST', this.instances, data);
         request
           .then( this.handleRetrieve.bind(this) )
           .catch( this.handleRetrieveError.bind(this) );
@@ -431,12 +475,14 @@
       handleRetrieve: function( response ){
 
         console.log( 'retrieve returned' );
+        console.log( response );
 
       },
 
       handleRetrieveError: function( response ){
 
         console.log( 'retrieve errored' );
+        console.log( response );
 
       }
     });
