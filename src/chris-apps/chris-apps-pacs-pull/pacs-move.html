@@ -111,13 +111,8 @@
 
       <paper-badge id="fabspeedbadge" for="fabspeed" label="[[selection.length]]"></paper-badge>
 
-      <!--small buble with nb of files to be pulled-->
-
       <div id="vad">
 
-
-        <!-- https://vaadin.com/elements/-/element/vaadin-grid -->
-        <!-- https://github.com/vaadin/vaadin-grid -->
         <paper-input id="filter" label="Filter results ([[filter.length]])" value="{{filterExp}}"></paper-input>
 
         <vaadin-grid id="grid" selection-mode="multi" style="height:100%">
@@ -129,6 +124,7 @@
               <col name="StudyDescription" max-width="250" sortable hidable/>
               <col name="SeriesDescription" max-width="250" sortable hidable/>
               <col name="NumberOfSeriesRelatedInstances" sortable max-width="200" hidable/>
+              <col name="uid" sortable max-width="200" hidden/>
 
             </colgroup>
 
@@ -151,10 +147,10 @@
       is: 'pacs-move',
       properties: {
 
-        query: {
+        results: {
           type: Array,
           value: [],
-          observer: '_queryChanged'
+          observer: '_resultsChanged'
         },
 
         previous: {
@@ -217,14 +213,12 @@
         var self = this;
         grid.addEventListener('selected-items-changed', function(e) {
 
-          console.log('Selected: ' + grid.selection.selected());
-
           var selection = [];
           grid.selection.selected(function(index) {
 
             // should fetch selection from the filter
             // so indices match
-            selection.push( self.query[index] );
+            selection.push( self.filter[index] );
 
           });
 
@@ -234,34 +228,35 @@
 
       },
 
-      _queryChanged: function(){
+      _resultsChanged: function(){
 
         // format query...
         // loop through series
-        let fQuery = [];
-        for( var i=0; i<this.query.length; i++ ){
+        let filter = [];
+        for( var i=0; i<this.results.length; i++ ){
 
           // fill row (with extra info for move)
           let row = {};
-          row.PatientID = this.query[i].PatientID.value;
-          row.PatientName = this.query[i].PatientName.value;
-          row.StudyDescription = this.query[i].StudyDescription.value;
-          row.SeriesDescription = this.query[i].SeriesDescription.value;
-          row.NumberOfSeriesRelatedInstances = this.query[i].NumberOfSeriesRelatedInstances.value;
+          row.PatientID = this.results[i].PatientID.value;
+          row.PatientName = this.results[i].PatientName.value;
+          row.StudyDescription = this.results[i].StudyDescription.value;
+          row.SeriesDescription = this.results[i].SeriesDescription.value;
+          row.NumberOfSeriesRelatedInstances = this.results[i].NumberOfSeriesRelatedInstances.value;
+          row.uid = this.results[i].uid.value;
 
-          fQuery.push( row );
+          filter.push( row );
         }
 
-        this.set( 'filter', fQuery );
+        this.set( 'filter', filter );
 
         // fill table
-        this.$.grid.items = fQuery;
+        this.$.grid.items = filter;
 
       },
 
       _filterExpChanged: function( value ){
 
-        var filterResponse = this.query.filter(function(val) {
+        var filterResponse = this.results.filter(function(val) {
 
           if ( value ) {
 
@@ -298,7 +293,7 @@
           }
         });
 
-        var fQuery = [];
+        var filter = [];
         for( var i=0; i<filterResponse.length; i++ ){
 
           // fill row (with extra info for move)
@@ -308,12 +303,13 @@
           row.StudyDescription = filterResponse[i].StudyDescription.value;
           row.SeriesDescription = filterResponse[i].SeriesDescription.value;
           row.NumberOfSeriesRelatedInstances = filterResponse[i].NumberOfSeriesRelatedInstances.value;
+          row.uid = filterResponse[i].uid.value;
 
-          fQuery.push( row );
+          filter.push( row );
 
         }
 
-        this.set( 'filter', fQuery );
+        this.set( 'filter', filter );
 
         // fill table
         this.$.grid.items = this.filter;
@@ -340,12 +336,25 @@
 
       toCSV: function( data ){
 
+        // filter results by selection.uid
+        var uids = [];
+        for( var j=0; j<data.length; j++){
+          uids.push(data[j]['uid']);
+        }
+
+        function isSelected( value ){
+          return uids.indexOf( value['uid'].value ) >= 0;
+        }
+
+        var finalSelection = this.results.filter(isSelected);
+
+
         var csv = '';
 
         // fill headers
-        for( var key in data[0] ){
+        for( var key in finalSelection[0] ){
 
-          if (data[0].hasOwnProperty(key)) {
+          if (finalSelection[0].hasOwnProperty(key)) {
 
             csv += '"' + key + '",';
 
@@ -357,13 +366,13 @@
         csv += '\r\n';
 
         // fill content
-        for( var i = 0; i<data.length; i++){
+        for( var i = 0; i<finalSelection.length; i++){
 
-          for( var key in data[i] ){
+          for( var key in finalSelection[i] ){
 
-            if (data[i].hasOwnProperty(key)) {
+            if (finalSelection[i].hasOwnProperty(key)) {
 
-              csv += '"' + data[i][key].value + '",';
+              csv += '"' + finalSelection[i][key].value + '",';
 
             }
             else{
@@ -407,8 +416,6 @@
     },
 
       _retrieve: function(){
-
-        console.log('_retrieve');
 
         var data = {};
         data.auth = {

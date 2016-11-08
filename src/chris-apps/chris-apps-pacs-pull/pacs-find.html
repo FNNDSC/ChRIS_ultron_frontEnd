@@ -14,7 +14,9 @@
 <link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- EXTERNAL ELEMENTS -->
-<link rel="import" href="../../../bower_components/paper-date-picker/paper-date-picker.html">
+<script src="https://cdn.vaadin.com/vaadin-core-elements/latest/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+<link rel="import" href="../../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../chris-api/chris-api.html">
@@ -34,53 +36,6 @@
 
         @apply(--layout-flex);
 
-      }
-
-      paper-dialog {
-
-        --paper-date-picker-dialog: {
-
-          margin: 0;
-          max-height: 520px !important;
-          overflow: hidden;
-
-        };
-
-        --paper-date-picker-dialog-picker: {
-
-          margin-top: 0 !important;
-          padding: 0;
-
-        };
-
-        --paper-date-picker-dialog-calendar: {
-
-          padding-bottom: 0;
-
-        };
-
-        --paper-date-picker-dialog-heading: {
-
-          margin-bottom: -62px;
-
-        };
-
-      }
-
-      /* Application of mixins to local .paper-date-picker-dialog elements */
-      .paper-date-picker-dialog {
-        @apply(--paper-date-picker-dialog);
-      }
-      .paper-date-picker-dialog > paper-date-picker {
-        --paper-calendar: {
-          @apply(--paper-date-picker-dialog-calendar);
-        };
-        @apply(--paper-date-picker-dialog-picker);
-      }
-      .paper-date-picker-dialog > paper-date-picker:not([narrow]) {
-        --paper-date-picker-heading: {
-          @apply(--paper-date-picker-dialog-heading);
-        };
       }
 
       .content {
@@ -168,6 +123,35 @@
 
       }
 
+      .labelContainer, vaadin-date-picker {
+
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        height: 100%;
+
+      }
+
+      .label {
+
+        font: inherit;
+        color: #737373;
+        -webkit-transition: -webkit-transform 0.25s, width 0.25s;
+        transition: transform 0.25s, width 0.25s;
+        -webkit-transform-origin: left top;
+        transform-origin: left top;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        align-self: flex-end;
+
+      }
+
     </style>
 
     <!-- API connection -->
@@ -206,17 +190,15 @@
           <div class="item large">
 
             <div class="flex">
-              <paper-input label="Study Date (Format: MM-DD-YYYY)" value="[[studyDate]]"></paper-input>
-              <paper-button class="btn" on-tap="showDialog" raised>Change</paper-button>
-            </div>
 
-            <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog" on-iron-overlay-opened="patchOverlay" >
-              <paper-date-picker id="datePicker"></paper-date-picker>
-              <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm>OK</paper-button>
+              <div class="labelContainer">
+                <div class="label">Study date</div>
               </div>
-            </paper-dialog>
+
+              <vaadin-date-picker label="From" value="{{startDate}}" max="[[endDate]]"></vaadin-date-picker>
+              <vaadin-date-picker label="To" value="{{endDate}}" min="[[startDate]]"></vaadin-date-picker>
+
+            </div>
 
           </div>
 
@@ -273,11 +255,6 @@
 
       properties: {
 
-        query: {
-          type: Array,
-          value: []
-        },
-
         instances: {
           type: String
         },
@@ -298,36 +275,6 @@
 
       },
 
-      showDialog: function() {
-
-        this.$.dialog.toggle();
-        this.$.dialog.updateStyles();
-
-      },
-
-      patchOverlay: function ( e ) {
-
-        if ( e.currentTarget.backdropElement ) {
-
-          e.currentTarget.parentNode.insertBefore( e.currentTarget.backdropElement, e.currentTarget );
-
-        }
-
-      },
-
-      dismissDialog: function( e ){
-
-        if( e && e.detail && e.detail.confirmed ){
-
-          var dateString = (this.$.datePicker.date.getFullYear()
-            + '-' + ('0' + (this.$.datePicker.date.getMonth() + 1)).slice(-2)
-            + '-' + ('0' + (this.$.datePicker.date.getDate())).slice(-2));
-
-          this.studyDate = dateString;
-
-        }
-
-      },
 
       _toggleAdvanced: function(){
 
