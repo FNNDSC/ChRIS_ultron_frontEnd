@@ -233,25 +233,25 @@
 
           <div class="item large">
             <div class="flex">
-              <paper-input label="PACS Server IP" value="{{serverIP}}"></paper-input>
+              <paper-input label="PACS Server IP" value="{{pacsSettings.server_ip}}"></paper-input>
             </div>
           </div>
 
           <div class="item large">
             <div class="flex">
-              <paper-input label="PACS Server Port" value="{{serverPort}}"></paper-input>
+              <paper-input label="PACS Server Port" value="{{pacsSettings.server_port}}"></paper-input>
             </div>
           </div>
 
           <div class="item large">
             <div class="flex">
-              <paper-input label="AET" value="{{aet}}"></paper-input>
+              <paper-input label="AET" value="{{pacsSettings.aet}}"></paper-input>
             </div>
           </div>
 
           <div class="item large">
             <div class="flex">
-              <paper-input label="AEC" value="{{aec}}"></paper-input>
+              <paper-input label="AEC" value="{{pacsSettings.aec}}"></paper-input>
             </div>
           </div>
 
@@ -259,7 +259,7 @@
 
       </div>
 
-      <paper-button class="submit" raised on-tap="_query">Search on the PACS</paper-button>
+      <paper-button class="submit" raised on-tap="_find">Search on the PACS</paper-button>
 
     </div>
 
@@ -282,28 +282,8 @@
           type: String
         },
 
-        parameters: {
-          type: String
-        },
-
-        serverIP: {
-          type: String,
-          value: '192.168.1.39'
-        },
-
-        serverPort: {
-          type: String,
-          value: '4242'
-        },
-
-        aet: {
-          type: String,
-          value: 'CHRIS-ULTRON-AET'
-        },
-
-        aec: {
-          type: String,
-          value: 'CHRIS-ULTRON-AEC'
+        pacsSettings: {
+          type: Object
         },
 
         patientID: {
@@ -370,7 +350,7 @@
 
       },
 
-      _query: function(){
+      _find: function(){
 
         // show loading progress bar
         this.$.progressBar.style.display = 'block';
@@ -402,19 +382,9 @@
 
 
 
-        data.body.data = {
-          aet: this.aet,
-          aec: this.aec,
-          server_ip: this.serverIP,
-          server_port: this.serverPort,
-          patient_id: this.patientID,
-          study_date: this.studyDate
-        }
-
-        console.log( this.instances );
-
-        // get parameters
-
+        data.body.data = this.pacsSettings;
+        data.body.data['patient_id'] = this.patientID;
+        data.body.data['study_date'] = this.studyDate;
 
         var request1 = this.$.API.request( 'GET', this.instances, data );
         request1
@@ -500,8 +470,6 @@
              run = run.bind(this);
              run();
 
-
-
            }
 
 
@@ -514,6 +482,8 @@
       getFeedFiles: function( response ){
 
         let feed = response.data[0].links.feed;
+
+        console.log(`FEED: ${feed}`);
 
         var data = {};
         data.auth = {
@@ -548,7 +518,7 @@
         console.log( response );
 
         this.$.progressBar.style.display = 'none';
-        this.fire( 'query-changed', response.data );
+        this.fire( 'results-changed', response.data );
 
         return 'Done'
 

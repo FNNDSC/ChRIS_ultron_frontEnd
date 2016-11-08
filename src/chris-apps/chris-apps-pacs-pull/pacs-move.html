@@ -162,8 +162,8 @@
           value: 0
         },
 
-        href: {
-          type: String
+        pacsSettings: {
+          type: Object
         },
 
         filterExp: {
@@ -410,20 +410,6 @@
 
         console.log('_retrieve');
 
-        // go API with selection!
-
-
-        // debug;
-
-        // var params = {
-        //   mrns: this.$.mrns.value,
-        //   startDate: this.$.startDate.value,
-        //   endDate: this.$.endDate.value,
-        //   anonymize: this.$.anonymize.checked
-        // }
-        // var request = this.$.API.request( 'POST', this.instances, data );
-
-                // get data for pacs find
         var data = {};
         data.auth = {
           type: 'token',
@@ -434,32 +420,22 @@
         data.body = {};
         data.body.template = {};
         data.body.template.data = [
-          {name: 'aet', value: ''},
-          {name: 'aec', value: ''},
-          {name: 'aet_listener', value: ''},
-          {name: 'server_ip', value: ''},
-          {name: 'server_port', value: ''},
-          {name: 'series_uids', value: ''},
-          {name: 'series_file', value: ''},
+          {name: 'aet',           value: ''},
+          {name: 'aec',           value: ''},
+          {name: 'aet_listener',  value: ''},
+          {name: 'server_ip',     value: ''},
+          {name: 'server_port',   value: ''},
+          {name: 'series_uids',   value: ''},
+          {name: 'series_file',   value: ''},
           {name: 'data_location', value: ''},
-          {name: 'previous', value: ''}
+          {name: 'previous',      value: ''}
         ];
 
 
 
-        data.body.data = {
-          aet: 'CHRIS-ULTRON-AET',
-          aec: 'CHRIS-ULTRON-AEC',
-          aet_listener: 'CHRIS-ULTRON-LIS',
-          server_ip: '192.168.1.39',
-          server_port: '4242',
-          series_uids: '0,1',
-          previous: this.previous
-        }
-
-        console.log( this.instances );
-        console.log( this.previous );
-
+        data.body.data = this.pacsSettings;
+        data.body.data['series_uids'] = '0,1';
+        data.body.data['previous']    = this.previous;
 
         var request = this.$.API.request( 'POST', this.instances, data);
         request

@@ -54,14 +54,14 @@ Chris app pacs-pull element!
       <div id="toolbar">
         <paper-tabs selected="{{selected}}">
           <paper-tab>Search</paper-tab>
-          <paper-tab>Results ([[query.length]])</paper-tab>
+          <paper-tab>Results ([[results.length]])</paper-tab>
         </paper-tabs>
       </div>
 
       <iron-pages selected="{{selected}}">
 
-        <pacs-find id="find" on-query-changed="_queryChanged" on-previous-changed="_previousChanged"></pacs-find>
-        <pacs-move id="move" query="[[query]]" previous="[[previous]]"></pacs-move>
+        <pacs-find id="find" instances="[[pacsqueryInstances]]" pacs-settings="[[pacsSettings]]" on-pacs-settings-changed="_pacsSettingsChanged" on-results-changed="_resultsChanged" on-previous-changed="_previousChanged"></pacs-find>
+        <pacs-move id="move" instances="[[pacsretrieveInstances]]" pacs-settings="[[pacsSettings]]" query="[[results]]" previous="[[previous]]"></pacs-move>
 
       </iron-pages>
 
@@ -84,13 +84,21 @@ Chris app pacs-pull element!
             value: 0
           },
 
-          query: {
+          results: {
             type: Array,
             value: []
           },
 
-          parameters: {
+          pacsSettings:{
             type: Object
+          },
+
+          pacsqueryInstances: {
+            type: String
+          },
+
+          pacsretrieveInstances: {
+            type: String
           }
 
         },
@@ -103,6 +111,16 @@ Chris app pacs-pull element!
 
           this.toolbar = this.$.toolbar;
 
+          // PACS Default settings
+          this.pacsSettings = {
+            aet: 'CHRIS-ULTRON-AET',
+            aec: 'CHRIS-ULTRON-AEC',
+            aet_listener: 'CHRIS-ULTRON-LIS',
+            data_location: '/tmp/host/data',
+            server_ip: '192.168.1.39',
+            server_port: '4242'
+          };
+
           // fetch pacsquery and pacsmove ids from the REST API
           //
           var data = {};
@@ -111,10 +129,8 @@ Chris app pacs-pull element!
             token: sessionStorage.getItem('token')
           };
 
-          // fetch the feeds
-          // color/icons/etc are BE or FE params?
-          // in the plugin args could be
-          var request =this.$.API.request('GET', 'plugins', data);
+          // fetch the plugins
+          var request = this.$.API.request('GET', 'plugins', data);
           request
             .then( this.handlePlugins.bind(this) )
             .catch( this.handleError.bind(this) );
@@ -125,18 +141,16 @@ Chris app pacs-pull element!
 
           for( var i = 0; i < response.data.length; i++ ){
 
-            console.log(response.data[i].data.name);
-            console.log(response.data[i].links.instances);
+            if( response.data[i].data.name === 'pacsquery' ){
 
-            if( response.data[i].data.name === 'pacsquery'){
-              console.log(response.data[i].links.instances);
-              this.$.find.instances = response.data[i].links.instances;
-              this.$.find.parameters = response.data[i].links.parameters
+              this.pacsqueryInstances = response.data[i].links.instances;
+
             }
 
-            if( response.data[i].data.name === 'pacsretrieve'){
-              this.$.move.instances = response.data[i].links.instances;
-              this.$.move.parameters = response.data[i].links.instances
+            if( response.data[i].data.name === 'pacsretrieve' ){
+
+              this.pacsretrieveInstances = response.data[i].links.instances;
+
             }
 
           }
@@ -150,34 +164,25 @@ Chris app pacs-pull element!
         },
 
         // because if so the callback is called at creation time.
-        _queryChanged: function( event ){
+        _resultsChanged: function( event ){
 
-          console.log( event );
-          this.query = event.detail;
+          this.results = event.detail;
           this.selected = 1;
 
         },
 
         _previousChanged: function( event ){
 
-          console.log( event );
           this.previous = event.detail;
 
         },
 
-        generateParameters: function(){
+        _pacsSettingsChanged: function( event ){
 
-          // get parameters
-          //
-          this.parameters = {
-            hello: 'from',
-            the: 'pacs_pull'
-          }
-
-          // let plugin-fs know the parameters are ready
-          this.fire( 'parameters-changed' );
+          this.set(event.detail.path, event.detail.value);
 
         }
+
     });
   </script>
 </dom-module>

@@ -109,9 +109,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             Polymer.dom( this.$.content ).removeChild( this.appElt );
             Polymer.dom( this.$.appToolbar ).removeChild( Polymer.dom(this.$.appToolbar).firstElementChild );
 
-            // remove event listener
-            this.appElt.removeEventListener( 'parameters-changed', this._createFeed );
-
             // remove reference if any
             this.appElt = null;
 
@@ -130,9 +127,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
               // attach toolbar
               Polymer.dom( this.$.appToolbar ).appendChild( this.appElt.toolbar );
 
-              // add event listener
-              this.appElt.addEventListener( 'parameters-changed', this._createFeed.bind( this ) );
-
             }.bind( this ),
 
             function( evt ){
@@ -147,71 +141,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _reset: function(){
 
           this.appElt.reset();
-
-        },
-
-        _getParamters: function(){
-
-          this.appElt.generateParameters();
-
-        },
-
-        _createFeed: function(){
-
-          // push to the API
-          // print plugin command line paramters
-
-          // feed created
-          // ask for feed ID # through API...
-          // call API to get feed
-          // the create plugin should return it to us...
-          this.feed = {};
-          this.feed.details = {
-            id: '', // will be overwritten
-            name: 'created by ' + this.app.name,
-            opened: false,
-            checked: false,
-            color: this.app.color,
-            favorite: false,
-            status: 'running',
-            tags: [],
-            selected: false,
-            letter: this.app.name.charAt(0).toUpperCase(),
-            date: ( new Date() ).toString()
-          }
-          this.feed.plugins = [{
-            label: this.app.name,
-            color: this.app.color,
-            id: 0,
-            parentID: 0,
-            depth: 0,
-            icon: 'icons:cloud-queue',
-            workflow: [{
-              color: this.app.color,
-              icon: 'icons:cloud-queue',
-              label: this.app.name
-            }]
-          }];
-          this.feed.comments = [];
-
-          this.feed.note = '\
-# Note about ' + this.app.data.name + '\n\
-\n\
----\n\
-### parameters\n\
-';
-
-        // add parameters to the note
-        var parametersKeys = Object.keys( this.appElt.parameters );
-        for( var i = 0; i < parametersKeys.length; i++ ){
-
-          var key = parametersKeys[i];
-          this.feed.note += '*' + key + '* : ' + this.appElt.parameters[key] + '\n\n';
-
-        }
-
-          // fire in X seconds to fake finished notification
-          this.fire('feed-changed');
 
         },
 
