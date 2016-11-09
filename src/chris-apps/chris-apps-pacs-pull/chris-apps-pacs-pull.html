@@ -2,6 +2,7 @@
 
 <!-- IRON ELEMENTS -->
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 
 <!-- PAPER ELEMENTS -->
@@ -13,13 +14,8 @@
 <link rel="import" href="../../chris-api/chris-api.html">
 
 <!-- BASE ELEMENTS -->
-<link rel="import" href="pacs-find.html">
-<link rel="import" href="pacs-move.html">
-
-<!--
-Chris app pacs-pull element!
-@demo demo/index.html
--->
+<link rel="import" href="pacs-query.html">
+<link rel="import" href="pacs-retrieve.html">
 
 <dom-module id="chris-apps-pacs-pull">
 
@@ -33,35 +29,21 @@ Chris app pacs-pull element!
 
       }
 
-      paper-tabs {
-
-        --paper-tabs-selection-bar-color: var(--accent-color);
-
-      }
-
-      paper-tab {
-
-        --paper-tab-ink: var(--accent-color);
-
-      }
-
     </style>
 
       <!-- API connection -->
       <chris-api id="API"></chris-api>
 
       <!-- Toolbar -->
-      <div id="toolbar">
-        <paper-tabs selected="{{selected}}">
-          <paper-tab>Search</paper-tab>
-          <paper-tab>Results ([[results.length]])</paper-tab>
-        </paper-tabs>
+      <div id="toolbar" style="width: 100%; display: flex;">
+        <span style="flex: 1;"></span>
+        <paper-button hidden$="[[_hideButton(page,searching)]]" on-tap="_pageChange"> <iron-icon icon="icons:arrow-back"></iron-icon> Back to search</paper-button>
       </div>
 
-      <iron-pages selected="{{selected}}">
+      <iron-pages selected="{{page}}">
 
-        <pacs-find id="find" instances="[[pacsqueryInstances]]" pacs-settings="[[pacsSettings]]" on-pacs-settings-changed="_pacsSettingsChanged" on-results-changed="_resultsChanged" on-previous-changed="_previousChanged"></pacs-find>
-        <pacs-move id="move" instances="[[pacsretrieveInstances]]" pacs-settings="[[pacsSettings]]" results="[[results]]" previous="[[previous]]"></pacs-move>
+        <pacs-find id="find" instances="[[pacsqueryInstances]]" pacs-settings="[[pacsSettings]]" on-pacs-settings-changed="_pacsSettingsChanged" on-results-changed="_resultsChanged" on-previous-changed="_previousChanged" on-searching-changed="_searchingChanged"></pacs-find>
+        <pacs-move id="move" instances="[[pacsretrieveInstances]]" pacs-settings="[[pacsSettings]]" results="[[results]]" previous="[[previous]]" searching="[[searching]]"></pacs-move>
 
       </iron-pages>
 
@@ -74,9 +56,15 @@ Chris app pacs-pull element!
 
           toolbar: HTMLElement,
 
-          selected: {
+          page: {
             type: Number,
-            value: 0
+            value: 0,
+            observer: '_pageChanged'
+          },
+
+          searching: {
+            type: Boolean,
+            value: false
           },
 
           previous: {
@@ -163,11 +151,10 @@ Chris app pacs-pull element!
 
         },
 
-        // because if so the callback is called at creation time.
         _resultsChanged: function( event ){
 
+          this.searching = false;
           this.results = event.detail;
-          this.selected = 1;
 
         },
 
@@ -177,10 +164,52 @@ Chris app pacs-pull element!
 
         },
 
+        _searchingChanged: function( event ){
+
+          this.searching = event.detail;
+          this.page = 1;
+
+        },
+
         _pacsSettingsChanged: function( event ){
 
           this.set(event.detail.path, event.detail.value);
 
+        },
+
+        _hideButton: function(page, searching){
+
+          // show if we areon page 1 and not searching
+          var show = (this.page === 1) && (!searching);
+
+          // else hide!
+          return !show;
+
+        },
+
+        _pageChange: function( value ){
+
+          if( typeof value === 'object'){
+
+            value = 0;
+
+          }
+
+          this.page = value;
+
+        },
+
+        _pageChanged: function(){
+
+          if( this.page === 0){
+
+            // clean up results
+            this.results = [];
+            this.previous = '';
+
+            // stop kill promise
+
+          }
         }
 
     });

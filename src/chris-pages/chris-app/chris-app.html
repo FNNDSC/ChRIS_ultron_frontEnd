@@ -60,7 +60,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(app.color)]]">
       <app-header fixed condenses effects="waterfall">
         <app-toolbar style$="[[_setToolbarStyle(app.color)]]">
-          <div main-title>[[app.data.label]]</div>
+          <div main-title>[[app.label]]</div>
           <a class="back" href="/home" on-tap="_reset">
             <paper-icon-button icon="icons:clear"></paper-icon-button>
           </a>
@@ -103,6 +103,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         _appChanged: function( ){
+
+          console.log( this.app );
 
           if( this.appElt ){
 
