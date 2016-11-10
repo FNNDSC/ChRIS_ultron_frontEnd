@@ -233,19 +233,9 @@
         return comments;
       },
 
-      plugins: function(){
+      deprecatedPlugins: function(){
 
         var plugins = [
-        {
-          name: "file-browser-plugin",
-          label: "File Browser",
-          color: "#03A9F4",
-          icon: "icons:folder-open",
-          dataview: {
-            name: 'file-browser-plugin-view',
-            src: 'data/file_browser/file_browser-view.html'
-          }
-        },
         {
           name: "pacs-pull-plugin",
           label: "Pacs Pull",
@@ -305,6 +295,28 @@
             name: 'pacs-pull-plugin-view',
             src: 'data/pacs_pull/pacs_pull-view.html'
           }
+        }];
+
+        return plugins;
+      },
+
+      plugins: function(){
+
+        var plugins = [
+        {
+          name: "pacsquery",
+          id: "0",
+          type: "fs"
+        },
+        {
+          name: "anotherplugin",
+          id: "1",
+          type: "ds"
+        },
+        {
+          name: "pacsretrieve",
+          id: "2",
+          type: "ds"
         }];
 
         return plugins;

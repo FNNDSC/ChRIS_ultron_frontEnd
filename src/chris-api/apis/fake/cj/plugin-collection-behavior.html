@@ -10,7 +10,7 @@
       cj.collection = {};
 
       // create the href field
-      cj.collection.href = this.apiRoot + '/' + '<feedID>/plugins';
+      cj.collection.href = this.apiRoot + '/plugins/';
 
       // create the template field
       cj.collection.template = {};
@@ -21,17 +21,23 @@
       var items = cj.collection.items;
 
       // generate random number of items
-      var plugins = this.generateFakeFlatPlugins( 3 );
+      var plugins = this.plugins();
 
       for( var i=0; i<plugins.length; i++ ){
 
         var item = {};
         //create the href field (will miss the feed id but OK)
-        item.href = this.apiRoot + '/<feedID>/plugins/' + i;
+        item.href = this.apiRoot + '/plugins/' + plugins[i].id + '/';
 
         // create the links field
         item.links = [];
+        var instances = {
+            rel: 'instances',
+            href: this.apiRoot + '/plugins/' + plugins[i].id + '/instances/'
+        }
+        item.links.push(instances);
 
+        // create the data field
         item.data = this.generateItemDataCJ( cj.collection.template.data, plugins[i] ).data;
         items.push(item);
 
@@ -39,47 +45,7 @@
 
       return cj;
 
-    },
-
-    generateFakeFlatPlugins: function( maxDepth ){
-
-      var plugins = [];
-      plugins.push( this.generatePlugin( null, 0, 0 ) );
-
-      var leaves = this.rGenerateFlatPlugins( plugins[0], 1, maxDepth );
-      plugins.push.apply( plugins, leaves );
-
-      return plugins;
-
-    },
-
-    rGenerateFlatPlugins: function( parent, depth, maxDepth ){
-
-      // random number of leaves between 0 and 3
-      var nbLeaves = Math.floor( Math.random( ) * 3 );
-      if(!nbLeaves){
-        return;
-      }
-
-      var leaves = [];
-
-
-      for( var i = 0; i<nbLeaves; i++ ){
-
-        // generate leave
-        var leave = this.generatePlugin( parent, i, depth );
-        leaves.push( leave );
-
-        if( depth <= maxDepth ){
-          var child = this.rGenerateFlatPlugins( leave, depth + 1, maxDepth );
-          leaves.push.apply( leaves, child );
-        }
-
-      }
-
-      return leaves;
-
-    },
+    }
 
   }
 </script>

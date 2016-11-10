@@ -1,0 +1,50 @@
+<script>
+  /** @polymerBehavior PluginInstanceCJ */
+  PluginInstanceCJ = {
+
+    pluginInstanceTemplate: function(){
+
+      var template = [
+        {'name' : 'status', 'value' : ''}
+      ];
+
+      return template;
+
+    },
+
+    generatePluginInstanceCJ: function( id ){
+
+      var cj = {};
+      cj.collection = {};
+
+      // create the href field
+      cj.collection.href = this.apiRoot + '/plugins/instances/' + id + '/';
+
+      // create the template field
+      cj.collection.template = {};
+      cj.collection.template.data = this.pluginInstanceTemplate();
+
+      // create the items field
+      cj.collection.items = [];
+
+      var feedID = Math.round( Math.random() * 100 );
+
+      data = {
+          status: feedID < 10 ? 'started' : 'finishedSuccessfully'
+      };
+
+      var item = this.generateItemDataCJ( cj.collection.template.data, data );
+      item.href = this.apiRoot + '/plugins/instances/' + id + '/';
+      item.links = [{
+          rel: 'feed',
+          href: this.apiRoot + '/' + feedID + '/'
+      }];
+
+      cj.collection.items.push( item );
+
+      return cj;
+
+    }
+
+  }
+</script>

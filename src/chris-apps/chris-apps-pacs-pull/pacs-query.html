@@ -1,0 +1,469 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- IRON ELEMENTS -->
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<!-- EXTERNAL ELEMENTS -->
+<script src="https://cdn.vaadin.com/vaadin-core-elements/latest/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+<link rel="import" href="../../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../../chris-api/chris-api.html">
+
+<dom-module id="pacs-find">
+
+  <template>
+    <style>
+
+      host {
+
+        display: block;
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      .content {
+
+        background-color: var(--paper-grey-50);
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
+
+      }
+
+      .item {
+
+        @apply(--layout-horizontal);
+        padding: 10px 72px;
+
+      }
+
+      .group {
+
+        @apply(--layout-vertical);
+        position: relative;
+        padding: 8px 0;
+
+      }
+
+      .name {
+
+        font-size: 18px;
+        font-weight: 400;
+        color: #737373;
+
+      }
+
+      .submit {
+
+        padding: 16px;
+        font-size: 18px;
+        font-weight: 400;
+        background-color: var(--accent-color);
+        color: #ffffff;
+        margin-top: 24px;
+
+      }
+
+      .tool {
+
+        @apply(--layout-horizontal);
+        cursor: pointer;
+        /*padding: 8px 14px;*/
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+      }
+
+      paper-textarea {
+
+        width: 100%;
+
+      }
+
+      paper-input {
+
+        width: 100%;
+
+      }
+
+      .flex {
+
+        @apply(--layout-flex);
+        @apply(--layout-horizontal);
+        align-items: center;
+        justify-content: flex-start;
+
+      }
+
+      .labelContainer, vaadin-date-picker {
+
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        height: 100%;
+
+      }
+
+      .label {
+
+        font: inherit;
+        color: #737373;
+        -webkit-transition: -webkit-transform 0.25s, width 0.25s;
+        transition: transform 0.25s, width 0.25s;
+        -webkit-transform-origin: left top;
+        transform-origin: left top;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        align-self: flex-end;
+
+      }
+
+    </style>
+
+    <!-- API connection -->
+    <chris-api id="API"
+      error="{{error}}">
+    </chris-api>
+
+    <div class="content">
+
+      <div class="group">
+
+        <div class="name tool" on-tap="_toggleSimple">Simple search <div class="spacer"></div> <paper-icon-button id="simpleIcon" icon="icons:expand-less"></paper-icon-button></div>
+
+        <iron-collapse id="simple" opened>
+
+          <div class="item large">
+            <div class="flex">
+              <paper-textarea id="patientids" label='Patient IDs' value="{{patientID}}"></paper-textarea>
+              <paper-tooltip>Tooltip text</paper-tooltip>
+            </div>
+          </div>
+
+        </iron-collapse>
+
+      </div>
+
+      <div class="group">
+
+        <div class="name tool" on-tap="_toggleAdvanced">Advanced search <div class="spacer"></div> <paper-icon-button id="advancedIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+        <iron-collapse id="advanced">
+
+          <div class="item large">
+
+            <div class="flex">
+
+              <div class="labelContainer">
+                <div class="label">Study date</div>
+              </div>
+
+              <vaadin-date-picker label="From" value="{{startDate}}" max="[[endDate]]"></vaadin-date-picker>
+              <vaadin-date-picker label="To" value="{{endDate}}" min="[[startDate]]"></vaadin-date-picker>
+
+            </div>
+
+          </div>
+
+        </iron-collapse>
+
+      </div>
+
+
+      <div class="group">
+
+        <div class="name tool" on-tap="_toggleSettings">PACS settings <div class="spacer"></div> <paper-icon-button id="settingsIcon" icon="icons:expand-more"></paper-icon-button></div>
+
+        <iron-collapse id="settings">
+
+          <div class="item large">
+            <div class="flex">
+              <paper-input label="PACS Server IP" value="{{pacsSettings.server_ip}}"></paper-input>
+            </div>
+          </div>
+
+          <div class="item large">
+            <div class="flex">
+              <paper-input label="PACS Server Port" value="{{pacsSettings.server_port}}"></paper-input>
+            </div>
+          </div>
+
+          <div class="item large">
+            <div class="flex">
+              <paper-input label="AET" value="{{pacsSettings.aet}}"></paper-input>
+            </div>
+          </div>
+
+          <div class="item large">
+            <div class="flex">
+              <paper-input label="AEC" value="{{pacsSettings.aec}}"></paper-input>
+            </div>
+          </div>
+
+        </iron-collapse>
+
+      </div>
+
+      <paper-button class="submit" raised on-tap="_find">Search on the PACS</paper-button>
+
+    </div>
+
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'pacs-find',
+
+      properties: {
+
+        instances: {
+          type: String
+        },
+
+        pacsSettings: {
+          type: Object
+        },
+
+        patientID: {
+          type: String,
+          value: ''
+        },
+
+        studyDate: {
+          type: String,
+          value: ''
+        }
+
+      },
+
+
+      _toggleAdvanced: function(){
+
+        this.$.advanced.toggle();
+        this.$.advancedIcon.icon = this.$.advanced.opened ? 'icons:expand-less' : 'icons:expand-more';
+
+      },
+
+      _toggleSimple: function(){
+
+        this.$.simple.toggle();
+        this.$.simpleIcon.icon = this.$.simple.opened ? 'icons:expand-less' : 'icons:expand-more';
+
+      },
+
+      _toggleSettings: function(){
+
+        this.$.settings.toggle();
+        this.$.settingsIcon.icon = this.$.settings.opened ? 'icons:expand-less' : 'icons:expand-more';
+
+      },
+
+      _find: function(){
+
+        // get data for pacs find
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        //
+        data.body = {};
+        data.body.template = {};
+        data.body.template.data = [
+          {name: 'aet', value: ''},
+          {name: 'aec', value: ''},
+          {name: 'server_ip', value: ''},
+          {name: 'server_port', value: ''},
+          {name: 'modalities_in_study', value: ''},
+          {name: 'patient_name', value: ''},
+          {name: 'patient_sex', value: ''},
+          {name: 'patient_id', value: ''},
+          {name: 'study_description', value: ''},
+          {name: 'study_date', value: ''},
+          {name: 'series_description', value: ''},
+          {name: 'performed_station_aet', value: ''}
+        ];
+
+
+
+        data.body.data = this.pacsSettings;
+        data.body.data['patient_id'] = this.patientID;
+        data.body.data['study_date'] = this.studyDate;
+
+        var request = this.$.API.request( 'POST', this.instances, data );
+        request
+          .then( this.handlePacsQuery.bind(this) )
+          .then( this.waitUntilFinished.bind(this) )
+          .then( this.getFeedFiles.bind(this) )
+          .then( this.handleFeedFiles.bind(this) )
+          .then( this.getFileContent.bind(this) )
+          .then( this.handleFileContent.bind(this) )
+          .catch( this.handlePacsQueryError.bind(this) );
+          
+          //
+          this.fire( 'searching-changed', true );
+
+      },
+
+      handlePacsQuery: function( response ){
+
+        let p1 = new Promise(
+
+           function(resolve, reject){
+             window.setTimeout(
+               function(){resolve(response)},
+                  1000
+              );
+
+           }
+
+        );
+
+        return p1;
+        
+
+      },
+
+      waitUntilFinished: function( response ){
+
+        console.log( response );
+
+        // new feed
+        let data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem( 'token' )
+        };
+
+        //
+        this.fire( 'previous-changed', response.data[0].data.id );
+
+        let waitPromise = new Promise(
+
+           (resolve, reject) => {
+
+             var remaningAttemps = 6;
+
+             function run(){
+              //
+              this.$.API.request( 'GET', response.data[0].href , data ).
+              then( ( response2 ) => {
+                // check depdending on status
+                console.log( response2 );
+                if( remaningAttemps < 5 && response2.data[0].data.status === 'finishedSuccessfully'){
+
+                  resolve(response2);
+
+                }
+                else{
+                  remaningAttemps--;
+                  if( remaningAttemps <= 0){
+                    reject(response2);
+                  }
+                  else{
+                    setTimeout(run, 1000);
+                  }
+                  
+
+                }
+                
+              });
+             }
+
+             run = run.bind(this);
+             run();
+
+           }
+
+
+        );
+
+        return waitPromise;
+
+      },
+
+      getFeedFiles: function( response ){
+
+        console.log( response );
+
+        let feed = response.data[0].links.feed;
+
+        console.log(`FEED: ${feed}`);
+
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        return this.$.API.request( 'GET', feed + 'files/', data );
+
+      },
+
+      handleFeedFiles: function( response ){
+
+        return response.data[0].links.file_resource;
+
+      },
+
+      getFileContent: function( file ){
+
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        return this.$.API.request( 'GET', file, data );
+
+      },
+
+      handleFileContent: function( response ){
+
+        console.log( response );
+
+        this.fire( 'results-changed', response.data );
+
+        return 'Done'
+
+      },
+
+      handlePacsQueryError: function( response ){
+
+        console.log( 'error:' + response );
+
+      }
+
+    });
+
+  </script>
+
+</dom-module>

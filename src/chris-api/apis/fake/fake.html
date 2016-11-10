@@ -3,9 +3,12 @@
 <link rel="import" href="cj/comment-behavior.html">
 <link rel="import" href="cj/feed-collection-behavior.html">
 <link rel="import" href="cj/feed-behavior.html">
+<link rel="import" href="cj/file-collection-behavior.html">
+<link rel="import" href="cj/file-behavior.html">
 <link rel="import" href="cj/note-behavior.html">
 <link rel="import" href="cj/pacsquery-behavior.html">
 <link rel="import" href="cj/plugin-collection-behavior.html">
+<link rel="import" href="cj/plugin-instance-behavior.html">
 <link rel="import" href="cj/plugin-behavior.html">
 <link rel="import" href="cj/tag-collection-behavior.html">
 <link rel="import" href="cj/tag-behavior.html">
@@ -20,9 +23,12 @@
       CommentCJ,
       FeedCollectionCJ,
       FeedCJ,
+      FileCollectionCJ,
+      FileCJ,
       NoteCJ,
       PacsqueryCJ,
       PluginCollectionCJ,
+      PluginInstanceCJ,
       PluginCJ,
       TagCollectionCJ,
       TagCJ
@@ -44,7 +50,20 @@
           target = target.replace(isFeedRegex, '/feed/');
         }
 
-        return 'data/' + target + '.json';
+        // HIJACK GET FILE NAME
+        if(/^\/data\//.test(target)){
+
+          console.log( target );
+
+          return target;
+
+        }
+        else{
+
+          return 'data/' + target + '.json';
+
+        }
+        
 
       },
 
@@ -62,6 +81,15 @@
             break;
         }
 
+        // if targetting raw data
+        if(/^\/data\//.test(target)){
+
+          console.log( target );
+
+          return response;
+
+        }
+        
         //
         var itemCJ = {};
 
@@ -88,15 +116,90 @@
         }
         else if( this.method === 'GET' && target === 'plugins' ){
 
+          console.log( target );
+
           itemCJ = this.generatePluginCollectionCJ();
 
+          console.log( itemCJ );
+
         }
+
+        window.console.log( target );
+
+        // url pattern: /plugins/instances/<id>
+        if( this.method === 'GET' && /^\/plugins\/instances\/(\d+)\//.test(target) ){
+
+          var id = Number( target.match(/\d+/)['0'] );
+          itemCJ = this.generatePluginInstanceCJ( id );
+
+        }
+
+        // url pattern: /<id>/files/
+        if( this.method === 'GET' && /^\/(\d+)\/files\//.test(target) ){
+          
+          window.console.log( target );
+          window.console.log( target.match(/\d+/)['0'] );
+          var id = Number( target.match(/\d+/)['0'] );
+          window.console.log( id );
+          itemCJ = this.generateFileCollectionCJ( id, params );
+
+          window.console.log( itemCJ );
+
+        }
+
+        // get file data
+        // this.$.API.request( 'GET', file, data );
+        // hijack file name :D
 
         // Simulate POST/PUT
         if( this.method !== 'GET' ){
 
           itemCJ.collection = {};
           itemCJ.collection.href = target;
+          itemCJ.collection.items = [{
+            data: [],
+            href: '',
+            links: []
+          }];
+
+          // url pattern: /plugins/<number>/instances/
+          if( /^\/plugins\/(\d+)\/instances\//.test(target) ){
+
+            // extract plugin ID from string
+            var id = Number( target.match(/\d+/)['0'] );
+
+            function pluginSelected( value ){
+              return Number( value['id'] ) ===  id;
+            }
+
+            var plugins = this.plugins();
+            var plugin = plugins.filter( pluginSelected )[0];
+
+            switch( plugin.name ){
+              case 'pacsquery':
+              case 'pacsretrieve':
+                  var pluginInstanceID = Math.round( Math.random() * 100 );
+                  itemCJ.collection.items[0].data = [
+                    {
+                      name: 'id',
+                      value: pluginInstanceID
+                    },
+                    {
+                      name: 'plugin_name',
+                      value: plugin.name
+                    },
+                    {
+                      name: 'owner',
+                      value: 'chris'
+                    }];
+                  itemCJ.collection.items[0].href = this.apiRoot + '/plugins/instances/' + pluginInstanceID + '/';
+                  break;
+              default:
+                  break;
+
+            }
+
+          }
 
         }
 

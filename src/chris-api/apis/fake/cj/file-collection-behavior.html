@@ -1,0 +1,42 @@
+<script>
+  /** @polymerBehavior FileCollectionCJ */
+  FileCollectionCJ = {
+
+    generateFileCollectionCJ: function( feedid, parameters ){
+
+      window.console.log('in');
+
+      // create a collection of 1 for now....
+      var cj = {};
+      cj.collection = {};
+
+      // create the href field
+      cj.collection.href = this.apiRoot + '/' + feedid + '/files/';
+
+      // create the template field
+      cj.collection.template = {};
+      cj.collection.template.data = this.fileTemplate();
+
+      // create the items field
+      cj.collection.items = [];
+
+      var fileId = 0;
+      var target = 'pacsquery';
+
+      var item = {};
+      item.data = [];
+      item.href = this.apiRoot + '/' + feedid + '/files/' + fileId + '/';
+      item.links = [{
+          rel: 'file_resource',
+          href: this.apiRoot + '/data/' + target + '.json'
+      }];
+
+      cj.collection.items.push( item );
+
+      window.console.log('out');
+
+      return cj;
+    }
+
+  }
+</script>
