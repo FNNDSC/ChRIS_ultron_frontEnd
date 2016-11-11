@@ -42,8 +42,25 @@
 
       <iron-pages selected="{{page}}">
 
-        <pacs-find id="find" instances="[[pacsqueryInstances]]" pacs-settings="[[pacsSettings]]" on-pacs-settings-changed="_pacsSettingsChanged" on-results-changed="_resultsChanged" on-previous-changed="_previousChanged" on-searching-changed="_searchingChanged"></pacs-find>
-        <pacs-move id="move" instances="[[pacsretrieveInstances]]" pacs-settings="[[pacsSettings]]" results="[[results]]" previous="[[previous]]" searching="[[searching]]"></pacs-move>
+        <pacs-find
+          id="find"
+          instances="[[pacsqueryInstances]]"
+          pacs-settings="[[pacsSettings]]"
+          on-pacs-settings-changed="_pacsSettingsChanged"
+          on-results-changed="_resultsChanged"
+          on-previous-changed="_previousChanged"
+          on-searching-changed="_searchingChanged"
+          on-feedid-changed="_feedIdChanged">
+        </pacs-find>
+
+        <pacs-move
+          id="move"
+          instances="[[pacsretrieveInstances]]"
+          pacs-settings="[[pacsSettings]]"
+          results="[[results]]"
+          previous="[[previous]]"
+          searching="[[searching]]"
+          on-add-feed="_addFeed"></pacs-move>
 
       </iron-pages>
 
@@ -60,6 +77,11 @@
             type: Number,
             value: 0,
             observer: '_pageChanged'
+          },
+
+          feedid: {
+            type: Number,
+            value: -1
           },
 
           searching: {
@@ -210,6 +232,46 @@
             // stop kill promise..?
 
           }
+        },
+
+        _addFeed: function( event ){
+
+          //
+          event.preventDefault();
+          event.stopPropagation();
+
+          // create the feed:
+          let feed = {
+            data: {
+              color: '#353535',
+              date: 'I am the date',
+              favorite: false,
+              id: this.feedid,
+              letter: 'P',
+              name: 'chris',
+              status: 'finishedSuccessfully',
+              tags: []
+            },
+            href: '/' + this.feedid,
+            links: {
+              comments: '/' + this.feedid + '/comments/',
+              note: '/' + this.feedid + '/note/',
+              plugins: '/' + this.feedid + '/plugins/'
+            }
+          }
+
+          // fire new add-event 
+          this.fire('add-feed', feed);
+          this.fire('exit-app');
+
+        },
+
+        _feedIdChanged: function( event ){
+
+          event.preventDefault();
+          let feedID = event.detail;
+          this.feedid = feedID;
+
         }
 
     });

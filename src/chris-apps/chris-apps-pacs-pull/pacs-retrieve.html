@@ -503,16 +503,14 @@
           .then( this.handleRetrieve.bind(this) )
           .catch( this.handleRetrieveError.bind(this) );
 
-        // this.reset();
-        // go pacs retrieve
-        // 1- post + update optimistic results
-
       },
 
       handleRetrieve: function( response ){
 
         console.log( 'retrieve returned' );
         console.log( response );
+
+        this.fire('add-feed');
 
       },
 

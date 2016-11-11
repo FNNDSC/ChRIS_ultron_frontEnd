@@ -12,7 +12,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../../bower_components/app-route/app-location.html">
 
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
@@ -107,9 +106,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </style>
 
     <div id="home">
-
-      <!-- Route -->
-      <app-location route="{{route}}"></app-location>
 
       <!-- API Calls -->
       <chris-api id="FeedsAPI" error="{{error}}"></chris-api>
@@ -326,13 +322,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         // set the plugin FS
         if( event ){
 
-          console.log( event.model.__data__.item );
-
           this.set( 'app', event.model.__data__.item );
 
-          // update route
-          this.set('route.path', '/app/' + event.model.__data__.item.name);
-
+          this.fire('change-route', '/app/' + event.model.__data__.item.name);
+  
         }
 
       },
@@ -351,7 +344,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('token');
 
-        this.set('route.path', '/login');
+        this.fire('change-route', '/login');
 
       }
 

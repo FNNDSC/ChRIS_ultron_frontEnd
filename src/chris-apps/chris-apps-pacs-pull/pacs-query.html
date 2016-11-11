@@ -415,8 +415,12 @@
         console.log( response );
 
         let feed = response.data[0].links.feed;
+        let id = Number( feed.match(/\d+/)['0'] );
+
+        this.fire('feedid-changed', id);
 
         console.log(`FEED: ${feed}`);
+        // need to push feed id to pacs-pull app
 
         var data = {};
         data.auth = {

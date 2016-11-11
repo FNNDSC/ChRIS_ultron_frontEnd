@@ -7,9 +7,10 @@
 
 <!-- PAPER ELEMENTS -->
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html"> 
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
-<!-- <link rel="import" href="../../../bower_components/paper-menu/paper-menu.html"> -->
-<!-- <link rel="import" href="../../../bower_components/paper-menu-button/paper-menu-button.html"> -->
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html"> 
+<link rel="import" href="../../../bower_components/paper-menu-button/paper-menu-button.html"> 
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
@@ -34,7 +35,7 @@
       .feed {
 
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         width:100%;
 
       }
@@ -118,10 +119,9 @@
       .title-area {
 
         width:100%;
-        flex: 0;
         padding: 8px 16px;
         box-sizing: border-box;
-        color: #fff;
+        color: var(--primary-text-color);
 
       }
 
@@ -149,13 +149,13 @@
 
       .tag {
 
-        opacity: 0.5;
+        /*opacity: 0.5;*/
 
       }
 
       .tag:hover {
 
-        opacity: 1;
+        /*opacity: 1;*/
 
       }
 
@@ -164,12 +164,14 @@
 
       .actions-area {
 
-          flex: 0;
+        /*display:none;*/
+
           color: var(--primary-text-color);
           padding: 0 16px;
           box-sizing: border-box;
           width: 100%;
-          border-top: 1px solid var(--divider-color);
+          text-align: right;
+          /*border-top: 1px solid var(--divider-color);*/
 
         }
 
@@ -247,7 +249,7 @@
       </div>
 
       <!-- Tags area -->
-      <div class="tags-area">
+      <!--<div class="tags-area">
 
           <template is="dom-repeat" items="[[_validateTags(feed.data.tags)]]">
 
@@ -255,7 +257,7 @@
 
           </template>
 
-      </div>
+      </div>-->
 
       <!-- Actions Area -->
       <div class="actions-area" on-tap="_blockEvents">
@@ -263,13 +265,26 @@
         <paper-checkbox class="checkbox" checked="{{checked}}"></paper-checkbox>
 
         <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
-        <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
         <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.data.favorite)]]" on-tap="favorite"></paper-icon-button>
         <!--<paper-icon-button id="status" icon$="[[_setStatusIcon(feed.data.status)]]" class$="[[feed.data.status]]" disabled></paper-icon-button>-->
 
-        <paper-tooltip for="share" offset="0">Share</paper-tooltip>
+        <!--<paper-tooltip for="share" offset="0">Share</paper-tooltip>
         <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
-        <paper-tooltip for="favorite" offset="0">Favorite</paper-tooltip>
+        <paper-tooltip for="favorite" offset="0">Favorite</paper-tooltip>-->
+
+        <paper-menu-button>
+          <paper-icon-button icon="icons:label-outline" class="dropdown-trigger"></paper-icon-button>
+
+          <paper-menu class="dropdown-content">
+
+            <template is="dom-repeat" items="[[_validateTags(feed.data.tags)]]">
+
+              <paper-item class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></paper-item>
+
+            </template>
+
+          </paper-menu>
+        </paper-menu-button>
 
       </div>
 
@@ -397,7 +412,7 @@
 
         _setBackgroundStyle: function( color ){
 
-          return 'background-color: ' + color + ';';
+          return 'border-left: 2px solid ' + color + ';';
 
         },
 

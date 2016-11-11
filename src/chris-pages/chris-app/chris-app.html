@@ -61,16 +61,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       <app-header fixed condenses effects="waterfall">
         <app-toolbar style$="[[_setToolbarStyle(app.color)]]">
           <div main-title>[[app.label]]</div>
-          <a class="back" href="/home" on-tap="_reset">
-            <paper-icon-button icon="icons:clear"></paper-icon-button>
-          </a>
+          <paper-icon-button icon="icons:clear" on-tap="_exit"></paper-icon-button>
         </app-toolbar>
         <app-toolbar id="appToolbar" style$="[[_setToolbarStyle(app.color)]]" sticky>
 
         </app-toolbar>
       </app-header>
 
-      <div id="content" class="content">
+      <div id="content" class="content" on-exit-app="_exit">
       </div>
 
     </app-header-layout>
@@ -140,9 +138,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             true );
         },
 
-        _reset: function(){
+        _exit: function(){
 
+          // reset the app state
           this.appElt.reset();
+
+          // go to home page
+          this.fire('change-route', '/home');
 
         },
 
