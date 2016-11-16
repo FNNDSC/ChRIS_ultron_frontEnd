@@ -7,7 +7,27 @@
 
 </head><body><dom-module id="app-drawer-layout">
   <template>
-    <style>:host{display:block;}:host([fullbleed]){@apply (--layout-fit);}#contentContainer{position:relative;height:100%;transition:var(--app-drawer-layout-content-transition, none);}#contentContainer:not(.narrow) > ::content [drawer-toggle]{display:none;}</style>
+    <style>
+      :host {
+        display: block;
+      }
+
+      :host([fullbleed]) {
+        @apply(--layout-fit);
+      }
+
+      #contentContainer {
+        position: relative;
+
+        height: 100%;
+
+        transition: var(--app-drawer-layout-content-transition, none);
+      }
+
+      #contentContainer:not(.narrow) > ::content [drawer-toggle] {
+        display: none;
+      }
+    </style>
 
     <div id="contentContainer">
       <content select=":not(app-drawer)"></content>

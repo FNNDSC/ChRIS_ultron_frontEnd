@@ -1,0 +1,122 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="vaadin-date-picker-helper.html">
+
+</head><body><dom-module id="vaadin-month-calendar">
+  <template>
+    <style>
+      :host {
+        display: block;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        font: inherit;
+        @apply(--paper-font-common-base);
+        @apply(--vaadin-date-picker-calendar);
+      }
+
+      #title {
+        color: var(--primary-text-color);
+        text-align: center;
+        padding: 6px 0;
+        @apply(--paper-font-subhead);
+        @apply(--vaadin-date-picker-calendar-title);
+      }
+
+      #monthGrid {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      #monthGrid div {
+        text-align: center;
+        width: calc(14.285714286% - 2px);
+        margin: 0 1px;
+        box-sizing: border-box;
+        padding: 6px 0;
+        @apply(--paper-font-body1);
+        @apply(--vaadin-date-picker-calendar-cell);
+      }
+
+      :host([week-numbers]) #monthGrid div {
+        width: calc(12.5% - 2px);
+      }
+
+      #monthGrid div:not(:empty) {
+        cursor: pointer;
+        color: var(--primary-text-color);
+        @apply(--vaadin-date-picker-calendar-date-cell);
+      }
+
+      #monthGrid div.weekday {
+        text-transform: uppercase;
+        color: var(--secondary-text-color);
+        cursor: default;
+        padding: 8px 0;
+        @apply(--paper-font-caption);
+        @apply(--vaadin-date-picker-calendar-weekday-cell);
+      }
+
+      #monthGrid div.weekday:empty,
+      #monthGrid div.weeknumber {
+        width: calc(10% - 2px);
+        padding-right: 1.25%;
+      }
+
+      #monthGrid div[today] {
+        position: relative;
+        color: var(--primary-color);
+        @apply(--vaadin-date-picker-calendar-cell-today);
+      }
+
+      #monthGrid div[today][selected] {
+        color: var(--dark-theme-text-color);
+        @apply(--vaadin-date-picker-calendar-cell-today-selected);
+      }
+
+      #monthGrid div[focused] {
+        background: var(--light-primary-color);
+        box-sizing: border-box;
+        border-radius: 2px;
+        @apply(--vaadin-date-picker-calendar-cell-focused);
+      }
+
+      #monthGrid div[selected] {
+        color: var(--light-primary-color);
+        background: var(--primary-color);
+        box-sizing: border-box;
+        border-radius: 2px;
+        @apply(--vaadin-date-picker-calendar-cell-selected);
+      }
+
+      #monthGrid div[disabled] {
+        opacity: 0.3;
+        cursor: default;
+        @apply(--vaadin-date-picker-calendar-cell-disabled);
+      }
+
+      #monthGrid div.weeknumber {
+        cursor: default;
+        color: rgba(0, 0, 0, 0.4);
+        @apply(--paper-font-caption);
+        @apply(--vaadin-date-picker-calendar-weeknumber-cell);
+      }
+    </style>
+
+    <div id="title" role="heading">[[_getTitle(month, i18n.monthNames)]]</div>
+    <div id="monthGrid" on-tap="_handleTap" on-touchend="_preventDefault" on-touchstart="_onMonthGridTouchStart">
+      <template is="dom-repeat" items="[[_getWeekDayNames(i18n.weekdays, i18n.weekdaysShort, showWeekNumbers, i18n.firstDayOfWeek)]]">
+        <div class="weekday" role="heading" aria-label$="[[item.weekDay]]">[[item.weekDayShort]]</div>
+      </template>
+      <template is="dom-repeat" items="[[_days]]">
+        <template is="dom-if" if="[[_showWeekSeparator(showWeekNumbers, i18n.firstDayOfWeek, index)]]">
+          <div class="weeknumber" role="heading" aria-label$="[[i18n.week]] [[_getWeekNumber(item, _days)]]">[[_getWeekNumber(item, _days)]]</div>
+        </template>
+        <div today$="[[_isToday(item)]]" selected$="[[_dateEquals(item, selectedDate)]]" focused$="[[_dateEquals(item, focusedDate)]]" date="[[item]]" disabled$="[[!_dateAllowed(item, minDate, maxDate)]]" role$="[[_getRole(item)]]" aria-label$="[[_getAriaLabel(item)]]" aria-disabled$="[[_getAriaDisabled(item, minDate, maxDate)]]">[[_getDate(item)]]</div>
+      </template>
+    </div>
+  </template>
+  <script>Polymer({is:"vaadin-month-calendar",properties:{month:{type:Date,value:new Date},selectedDate:{type:Date,notify:!0},focusedDate:Date,showWeekNumbers:{type:Boolean,value:!1},i18n:{type:Object},ignoreTaps:Boolean,_notTapping:Boolean,minDate:{type:Date,value:null},maxDate:{type:Date,value:null},_days:{type:Array,computed:"_getDays(month, i18n.firstDayOfWeek, minDate, maxDate)"}},observers:["_showWeekNumbersChanged(showWeekNumbers, i18n.firstDayOfWeek)"],_getTitle:function(e,t){return this.i18n.formatTitle(t[e.getMonth()],e.getFullYear())},_dateEquals:vaadin.elements.datepicker.DatePickerHelper._dateEquals,_onMonthGridTouchStart:function(){this._notTapping=!1,this.async(function(){this._notTapping=!0},300)},_dateAdd:function(e,t){e.setDate(e.getDate()+t)},_applyFirstDayOfWeek:function(e,t){return e.slice(t).concat(e.slice(0,t))},_getWeekDayNames:function(e,t,a,n){return e=this._applyFirstDayOfWeek(e,n),t=this._applyFirstDayOfWeek(t,n),e=e.map(function(e,a){return{weekDay:e,weekDayShort:t[a]}}),a&&1===n&&e.unshift({weekDay:"",weekDayShort:""}),e},_getDate:function(e){return e?e.getDate():""},_showWeekNumbersChanged:function(e,t){this.toggleAttribute("week-numbers",e&&1===t)},_showWeekSeparator:function(e,t,a){return e&&1===t&&a%7===0},_isToday:function(e){return this._dateEquals(new Date,e)},_getDays:function(e,t,a,n){var i=new Date(0,0);for(i.setFullYear(e.getFullYear()),i.setMonth(e.getMonth()),i.setDate(1);i.getDay()!==t;)this._dateAdd(i,-1);for(var r=[],o=i.getMonth(),s=e.getMonth();i.getMonth()===s||i.getMonth()===o;)r.push(i.getMonth()===s?new Date(i.getTime()):null),this._dateAdd(i,1);return r},_getWeekNumber:function(e,t){return e||(e=t.reduce(function(e,t){return!e&&t?t:e})),vaadin.elements.datepicker.DatePickerHelper._getISOWeekNumber(e)},_handleTap:function(e){this.ignoreTaps||this._notTapping||!e.target.date||e.target.hasAttribute("disabled")||(this.selectedDate=e.target.date,this.fire("date-tap"))},_preventDefault:function(e){e.preventDefault()},_dateAllowed:vaadin.elements.datepicker.DatePickerHelper._dateAllowed,_getRole:function(e){return e?"button":"presentational"},_getAriaLabel:function(e){if(!e)return"";var t=this._getDate(e)+" "+this.i18n.monthNames[e.getMonth()]+" "+e.getFullYear()+", "+this.i18n.weekdays[e.getDay()];return this._isToday(e)&&(t+=", "+this.i18n.today),t},_getAriaDisabled:function(e,t,a){return this._dateAllowed(e,t,a)?"false":"true"}});</script>
+</dom-module>
+</body></html>

@@ -7,7 +7,18 @@
 
 </head><body><dom-module id="paper-fab-speed-dial">
   <template>
-    <style>:host .vertical ::content .dropdown-content{@apply (--layout-vertical);}:host .horizontal ::content .dropdown-content{@apply (--layout-horizontal);}:host ::content .dropdown-content > *{margin:8px;@apply (--paper-fab-speed-dial-option);}</style>
+    <style>
+      :host .vertical ::content .dropdown-content {
+        @apply(--layout-vertical);
+      }
+      :host .horizontal ::content .dropdown-content {
+        @apply(--layout-horizontal);
+      }
+      :host ::content .dropdown-content > * {
+        margin: 8px;
+        @apply(--paper-fab-speed-dial-option);
+      }
+    </style>
     <content id="fabContainer" select=".dropdown-trigger"></content>
     <iron-dropdown id="dropdown" open-animation-config="[[openAnimationConfig]]" close-animation-config="[[closeAnimationConfig]]">
       <content id="contentContainer" select=".dropdown-content"></content>

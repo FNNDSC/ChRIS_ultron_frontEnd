@@ -20,7 +20,128 @@
 
   <template>
 
-    <style>.plugin{}.toolbar{@apply (--layout-horizontal);@apply (--layout-center);@apply (--layout-wrap);padding:16px;font-size:24px;font-weight:400;color:#737373;}.title{margin-left:8px;}.spacer{@apply (--layout-flex);}paper-icon-button{}paper-icon-button.iron-selected{color:var(--accent-color);}iron-selector{border-bottom:1px solid var(--accent-color);color:var(--secondary-text-color);}.content{}paper-card{width:800px;}@media (max-width: 800px){paper-card{width:100%;}}paper-card{color:var(--primary-text-color);--paper-card-header-color:var(--secondary-text-color);--paper-card-background-color:var(--paper-grey-100);background:var(--paper-grey-100);}paper-card .header{border-bottom:1px solid rgba(0, 0, 0, 0.1);padding:8px 0;}paper-fab-speed-dial{z-index:10;position:fixed;bottom:16px;right:16px;}paper-fab#create{--paper-fab-background:var(--accent-color);}</style>
+    <style>
+
+      .plugin{
+
+        /*background-color: white;*/
+
+      }
+
+      .toolbar{
+
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+        
+        padding: 16px;
+        font-size: 24px;
+        font-weight: 400;
+        color: #737373;
+
+      }
+
+      .title{
+
+        margin-left:8px;
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      paper-icon-button{
+
+        /*--paper-icon-button-ink-color: var(--paper-grey-300);*/
+
+      }
+
+      paper-icon-button.iron-selected{
+
+        color: var(--accent-color);
+
+      }
+
+      iron-selector{
+
+        border-bottom: 1px solid var(--accent-color);
+        color: var(--secondary-text-color);
+
+      }
+
+      .content {
+
+/*
+        padding: 20px;
+        display: block;*/
+
+      }
+
+
+/*      .dataview{
+
+        display:none;
+
+      }
+
+      .dataview.iron-selected{
+
+        display: block;
+
+      }*/
+
+      paper-card {
+
+        width: 800px;
+
+      }
+
+      @media (max-width: 800px) {
+
+        paper-card {
+
+          width: 100%;
+
+        }
+
+      }
+
+      paper-card{
+
+        color: var(--primary-text-color);
+        --paper-card-header-color: var(--secondary-text-color);
+        --paper-card-background-color: var(--paper-grey-100);
+        background: var(--paper-grey-100);
+
+      }
+
+      paper-card .header{
+
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 8px 0;
+
+      }
+
+      paper-fab-speed-dial{
+
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+
+      }
+
+      paper-fab#create {
+
+        --paper-fab-background: var(--accent-color);
+
+      }
+
+
+    </style>
 
     <paper-card>
 

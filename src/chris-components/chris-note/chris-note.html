@@ -16,9 +16,124 @@
 
 </head><body><dom-module id="chris-note">
   <template>
-    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);padding:16px;font-size:24px;font-weight:400;color:#737373;}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{border-bottom:1px solid var(--accent-color);color:var(--secondary-text-color);}.content{}#editor{display:none;width:inherit;}.markdown-html pre code{display:flex;padding:10px;color:#ffffff;background-color:var(--paper-grey-800);}.markdown-html code{padding:10px;background-color:#ffffff;color:var(--accent-color);font-weight:bold;}.markdown-html blockquote p{background-color:#ffffff;padding:8px;}.markdown-html table{border-collapse:collapse;}.markdown-html table, .markdown-html th, .markdown-html td{border:1px solid black;}paper-card{width:800px;}@media (max-width: 800px){paper-card{width:100%;}}paper-card{color:var(--primary-text-color);--paper-card-header-color:var(--secondary-text-color);--paper-card-background-color:var(--paper-grey-100);background:var(--paper-grey-100);}</style>
+    <style>
 
-    <chris-api id="API" api="Item" ,="" content-type="application/json" on-response="handleItem" error="{{error}}" on-error="handleError">
+      .toolbar {
+
+        min-height: 48px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-wrap);
+
+        padding: 16px;
+        font-size: 24px;
+        font-weight: 400;
+        color: #737373;
+
+      }
+
+      .name {
+
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      paper-icon-button {
+
+        border-bottom: 1px solid var(--accent-color);
+        color: var(--secondary-text-color);
+
+      }
+
+      .content {
+
+        /*padding: 20px;*/
+
+      }
+
+      #editor {
+
+        display: none;
+        width: inherit;
+
+      }
+
+      /* Markdown style */
+
+      .markdown-html pre code {
+
+        display: flex;
+        padding: 10px;
+        color: #ffffff;
+        background-color: var(--paper-grey-800);
+
+      }
+
+      .markdown-html code {
+
+        padding: 10px;
+        background-color: #ffffff;
+        color: var(--accent-color);
+        font-weight: bold;
+
+      }
+
+      .markdown-html blockquote p {
+
+        background-color: #ffffff;
+        padding: 8px;
+
+      }
+
+      .markdown-html table {
+
+        border-collapse: collapse;
+
+      }
+
+      .markdown-html table, .markdown-html th, .markdown-html td {
+
+        border: 1px solid black;
+
+      }
+
+      paper-card {
+
+          width: 800px;
+
+        }
+
+      @media (max-width: 800px) {
+
+        paper-card {
+
+          width: 100%;
+
+        }
+
+      }
+
+
+      paper-card{
+
+        color: var(--primary-text-color);
+        --paper-card-header-color: var(--secondary-text-color);
+        --paper-card-background-color: var(--paper-grey-100);
+        background: var(--paper-grey-100);
+
+      }
+
+    </style>
+
+    <chris-api id="API" content-type="application/json" ,="" on-response="handleItem" error="{{error}}" on-error="handleError">
     </chris-api>
 
     <paper-card>

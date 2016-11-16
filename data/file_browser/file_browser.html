@@ -1,13 +1,28 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
 
-
+<!-- PAPER ELEMENTS -->
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
-</head><body><dom-module id="file-browser-plugin">
+<dom-module id="file-browser-plugin">
 
   <template>
 
-    <style>host{display:block;}.container{padding:10px;height:1000px;}</style>
+    <style>
+
+      host {
+
+        display: block;
+
+      }
+
+      .container {
+
+        padding: 10px;
+        height: 1000px;
+
+      }
+
+    </style>
 
       <div class="container">
 
@@ -19,6 +34,29 @@
 
   </template>
 
-  <script>Polymer({is:"file-browser-plugin",properties:{parameters:{type:Object}},generateParameters:function(){this.parameters={hello:"from",the:"file browser"},this.fire("parameters-changed")}});</script>
+  <script>
+    Polymer({
+        is: 'file-browser-plugin',
+        properties: {
+
+          parameters: {
+            type: Object
+          }
+        },
+
+        generateParameters: function(){
+
+          // get parameters
+          //
+          this.parameters = {
+            hello: 'from',
+            the: 'file browser'
+          }
+
+          // let plugin-fs know the parameters are ready
+          this.fire( 'parameters-changed' );
+
+        }
+    });
+  </script>
 </dom-module>
-</body></html>

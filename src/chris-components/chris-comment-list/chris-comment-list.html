@@ -15,9 +15,72 @@
 
 </head><body><dom-module id="chris-comment-list">
   <template>
-    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{}paper-card{width:800px;}@media (max-width: 800px){paper-card{width:100%;}}paper-card{color:var(--primary-text-color);--paper-card-header-color:var(--secondary-text-color);--paper-card-background-color:var(--paper-grey-100);background:var(--paper-grey-100);}</style>
+    <style>
 
-    <chris-api id="API" api="Item" ,="" content-type="application/json" response="{{response}}" on-response="handleItem" error="{{error}}" on-error="handleError">
+    .toolbar {
+
+        min-height: 48px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-wrap);
+        border-bottom: 1px solid var(--accent-color);
+
+      }
+
+      .name {
+
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      paper-icon-button {
+
+        color: var(--secondary-text-color);
+
+      }
+
+      .content {
+
+        /*padding: 20px;*/
+
+      }
+
+      paper-card {
+
+        width: 800px;
+
+      }
+
+    @media (max-width: 800px) {
+
+      paper-card {
+
+        width: 100%;
+
+      }
+    }
+
+
+    paper-card{
+
+      color: var(--primary-text-color);
+      --paper-card-header-color: var(--secondary-text-color);
+      --paper-card-background-color: var(--paper-grey-100);
+      background: var(--paper-grey-100);
+
+    }
+
+    </style>
+
+    <chris-api id="API" content-type="application/json" ,="" response="{{response}}" on-response="handleItem" error="{{error}}" on-error="handleError">
     </chris-api>
 
     <paper-card heading="Discussion">

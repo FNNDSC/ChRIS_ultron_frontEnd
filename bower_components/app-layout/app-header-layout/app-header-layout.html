@@ -6,7 +6,55 @@
 
 </head><body><dom-module id="app-header-layout">
   <template>
-    <style>:host{display:block;position:relative;z-index:0;}:host > ::content > app-header{@apply (--layout-fixed-top);z-index:1;}:host([has-scrolling-region]){height:100%;}:host([has-scrolling-region]) > ::content > app-header{position:absolute;}:host([has-scrolling-region]) > #contentContainer{@apply (--layout-fit);overflow-y:auto;-webkit-overflow-scrolling:touch;}:host([fullbleed]){@apply (--layout-vertical);@apply (--layout-fit);}:host([fullbleed]) > #contentContainer{@apply (--layout-vertical);@apply (--layout-flex);}#contentContainer{position:relative;z-index:0;}</style>
+    <style>
+      :host {
+        display: block;
+        /**
+         * Force app-header-layout to have its own stacking context so that its parent can
+         * control the stacking of it relative to other elements (e.g. app-drawer-layout).
+         * This could be done using `isolation: isolate`, but that's not well supported
+         * across browsers.
+         */
+        position: relative;
+        z-index: 0;
+      }
+
+      :host > ::content > app-header {
+        @apply(--layout-fixed-top);
+        z-index: 1;
+      }
+
+      :host([has-scrolling-region]) {
+        height: 100%;
+      }
+
+      :host([has-scrolling-region]) > ::content > app-header {
+        position: absolute;
+      }
+
+      :host([has-scrolling-region]) > #contentContainer {
+        @apply(--layout-fit);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      :host([fullbleed]) {
+        @apply(--layout-vertical);
+        @apply(--layout-fit);
+      }
+
+      :host([fullbleed]) > #contentContainer {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      #contentContainer {
+        /* Create a stacking context here so that all children appear below the header. */
+        position: relative;
+        z-index: 0;
+      }
+
+    </style>
 
     <content id="header" select="app-header"></content>
 

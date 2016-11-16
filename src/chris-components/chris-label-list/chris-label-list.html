@@ -14,9 +14,51 @@
 
   <template>
 
-    <style include="iron-flex iron-flex-alignment"><style>
+    <style include="iron-flex iron-flex-alignment">
+    <style>
 
-      :host{display:flex;position:absolute;}.separator{font-size:14px;font-weight:500;color:var(--primary-text-color);padding:16px 16px 0;border-top:1px solid rgb(224, 224, 224);}.favorite{color:var(--accent-color);}.done{color:var(--paper-light-green-500);}.running{color:var(--paper-light-blue-500);}.error{color:var(--paper-red-500);}</style>
+      :host {
+
+        display: flex;
+        position: absolute;
+      
+      }
+
+      .separator {
+
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--primary-text-color);
+        padding: 16px 16px 0;
+        border-top: 1px solid rgb(224, 224, 224);
+
+      }
+
+      .favorite {
+
+        color: var(--accent-color);
+
+      }
+
+      .done {
+
+        color: var(--paper-light-green-500);
+
+      }
+
+      .running {
+
+        color: var(--paper-light-blue-500);
+
+      }
+
+      .error {
+
+        color: var(--paper-red-500);
+
+      }
+
+    </style>
 
     
     <div class="separator">Categories</div>
@@ -65,6 +107,6 @@
 
   </template>
 
-  <script>Polymer({is:"chris-label-list",properties:{customLabels:{type:Array},filter:{type:Array,value:[]},customFilter:{type:Array,value:[]}},handleSelect:function(e){var l=e.detail.item.getAttribute("value"),t=this.$.labels.selectedValues;if("all"===l||0===this.$.labels.selectedValues.length)this.$.labels.selectedValues=["all"];else{var s=t.indexOf("all");s>-1&&t.splice(s,1),this.$.labels.selectedValues=t.slice(0)}this.updateFilter()},updateFilter:function(){0===this.$.labels.selectedValues.length&&(this.$.labels.selectedValues=["all"]),this.filter=this.$.labels.selectedValues,this.fire("filter-changed")},updateCustomFilter:function(){this.customFilter=this.$.customLabels.selectedValues,this.fire("custom-filter-changed")},_setStyle:function(e){return"color: "+e}});</script>
+  <script>Polymer({is:"chris-label-list",properties:{customLabels:{type:Array},filter:{type:Array,value:[]},customFilter:{type:Array,value:[]}},handleSelect:function(e){var l=e.detail.item.getAttribute("value"),t=this.$.labels.selectedValues;if("all"===l||0===this.$.labels.selectedValues.length)this.$.labels.selectedValues=["all"];else{var s=t.indexOf("all");s>-1&&t.splice(s,1),this.$.labels.selectedValues=t.slice(0)}this.updateFilter()},updateFilter:function(){0===this.$.labels.selectedValues.length&&(this.$.labels.selectedValues=["all"]),this.filter=this.$.labels.selectedValues,this.fire("filter-changed")},updateCustomFilter:function(){this.customFilter=this.$.customLabels.selectedValues,this.fire("change-filter",this.customFilter)},_setStyle:function(e){return"color: "+e}});</script>
 </dom-module>
 </body></html>

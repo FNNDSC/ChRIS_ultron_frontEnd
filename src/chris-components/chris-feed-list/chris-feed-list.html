@@ -4,36 +4,74 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
 
-
-
-
-
 <link rel="import" href="../chris-feed-preview/chris-feed-preview.html">
 
 </head><body><dom-module id="chris-feed-list">
 
   <template>
 
-    <style>:host{display:block;}iron-list{@apply (--layout-fit);padding-top:16px;padding-bottom:64px;--iron-list-items-container:{max-width:800px;margin:auto;margin-top:30px;margin-bottom:60px;border-bottom:1px solid var(--accent-color);};}a{color:inherit;}</style>
+    <style>
+
+      :host {
+
+        display: block;
+
+      }
+
+      iron-list {
+
+        padding-top: 16px;
+        padding-bottom: 64px;
+        --iron-list-items-container: {
+          max-width: 1200px;
+          margin: auto;
+          margin-top: 30px;
+          margin-bottom: 60px;
+          border-bottom: 1px solid var(--accent-color);
+        };
+
+      }
+
+        chris-feed-preview {
+          @apply(--layout);
+          background-color: #fff;
+          position: relative;
+          /*width: 256px;
+          height: 96px;*/
+          margin: 4px;
+        }
+
+        @media (max-width: 896px) {
+          .feedContainer {
+            width: 100%;
+          }
+
+          chris-feed-preview {
+            width: auto;
+          }
+
+          chris-feed-preview > .detail {
+            opacity: 1;
+          }
+        }      
+
+    </style>
 
     <iron-list id="feeds" items="[[feeds.data]]" as="feed" selection-enabled="" on-resize-feed="resizeFeed" scroll-target="[[scrollTarget]]">
 
       <template>
 
-        <a href="/feed/{{index}}/">
-
-          <chris-feed-preview index="[[index]]" feed="[[feed]]" on-tap="_showDetails"></chris-feed-preview>
-
-        </a>
-
+        <div class="feedContainer" style$="z-index: [[getIndex(index)]]">
+            <chris-feed-preview tabindex$="[[tabIndex]]" index="[[index]]" feed="[[feed]]" on-tap="_openFeed"></chris-feed-preview>
+        </div>
 
       </template>
-      
+
     </iron-list>
 
 
   </template>
 
-  <script>Polymer({is:"chris-feed-list",properties:{feeds:{type:Array},feedOpened:{type:Object},scrollTarget:HTMLElement},resizeFeed:function(e){this.$.feeds.updateSizeForItem(e.detail.index)},_showDetails:function(e){this.set("feedOpened",e.model.__data__.feed),this.fire("feed-opened-changed",e.model.__data__.feed)}});</script>
+  <script>Polymer({is:"chris-feed-list",properties:{feeds:{type:Array},scrollTarget:HTMLElement},resizeFeed:function(e){this.$.feeds.updateSizeForItem(e.detail.index)},_openFeed:function(e){this.fire("open-feed",e.model.__data__.feed)},getIndex:function(e){return this._jsonReceived()-e},_jsonReceived:function(){return this.feeds.data.length}});</script>
 </dom-module>
 </body></html>

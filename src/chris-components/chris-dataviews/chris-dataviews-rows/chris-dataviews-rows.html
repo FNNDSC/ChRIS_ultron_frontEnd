@@ -2,7 +2,79 @@
 
   <template>
 
-    <style include="iron-flex iron-flex-alignment">#rowsView{width:100%;overflow-x:scroll;}#rowsView paper-listbox{overflow-y:scroll;}iron-icon{margin-right:2px;}paper-item{--paper-item:{cursor:pointer;};}paper-item[type="folder"] iron-icon{--iron-icon-stroke-color:var(--primary-color);--iron-icon-fill-color:var(--paper-grey-100);}paper-item[type="folder"][up] iron-icon{--iron-icon-stroke-color:var(--paper-grey-500);--iron-icon-fill-color:var(--paper-grey-500);}paper-item[type="folder"][up]{color:var(--paper-grey-500);}paper-item[type="file"] iron-icon{--iron-icon-stroke-color:var(--accent-color);--iron-icon-fill-color:var(--paper-grey-100);}#rowsView paper-item{min-height:32px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;--paper-item-selected:{color:var(--primary-color);};}</style>
+    <style include="iron-flex iron-flex-alignment">
+
+      #rowsView{
+
+        width:100%;
+        overflow-x: scroll;
+
+      }
+      #rowsView paper-listbox{
+
+        overflow-y: scroll;
+/*        min-height: 300px;
+        max-height: 300px;*/
+
+      }
+
+      iron-icon {
+
+        margin-right: 2px;
+
+      }
+
+      paper-item {
+
+        --paper-item: {
+
+          cursor: pointer;
+
+        };
+
+      }
+
+      paper-item[type="folder"] iron-icon{
+
+        --iron-icon-stroke-color: var(--primary-color);
+        --iron-icon-fill-color: var(--paper-grey-100);
+
+      }
+
+      paper-item[type="folder"][up] iron-icon{
+
+        --iron-icon-stroke-color: var(--paper-grey-500);
+        --iron-icon-fill-color: var(--paper-grey-500);
+
+      }
+
+      paper-item[type="folder"][up] {
+
+        color: var(--paper-grey-500);
+
+      }
+
+      paper-item[type="file"] iron-icon{
+
+        --iron-icon-stroke-color: var(--accent-color);
+        --iron-icon-fill-color: var(--paper-grey-100);
+
+      }
+
+      #rowsView paper-item{
+
+        min-height:32px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display:block;
+        --paper-item-selected: {
+        color: var(--primary-color);
+
+        };
+
+      }
+    </style>
 
     <div id="rowsView">
 

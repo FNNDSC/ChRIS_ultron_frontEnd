@@ -7,9 +7,10 @@
 
 
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html"> 
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
-
-
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html"> 
+<link rel="import" href="../../../bower_components/paper-menu-button/paper-menu-button.html"> 
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
@@ -20,66 +21,256 @@
 
   <template>
 
-    <style include="iron-flex iron-flex-alignment"><style>
+    <style include="iron-flex iron-flex-alignment">
+    <style>
 
-      :host{display:block;}.feed{@apply (--layout-flex);@apply (--layout-vertical);padding:20px;background-color:white;margin-bottom:10px;}.feed:hover{@apply (--shadow-elevation-8dp);}.feed.checked{background-color:var(--paper-grey-200);border-left:4px solid var(--accent-color);}.toolbar{min-height:64px;@apply (--layout-horizontal);@apply (--layout-wrap);}.check-area{height:48px;width:48px;border-radius:24px;box-sizing:border-box;@apply (--layout-vertical);@apply (--layout-center);@apply (--layout-center-justified);}.check-area .invalid{color:var(--paper-red-500);border-color:var(--paper-red-500)!important;background-color:#ffffff;border-radius:26px;cursor:pointer;padding:0;width:52px;height:52px;}.check-area:hover .invalid{background-color:var(--paper-red-500);color:#ffffff;}.check-area:hover, .checked .check-area{background-color:var(--accent-color);border-color:var(--accent-color)!important;}.letter{font-size:24px;}.check-area:hover .letter, .checked .letter{display:none;}.checkbox{display:none;--paper-checkbox-checked-color:var(--accent-color);--paper-checkbox-checked-ink-color:var(--accent-color);--paper-checkbox-unchecked-color:#ffffff;--paper-checkbox-unchecked-ink-color:var(--dark-accent-color);--paper-checkbox-size:24px;--paper-checkbox-label-spacing:0px;}.check-area:hover .checkbox, .checked .checkbox{display:block;}.title-area{padding:0 16px;@apply (--layout-flex);@apply (--layout-vertical);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.date, .tags{font-size:14px;color:var(--secondary-text-color);}#favorite[icon="icons:favorite"]{color:var(--accent-color);}.done{color:var(--paper-light-green-500);}.running{color:var(--paper-light-blue-500);}.error{color:var(--paper-red-500);}.action:hover{color:var(--accent-color);}.content{margin-top:8px;min-height:64px;display:none;}.feed.open .content{display:block;}@media all and (max-width: 800px){.toolbar{@apply (--layout-justified);}.title-area{flex:1 100%;padding:16px 0 0;}.check-area{order:1;}.actions-area{order:2;}.title-area{order:3;}}</style>
+      :host{
+        
+        display: block;
 
-    <chris-api id="FeedAPI" api="Item" ,="" content-type="application/json" on-response="handleFeedDetails" error="{{error}}" on-error="handleError">
+      }
+
+      /* Feed style */
+
+      .feed {
+
+        display: flex;
+        flex-direction: row;
+        width:100%;
+
+      }
+
+      .feed:hover {
+
+        @apply(--shadow-elevation-8dp);
+
+      }
+
+       .feed.checked {
+
+        background-color: var(--paper-grey-200);
+        border-left: 4px solid var(--accent-color);
+
+      }
+
+      /* Check area */
+
+      .check-area {
+
+        height: 48px;
+        width: 48px;
+        border-radius: 24px;
+        box-sizing: border-box;
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+
+      }
+
+      .check-area .invalid {
+
+        color: var(--paper-red-500);
+        border-color: var(--paper-red-500)!important;
+        background-color: #ffffff;
+        border-radius: 26px;
+        cursor: pointer;
+        padding: 0;
+        width: 52px;
+        height: 52px;
+
+      }
+
+      .check-area:hover .invalid {
+
+        background-color: var(--paper-red-500);
+        color: #ffffff;
+
+      }
+
+      .check-area:hover, .checked .check-area {
+
+        background-color: var(--accent-color);
+        border-color: var(--accent-color)!important;
+
+      }
+
+      /* Check area > Letter */
+
+      .letter {
+
+        font-size: 24px;
+
+      }
+
+      .check-area:hover .letter, .checked .letter {
+
+        display:none;
+
+      }
+
+      /* Check area > Checkbox */
+
+
+
+
+
+      /* Title area */
+
+      .title-area {
+
+        width:100%;
+        padding: 8px 16px;
+        box-sizing: border-box;
+        color: var(--primary-text-color);
+
+      }
+
+      .name {
+
+        font-size: 16px;
+
+      }
+
+      .date, .tags {
+
+        font-size: 14px;
+        color: var(--secondary-text-color);
+
+      }
+
+      /* Tags area */
+      .tags-area {
+
+        padding: 8px 16px;
+        flex: 1;
+        overflow-y: auto;
+
+      }
+
+      .tag {
+
+        /*opacity: 0.5;*/
+
+      }
+
+      .tag:hover {
+
+        /*opacity: 1;*/
+
+      }
+
+      /* Action area */
+     /* width vx flex 1 100%*/
+
+      .actions-area {
+
+        /*display:none;*/
+
+          color: var(--primary-text-color);
+          padding: 0 16px;
+          box-sizing: border-box;
+          width: 100%;
+          text-align: right;
+          /*border-top: 1px solid var(--divider-color);*/
+
+        }
+
+        paper-icon-button, .checkbox{
+          opacity: 0.5;
+        }
+
+        paper-icon-button:hover, .checkbox:hover{
+          opacity: 1.0;
+        }
+
+        .checkbox {
+
+          --paper-checkbox-checked-color: var(--accent-color);
+          --paper-checkbox-checked-ink-color: var(--accent-color);
+          --paper-checkbox-unchecked-color: var(--primary-text-color);
+          --paper-checkbox-unchecked-ink-color: var(--accent-color);
+          --paper-checkbox-size: 24px;
+          --paper-checkbox-label-spacing: 0px;
+
+        }
+
+        .done{
+
+          color: var(--paper-light-green-500);
+
+        }
+
+        .running{
+
+          color: var(--paper-light-blue-500);
+
+        }
+
+        .error{
+
+          color: var(--paper-red-500);
+  
+        }
+
+
+      /* Content */
+
+      .content {
+
+        margin-top: 8px;
+        min-height: 64px;
+        display: none;
+
+      }
+
+      .feed.open .content {
+
+        display: block;
+
+      }
+
+
+    </style>
+
+    <chris-api id="FeedAPI" content-type="application/json" ,="" on-response="handleFeedDetails" error="{{error}}" on-error="handleError">
     </chris-api>
 
     <paper-material id="feed" class="feed" elevation="1">
 
       
-      <div class="toolbar">
+      <div class="title-area" style$="{{_setBackgroundStyle(feed.data.color)}}">
+
+        <div class="name">Feed [[feed.data.id]] - [[feed.data.name]]</div>
+
+      </div>
+
+      
+      
+
+      
+      <div class="actions-area" on-tap="_blockEvents">
+
+        <paper-checkbox class="checkbox" checked="{{checked}}"></paper-checkbox>
+
+        <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
+        <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.data.favorite)]]" on-tap="favorite"></paper-icon-button>
+        
 
         
-        <div class="check-area" style$="[[_setStyle(feed.data.color)]]" on-tap="_blockEvents">
 
-          <template is="dom-if" if="{{!valid}}">
+        <paper-menu-button>
+          <paper-icon-button icon="icons:label-outline" class="dropdown-trigger"></paper-icon-button>
 
-            <paper-icon-button id="invalid" class="invalid" icon="icons:bug-report" disabled=""></paper-icon-button>
-
-          </template>
-
-          <template is="dom-if" if="{{valid}}">
-
-              <span class="letter">[[feed.data.letter]]</span>
-              <paper-checkbox class="checkbox" checked="{{checked}}"></paper-checkbox>
-
-          </template>
-
-        </div>
-
-        
-        <div class="title-area">
-
-          <div class="name">Feed [[feed.data.id]] - [[feed.data.name]]</div>
-          <div class="date">[[feed.data.date]]</div>
-          <div class="tags">
+          <paper-menu class="dropdown-content">
 
             <template is="dom-repeat" items="[[_validateTags(feed.data.tags)]]">
 
-              <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
+              <paper-item class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></paper-item>
 
             </template>
 
-          </div>
-
-        </div>
-
-        
-        <div class="actions-area" on-tap="_blockEvents">
-
-          <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
-          <paper-icon-button id="tag" class="action" icon="icons:label-outline" on-tap="tag"></paper-icon-button>
-          <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.data.favorite)]]" on-tap="favorite"></paper-icon-button>
-          <paper-icon-button id="status" icon$="[[_setStatusIcon(feed.data.status)]]" class$="[[feed.data.status]]" disabled=""></paper-icon-button>
-
-          <paper-tooltip for="share" offset="0">Share</paper-tooltip>
-          <paper-tooltip for="tag" offset="0">Tag</paper-tooltip>
-          <paper-tooltip for="favorite" offset="0">Favorite</paper-tooltip>
-
-        </div>
+          </paper-menu>
+        </paper-menu-button>
 
       </div>
 
@@ -87,6 +278,325 @@
 
   </template>
 
-  <script>Polymer({is:"chris-feed-preview",properties:{feed:{type:Object,observer:"_validateFeed"},checked:{type:Boolean,value:!1,observer:"_checkedChanged"},open:{type:Boolean,value:!1},index:{type:Number},valid:{type:Boolean},error:{type:Array}},_setStyle:function(e){return"border: 4px solid "+e+";"},_setStatusIcon:function(e){var t="icons:";return t+="running"===e?"schedule":"error"===e?"clear":"done"},_checkedChanged:function(){this.checked?this.$.feed.classList.add("checked"):this.$.feed.classList.remove("checked")},share:function(e){e.preventDefault(),e.stopPropagation(),this.valid&&console.log("share feed")},tag:function(e){e.preventDefault(),e.stopPropagation(),!this.valid},_setTagStyle:function(e){return"color: "+e+";"},favorite:function(e){if(e.preventDefault(),e.stopPropagation(),this.valid){var t=[{name:"favorite",value:this.feed.data.favorite}];this.set("feed.data.favorite",!this.feed.data.favorite),this._saveFeed(t)}},_setFavoriteIcon:function(e){return e?"icons:favorite":"icons:favorite-border"},handleFeedDetails:function(e){if(e.preventDefault(),e.stopPropagation(),e.detail){var t=e.detail;if(t.error&&t.error.code){for(var a=0;a<t.cache.length;a++)this.set("feed.data."+t.cache[a].name,t.cache[a].value);this.fire("notification",t.error)}}},_saveFeed:function(e){var t=this.feed.data;t.template=this.feed.template,t.href=this.feed.href;this.$.FeedAPI.request("PUT",this.feed.href,{body:t,cache:e})},handleError:function(e){this.$.FeedDetailsAPI.url="",e.preventDefault(),e.stopPropagation(),console.log(this.error)},_validateFeed:function(){if(this.feed&&this.feed.data){var e=[];if("string"!=typeof this.feed.data.id&&e.push("id:String"),"string"!=typeof this.feed.data.name&&e.push("name:String"),"string"!=typeof this.feed.data.letter&&e.push("letter:String"),"string"!=typeof this.feed.data.color&&e.push("color:String"),"string"!=typeof this.feed.data.date&&e.push("date:String"),"string"!=typeof this.feed.data.status&&e.push("status:String"),"boolean"!=typeof this.feed.data.favorite&&e.push("favorite:Boolean"),this.feed.data.tags&&this.feed.data.tags.constructor===Array||e.push("tags:Array"),e.length>0)return console.log(e),this.error=e,this.fire("error-changed"),this.valid=!1,this.fire("valid-changed"),void this.fire("error");this.valid=!0,this.fire("valid-changed")}},_validateTags:function(e){return e&&e.constructor===Array?e:[]},_blockEvents:function(e){e.preventDefault(),e.stopPropagation()}});</script>
+  <script>
+    Polymer({
+        is: 'chris-feed-preview',
+        properties: {
+
+          feed: {
+            type: Object,
+            observer: '_validateFeed'
+          },
+
+          checked: {
+            type: Boolean,
+            value: false,
+            observer: '_checkedChanged'
+          },
+
+          open:{
+            type: Boolean,
+            value: false
+          },
+
+          index: {
+            type: Number
+          },
+
+          valid:{
+            type: Boolean
+          },
+
+          error: {
+            type: Array
+          }
+
+        },
+
+        observers: [
+          'updateFavorite(feed.data.favorite)'
+        ],
+
+        _setStyle: function( color ){
+
+          return 'border: 4px solid ' + color + ';';
+
+        },
+
+        updateFavorite(){
+         
+        },
+
+        _setStatusIcon: function( status ){
+
+          var icon = 'icons:';
+
+          if( status === 'running'){
+
+            icon += 'schedule';
+
+          }
+          else if( status === 'error' ){
+
+            icon += 'clear';
+
+          }
+          else{
+
+            icon += 'done';
+
+          }
+
+          return icon;
+
+        },
+
+        _checkedChanged: function(){
+
+          // add/remove class
+          // if( this.feed && this.feed.data ){
+
+            this.checked ? this.$.feed.classList.add('checked') : this.$.feed.classList.remove('checked');
+
+          // }
+
+        },
+
+        share: function( event ){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          if( !this.valid ){
+
+            return;
+
+          }
+
+          console.log( 'share feed' );
+
+        },
+
+        tag: function( event ){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          if( !this.valid ){
+
+            return;
+
+          }
+
+        },
+
+        _setTagStyle: function( color ){
+
+          return 'color: ' + color + ';';
+
+        },
+
+        _setBackgroundStyle: function( color ){
+
+          return 'border-left: 2px solid ' + color + ';';
+
+        },
+
+        favorite: function( event ){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          if( !this.valid ){
+
+            return;
+
+          }
+
+          //console.log(this.feed.data.favorite);
+
+          // update feed favorite
+          var cache = [ { 'name': 'favorite', 'value': this.feed.data.favorite } ];
+          this.set(['feed', 'data', 'favorite'], !this.feed.data.favorite);
+
+          // fire save feed
+          this.fire( 'save-feed', {feed: this.feed, cache: cache} );
+
+        },
+
+        _setFavoriteIcon: function( favorite ) {
+
+          return favorite ? 'icons:favorite' : 'icons:favorite-border';
+
+        },
+
+        handleFeedDetails: function( event ){
+
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
+
+          // could/should show nice reload button
+          if( !event.detail ){
+
+            return;
+
+          }
+
+          var response = event.detail;
+
+           // if feed was not updated, fire notification message
+          if( response.error && response.error.code ){
+
+            // restore cache
+            for( var i = 0; i < response.cache.length; i++ ){
+
+              this.set( 'feed.data.' + response.cache[i].name , response.cache[i].value );
+
+            }
+
+
+            // show toast message
+            this.fire( 'notification', response.error );
+
+          }
+
+        },
+
+        handleError: function( event ){
+
+          this.$.FeedDetailsAPI.url = '';
+
+          // stop ajax propagation
+          event.preventDefault();
+          event.stopPropagation();
+          console.log( this.error );
+
+        },
+
+        _validateFeed: function(){
+
+          if( !this.feed || !this.feed.data ){
+
+            return;
+
+          }
+
+          var error = [];
+
+          // need id
+          if( !( typeof this.feed.data.id === 'string' ) ){
+
+            error.push( 'id:String' );
+
+          }
+
+          // need name
+          if( !( typeof this.feed.data.name === 'string' ) ){
+
+            error.push( 'name:String' );
+
+          }
+
+          // need letter
+          if( !( typeof this.feed.data.letter === 'string' ) ){
+
+            error.push( 'letter:String' );
+
+          }
+
+          // need color
+          if( !( typeof this.feed.data.color === 'string' ) ){
+
+            error.push( 'color:String' );
+
+          }
+
+          // need date
+          if( !( typeof this.feed.data.date === 'string' ) ){
+
+            error.push( 'date:String' );
+
+          }
+
+          // need status
+          if( !( typeof this.feed.data.status === 'string' ) ){
+
+            error.push( 'status:String' );
+
+          }
+
+          // need favorite
+          if( !( typeof this.feed.data.favorite === 'boolean' ) ){
+
+            error.push( 'favorite:Boolean' );
+
+          }
+
+          // need checked
+          // if( !( typeof this.feed.data.checked === 'boolean' ) ){
+
+          //   error.push( 'checked:Boolean' );
+
+          // }
+
+          // need tags array
+          if( !( this.feed.data.tags && this.feed.data.tags.constructor === Array ) ){
+
+            // should we "fix" it or hide the feed and show error
+            // just show error "feed"
+            // if invalid: red and can not do anything
+            error.push( 'tags:Array' );
+
+          }
+
+          if( error.length > 0){
+
+
+            console.log( error );
+
+            // got an error
+            this.error = error;
+            this.fire( 'error-changed' );
+            // triggers error on Firefox for some reason...
+            // this.fire( 'error' );
+
+            // make it invalid
+            this.valid = false;
+            this.fire( 'valid-changed' );
+
+            // fire error here because firefox complains if we do it before...?
+            this.fire( 'error' );
+
+            return;
+
+          }
+
+          this.valid = true;
+          this.fire( 'valid-changed');
+
+        },
+
+        _validateTags: function( tags ){
+
+          if( !( tags && tags.constructor === Array ) ){
+
+            return [];
+
+          }
+
+          return tags;
+
+        },
+
+        _blockEvents: function( event ){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+        }
+
+    });
+  </script>
 </dom-module>
 </body></html>

@@ -2,36 +2,24 @@
 
 
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-meta/iron-meta.html">
 
 
-<link rel="import" href="behaviors/chris-api-login-behavior.html">
-<link rel="import" href="behaviors/chris-api-helper-behavior.html">
-<link rel="import" href="behaviors/chris-api-plugin-pacspull-behavior.html">
-<link rel="import" href="behaviors/chris-api-plugin-create-behavior.html">
-<link rel="import" href="behaviors/chris-api-item-behavior.html">
+<link rel="import" href="chris-api-helper-behavior.html">
 
-<link rel="import" href="cj/helper-behavior.html">
-<link rel="import" href="cj/comment-collection-behavior.html">
-<link rel="import" href="cj/comment-behavior.html">
-<link rel="import" href="cj/feed-collection-behavior.html">
-<link rel="import" href="cj/feed-behavior.html">
-<link rel="import" href="cj/label-collection-behavior.html">
-<link rel="import" href="cj/label-behavior.html">
-<link rel="import" href="cj/note-behavior.html">
-<link rel="import" href="cj/pacsquery-behavior.html">
-<link rel="import" href="cj/plugin-collection-behavior.html">
-<link rel="import" href="cj/plugin-behavior.html">
-<link rel="import" href="cj/pluginfs-collection-behavior.html">
-<link rel="import" href="cj/pluginfs-behavior.html">
+<link rel="import" href="apis/fake/fake.html">
+<link rel="import" href="apis/ultron/ultron.html">
 
 </head><body><dom-module id="chris-api">
 
   <template>
 
-    <iron-ajax id="ironAjax" url="[[getUrl(url, api)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" last-error="{{error}}" handle-as="[[handleAs]]" auto="[[auto]]"></iron-ajax>
+    <iron-meta id="meta"></iron-meta>
+
+    <iron-ajax id="ironAjax" url="[[getUrl(apiRoot, api, target)]]" body="[[body]]" params="[[params]]" method="[[method]]" content-type="[[contentType]]" last-response="{{response}}" last-error="{{error}}" handle-as="[[handleAs]]" auto="[[auto]]" headers="{{headers}}"></iron-ajax>
 
   </template>
 
-  <script>Polymer({is:"chris-api",properties:{url:{type:String},auto:{type:Boolean,value:!1},response:{type:Object},error:{type:Object},body:{type:Object},method:{type:String,value:"GET"},contentType:{type:String},params:{type:Object},api:{type:String,value:"",observer:"_validAPI"},handleAs:{type:String,value:"json"},apiRoot:{type:String,value:""},fakeAPI:{type:Boolean,value:!0},fakeAPIError:{type:Boolean,value:!1}},observers:["getBody(body, body.*)","getParams(params, params.*)"],behaviors:[Helper,HelperCJ,CommentCollectionCJ,CommentCJ,FeedCollectionCJ,FeedCJ,LabelCollectionCJ,LabelCJ,NoteCJ,PacsqueryCJ,PluginCollectionCJ,PluginCJ,PluginFSCollectionCJ,PluginFSCJ,Item,Login,PluginCreate,PluginPacspull],ready:function(){},generateRequest:function(){return this.url=this.getUrl(),this.$.ironAjax.generateRequest()},handleResponse:function(e){var t=this["handle"+this.api](e);return this._setResponse(t),t},handleError:function(e){var t=this["handleError"+this.api](e);return this._setError(t),t},getUrl:function(){return this._validAPI()?this["prepare"+this.api]("url"):void 0},getBody:function(){return this._validAPI()?this["prepare"+this.api]("body"):void 0},getParams:function(){return this._validAPI()?this["prepare"+this.api]("params"):void 0},request:function(e,t,r){var i={auth:"user="+sessionStorage.getItem("username")+",hash="+sessionStorage.getItem("token")};r&&r.params&&(r.params.auth=i.auth,i=r.params),this.params=i,r&&r.body&&(this.body=r.body),this.method=e,this.url=t;var s=this.generateRequest();return r&&r.cache&&(s.cache=r.cache),s.completes.then(this.handleResponse.bind(this))["catch"](this.handleError.bind(this))},_setResponse:function(e){this.response=e,this.fire("response-changed"),this.fire("response",e)},_setError:function(e){this.error=e,this.fire("error-changed"),this.fire("error",e)},_validAPI:function(){var e="";if(this["prepare"+this.api]||(e+=" prepare"+this.api),this["handle"+this.api]||(e+=" handle"+this.api),this["handleError"+this.api]||(e+=" handleError"+this.api),""!==e){var t=this.api+" is not valid. ( Missing "+e+" )";return this._setError(t),this.api="",!1}return!0}});</script>
+  <script>Polymer({is:"chris-api",properties:{url:{type:String},auto:{type:Boolean,value:!1},response:{type:Object},error:{type:Object},body:{type:Object},method:{type:String,value:"GET"},contentType:{type:String},params:{type:Object},headers:{type:Object,value:{}},handleAs:{type:String,value:"json"},target:{type:String},api:{type:String,observer:"_validateAPI"},apiRoot:{type:String},apiError:{type:Boolean,value:!1}},observers:["getBody(body, body.*)"],behaviors:[Helper,FakeAPI,UltronAPI],ready:function(){this.apiRoot=this.$.meta.byKey("cu-api-root"),this.api=this.$.meta.byKey("cu-api")},generateRequest:function(){return this.url=this.getUrl(),this.$.ironAjax.generateRequest()},handleResponse:function(t){var e=this.formatResponse(t);return this._setResponse(e),e},formatResponse:function(t){var e=this["format"+this.api+"APIResponse"](t.target,t.params,t.response);e=this.formatJsonCollectionResponse(e);var o=t.cache;return o&&(e.cache=o),e},formatJsonCollectionResponse:function(t){if(!t.collection)return t;var e={href:this._removeAPIRoot(t.collection.href)};if(t.collection.template&&t.collection.template.data&&t.collection.template.data.length>0&&(e.template=t.collection.template),t.collection.error)e.error=t.collection.error;else if(t.collection.items){e.data=[];for(var o=0;o<t.collection.items.length;o++){var a={};a.data={};for(var i=0;i<t.collection.items[o].data.length;i++)a.data[t.collection.items[o].data[i].name]=t.collection.items[o].data[i].value;if(t.collection.items[o].links&&t.collection.items[o].links.length>0){a.links={};for(var i=0;i<t.collection.items[o].links.length;i++)a.links[t.collection.items[o].links[i].rel]=this._removeAPIRoot(t.collection.items[o].links[i].href)}a.href=this._removeAPIRoot(t.collection.items[o].href),e.data.push(a)}}return e},_removeAPIRoot:function(t){return t.replace(this.apiRoot,"")},handleError:function(t){var e=this.formatError(t);return this._setError(e),e},formatError:function(t){return t},_validateAPI:function(){var t=[];"function"!=typeof this["url"+this.api+"API"]&&t.push("url"+this.api+"API() function not declared."),"function"!=typeof this["format"+this.api+"APIResponse"]&&t.push("format"+this.api+"APIResponse() function not declared."),t.length>0&&console.log(t)},getUrl:function(){return this.apiRoot+this["url"+this.api+"API"](this.target)},getBody:function(){this.body;return{}},getParams:function(){return this.params},request:function(t,e,o){this.method=t,this.target=e,this._handleParameters(o.params),this._handleBody(e,o.body),this._handleAuthorization(o.auth),this._handleType(e);var a=this.generateRequest();return this._attachToRequest(a,"cache",o.cache),this._attachToRequest(a,"target",e),this._attachToRequest(a,"params",o.params),a.completes.then(this.handleResponse.bind(this)).catch(this.handleError.bind(this))},_setResponse:function(t){this.response=t,this.fire("response-changed"),this.fire("response",t)},_setError:function(t){this.error=t,this.fire("error-changed"),this.fire("error",t)},_handleParameters:function(t){t?this.params=t:this.params={},this.params=t},_handleBody:function(t,e){if("login"===t)this.body=e;else if(e&&e.template&&e.data){var o={};o.template=e.template;for(var a=0;a<e.template.data.length;a++)e.data[e.template.data[a].name]&&(o.template.data[a].value=e.data[e.template.data[a].name]);this.body=JSON.stringify(o)}},_handleType:function(t){"login"===t?(this.headers["Content-Type"]="application/json",this.headers.Accept="application/json"):(this.headers["Content-Type"]="application/vnd.collection+json",this.headers.Accept="application/vnd.collection+json")},_handleAuthorization:function(t){if(t.type)if("basic"===t.type){var e=window.btoa(unescape(encodeURIComponent(t.username+":"+t.password)));this.headers.Authorization="Basic "+e}else"token"===t.type?this.headers.Authorization="Token "+t.token:this.headers.Authorization=""},_attachToRequest:function(t,e,o){o&&(t[e]=o)}});</script>
 </dom-module>
 </body></html>

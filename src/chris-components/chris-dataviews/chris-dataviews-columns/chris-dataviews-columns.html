@@ -1,7 +1,75 @@
 <html><head><meta charset="UTF-8"><link rel="import" href="../../../chris-ultron/chris-ultron.html"></head><body><dom-module id="chris-dataviews-columns">
   <template>
 
-    <style include="iron-flex iron-flex-alignment">#columnsView{width:100%;overflow-x:scroll;}#columnsView paper-listbox{border-right:1px solid var(--paper-grey-100);min-width:128px;overflow-y:scroll;}iron-icon{margin-right:2px;}paper-item{--paper-item:{cursor:pointer;};}paper-item[type="folder"] iron-icon{--iron-icon-stroke-color:var(--primary-color);--iron-icon-fill-color:var(--paper-grey-100);}paper-item[type="file"] iron-icon{--iron-icon-stroke-color:var(--accent-color);--iron-icon-fill-color:var(--paper-grey-100);}#columnsView paper-item{min-height:32px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;--paper-item-selected:{color:var(--primary-color);};}#columnsView paper-listbox:last-child{flex-grow:0;flex-shrink:0;}</style>
+    <style include="iron-flex iron-flex-alignment">
+
+      #columnsView{
+
+        width:100%;
+        overflow-x: scroll;
+
+      }
+
+      #columnsView paper-listbox{
+
+        border-right: 1px solid var(--paper-grey-100);
+        min-width: 128px;
+        overflow-y: scroll;
+        /*max-height: 300px;*/
+
+      }
+
+      iron-icon {
+
+        margin-right: 2px;
+
+      }
+
+      paper-item {
+
+        --paper-item: {
+
+          cursor: pointer;
+
+        };
+
+      }
+
+      paper-item[type="folder"] iron-icon{
+
+        --iron-icon-stroke-color: var(--primary-color);
+        --iron-icon-fill-color: var(--paper-grey-100);
+
+      }
+
+      paper-item[type="file"] iron-icon{
+
+        --iron-icon-stroke-color: var(--accent-color);
+        --iron-icon-fill-color: var(--paper-grey-100);
+
+      }
+
+      #columnsView paper-item{
+
+        min-height:32px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display:block;
+        --paper-item-selected: {
+          color: var(--primary-color);
+        };
+
+      }
+
+      #columnsView paper-listbox:last-child {
+
+        flex-grow:0;
+        flex-shrink:0;
+
+      }
+
+    </style>
 
     <div id="columnsView" class="layout horizontal">
 
@@ -23,6 +91,6 @@
 
   </template>
 
-  <script>Polymer({is:"chris-dataviews-columns",behaviors:[Dataviews],_pathChanged:function(){console.log("columns path changed"),console.log(this.path)},_selectionChanged:function(e){for(var t=parseInt(e.target.attributes.depth.nodeValue,10),s=e.target.selectedItem.attributes.type.nodeValue,i=Polymer.dom(this.$.columnsView).querySelectorAll("paper-listbox"),l=t+1;l<i.length;l++)Polymer.dom(this.$.columnsView).removeChild(i[l]);if("file"!==s){for(var a=i[0].selected,o=this.data.files[a].files,h=this.data.files[a].images,n=[a],l=1;t+1>l;l++)n.push(i[l].selected),a=i[l].selected,h=o[a].images,o=o[a].files;if(this.set("path",n),this.fire("path-changed"),o||h){var r=this.fillListBox(t+1,o,h);Polymer.dom(this.$.columnsView).appendChild(r)}this.$.columnsView.scrollLeft=9999999}}});</script>
+  <script>Polymer({is:"chris-dataviews-columns",behaviors:[Dataviews],_pathChanged:function(){console.log("columns path changed"),console.log(this.path)},_selectionChanged:function(e){for(var t=parseInt(e.target.attributes.depth.nodeValue,10),s=e.target.selectedItem.attributes.type.nodeValue,i=Polymer.dom(this.$.columnsView).querySelectorAll("paper-listbox"),l=t+1;l<i.length;l++)Polymer.dom(this.$.columnsView).removeChild(i[l]);if("file"!==s){for(var a=i[0].selected,o=this.data.files[a].files,h=this.data.files[a].images,n=[a],l=1;l<t+1;l++)n.push(i[l].selected),a=i[l].selected,h=o[a].images,o=o[a].files;if(this.set("path",n),this.fire("path-changed"),o||h){var r=this.fillListBox(t+1,o,h);Polymer.dom(this.$.columnsView).appendChild(r)}this.$.columnsView.scrollLeft=9999999}}});</script>
 </dom-module>
 </body></html>

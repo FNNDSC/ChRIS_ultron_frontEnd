@@ -2,22 +2,52 @@
 
   <template>
 
-    <style>:host{background-color:var(--dark-primary-color);--paper-input-container-focus-color:var(--accent-color);}app-header-layout{position:absolute;top:0;right:0;left:0;bottom:0;}app-toolbar{color:#ffffff;}a{color:#ffffff;}</style>
+    <style>
 
-    <app-header-layout has-scrolling-region="" style$="[[_setLayoutStyle(app.data.color)]]">
+    :host{
+
+      background-color: var(--dark-primary-color);
+      --paper-input-container-focus-color: var(--accent-color);
+
+    }
+
+    app-header-layout {
+
+      /* use fit instead... */
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+
+    }
+
+    app-toolbar {
+
+      color: #ffffff;
+
+    }
+
+    a {
+
+      color: #ffffff;
+
+    }
+
+    </style>
+
+    <app-header-layout has-scrolling-region="" style$="[[_setLayoutStyle(app.color)]]">
       <app-header fixed="" condenses="" effects="waterfall">
-        <app-toolbar style$="[[_setToolbarStyle(app.data.color)]]">
-          <div main-title="">[[app.data.label]]</div>
-          <a class="back" href="/home" on-tap="_reset">
-            <paper-icon-button icon="icons:clear"></paper-icon-button>
-          </a>
+        <app-toolbar style$="[[_setToolbarStyle(app.color)]]">
+          <div main-title="">[[app.label]]</div>
+          <paper-icon-button icon="icons:clear" on-tap="_exit"></paper-icon-button>
         </app-toolbar>
-        <app-toolbar id="appToolbar" style$="[[_setToolbarStyle(app.data.color)]]" sticky="">
+        <app-toolbar id="appToolbar" style$="[[_setToolbarStyle(app.color)]]" sticky="">
 
         </app-toolbar>
       </app-header>
 
-      <div id="content" class="content">
+      <div id="content" class="content" on-exit-app="_exit">
       </div>
 
     </app-header-layout>
@@ -25,6 +55,6 @@
   </template>
 
 
-  <script>Polymer({is:"chris-app",properties:{app:{type:Object,observer:"_appChanged"},appElt:HTMLElement,feed:{type:Object}},attached:function(){console.log("got attached")},_appChanged:function(){this.appElt&&(Polymer.dom(this.$.content).removeChild(this.appElt),Polymer.dom(this.$.appToolbar).removeChild(Polymer.dom(this.$.appToolbar).firstElementChild),this.appElt.removeEventListener("parameters-changed",this._createFeed),this.appElt=null),Polymer.Base.importHref(this.resolveUrl("../../chris-apps/chris-apps-"+this.app.data.name+"/chris-apps-"+this.app.data.name+".html"),function(e){this.appElt=document.createElement("chris-apps-"+this.app.data.name),Polymer.dom(this.$.content).appendChild(this.appElt),Polymer.dom(this.$.appToolbar).appendChild(this.appElt.toolbar),this.appElt.addEventListener("parameters-changed",this._createFeed.bind(this))}.bind(this),function(e){window.console.log("oops, something went wrong..."),window.console.log(e)}.bind(this),!0)},_reset:function(){this.appElt.reset()},_getParamters:function(){this.appElt.generateParameters()},_createFeed:function(){this.feed={},this.feed.details={id:"",name:"created by "+this.app.data.name,opened:!1,checked:!1,color:this.app.data.color,favorite:!1,status:"running",tags:[],selected:!1,letter:this.app.data.name.charAt(0).toUpperCase(),date:(new Date).toString()},this.feed.plugins=[{label:this.app.data.name,color:this.app.data.color,id:0,parentID:0,depth:0,icon:"icons:cloud-queue",workflow:[{color:this.app.data.color,icon:"icons:cloud-queue",label:this.app.data.name}]}],this.feed.comments=[],this.feed.note="# Note about "+this.app.data.name+"\n\n---\n### parameters\n";for(var e=Object.keys(this.appElt.parameters),t=0;t<e.length;t++){var a=e[t];this.feed.note+="*"+a+"* : "+this.appElt.parameters[a]+"\n\n"}this.fire("feed-changed")},_setLayoutStyle:function(e){e=e.replace("#","");var t=parseInt(e.substring(0,2),16),a=parseInt(e.substring(2,4),16),p=parseInt(e.substring(4,6),16);return"background-color: rgba("+t+","+a+","+p+", 0.5);"},_setToolbarStyle:function(e){return"background-color: "+e+";"}});</script>
+  <script>Polymer({is:"chris-app",properties:{app:{type:Object,observer:"_appChanged"},appElt:HTMLElement,feed:{type:Object}},attached:function(){console.log("got attached")},_appChanged:function(){console.log(this.app),this.appElt&&(Polymer.dom(this.$.content).removeChild(this.appElt),Polymer.dom(this.$.appToolbar).removeChild(Polymer.dom(this.$.appToolbar).firstElementChild),this.appElt=null),Polymer.Base.importHref(this.resolveUrl("../../chris-apps/chris-apps-"+this.app.name+"/chris-apps-"+this.app.name+".html"),function(t){this.appElt=document.createElement("chris-apps-"+this.app.name),Polymer.dom(this.$.content).appendChild(this.appElt),Polymer.dom(this.$.appToolbar).appendChild(this.appElt.toolbar)}.bind(this),function(t){window.console.log("oops, something went wrong..."),window.console.log(t)}.bind(this),!0)},_exit:function(){this.appElt.reset(),this.fire("change-route","/home")},_setLayoutStyle:function(t){t=t.replace("#","");var e=parseInt(t.substring(0,2),16),o=parseInt(t.substring(2,4),16),p=parseInt(t.substring(4,6),16);return"background-color: rgba("+e+","+o+","+p+", 0.5);"},_setToolbarStyle:function(t){return"background-color: "+t+";"}});</script>
 </dom-module>
 </body></html>

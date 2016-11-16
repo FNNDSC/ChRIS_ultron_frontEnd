@@ -11,7 +11,19 @@
 
 </head><body><dom-module id="iron-dropdown">
   <template>
-    <style>:host{position:fixed;}#contentWrapper ::content > *{overflow:auto;}#contentWrapper.animating ::content > *{overflow:hidden;}</style>
+    <style>
+      :host {
+        position: fixed;
+      }
+
+      #contentWrapper ::content > * {
+        overflow: auto;
+      }
+
+      #contentWrapper.animating ::content > * {
+        overflow: hidden;
+      }
+    </style>
 
     <div id="contentWrapper">
       <content id="content" select=".dropdown-content"></content>

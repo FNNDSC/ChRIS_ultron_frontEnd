@@ -14,7 +14,57 @@
 
 </head><body><dom-module id="chris-plugin-list">
   <template>
-    <style>.toolbar{min-height:48px;@apply (--layout-horizontal);@apply (--layout-end);@apply (--layout-wrap);border-bottom:1px solid var(--accent-color);}.name{font-size:16px;font-weight:bold;color:var(--primary-text-color);}.spacer{@apply (--layout-flex);}paper-icon-button{color:var(--secondary-text-color);}.content{padding:20px;}.hidden{display:none;}#showAll{cursor:pointer;}</style>
+    <style>
+
+      .toolbar {
+
+          min-height: 48px;
+          @apply(--layout-horizontal);
+          @apply(--layout-end);
+          @apply(--layout-wrap);
+          border-bottom: 1px solid var(--accent-color);
+
+        }
+
+      .name {
+
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      paper-icon-button {
+
+        color: var(--secondary-text-color);
+
+      }
+
+      .content {
+
+        padding: 20px;
+
+      }
+
+      .hidden {
+
+        display: none;
+
+      }
+
+      #showAll{
+
+        cursor: pointer;
+
+      }
+
+    </style>
 
     <div id="pluginList" class="plugin-list">
 

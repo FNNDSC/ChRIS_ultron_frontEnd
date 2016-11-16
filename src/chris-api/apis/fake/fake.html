@@ -1,0 +1,17 @@
+<html><head><link rel="import" href="cj/helper-behavior.html">
+<link rel="import" href="cj/comment-collection-behavior.html">
+<link rel="import" href="cj/comment-behavior.html">
+<link rel="import" href="cj/feed-collection-behavior.html">
+<link rel="import" href="cj/feed-behavior.html">
+<link rel="import" href="cj/file-collection-behavior.html">
+<link rel="import" href="cj/file-behavior.html">
+<link rel="import" href="cj/note-behavior.html">
+<link rel="import" href="cj/pacsquery-behavior.html">
+<link rel="import" href="cj/plugin-collection-behavior.html">
+<link rel="import" href="cj/plugin-instance-behavior.html">
+<link rel="import" href="cj/plugin-behavior.html">
+<link rel="import" href="cj/tag-collection-behavior.html">
+<link rel="import" href="cj/tag-behavior.html">
+
+<script>FakeAPI=[HelperCJ,CommentCollectionCJ,CommentCJ,FeedCollectionCJ,FeedCJ,FileCollectionCJ,FileCJ,NoteCJ,PacsqueryCJ,PluginCollectionCJ,PluginInstanceCJ,PluginCJ,TagCollectionCJ,TagCJ],FakeAPIImpl={urlFakeAPI:function(e){if("GET"!==this.method)return"https://httpbin.org/"+this.method.toLowerCase();var t=/^\/(\d+)\//;return t.test(e)&&(e=e.replace(t,"/feed/")),/^\/data\//.test(e)?e:/^\/plugins\/instances\/(\d+)\//.test(e)?"/data/plugins.json":/^\/feed\/files\//.test(e)?"/data/files.json":"/data/"+e+".json"},formatFakeAPIResponse:function(e,t,o){function n(e){return Number(e.id)===i}switch(e){case"login":return{status:!0,message:"Successful login.",token:"kjASD12dasS"}}if(/^\/data\//.test(e))return console.log(e),o;var s={};if("GET"===this.method&&"comments"===e?s=this.generateCommentCollectionCJ():"GET"===this.method&&"feeds"===e?s=this.generateFeedCollectionCJ(o.data,t):"GET"===this.method&&"tags"===e?s=this.generateTagCollectionCJ():"GET"===this.method&&"note"===e?s=this.generateNoteCJ():"GET"===this.method&&"plugins"===e&&(console.log(e),s=this.generatePluginCollectionCJ(),console.log(s)),window.console.log(e),"GET"===this.method&&/^\/plugins\/instances\/(\d+)\//.test(e)){var i=Number(e.match(/\d+/)[0]);s=this.generatePluginInstanceCJ(i)}if("GET"===this.method&&/^\/(\d+)\/files\//.test(e)){window.console.log(e),window.console.log(e.match(/\d+/)[0]);var i=Number(e.match(/\d+/)[0]);window.console.log(i),s=this.generateFileCollectionCJ(i,t),window.console.log(s)}if("GET"!==this.method&&(s.collection={},s.collection.href=e,s.collection.items=[{data:[],href:"",links:[]}],/^\/plugins\/(\d+)\/instances\//.test(e))){var i=Number(e.match(/\d+/)[0]),l=this.plugins(),a=l.filter(n)[0];switch(a.name){case"pacsquery":case"pacsretrieve":var c=Math.round(100*Math.random());s.collection.items[0].data=[{name:"id",value:c},{name:"plugin_name",value:a.name},{name:"owner",value:"chris"}],s.collection.items[0].href=this.apiRoot+"/plugins/instances/"+c+"/"}}return this.apiError&&(s.collection.error={title:"API Error",code:"X1234",message:this.method+" : "+s.collection.href+" could not be processed."}),s}},FakeAPI.push(FakeAPIImpl);</script>
+</head><body></body></html>
