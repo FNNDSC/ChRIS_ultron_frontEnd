@@ -160,10 +160,7 @@
         <div class="border-wrap">
           [[feed.data.letter]]
         </div>
-        <div class="check">
-        <paper-fab class="fab" id="favorite" icon$="[[_setFavoriteIcon(feed.data.favorite)]]"></paper-fab>
-        <paper-fab class$="fab [[feed.data.status]]" id="status" icon$="[[_setStatusIcon(feed.data.status)]]"></paper-fab>
-        </div>
+        
       </div>
 
       <div class="card-content">
@@ -176,10 +173,7 @@
             <div class="double-line-1">[[feed.data.name]]</div>
             <div class="double-line-2">Name</div>
           </div>
-          <div class="item">
-            <div class="double-line-1">[[feed.data.letter]]</div>
-            <div class="double-line-2">Letter</div>
-          </div>
+          
           <div class="item">
             <iron-icon icon="icons:assignment-ind"></iron-icon>
             <div class="double-line-1">[[feed.data.date]]</div>
@@ -188,13 +182,7 @@
         </div>
 
         
-      <div class="group">
-        <div class="item">
-          <iron-icon style$="[[_setColor(feed.data.color)]]" icon="invert-colors"></iron-icon>
-          <div class="double-line-1"> Pick color: [[feed.data.color]]<paper-swatch-picker color="{{feed.data.color}}"></paper-swatch-picker> </div>
-          <div class="double-line-2">Color</div>
-        </div>
-      </div>
+      
 
       
       <div class="group">
@@ -206,38 +194,20 @@
         </div>
       </div>
 
-      <div class="group">
-        <div class="item">
-          <iron-icon icon="social:people"></iron-icon>
-          <div class="double-line-1">[[feed.data.tags]]</div>
-
-          <paper-menu-button ignore-select="">
-            <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" multi="">
-              <paper-item>Share</paper-item>
-              <paper-item>Settings</paper-item>
-              <paper-item>Help</paper-item>
-            </paper-menu>
-          </paper-menu-button>
-
-          <div class="double-line-2">Shared ([[feed.data.tags.length]])</div>
-        </div>
-      </div>
+      
 
       
       <div class="group">
         <div class="item">
           <iron-icon icon="icons:label"></iron-icon>
-          <div class="double-line-1">[[feed.data.tags]]</div>
+          <div class="double-line-1">
+            <template is="dom-repeat" items="[[feed.data.tags]]">
+              <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
+            </template>
 
-            <paper-dropdown-menu label="Dinosaurs">
-              <paper-listbox class="dropdown-content">
-                <paper-item>allosaurus</paper-item>
-                <paper-item>brontosaurus</paper-item>
-                <paper-item>carcharodontosaurus</paper-item>
-                <paper-item>diplodocus</paper-item>
-              </paper-listbox>
-          </paper-dropdown-menu>
+          </div>
+
+            
 
           <div class="double-line-2">Labels ([[feed.data.tags.length]])</div>
         </div>
@@ -246,5 +216,5 @@
 
   </div></paper-card></template>
 
-  <script>!function(){"use strict";Polymer({is:"chris-feed-about",properties:{feed:{type:Object}},_setBackgroundColor:function(r){return"background-color: "+r+";"},_setColor:function(r){return"color: "+r+";"},_setStatusIcon:function(r){var o="icons:";return o+="running"===r?"schedule":"error"===r?"clear":"done"},_setFavoriteIcon:function(r){var o="icons:";return o+=r?"favorite":"favorite-border"}})}();</script>
+  <script>!function(){"use strict";Polymer({is:"chris-feed-about",properties:{feed:{type:Object}},_setBackgroundColor:function(r){return"background-color: "+r+";"},_setColor:function(r){return"color: "+r+";"},_setStatusIcon:function(r){var o="icons:";return o+="running"===r?"schedule":"error"===r?"clear":"done"},_setFavoriteIcon:function(r){var o="icons:";return o+=r?"favorite":"favorite-border"},_setTagStyle:function(r){return"color: "+r+";"}})}();</script>
 </dom-module></body></html>

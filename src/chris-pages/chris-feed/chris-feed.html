@@ -397,10 +397,7 @@
         <div class="border-wrap">
           [[feed.data.letter]]
         </div>
-        <div class="check">
-        <paper-fab class="fab" id="favorite" icon$="[[_setFavoriteIcon(feed.data.favorite)]]"></paper-fab>
-        <paper-fab class$="fab [[feed.data.status]]" id="status" icon$="[[_setStatusIcon(feed.data.status)]]"></paper-fab>
-        </div>
+        
       </div>
 
       <div class="card-content">
@@ -413,10 +410,7 @@
             <div class="double-line-1">[[feed.data.name]]</div>
             <div class="double-line-2">Name</div>
           </div>
-          <div class="item">
-            <div class="double-line-1">[[feed.data.letter]]</div>
-            <div class="double-line-2">Letter</div>
-          </div>
+          
           <div class="item">
             <iron-icon icon="icons:assignment-ind"></iron-icon>
             <div class="double-line-1">[[feed.data.date]]</div>
@@ -425,13 +419,7 @@
         </div>
 
         
-      <div class="group">
-        <div class="item">
-          <iron-icon style$="[[_setColor(feed.data.color)]]" icon="invert-colors"></iron-icon>
-          <div class="double-line-1"> Pick color: [[feed.data.color]]<paper-swatch-picker color="{{feed.data.color}}"></paper-swatch-picker> </div>
-          <div class="double-line-2">Color</div>
-        </div>
-      </div>
+      
 
       
       <div class="group">
@@ -443,38 +431,20 @@
         </div>
       </div>
 
-      <div class="group">
-        <div class="item">
-          <iron-icon icon="social:people"></iron-icon>
-          <div class="double-line-1">[[feed.data.tags]]</div>
-
-          <paper-menu-button ignore-select="">
-            <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" multi="">
-              <paper-item>Share</paper-item>
-              <paper-item>Settings</paper-item>
-              <paper-item>Help</paper-item>
-            </paper-menu>
-          </paper-menu-button>
-
-          <div class="double-line-2">Shared ([[feed.data.tags.length]])</div>
-        </div>
-      </div>
+      
 
       
       <div class="group">
         <div class="item">
           <iron-icon icon="icons:label"></iron-icon>
-          <div class="double-line-1">[[feed.data.tags]]</div>
+          <div class="double-line-1">
+            <template is="dom-repeat" items="[[feed.data.tags]]">
+              <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
+            </template>
 
-            <paper-dropdown-menu label="Dinosaurs">
-              <paper-listbox class="dropdown-content">
-                <paper-item>allosaurus</paper-item>
-                <paper-item>brontosaurus</paper-item>
-                <paper-item>carcharodontosaurus</paper-item>
-                <paper-item>diplodocus</paper-item>
-              </paper-listbox>
-          </paper-dropdown-menu>
+          </div>
+
+            
 
           <div class="double-line-2">Labels ([[feed.data.tags.length]])</div>
         </div>
@@ -483,7 +453,7 @@
 
   </div></paper-card></template>
 
-  <script>!function(){"use strict";Polymer({is:"chris-feed-about",properties:{feed:{type:Object}},_setBackgroundColor:function(r){return"background-color: "+r+";"},_setColor:function(r){return"color: "+r+";"},_setStatusIcon:function(r){var o="icons:";return o+="running"===r?"schedule":"error"===r?"clear":"done"},_setFavoriteIcon:function(r){var o="icons:";return o+=r?"favorite":"favorite-border"}})}();</script>
+  <script>!function(){"use strict";Polymer({is:"chris-feed-about",properties:{feed:{type:Object}},_setBackgroundColor:function(r){return"background-color: "+r+";"},_setColor:function(r){return"color: "+r+";"},_setStatusIcon:function(r){var o="icons:";return o+="running"===r?"schedule":"error"===r?"clear":"done"},_setFavoriteIcon:function(r){var o="icons:";return o+=r?"favorite":"favorite-border"},_setTagStyle:function(r){return"color: "+r+";"}})}();</script>
 </dom-module><dom-module id="chris-comment" assetpath="../../chris-components/chris-comment/">
 
   <template>
@@ -1517,9 +1487,7 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
             <app-toolbar>
               <paper-icon-button icon="menu" drawer-toggle=""></paper-icon-button>
               <div main-title="">[[feed.data.name]]</div>
-              <a class="back" href="/home" on-tap="_reset">
-                <paper-icon-button icon="icons:clear"></paper-icon-button>
-              </a>
+              <paper-icon-button icon="icons:clear" on-tap="_exit"></paper-icon-button>
             </app-toolbar>
           </app-header>
 
@@ -1545,6 +1513,6 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
 
   </template>
 
-  <script>Polymer({is:"chris-feed",properties:{feed:{type:Object,observer:"_feedChanged"},workflow:{type:Array},note:{type:Object},comments:{type:Object},details:{type:Object},feedRoute:{type:Object},feedRouteData:{type:Object},pageRoute:{type:Object},pageRouteData:{type:Object},pluginRoute:{type:Object},pluginRouteData:{type:Object},pluginDSRoute:{type:Object},pluginDSRouteData:{type:Object},error:{type:Object},page:{type:String}},observers:["_feedIndexChanged(feedRouteData.index)","_pageDataChanged(pageRouteData.page)","_pluginIndexChanged(pluginRouteData.index)","_pluginDSIdChanged(pluginDSRouteData.id)"],ready:function(e){},_targetPlugin:function(e){if(e){for(var t=0;t<this.workflow.data.length;t++)if(this.workflow.data[t].data.id===e)return this.workflow.data[t];return 0}},_feedIndexChanged:function(e){console.log("_feedIndexChanged "),console.log(e)},_pageDataChanged:function(e){console.log("_pageDataChanged"),console.log(e),"workflow"===e&&console.log(this.pluginDSRouteData),this.page=e||"about"},_pluginIndexChanged:function(e){console.log("_pluginIndexChanged"),console.log(e)},_pluginDSIdChanged:function(e){console.log("_pluginDSIdChanged"),console.log(e),e&&(this.page="plugin")},_feedChanged:function(){var e={};e.auth={type:"token",token:sessionStorage.getItem("token")};var t=this.$.ItemAPI.request("GET",this.feed.links.comments,e);t.then(this.handleItem.bind(this)).catch(this.handleError.bind(this));var n=this.$.ItemAPI.request("GET",this.feed.links.note,e);n.then(this.handleItem.bind(this)).catch(this.handleError.bind(this));var o=this.$.ItemAPI.request("GET",this.feed.links.plugins,e);o.then(this.handleItem.bind(this)).catch(this.handleError.bind(this))},_reset:function(){console.log("reset"),this.page="about"},handleItem:function(e){if(this.$.adl.resetLayout(),e){var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("comments",e);break;case"note":this.set("note",e);break;case"plugins":this.set("workflow",e)}}},handleError:function(e){console.error(e)},_setLayoutStyle:function(e){e=e.replace("#","");var t=parseInt(e.substring(0,2),16),n=parseInt(e.substring(2,4),16),o=parseInt(e.substring(4,6),16);return"background-color: rgba("+t+","+n+","+o+", 0.5);"},_setToolbarStyle:function(e){return"background-color: "+e+";"}});</script>
+  <script>Polymer({is:"chris-feed",properties:{feed:{type:Object,observer:"_feedChanged"},workflow:{type:Array},note:{type:Object},comments:{type:Object},details:{type:Object},feedRoute:{type:Object},feedRouteData:{type:Object},pageRoute:{type:Object},pageRouteData:{type:Object},pluginRoute:{type:Object},pluginRouteData:{type:Object},pluginDSRoute:{type:Object},pluginDSRouteData:{type:Object},error:{type:Object},page:{type:String}},observers:["_feedIndexChanged(feedRouteData.index)","_pageDataChanged(pageRouteData.page)","_pluginIndexChanged(pluginRouteData.index)","_pluginDSIdChanged(pluginDSRouteData.id)"],ready:function(e){},_targetPlugin:function(e){if(e){for(var t=0;t<this.workflow.data.length;t++)if(this.workflow.data[t].data.id===e)return this.workflow.data[t];return 0}},_feedIndexChanged:function(e){console.log("_feedIndexChanged "),console.log(e)},_pageDataChanged:function(e){console.log("_pageDataChanged"),console.log(e),"workflow"===e&&console.log(this.pluginDSRouteData),this.page=e||"about"},_pluginIndexChanged:function(e){console.log("_pluginIndexChanged"),console.log(e)},_pluginDSIdChanged:function(e){console.log("_pluginDSIdChanged"),console.log(e),e&&(this.page="plugin")},_feedChanged:function(){console.log(this.feed);var e={};e.auth={type:"token",token:sessionStorage.getItem("token")};var t=this.$.ItemAPI.request("GET",this.feed.links.comments,e);t.then(this.handleComments.bind(this)).catch(this.handleError.bind(this));var n=this.$.ItemAPI.request("GET",this.feed.links.note,e);n.then(this.handleNote.bind(this)).catch(this.handleError.bind(this))},_reset:function(){this.page="about"},handleComments:function(e){if(console.log(e),this.$.adl.resetLayout(),e){var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("comments",e);break;case"note":this.set("note",e);break;case"plugins":this.set("workflow",e)}}},handleNote:function(e){if(console.log(e),this.$.adl.resetLayout(),e){var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("comments",e);break;case"note":this.set("note",e);break;case"plugins":this.set("workflow",e)}}},handleError:function(e){console.error(e)},_setLayoutStyle:function(e){e=e.replace("#","");var t=parseInt(e.substring(0,2),16),n=parseInt(e.substring(2,4),16),o=parseInt(e.substring(4,6),16);return"background-color: rgba("+t+","+n+","+o+", 0.5);"},_setToolbarStyle:function(e){return"background-color: "+e+";"},_exit:function(){this._reset(),this.fire("exit")}});</script>
 </dom-module>
 </body></html>
