@@ -53,14 +53,19 @@
         // HIJACK GET FILE NAME
         if(/^\/data\//.test(target)){
 
-          console.log( target );
-
           return target;
 
-        }
-        else{
+        } else if( /^\/plugins\/instances\/(\d+)\//.test(target) ){
 
-          return 'data/' + target + '.json';
+           return '/data/plugins.json';
+
+        } else if( /^\/feed\/files\//.test(target) ){
+
+          return '/data/files.json';
+
+        } else{
+
+          return '/data/' + target + '.json';
 
         }
         

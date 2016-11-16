@@ -366,6 +366,8 @@
         //
         this.fire( 'previous-changed', response.data[0].data.id );
 
+        console.log( response.data[0].href );
+
         let waitPromise = new Promise(
 
            (resolve, reject) => {
