@@ -62,16 +62,19 @@
         on-fetch-feeds='_fetchFeeds'
         on-open-feed="_openFeed"
         on-save-feed="_saveFeed"
-        on-exit="_exitHome"
+        on-exit="_exitToLogin"
         on-open-app="_openApp"></chris-home>
 
       <chris-app
         name="app"
         app="[[openApp]]"
-        on-exit="_exitApp"
+        on-exit="_exitToHome"
         on-add-feed="_addFeed"></chris-app>
 
-      <chris-feed name="feed" feed="[[openFeed]]"></chris-feed>
+      <chris-feed
+        name="feed"
+        feed="[[openFeed]]"
+        on-exit="_exitToHome"></chris-feed>
 
     </iron-pages>
 
@@ -336,13 +339,13 @@
         
       },
 
-      _exitApp: function(){
+      _exitToHome: function(){
 
         this.set('route.path', '/home/');
 
       },
 
-      _exitHome: function(){
+      _exitToLogin: function(){
 
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('token');

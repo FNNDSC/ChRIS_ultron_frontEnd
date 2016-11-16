@@ -50,6 +50,8 @@
           target = target.replace(isFeedRegex, '/feed/');
         }
 
+        console.log( target );
+
         // HIJACK GET FILE NAME
         if(/^\/data\//.test(target)){
 
@@ -62,6 +64,14 @@
         } else if( /^\/feed\/files\//.test(target) ){
 
           return '/data/files.json';
+
+        } else if( /^\/feed\/comments\//.test(target) ){
+
+          return '/data/feed/comments.json';
+
+        } else if( /^\/note\/(\d+)\//.test(target) ){
+
+          return '/data/feed/note.json';
 
         } else{
 
@@ -99,7 +109,7 @@
         var itemCJ = {};
 
         // Simulate GET
-        if( this.method === 'GET' && target === 'comments' ){
+        if( this.method === 'GET' && /^\/(\d+)\/comments\//.test(target) ){
 
           itemCJ = this.generateCommentCollectionCJ();
 
@@ -114,7 +124,7 @@
           itemCJ = this.generateTagCollectionCJ();
 
         }
-        else if( this.method === 'GET' && target === 'note' ){
+        else if( this.method === 'GET' && /^\/note\/(\d+)\//.test(target) ){
 
           itemCJ = this.generateNoteCJ();
 

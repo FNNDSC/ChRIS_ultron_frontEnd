@@ -160,9 +160,7 @@
             <app-toolbar>
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <div main-title>[[feed.data.name]]</div>
-              <a class="back" href="/home" on-tap="_reset">
-                <paper-icon-button icon="icons:clear"></paper-icon-button>
-              </a>
+              <paper-icon-button icon="icons:clear" on-tap="_exit"></paper-icon-button>
             </app-toolbar>
           </app-header>
 
@@ -336,6 +334,8 @@
 
       _feedChanged: function(){
 
+        console.log( this.feed );
+
         var data = {};
         data.auth = {
           type: 'token',
@@ -345,31 +345,69 @@
         // get comments
         var requestComments = this.$.ItemAPI.request( 'GET', this.feed.links.comments, data );
         requestComments
-          .then( this.handleItem.bind(this) )
+          .then( this.handleComments.bind(this) )
           .catch( this.handleError.bind(this) );
 
         // get note
         var requestNote = this.$.ItemAPI.request( 'GET', this.feed.links.note, data );
         requestNote
-          .then( this.handleItem.bind(this) )
+          .then( this.handleNote.bind(this) )
           .catch( this.handleError.bind(this) );
 
         // get plugins/wokflow
-        var requestPlugins = this.$.ItemAPI.request( 'GET', this.feed.links.plugins, data );
-        requestPlugins
-          .then( this.handleItem.bind(this) )
-          .catch( this.handleError.bind(this) );
+        // var requestPlugins = this.$.ItemAPI.request( 'GET', this.feed.links.plugins, data );
+        // requestPlugins
+        //   .then( this.handleItem.bind(this) )
+        //   .catch( this.handleError.bind(this) );
 
       },
 
       _reset: function(){
 
-        console.log( 'reset' );
         this.page = 'about';
 
       },
 
-      handleItem: function( response ){
+      handleComments: function( response ){
+
+        console.log( response );
+
+        /// ugly hack
+        this.$.adl.resetLayout();
+
+          // could/should show nice reload button
+        if( !response ){
+
+          return;
+
+        }
+
+        // use href to decide on how to handle it!
+        var type = response.href.split(/[/]+/).pop();
+
+        switch(type){
+
+          case 'comments' :
+            this.set( 'comments', response );
+            break;
+
+          case 'note' :
+            this.set( 'note', response );
+            break;
+
+          case 'plugins' :
+            this.set( 'workflow', response );
+            break;
+
+          default:
+            break;
+
+        }
+      },
+
+      handleNote: function( response ){
+
+        console.log( response );
 
         /// ugly hack
         this.$.adl.resetLayout();
@@ -425,6 +463,13 @@
       _setToolbarStyle: function( color ){
 
         return 'background-color: ' + color + ';';
+
+      },
+
+      _exit: function(){
+        
+        this._reset();
+        this.fire('exit');
 
       }
 
