@@ -1,0 +1,154 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<dom-module id="chris-file-tree">
+
+  <template>
+
+    <style>
+
+      :host {
+
+        display: block;
+
+        }
+
+    </style>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-file-tree',
+
+        properties: {
+
+          list: {
+            type: Object,
+            observer: '_listChanged'
+          },
+
+          tree: {
+            type: Array,
+            observer: '_treeChanged'
+          }
+        },
+
+        _listChanged: function(){
+          
+          this._build( this.list );
+
+
+        },
+
+        _treeChanged: function(){
+
+          console.log( this.tree );
+
+        },
+
+        _build: function( list ){
+
+          // sort by previous id
+          list.sort( this._sortByPreviousId );
+
+          // note
+          // path required so polymer auto binding kick in
+          var tree = [];
+          var map = {};
+          var treePath = [];
+          for(var i = 0; i < list.length; i++ ){ 
+
+            var node = list[i];
+            node.children = [];
+            map[node.id] = i;
+
+            if( node.previous_id === '' ){
+
+              node.path = ['tree', 0];
+              tree.push( node );
+              
+            }
+            else{
+              
+              var previousPath = list[map[node.previous_id]].path;
+              node.path = previousPath.concat( ['children', list[map[node.previous_id]].children.length] );
+              list[map[node.previous_id]].children.push(node);
+
+            }
+
+          }
+
+          this.set('tree', tree);
+          this.fire('tree-changed', this.tree);
+
+        },
+
+        _sortByPreviousId: function( a, b ){
+
+            // special case for the root
+            if( a.previous_id === '' ){
+              return -1;
+            }
+            if( b.previous_id==='' ){
+              return 1;
+            }
+
+            if ( parseInt( a.previous_id ) > parseInt( b.previous_id ) ) {
+              return 1;
+            }
+            if ( parseInt( a.previous_id ) < parseInt( b.previous_id ) ) {
+              return -1;
+            }
+            // a must be equal to b
+            return 0;
+
+        },
+
+        _sortByPathLength: function( a, b ){
+
+            if ( parseInt( a.path.length ) < parseInt( b.path.length ) ) {
+              return 1;
+            }
+            if ( parseInt( a.path.length ) > parseInt( b.path.length ) ) {
+              return -1;
+            }
+            // a must be equal to b
+            return 0;
+
+        },
+
+        _selectNode: function( event ){
+          // stop event propagation
+          event.preventDefault();
+          event.stopPropagation();
+
+          this.selected = event.detail;
+
+        },
+
+        _selectedChanged: function(){
+
+          var self = this;
+          // update list and tree
+          this.list.map(function(obj){
+
+            obj.selected = ( obj.id === self.selected.id );
+            // required so polymer auto bindings kick in
+            self.set(obj.path.concat(['selected']), obj.selected );
+
+          });
+
+          // fire event!
+          console.log('fire select-node');
+          this.fire( 'select-node', this.selected );
+
+        }
+
+    });
+  </script>
+</dom-module>

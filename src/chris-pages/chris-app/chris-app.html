@@ -55,13 +55,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     }
 
+    div[main-title] {
+
+      text-align: center;
+      
+    }
+
     </style>
 
     <app-header-layout has-scrolling-region style$="[[_setLayoutStyle(app.color)]]">
       <app-header fixed condenses effects="waterfall">
         <app-toolbar style$="[[_setToolbarStyle(app.color)]]">
+          <paper-icon-button icon="icons:arrow-back" on-tap="_exit"></paper-icon-button>
           <div main-title>[[app.label]]</div>
-          <paper-icon-button icon="icons:clear" on-tap="_exit"></paper-icon-button>
         </app-toolbar>
         <app-toolbar id="appToolbar" style$="[[_setToolbarStyle(app.color)]]" sticky>
 

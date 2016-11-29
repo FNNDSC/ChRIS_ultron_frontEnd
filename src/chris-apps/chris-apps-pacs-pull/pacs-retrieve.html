@@ -1,8 +1,9 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <!-- PAPER ELEMENTS -->
-<link rel="import" href="../../../bower_components/paper-badge/paper-badge.html">
-<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<!--<link rel="import" href="../../../bower_components/paper-badge/paper-badge.html">
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">-->
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
@@ -93,6 +94,7 @@
         font-size: 2.4em;
         position: relative;
         top: 1em;
+        display: block;
         /*-webkit-transform: scale(.9);*/
         /*-moz-transform: scale(.9);*/
         /*transform: scale(.9);*/
@@ -128,6 +130,41 @@
 
       }
 
+      #vad[hidden], .load[hidden]{
+
+        display: none
+
+      }
+
+      .vaadinfoot {
+
+        text-align: center;
+        border: 1px solid #e3e3e3;
+        font-size: 18px;
+        padding: 16px;
+        background-color: var(--paper-grey-50);
+
+      }
+
+      .submit {
+
+        padding: 16px;
+        font-size: 18px;
+        font-weight: 600;
+        background-color: var(--accent-color);
+        color: #ffffff;
+        margin-top: 24px;
+        width: 100%;
+        max-width: 400px;
+
+      }
+
+      .submit[disabled] {
+
+        background-color: var(--light-accent-color);
+
+     }
+
     </style>
 
     <!-- API connection -->
@@ -137,25 +174,6 @@
     </chris-api>
 
     <div class="content">
-
-      <paper-fab-speed-dial id="fabspeed" direction="top">
-
-        <!-- update icon nd color depending on if there is something to get or not. -->
-        <paper-fab id="create" icon="icons:add" class="dropdown-trigger" disabled></paper-fab>
-
-        <div class="dropdown-content">
-          <div>
-            <paper-fab mini id="export" icon="editor:insert-drive-file" on-tap="_getCSV"></paper-fab>
-            <paper-tooltip for="export" position="left" animation-delay="0">Save in file</paper-tooltip>
-          </div>
-          <div>
-            <paper-fab mini id="download" icon="icons:file-download" on-tap="_retrieve"></paper-fab>
-            <paper-tooltip for="download" position="left" animation-delay="0">Save in ChRIS</paper-tooltip>
-          </div>
-        </div>
-      </paper-fab-speed-dial>
-
-      <paper-badge id="fabspeedbadge" for="fabspeed" label="[[selection.length]]"></paper-badge>
 
       <!-- Progress bar -->
       <paper-progress id="progressBar" indeterminate hidden$="[[!searching]]"></paper-progress>
@@ -179,9 +197,13 @@
               <col name="uid" sortable max-width="200" hidden/>
 
             </colgroup>
-
           </table>
         </vaadin-grid>
+
+        <div class="vaadinfoot">
+          <!--<paper-button class="submit" raised on-tap="_find">Back to search</paper-button>-->
+          <paper-button id="retrieve" class="submit" raised on-tap="_retrieve" disabled>Pull [[selection.length]] series.</paper-button>
+        </div>
 
       </div>
 
@@ -374,9 +396,9 @@
 
       _selectionChanged: function(){
 
-        // update color of FAB
-        this.$.create.disabled = this.selection.length > 0 ? false : true;
-        this.$.fabspeedbadge.hidden = this.selection.length > 0 ? false : true;
+        // update state of button
+        this.$.retrieve.disabled = this.selection.length > 0 ? false : true;
+        // this.$.fabspeedbadge.hidden = this.selection.length > 0 ? false : true;
 
       },
 

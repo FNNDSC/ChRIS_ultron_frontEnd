@@ -1,0 +1,131 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>chris-plugin-tree test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../../web-component-tester/browser.js"></script>
+    <script src="../../../../iron-test-helpers/mock-interactions.js"></script>
+
+    <link rel="import" href="../../../src/chris-components/chris-plugin-tree/chris-plugin-tree.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <chris-plugin-tree></chris-plugin-tree>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite( '<chris-plugin-tree>', function() {
+
+        let element, list, tree;
+
+        setup(function(){
+
+          element = fixture('basic');
+
+          list = [
+             {
+                id: '7',
+                previous_id: '3',
+                plugin_name: 'mriconvert'
+              },
+              {
+                id: '1',
+                previous_id: '',
+                plugin_name: 'pacsquery'
+              },
+              {
+                id: '3',
+                previous_id: '1',
+                plugin_name: 'pacsretrieve'
+              },
+              {
+                id: '55',
+                previous_id: '1',
+                plugin_name: 'reconall'
+              },
+  
+              {
+                id: '10',
+                previous_id: '7',
+                plugin_name: 'tractography'
+              }];
+
+            tree = [
+              {
+                id: '1',
+                previous_id: '',
+                plugin_name: 'pacsquery',
+                children: [
+                  {
+                    id: '3',
+                    previous_id: '1',
+                    plugin_name: 'pacsretrieve',
+                    children: [
+                      {
+                        id: '7',
+                        previous_id: '3',
+                        plugin_name: 'mriconvert',
+                        children: [
+                          {
+                            id: '10',
+                            previous_id: '7',
+                            plugin_name: 'tractography',
+                            children: []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    id: '55',
+                    previous_id: '1',
+                    plugin_name: 'reconall',
+                    children: []
+                  }
+                ]
+              }
+            ]
+
+        });
+
+        test('instantiating the element works', function() {
+
+          assert.equal( element.is, 'chris-plugin-tree' );
+
+        });
+
+        test('sort list by previous id works', function(){
+
+            list.sort( element._sortByPreviousId );
+            assert.equal( list[3].previous_id, '3' );
+
+        });
+
+        test('tree generation when list provided works', function( done ) {
+
+          element.addEventListener( 'tree-changed', treeChanged );
+          element.list = list;
+
+          function treeChanged( event ){
+
+            assert.deepEqual( tree, element.tree );
+            assert.deepEqual( tree, event.detail );
+
+            done();
+            element.removeEventListener( 'tree-changed', treeChanged );
+
+          }
+
+        });
+
+      } );
+    </script>
+
+  </body>
+</html>
