@@ -1,0 +1,56 @@
+<script>
+  /** @polymerBehavior PluginCollection */
+  PluginInstanceCollectionCJ = {
+
+    /**
+     */
+    generatePluginInstanceCollectionCJ: function( rootId ){
+
+      var cj = {};
+      cj.collection = {};
+
+      // create the href field
+      cj.collection.href = this.apiRoot + '/plugins/instances/search/';
+
+      // create the template field
+      cj.collection.template = {};
+      cj.collection.template.data = [
+        {'name' : 'id', 'value' : ''},
+        {'name' : 'previous_id', 'value' : ''},
+        {'name' : 'plugin_name', 'value' : ''}
+      ];
+
+      // create the items
+      cj.collection.items = [];
+      var items = cj.collection.items;
+
+      // generate random number of items
+      var plugins = this.pluginsInstancesCollectionRawData(rootId);
+      console.log( plugins );
+
+      for( var i=0; i<plugins.length; i++ ){
+
+        var item = {};
+        //create the href field (will miss the feed id but OK)
+        item.href = this.apiRoot + '/plugins/' + plugins[i].id + '/';
+
+        // create the links field
+        item.links = [];
+        var instances = {
+            rel: 'instances',
+            href: this.apiRoot + '/plugins/' + plugins[i].id + '/instances/'
+        }
+        item.links.push(instances);
+
+        // create the data field
+        item.data = this.generateItemDataCJ( cj.collection.template.data, plugins[i] ).data;
+        items.push(item);
+
+      }
+
+      return cj;
+
+    }
+
+  }
+</script>
