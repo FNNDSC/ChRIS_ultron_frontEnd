@@ -300,11 +300,12 @@
         requestPlugins
           .then( this._handlePlugins.bind(this) )
           .catch( this.handleError.bind(this) );
-
-        // get plugins/wokflow
-        // FILES COLLECTION
-        // https://fnndsc.github.io/ChRIS_ultron_backEnd/collections/file.html
-        // we can map it to a plugin later...
+        
+        // get files
+        var requestFiles = this.$.ChrisAPI.request( 'GET', this.feed.links.files, data );
+        requestFiles
+          .then( this._handleFiles.bind(this) )
+          .catch( this.handleError.bind(this) );
       },
 
       _reset: function(){
@@ -313,9 +314,15 @@
 
       },
 
+      _handleFiles: function( response ){
+
+        //https://fnndsc.github.io/ChRIS_ultron_backEnd/collections/file.html
+        console.log( response );
+
+      },
+
       _handlePlugins: function( response ){
 
-        console.log( response );
         this.set('pluginCollection', response.data );
 
       },

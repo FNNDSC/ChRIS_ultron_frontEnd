@@ -18,6 +18,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <!-- IRON ELEMENTS -->
@@ -99,6 +100,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         --paper-fab-background: var(--accent-color);
       }
 
+      paper-toggle-button {
+
+        --paper-toggle-button-checked-bar-color:  var(--accent-color);
+        --paper-toggle-button-checked-button-color:  var(--accent-color);
+        --paper-toggle-button-checked-ink-color: var(--accent-color);
+
+      }
+
       /*on small screens, make toast full width
  class="fit-bottom"
       */
@@ -131,6 +140,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             <app-toolbar>
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <div main-title>ChRIS 3.0 - Ultrøn</div>
+              <paper-toggle-button></paper-toggle-button>
               <paper-icon-button icon="icons:exit-to-app" on-tap="_exit"></paper-icon-button>
             </app-toolbar>
           </app-header>
