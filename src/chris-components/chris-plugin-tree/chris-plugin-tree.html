@@ -185,18 +185,20 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _selectedChanged: function(){
 
-          var self = this;
-          // update list and tree
-          this.list.map(function(obj){
+          if( this.selected){
 
-            obj.selected = ( obj.id === self.selected.id );
-            // required so polymer auto bindings kick in
-            self.set(obj.path.concat(['selected']), obj.selected );
+            // update list and tree
+            this.list.map(function(obj){
 
-          });
+              obj.selected = ( obj.id === this.selected.id );
+              // required so polymer auto bindings kick in
+              this.set(obj.path.concat(['selected']), obj.selected );
+
+            }.bind(this));
+
+          }
 
           // fire event!
-          console.log('fire select-node');
           this.fire( 'select-node', this.selected );
 
         }

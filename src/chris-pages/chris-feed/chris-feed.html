@@ -136,15 +136,15 @@
                 <paper-icon-button icon="icons:apps" on-tap="_openTree"></paper-icon-button>
                 <iron-dropdown id="dropdown" horizontal-align="right" vertical-align="top" on-tap="_closeDropdown">
                     <div class="plugin dropdown-content" on-select-node="_selectPlugin">
-                      <chris-plugin-tree list="[[pluginCollection]]"></chris-plugin-tree>
+                      <chris-plugin-tree list="[[pluginCollection]]" selected="[[plugin]]"></chris-plugin-tree>
                     </div>
                 </iron-dropdown>
               </span>
 
               <iron-selector attr-for-selected="name" selected="{{page}}">
-                <paper-icon-button name="note" icon="editor:mode-edit"></paper-icon-button>
-                <paper-icon-button name="comments" icon="communication:forum"></paper-icon-button>
-                <paper-icon-button name="about" icon="icons:assignment-ind"></paper-icon-button>
+                <paper-icon-button name="note" icon="editor:mode-edit" on-tap="_deselectPlugin"></paper-icon-button>
+                <paper-icon-button name="comments" icon="communication:forum" on-tap="_deselectPlugin"></paper-icon-button>
+                <paper-icon-button name="about" icon="icons:assignment-ind" on-tap="_deselectPlugin"></paper-icon-button>
               </iron-selector>
 
               <paper-icon-button icon="icons:more-vert"></paper-icon-button>
@@ -495,6 +495,12 @@
       _selectPlugin: function( event ){
         
         this.plugin = event.detail;
+
+      },
+
+      _deselectPlugin: function(){
+
+        this.plugin = null;
 
       },
 
