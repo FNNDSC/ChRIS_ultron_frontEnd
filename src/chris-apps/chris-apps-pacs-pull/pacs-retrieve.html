@@ -146,20 +146,23 @@
 
       }
 
-      .submit {
+      paper-button {
 
         padding: 16px;
         font-size: 18px;
-        font-weight: 600;
+
+      }
+
+      #retrieve {
+
         background-color: var(--accent-color);
         color: #ffffff;
-        margin-top: 24px;
         width: 100%;
         max-width: 400px;
 
       }
 
-      .submit[disabled] {
+      #retrieve[disabled] {
 
         background-color: var(--light-accent-color);
 
@@ -201,8 +204,8 @@
         </vaadin-grid>
 
         <div class="vaadinfoot">
-          <!--<paper-button class="submit" raised on-tap="_find">Back to search</paper-button>-->
-          <paper-button id="retrieve" class="submit" raised on-tap="_retrieve" disabled>Pull [[selection.length]] series.</paper-button>
+          <paper-button id="retrieve" raised on-tap="_retrieve" disabled>Pull [[selection.length]] series</paper-button>
+          <paper-button id="csv" raised on-tap="_getCSV">CSV<iron-icon icon="icons:file-download"></iron-icon></paper-button>
         </div>
 
       </div>
@@ -398,7 +401,7 @@
 
         // update state of button
         this.$.retrieve.disabled = this.selection.length > 0 ? false : true;
-        // this.$.fabspeedbadge.hidden = this.selection.length > 0 ? false : true;
+        this.$.csv.disabled = this.selection.length > 0 ? false : true;
 
       },
 
