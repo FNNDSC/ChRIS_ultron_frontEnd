@@ -119,7 +119,7 @@
     <div id="detail">
 
       <!-- API Calls -->
-      <chris-api id="ItemAPI"
+      <chris-api id="ChrisAPI"
         error="{{error}}">
       </chris-api>
 
@@ -282,93 +282,41 @@
         };
 
         // get comments
-        var requestComments = this.$.ItemAPI.request( 'GET', this.feed.links.comments, data );
+        var requestComments = this.$.ChrisAPI.request( 'GET', this.feed.links.comments, data );
         requestComments
           .then( this.handleComments.bind(this) )
           .catch( this.handleError.bind(this) );
 
         // get note
-        var requestNote = this.$.ItemAPI.request( 'GET', this.feed.links.note, data );
+        var requestNote = this.$.ChrisAPI.request( 'GET', this.feed.links.note, data );
         requestNote
           .then( this.handleNote.bind(this) )
           .catch( this.handleError.bind(this) );
 
-
-        var pluginList = [
-             {
-                id: '7',
-                previous_id: '3',
-                plugin_name: 'mriconvert',
-                selected: false,
-                path: []
-              },
-              {
-                id: '1',
-                previous_id: '',
-                plugin_name: 'pacsquery',
-                selected: false,
-                path: []
-              },
-              {
-                id: '3',
-                previous_id: '1',
-                plugin_name: 'pacsretrieve',
-                selected: false,
-                path: []
-              },
-              {
-                id: '55',
-                previous_id: '1',
-                plugin_name: 'reconall',
-                selected: false,
-                path: []
-              },
-  
-              {
-                id: '10',
-                previous_id: '7',
-                plugin_name: 'tractography',
-                selected: false,
-                path: []
-              },
-              {
-                id: '56',
-                previous_id: '55',
-                plugin_name: 'tractography',
-                selected: false,
-                path: []
-              },
-              {
-                id: '2',
-                previous_id: '1',
-                plugin_name: 'pacman',
-                selected: false,
-                path: []
-              }
-            ];
-
-            this.set('pluginCollection', pluginList);
+        // get plugins
+        data.params = {};
+        data.params.root_id = this.feed.data.id;
+        var requestPlugins =this.$.ChrisAPI.request('GET', '/plugins/instances/search/', data);
+        requestPlugins
+          .then( this._handlePlugins.bind(this) )
+          .catch( this.handleError.bind(this) );
 
         // get plugins/wokflow
         // FILES COLLECTION
         // https://fnndsc.github.io/ChRIS_ultron_backEnd/collections/file.html
         // we can map it to a plugin later...
-
-        // get all plugins from this feed
-        //
-        // http http://localhost:8000/api/v1/plugins/instances/search/ root_id==6 
-
-        //this.feed.links.files
-        // var requestPlugins = this.$.ItemAPI.request( 'GET', this.feed.links.plugins, data );
-        // requestPlugins
-        //   .then( this.handleItem.bind(this) )
-        //   .catch( this.handleError.bind(this) );
-
       },
 
       _reset: function(){
 
         //this.page = 'about';
+
+      },
+
+      _handlePlugins: function( response ){
+
+        console.log( response );
+        this.set('pluginCollection', response.data );
 
       },
 
@@ -493,8 +441,17 @@
       },
 
       _selectPlugin: function( event ){
-        
-        this.plugin = event.detail;
+
+        if( event.detail.data ){
+
+          this.plugin = event.detail;
+
+        }
+        else {
+
+          this._deselectPlugin();
+
+        }
 
       },
 

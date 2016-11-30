@@ -156,6 +156,61 @@
 
       },
 
+      pluginsInstancesCollectionRawData: function( rootId ){
+         return [
+             {
+                id: '7',
+                previous_id: '3',
+                plugin_name: 'mriconvert',
+                selected: false,
+                path: []
+              },
+              {
+                id: rootId.toString(),
+                previous_id: '',
+                plugin_name: 'pacsquery',
+                selected: false,
+                path: []
+              },
+              {
+                id: '3',
+                previous_id: rootId.toString(),
+                plugin_name: 'pacsretrieve',
+                selected: false,
+                path: []
+              },
+              {
+                id: '55',
+                previous_id: rootId.toString(),
+                plugin_name: 'reconall',
+                selected: false,
+                path: []
+              },
+  
+              {
+                id: '10',
+                previous_id: '7',
+                plugin_name: 'tractography',
+                selected: false,
+                path: []
+              },
+              {
+                id: '56',
+                previous_id: '55',
+                plugin_name: 'tractography',
+                selected: false,
+                path: []
+              },
+              {
+                id: '2',
+                previous_id: rootId.toString(),
+                plugin_name: 'pacman',
+                selected: false,
+                path: []
+              }
+            ];
+      },
+
       comments: function(){
 
         var comments = [

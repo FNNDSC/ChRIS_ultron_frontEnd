@@ -7,7 +7,8 @@
 <link rel="import" href="cj/file-behavior.html">
 <link rel="import" href="cj/note-behavior.html">
 <link rel="import" href="cj/pacsquery-behavior.html">
-<link rel="import" href="cj/plugin-collection-behavior.html">
+<link rel="import" href="cj/plugin-collection-behavior.html">"
+<link rel="import" href="cj/plugin-instance-collection-behavior.html">
 <link rel="import" href="cj/plugin-instance-behavior.html">
 <link rel="import" href="cj/plugin-behavior.html">
 <link rel="import" href="cj/tag-collection-behavior.html">
@@ -28,6 +29,7 @@
       NoteCJ,
       PacsqueryCJ,
       PluginCollectionCJ,
+      PluginInstanceCollectionCJ,
       PluginInstanceCJ,
       PluginCJ,
       TagCollectionCJ,
@@ -60,6 +62,10 @@
         } else if( /^\/plugins\/instances\/(\d+)\//.test(target) ){
 
            return '/data/plugins.json';
+
+        } else if( /^\/plugins\/instances\/search\//.test(target) ){
+
+           return '/data/pluginsInstancesSearch.json';
 
         } else if( /^\/feed\/files\//.test(target) ){
 
@@ -139,13 +145,16 @@
 
         }
 
-        window.console.log( target );
-
         // url pattern: /plugins/instances/<id>
         if( this.method === 'GET' && /^\/plugins\/instances\/(\d+)\//.test(target) ){
 
           var id = Number( target.match(/\d+/)['0'] );
           itemCJ = this.generatePluginInstanceCJ( id );
+
+        }
+        else if( this.method === 'GET' && /^\/plugins\/instances\/search\//.test(target) ){
+
+          itemCJ = this.generatePluginInstanceCollectionCJ( params.root_id );
 
         }
 

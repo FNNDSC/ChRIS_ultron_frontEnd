@@ -62,10 +62,10 @@
     <template is="dom-repeat" items="{{tree}}">
       <div class="plugin">
         <div class="label" on-tap="_selectNode">
-          <paper-button class="primary" selected$="{{item.selected}}">{{item.plugin_name}}</paper-button>
+          <paper-button class="primary" selected$="{{item.data.selected}}">{{item.data.plugin_name}}</paper-button>
         </div>
         <div class="children">
-          <chris-plugin-tree-recursive tree="{{item.children}}"></chris-plugin-tree-recursive>
+          <chris-plugin-tree-recursive tree="{{item.data.children}}"></chris-plugin-tree-recursive>
         </div>
       </div>
     </template>

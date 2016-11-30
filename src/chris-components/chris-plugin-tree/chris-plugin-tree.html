@@ -58,7 +58,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         properties: {
 
           list: {
-            type: Object,
+            type: Array,
             observer: '_listChanged'
           },
 
@@ -87,7 +87,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _treeChanged: function(){
 
-          console.log( this.tree );
+          //console.log( this.tree );
 
         },
 
@@ -104,20 +104,20 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           for(var i = 0; i < list.length; i++ ){ 
 
             var node = list[i];
-            node.children = [];
-            map[node.id] = i;
+            node.data.children = [];
+            map[node.data.id] = i;
 
-            if( node.previous_id === '' ){
+            if( node.data.previous_id === '' ){
 
-              node.path = ['tree', 0];
+              node.data.path = ['tree', 0, 'data'];
               tree.push( node );
               
             }
             else{
               
-              var previousPath = list[map[node.previous_id]].path;
-              node.path = previousPath.concat( ['children', list[map[node.previous_id]].children.length] );
-              list[map[node.previous_id]].children.push(node);
+              var previousPath = list[map[node.data.previous_id]].data.path;
+              node.data.path = previousPath.concat( ['children', list[map[node.data.previous_id]].data.children.length, 'data'] );
+              list[map[node.data.previous_id]].data.children.push(node);
 
             }
 
@@ -143,17 +143,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _sortByPreviousId: function( a, b ){
 
             // special case for the root
-            if( a.previous_id === '' ){
+            if( a.data.previous_id === '' ){
               return -1;
             }
-            if( b.previous_id==='' ){
+            if( b.data.previous_id==='' ){
               return 1;
             }
 
-            if ( parseInt( a.previous_id ) > parseInt( b.previous_id ) ) {
+            if ( parseInt( a.data.previous_id ) > parseInt( b.data.previous_id ) ) {
               return 1;
             }
-            if ( parseInt( a.previous_id ) < parseInt( b.previous_id ) ) {
+            if ( parseInt( a.data.previous_id ) < parseInt( b.data.previous_id ) ) {
               return -1;
             }
             // a must be equal to b
@@ -163,10 +163,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _sortByPathLength: function( a, b ){
 
-            if ( parseInt( a.path.length ) < parseInt( b.path.length ) ) {
+            if ( parseInt( a.data.path.length ) < parseInt( b.data.path.length ) ) {
               return 1;
             }
-            if ( parseInt( a.path.length ) > parseInt( b.path.length ) ) {
+            if ( parseInt( a.data.path.length ) > parseInt( b.data.path.length ) ) {
               return -1;
             }
             // a must be equal to b
@@ -175,6 +175,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         _selectNode: function( event ){
+
           // stop event propagation
           event.preventDefault();
           event.stopPropagation();
@@ -185,18 +186,22 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _selectedChanged: function(){
 
-          if( this.selected){
+          var selectedId = -1;
 
-            // update list and tree
-            this.list.map(function(obj){
+          if( this.selected && this.selected.data && this.selected.data.id ){
 
-              obj.selected = ( obj.id === this.selected.id );
-              // required so polymer auto bindings kick in
-              this.set(obj.path.concat(['selected']), obj.selected );
-
-            }.bind(this));
+            selectedId = this.selected.data.id
 
           }
+
+          // update list and tree
+          this.list.map(function(obj){
+
+            obj.data.selected = ( obj.data.id === selectedId );
+            // required so polymer auto bindings kick in
+            this.set(obj.data.path.concat(['selected']), obj.data.selected );
+
+          }.bind(this));
 
           // fire event!
           this.fire( 'select-node', this.selected );

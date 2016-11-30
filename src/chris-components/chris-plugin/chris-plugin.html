@@ -13,10 +13,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
   </style>
 
-    <div> Current Plugin: {{plugin.id}} : {{plugin.plugin_name}} </div>
-    <div> Parent ID: {{plugin.previous_id}} </div>
-    <template is="dom-repeat" items="{{plugin.children}}">
-      <div> Children ID:{{item.id}} </div>
+    <div> Current Plugin: {{plugin.data.id}} : {{plugin.data.plugin_name}} </div>
+    <div> Parent ID: {{plugin.data.previous_id}} </div>
+    <template is="dom-repeat" items="{{plugin.data.children}}">
+      <div> Children ID:{{item.data.id}} </div>
     </template>
 
   </template>
