@@ -82,7 +82,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           list.sort( this._sortByPathLength );
           this.selected = list[0];
 
-
         },
 
         _treeChanged: function(){
@@ -101,7 +100,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           var tree = [];
           var map = {};
           var treePath = [];
-          for(var i = 0; i < list.length; i++ ){ 
+          for(var i = 0; i < list.length; i++ ){
 
             var node = list[i];
             node.data.children = [];
@@ -146,14 +145,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             if( a.data.previous_id === '' ){
               return -1;
             }
-            if( b.data.previous_id==='' ){
+            if( b.data.previous_id === '' ){
               return 1;
             }
 
-            if ( parseInt( a.data.previous_id ) > parseInt( b.data.previous_id ) ) {
+            if ( parseInt( a.data.previous_id, 10 ) > parseInt( b.data.previous_id, 10 ) ) {
               return 1;
             }
-            if ( parseInt( a.data.previous_id ) < parseInt( b.data.previous_id ) ) {
+            if ( parseInt( a.data.previous_id, 10 ) < parseInt( b.data.previous_id, 10 ) ) {
               return -1;
             }
             // a must be equal to b
@@ -163,10 +162,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _sortByPathLength: function( a, b ){
 
-            if ( parseInt( a.data.path.length ) < parseInt( b.data.path.length ) ) {
+            if ( a.data.path.length < b.data.path.length ) {
               return 1;
             }
-            if ( parseInt( a.data.path.length ) > parseInt( b.data.path.length ) ) {
+            if ( a.data.path.length > b.data.path.length ) {
               return -1;
             }
             // a must be equal to b

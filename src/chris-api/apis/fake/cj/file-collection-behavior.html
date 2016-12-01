@@ -18,18 +18,32 @@
       // create the items field
       cj.collection.items = [];
 
-      var fileId = 0;
-      var target = 'pacsquery';
+      var dicomFiles = this.filesCollectionRawData();
+      dicomFiles.unshift('/data/pacsquery.json');
+      var plugins = this.pluginsInstancesCollectionRawData( feedid );
 
-      var item = {};
-      item.data = [];
-      item.href = this.apiRoot + '/' + feedid + '/files/' + fileId + '/';
-      item.links = [{
-          rel: 'file_resource',
-          href: this.apiRoot + '/data/' + target + '.json'
-      }];
+      for( var i = 0; i < dicomFiles.length; i++ ){
 
-      cj.collection.items.push( item );
+        var item = {};
+        item.href = this.apiRoot + '/' + feedid + '/files/' + i + '/';
+        item.links = [{
+            rel: 'file_resource',
+            href: this.apiRoot + dicomFiles[i]
+        }];
+        var data = {
+          fname: dicomFiles[i],
+          plugin_instance: plugins[Math.floor(Math.random() * plugins.length)].id
+        };
+
+        item.data = this.generateItemDataCJ( cj.collection.template.data, data ).data;
+
+        if( !parameters || !parameters.plugin_instance || parameters.plugin_instance === data.plugin_instance ){
+
+          cj.collection.items.push( item );
+
+        }
+
+      }
 
       return cj;
     }

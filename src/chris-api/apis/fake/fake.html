@@ -161,13 +161,8 @@
         // url pattern: /<id>/files/
         if( this.method === 'GET' && /^\/(\d+)\/files\//.test(target) ){
           
-          window.console.log( target );
-          window.console.log( target.match(/\d+/)['0'] );
           var id = Number( target.match(/\d+/)['0'] );
-          window.console.log( id );
           itemCJ = this.generateFileCollectionCJ( id, params );
-
-          window.console.log( itemCJ );
 
         }
 

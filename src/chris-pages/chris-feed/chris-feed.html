@@ -114,6 +114,17 @@
         background-color: rgba(255, 255, 255, .8);
       }
 
+      @media (max-width: 896px) {
+
+        /*iron-dropdown, .dropdown-content{
+
+          max-width: 100%!important;
+          width: 100%!important;
+
+        }*/
+
+      } 
+
     </style>
 
     <div id="detail">
@@ -159,7 +170,7 @@
             <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
             <chris-note name="note" notes="{{note}}"></chris-note>
             <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
-            <chris-plugin name="plugin" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]"></chris-plugin>
+            <chris-plugin name="plugin" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]"></chris-plugin>
 
           </iron-pages>
 
@@ -195,6 +206,14 @@
         plugin:{
           type: Object,
           observer: '_pluginChanged'
+        },
+
+        fileCollection: {
+          type: Array
+        },
+
+        files: {
+          type: Array
         },
 
         workflow: {
@@ -302,10 +321,10 @@
           .catch( this.handleError.bind(this) );
         
         // get files
-        var requestFiles = this.$.ChrisAPI.request( 'GET', this.feed.links.files, data );
-        requestFiles
-          .then( this._handleFiles.bind(this) )
-          .catch( this.handleError.bind(this) );
+        // var requestFiles = this.$.ChrisAPI.request( 'GET', this.feed.links.files, data );
+        // requestFiles
+        //   .then( this._handleFiles.bind(this) )
+        //   .catch( this.handleError.bind(this) );
       },
 
       _reset: function(){
@@ -316,12 +335,14 @@
 
       _handleFiles: function( response ){
 
-        //https://fnndsc.github.io/ChRIS_ultron_backEnd/collections/file.html
-        console.log( response );
+        this.set('files', response.data );
+        console.log( this.files );
 
       },
 
       _handlePlugins: function( response ){
+
+        console.log( response );
 
         this.set('pluginCollection', response.data );
 
@@ -478,6 +499,19 @@
         if( this.plugin !== null ){
           
           this.page = 'plugin';
+          // retrieve files for this plugin
+          var data = {};
+          data.auth = {
+            type: 'token',
+            token: sessionStorage.getItem('token')
+          };
+          data.params = {};
+          data.params.plugin_instance = this.feed.data.id;
+
+          var requestFiles = this.$.ChrisAPI.request( 'GET', this.feed.links.files, data );
+          requestFiles
+            .then( this._handleFiles.bind(this) )
+            .catch( this.handleError.bind(this) );
 
         }
         else{

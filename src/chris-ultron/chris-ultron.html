@@ -297,6 +297,7 @@
       },
 
       created: function() {
+
         window.performance && performance.mark && performance.mark( 'chris-ultron.created' );
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute( 'unresolved' );
@@ -304,6 +305,8 @@
       },
 
       ready: function(){
+
+        console.log('ready');
 
         //if username and token are stored, we are still loggedIn in
         if ( sessionStorage.getItem( 'username' ) &&

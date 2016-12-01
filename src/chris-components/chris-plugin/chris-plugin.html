@@ -5,19 +5,44 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
+<!-- AMI -->
+<link rel="import" href="../../../bower_components/ami-loader/ami-loader.html">
+<link rel="import" href="../../../bower_components/ami-viewer/ami-viewer.html">
+
 <dom-module id="chris-plugin">
 
   <template>
 
     <style>
 
+    ami-viewer {
+      height: 300px;
+      width: 100%;
+    }
+
   </style>
 
+    <ami-loader urls="{{urls}}" series="{{series}}"></ami-loader>
+    <ami-viewer series="[[series]]"> </ami-viewer>
+
     <div> Current Plugin: {{plugin.data.id}} : {{plugin.data.plugin_name}} </div>
+    
     <div> Parent ID: {{plugin.data.previous_id}} </div>
-    <template is="dom-repeat" items="{{plugin.data.children}}">
-      <div> Children ID:{{item.data.id}} </div>
-    </template>
+
+    <div> Children IDs </div>
+
+    <ul>
+      <template is="dom-repeat" items="{{plugin.data.children}}">
+        <li> Children ID:{{item.data.id}} </li>
+      </template>
+    </ul>
+
+    <div>Files names</div>
+    <ul>
+      <template is="dom-repeat" items="{{files}}" as="file">
+        <li>{{file.data.fname}} </li>
+      </template>
+    <ul>
 
   </template>
 
@@ -30,6 +55,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           plugin: {
             type: Object,
             observer: '_pluginChanged'
+          },
+
+          files: {
+            type: Array,
+            observer: '_filesChanged'
           }
 
         },
@@ -37,6 +67,26 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _pluginChanged: function(){
           
           console.log( this.plugin);
+
+        },
+
+        _filesChanged: function(){
+          
+          var datasets = [];
+
+          var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
+          var t2Full = t2.map(function(v) {
+            return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
+          });
+          datasets.push( t2Full );
+
+          var nrrdFull = ['https://cdn.rawgit.com/FNNDSC/data/master/nrrd/marc_avf/avf_float_32.nrrd'];
+          datasets.push( nrrdFull );
+
+          var niftiFull = ['https://cdn.rawgit.com/FNNDSC/data/master/nifti/siena/siena.nii.gz'];
+          datasets.push( niftiFull );
+
+          this.urls = datasets[ Math.floor(Math.random()*datasets.length) ];
 
         }
 
