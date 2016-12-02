@@ -18,12 +18,14 @@
 <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../../bower_components/iron-selector/iron-selector.html">
 
+<!-- CHRIS FEED VIEWS -->
+<link rel="import" href="../../chris-pages/chris-feed/chris-feed-views/chris-feed-about/chris-feed-about.html">
+<link rel="import" href="../../chris-pages/chris-feed/chris-feed-views/chris-feed-comments/chris-feed-comments.html">
+<link rel="import" href="../../chris-pages/chris-feed/chris-feed-views/chris-feed-note/chris-feed-note.html">
+<link rel="import" href="../../chris-pages/chris-feed/chris-feed-views/chris-feed-plugin/chris-feed-plugin.html">
+
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../chris-api/chris-api.html">
-<link rel="import" href="../../chris-components/chris-feed-about/chris-feed-about.html">
-<link rel="import" href="../../chris-components/chris-comment-list/chris-comment-list.html">
-<link rel="import" href="../../chris-components/chris-note/chris-note.html">
-<link rel="import" href="../../chris-components/chris-plugin/chris-plugin.html">
 <link rel="import" href="../../chris-components/chris-plugin-tree/chris-plugin-tree.html">
 
 <dom-module id="chris-feed">
@@ -51,10 +53,11 @@
 
       }
 
-      .drawer.content {
+      .content {
 
-        height: 100%;
-        overflow: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
 
       }
 
@@ -89,18 +92,6 @@
 
         color: #ffffff;
 
-      }
-
-      iron-pages{
-        position: relative;
-        max-width: 800px;
-        margin: auto;
-        margin-top: 24px;
-        margin-bottom: 100px;
-        /*min-height: 100vh;*/
-        /*height: 500px;*/
-        /*height: 100%;*/
-        background-color: var(--paper-grey-50);
       }
 
       div[main-title] {
@@ -168,9 +159,9 @@
           <iron-pages selected="[[page]]" attr-for-selected="name">
 
             <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
-            <chris-note name="note" notes="{{note}}"></chris-note>
-            <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
-            <chris-plugin name="plugin" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]"></chris-plugin>
+            <chris-feed-note name="note" notes="{{note}}"></chris-feed-note>
+            <chris-feed-comments name="comments" comments="{{comments}}"></chris-feed-comments>
+            <chris-feed-plugin name="plugin" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]"></chris-feed-plugin>
 
           </iron-pages>
 
@@ -524,7 +515,7 @@
 
       _closeDropdown: function(){
 
-        //this.$.dropdown.close();
+        this.$.dropdown.close();
 
       }
 

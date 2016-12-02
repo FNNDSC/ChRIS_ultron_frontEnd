@@ -42,7 +42,7 @@
 
       <iron-pages selected="{{page}}">
 
-        <pacs-find
+        <query
           id="find"
           instances="[[pacsqueryInstances]]"
           pacs-settings="[[pacsSettings]]"
@@ -51,7 +51,7 @@
           on-previous-changed="_previousChanged"
           on-searching-changed="_searchingChanged"
           on-feedid-changed="_feedIdChanged">
-        </pacs-find>
+        </query>
 
         <pacs-move
           id="move"

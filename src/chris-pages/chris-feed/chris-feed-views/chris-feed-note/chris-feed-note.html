@@ -3,25 +3,31 @@
 Copyright (c) 2016 FNNDSC. All rights reserved.
 -->
 
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
-<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <!-- PAPER ELEMENTS -->
-<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../../../bower_components/paper-icon-button/paper-icon-button.html">
 
-<link rel="import" href="../../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../../../../bower_components/marked-element/marked-element.html">
 
 <!-- CHRIS ELEMENTS -->
-<link rel="import" href="../../chris-api/chris-api.html">
+<link rel="import" href="../../../../chris-api/chris-api.html">
 
-<dom-module id="chris-note">
+<dom-module id="chris-feed-note">
   <template>
     <style>
+
+      host {
+
+        display: block;
+
+      }
 
       .toolbar {
 
@@ -110,22 +116,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       }
 
-      paper-card {
+      
+      .content {
 
-          width: 800px;
-
-        }
-
-      @media (max-width: 800px) {
-
-        paper-card {
-
-          width: 100%;
-
-        }
+        background-color: var(--paper-grey-50);
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
 
       }
-
 
       paper-card{
 
@@ -145,7 +148,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       on-error="handleError">
     </chris-api>
 
-    <paper-card>
+    <paper-card class="content">
 
       <div class="toolbar">
 
@@ -193,7 +196,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
   <script>
     Polymer({
-        is: 'chris-note',
+        is: 'chris-feed-note',
 
         properties: {
 

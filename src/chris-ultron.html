@@ -1,15 +1,15 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
 
 <!-- APP ELEMENTS -->
-<link rel="import" href="../../bower_components/app-route/app-location.html">
-<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
 
 <!-- IRON ELEMENTS -->
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
 <!--  CHRIS ELEMENTS -->
-<link rel="import" href="../chris-ultron-config.html">
-<link rel="import" href="../chris-api/chris-api.html">
+<link rel="import" href="./chris-ultron-config.html">
+<link rel="import" href="./chris-api/chris-api.html">
 
 <dom-module id="chris-ultron">
   <template>
@@ -292,7 +292,7 @@
 
         // load page import on demand.
         this.importHref(
-          this.resolveUrl( '../chris-pages/chris-' + page + '/chris-' + page + '.html' ), null, null, true );
+          this.resolveUrl( './chris-pages/chris-' + page + '/chris-' + page + '.html' ), null, null, true );
 
       },
 
