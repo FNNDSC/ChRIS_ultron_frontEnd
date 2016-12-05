@@ -1,0 +1,53 @@
+<script>
+  /** @polymerBehavior PluginParameterCJ */
+  PluginParameterCJ = {
+
+    pluginParameterTemplate: function(){
+
+      var template = [
+        {'name' : 'name',     'value' : ''},
+        {'name' : 'type',     'value' : ''},
+        {'name' : 'optional', 'value' : ''},
+        {'name' : 'default',  'value' : ''},
+        {'name' : 'help',     'value' : ''}
+      ];
+
+      return template;
+
+    },
+
+    generatePluginParameterCJ: function( id ){
+
+      var cj = {};
+      cj.collection = {};
+
+      // create the href field
+      cj.collection.href = this.apiRoot + '/plugins/parameters/' + id + '/';
+
+      // create the template field
+      cj.collection.template = {};
+      cj.collection.template.data = this.pluginParameterTemplate();
+
+      // create the items field
+      cj.collection.items = [];
+
+      // generate random data
+      data = {
+          status: feedID < 10 ? 'started' : 'finishedSuccessfully'
+      };
+
+      var item = this.generateItemDataCJ( cj.collection.template.data, data );
+      item.href = this.apiRoot + '/plugins/parameters/' + id + '/';
+      item.links = [{
+          rel: 'plugin',
+          href: this.apiRoot + '/plugins/' + id + '/'
+      }];
+
+      cj.collection.items.push( item );
+
+      return cj;
+
+    }
+
+  }
+</script>

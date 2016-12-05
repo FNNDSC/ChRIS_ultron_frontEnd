@@ -5,8 +5,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <link rel="import" href="../../../../../bower_components/polymer/polymer.html">
 
+<!--IRON ELEMENTS -->
+<link rel="import" href="../../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../../bower_components/iron-icons/av-icons.html">"
+
 <!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../../../../bower_components/paper-range-slider/paper-range-slider.html">
@@ -91,7 +97,19 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       }
 
       .files {
+
         overflow-y: auto;
+
+      }
+
+      #start {
+
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        --paper-fab-background: var(--accent-color);
+
       }
 
     </style>
@@ -162,6 +180,15 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         </div>
       </div>
 
+      <paper-fab id="start" icon="av:play-arrow" on-tap="_getPlugins"></paper-fab>
+
+      <!--<paper-dialog id="modal" modal on-iron-overlay-opened="_patchOverlay">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <div class="buttons">
+          <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
+        </div>
+      </paper-dialog>-->
+
     </div>
 
   </template>
@@ -207,6 +234,29 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           datasets.push( niftiFull );
 
           this.urls = datasets[ Math.floor(Math.random()*datasets.length) ];
+
+        },
+
+        _getPlugins: function(){
+
+          // get all plugins to dropdown menu
+
+          // each plugin, get parameters
+
+          // this.$.modal.open();
+          // fire selected plugin
+          this.fire('run-plugin');
+
+        },
+
+        // https://github.com/PolymerElements/paper-dialog/issues/7
+        _patchOverlay: function ( e ) {
+
+          if ( e.target.withBackdrop ) {
+
+            e.target.parentNode.insertBefore( e.target.backdropElement, e.target );
+
+          }
 
         }
 

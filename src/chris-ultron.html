@@ -68,12 +68,14 @@
       <chris-app
         name="app"
         app="[[openApp]]"
+        plugins="[[plugins]]"
         on-exit="_exitToHome"
         on-add-feed="_addFeed"></chris-app>
 
       <chris-feed
         name="feed"
         feed="[[openFeed]]"
+        plugins="[[plugins]]"
         on-exit="_exitToHome"></chris-feed>
 
     </iron-pages>
@@ -119,6 +121,10 @@
         },
 
         feeds: {
+          type: Array
+        },
+
+        plugins: {
           type: Array
         },
 
@@ -201,6 +207,28 @@
       _handleLabels: function( response ){
 
         this.set( 'labels', response );
+
+      },
+
+      _fetchPlugins: function(){
+
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        var request =this.$.ChrisAPI.request('GET', '/plugins/', data);
+        request
+          .then( this._handlePlugins.bind(this) );
+
+      },
+
+      _handlePlugins: function( response ){
+
+        console.log( response );
+
+        this.set( 'plugins', response.data );
 
       },
 
@@ -307,6 +335,7 @@
       ready: function(){
 
         console.log('ready');
+        this._fetchPlugins();
 
         //if username and token are stored, we are still loggedIn in
         if ( sessionStorage.getItem( 'username' ) &&

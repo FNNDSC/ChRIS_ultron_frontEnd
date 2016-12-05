@@ -23,6 +23,7 @@
 <link rel="import" href="../../chris-pages/chris-feed/chris-feed-views/chris-feed-comments/chris-feed-comments.html">
 <link rel="import" href="../../chris-pages/chris-feed/chris-feed-views/chris-feed-note/chris-feed-note.html">
 <link rel="import" href="../../chris-pages/chris-feed/chris-feed-views/chris-feed-plugin/chris-feed-plugin.html">
+<link rel="import" href="../../chris-pages/chris-feed/chris-feed-views/chris-feed-run/chris-feed-run.html">
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../chris-api/chris-api.html">
@@ -138,7 +139,7 @@
                 <paper-icon-button icon="icons:apps" on-tap="_openTree"></paper-icon-button>
                 <iron-dropdown id="dropdown" horizontal-align="right" vertical-align="top" on-tap="_closeDropdown">
                     <div class="plugin dropdown-content" on-select-node="_selectPlugin">
-                      <chris-plugin-tree list="[[pluginCollection]]" selected="[[plugin]]"></chris-plugin-tree>
+                      <chris-plugin-tree list="[[pluginInstanceCollection]]" selected="[[plugin]]"></chris-plugin-tree>
                     </div>
                 </iron-dropdown>
               </span>
@@ -161,7 +162,8 @@
             <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
             <chris-feed-note name="note" notes="{{note}}"></chris-feed-note>
             <chris-feed-comments name="comments" comments="{{comments}}"></chris-feed-comments>
-            <chris-feed-plugin name="plugin" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]"></chris-feed-plugin>
+            <chris-feed-plugin name="plugin" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]" on-run-plugin="_runPlugin"></chris-feed-plugin>
+            <chris-feed-run name="run" plugin="[[plugin]]" plugins="[[plugins]]"></chris-feed-run>
 
           </iron-pages>
 
@@ -190,7 +192,11 @@
           observer: '_pageChanged'
         },
 
-        pluginCollection: {
+        pluginInstanceCollection: {
+          type: Array
+        },
+
+        plugins: {
           type: Array
         },
 
@@ -230,27 +236,6 @@
       },
 
       ready: function( event ){
-
-      },
-
-      _targetPlugin: function( index ){
-
-        if( !index ){
-          return;
-        }
-
-        // find matching id...
-        for( var i=0; i<this.workflow.data.length; i++ ){
-
-          if( this.workflow.data[i].data.id === index ){
-
-            return this.workflow.data[i];
-
-          }
-
-        };
-
-        return 0;
 
       },
 
@@ -335,7 +320,7 @@
 
         console.log( response );
 
-        this.set('pluginCollection', response.data );
+        this.set('pluginInstanceCollection', response.data );
 
       },
 
@@ -511,6 +496,16 @@
 
         }
         
+      },
+
+      _runPlugin: function(){
+
+        if( this.plugin ){
+
+          this.page = 'run';
+
+        }
+
       },
 
       _closeDropdown: function(){

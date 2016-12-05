@@ -52,7 +52,6 @@
           target = target.replace(isFeedRegex, '/feed/');
         }
 
-        console.log( target );
 
         // HIJACK GET FILE NAME
         if(/^\/data\//.test(target)){
@@ -66,6 +65,10 @@
         } else if( /^\/plugins\/instances\/search\//.test(target) ){
 
            return '/data/pluginsInstancesSearch.json';
+
+        } else if( /^\/plugins\//.test(target) ){
+
+           return '/data/plugins.json';
 
         } else if( /^\/feed\/files\//.test(target) ){
 
@@ -135,7 +138,7 @@
           itemCJ = this.generateNoteCJ();
 
         }
-        else if( this.method === 'GET' && target === 'plugins' ){
+        else if( this.method === 'GET' && target === '/plugins/' ){
 
           console.log( target );
 
@@ -155,6 +158,14 @@
         else if( this.method === 'GET' && /^\/plugins\/instances\/search\//.test(target) ){
 
           itemCJ = this.generatePluginInstanceCollectionCJ( params.root_id );
+
+        }
+        else if( this.method === 'GET' && /^\/plugins\/(\d+)\/parameters\//.test(target) ){
+
+          console.log('gimme some parameters');
+          console.log( target );
+
+          // itemCJ = this.generatePluginInstanceCollectionCJ( params.root_id );
 
         }
 

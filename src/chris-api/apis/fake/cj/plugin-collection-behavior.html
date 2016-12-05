@@ -36,6 +36,11 @@
             href: this.apiRoot + '/plugins/' + plugins[i].id + '/instances/'
         }
         item.links.push(instances);
+        var parameters = {
+            rel: 'parameters',
+            href: this.apiRoot + '/plugins/' + plugins[i].id + '/parameters/'
+        }
+        item.links.push(parameters);
 
         // create the data field
         item.data = this.generateItemDataCJ( cj.collection.template.data, plugins[i] ).data;

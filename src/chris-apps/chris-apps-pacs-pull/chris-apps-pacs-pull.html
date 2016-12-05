@@ -42,7 +42,7 @@
 
       <iron-pages selected="{{page}}">
 
-        <query
+        <pacs-query
           id="find"
           instances="[[pacsqueryInstances]]"
           pacs-settings="[[pacsSettings]]"
@@ -51,7 +51,7 @@
           on-previous-changed="_previousChanged"
           on-searching-changed="_searchingChanged"
           on-feedid-changed="_feedIdChanged">
-        </query>
+        </pacs-query>
 
         <pacs-move
           id="move"
@@ -82,6 +82,11 @@
           feedid: {
             type: Number,
             value: -1
+          },
+
+          plugins: {
+            type: Array,
+            observer: '_pluginsChanged'
           },
 
           searching: {
@@ -119,6 +124,8 @@
 
         ready: function(){
 
+          console.log('I am ready');
+
           this.toolbar = this.$.toolbar;
 
           // PACS Default settings
@@ -131,35 +138,21 @@
             server_port: '4242'
           };
 
-          // fetch pacsquery and pacsmove ids from the REST API
-          //
-          var data = {};
-          data.auth = {
-            type: 'token',
-            token: sessionStorage.getItem('token')
-          };
-
-          // fetch the plugins
-          var request = this.$.API.request('GET', 'plugins', data);
-          request
-            .then( this.handlePlugins.bind(this) )
-            .catch( this.handleError.bind(this) );
-
         },
 
-        handlePlugins: function( response ){
+        _pluginsChanged: function( ){
 
-          for( var i = 0; i < response.data.length; i++ ){
+          for( var i = 0; i < this.plugins.length; i++ ){
 
-            if( response.data[i].data.name === 'pacsquery' ){
+            if( this.plugins[i].data.name === 'pacsquery' ){
 
-              this.pacsqueryInstances = response.data[i].links.instances;
+              this.pacsqueryInstances = this.plugins[i].links.instances;
 
             }
 
-            if( response.data[i].data.name === 'pacsretrieve' ){
+            if( this.plugins[i].data.name === 'pacsretrieve' ){
 
-              this.pacsretrieveInstances = response.data[i].links.instances;
+              this.pacsretrieveInstances = this.plugins[i].links.instances;
 
             }
 

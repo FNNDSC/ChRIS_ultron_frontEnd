@@ -1,0 +1,135 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<!-- POLYMER -->
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+
+
+<!-- PAPER ELEMENTS-->
+<link rel="import" href="../../../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../../bower_components/paper-item/paper-item.html">
+
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../../../../chris-api/chris-api.html">
+
+<dom-module id="chris-feed-run">
+  <template>
+    <style>
+
+      .content {
+
+        background-color: var(--paper-grey-50);
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
+
+      }
+
+
+    paper-card{
+
+      color: var(--primary-text-color);
+      --paper-card-header-color: var(--secondary-text-color);
+      --paper-card-background-color: var(--paper-grey-100);
+      background: var(--paper-grey-100);
+
+    }
+
+    </style>
+
+    <!-- API Calls -->
+    <chris-api id="ChrisAPI"
+      error="{{error}}">
+    </chris-api>
+
+    <paper-card class="content" heading="Run plugin">
+
+      <div class="card-content">
+
+        <paper-dropdown-menu label="Plugin to run">
+
+          <paper-listbox class="dropdown-content">
+
+            <template is="dom-repeat" items="{{plugins}}">
+              <paper-item plugin="[[item]]" on-tap="_pluginSelected">{{item.data.name}} </paper-item>
+            </template>
+
+          </paper-listbox>
+
+        </paper-dropdown-menu>
+
+      </div>
+
+    </paper-card>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-feed-run',
+
+        properties: {
+
+          plugin: {
+            type: Object,
+            observer: '_pluginChanged'
+          },
+
+          selectedPlugin: {
+            type: Object,
+            observer: '_selectedPluginChanged'
+          }
+
+        },
+
+        _pluginChanged: function( event ){
+
+          console.log( this.plugin );
+
+        },
+
+        _selectedPluginChanged: function(){
+
+          this._fetchParameters();
+
+        },
+
+        _fetchParameters: function(){
+
+          console.log( this.selectedPlugin);
+
+          var data = {};
+          data.auth = {
+            type: 'token',
+            token: sessionStorage.getItem('token')
+          };
+
+          var request =this.$.ChrisAPI.request('GET', this.selectedPlugin.links.parameters, data);
+          request
+            .then( this._handleParameters.bind(this) );
+
+        },
+
+        _handleParameters: function( event ){
+
+          console.log( event );
+
+        },
+
+        _pluginSelected: function( event ){
+
+          this.selectedPlugin = event.currentTarget.plugin;
+
+        }
+
+    });
+  </script>
+</dom-module>

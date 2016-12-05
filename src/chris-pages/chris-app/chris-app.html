@@ -92,11 +92,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             observer: '_appChanged'
           },
 
-          appElt: HTMLElement,
+          plugins: {
+            type: Array
+          },
 
-          feed:{
-            type: Object
-          }
+          appElt: HTMLElement
 
         },
 
@@ -126,6 +126,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             function( evt ){
 
               this.appElt = document.createElement( 'chris-apps-' + this.app.name );
+              this.appElt.plugins = this.plugins;
 
               // attach app
               Polymer.dom( this.$.content ).appendChild( this.appElt );
