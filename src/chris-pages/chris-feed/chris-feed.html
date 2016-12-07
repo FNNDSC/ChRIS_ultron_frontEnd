@@ -119,12 +119,12 @@
 
     </style>
 
-    <div id="detail">
+    <!-- API Calls -->
+    <chris-api id="ChrisAPI"
+      error="{{error}}">
+    </chris-api>
 
-      <!-- API Calls -->
-      <chris-api id="ChrisAPI"
-        error="{{error}}">
-      </chris-api>
+    <div id="detail">
 
         <!-- Main content -->
         <app-header-layout id="adl" has-scrolling-region style$="[[_setLayoutStyle(feed.data.color)]]" fullbleed>

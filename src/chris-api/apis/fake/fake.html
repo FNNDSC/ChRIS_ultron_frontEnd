@@ -10,6 +10,8 @@
 <link rel="import" href="cj/plugin-collection-behavior.html">"
 <link rel="import" href="cj/plugin-instance-collection-behavior.html">
 <link rel="import" href="cj/plugin-instance-behavior.html">
+<link rel="import" href="cj/plugin-parameter-collection-behavior.html">
+<link rel="import" href="cj/plugin-parameter-behavior.html">
 <link rel="import" href="cj/plugin-behavior.html">
 <link rel="import" href="cj/tag-collection-behavior.html">
 <link rel="import" href="cj/tag-behavior.html">
@@ -31,6 +33,8 @@
       PluginCollectionCJ,
       PluginInstanceCollectionCJ,
       PluginInstanceCJ,
+      PluginParameterCollectionCJ,
+      PluginParameterCJ,
       PluginCJ,
       TagCollectionCJ,
       TagCJ
@@ -162,10 +166,8 @@
         }
         else if( this.method === 'GET' && /^\/plugins\/(\d+)\/parameters\//.test(target) ){
 
-          console.log('gimme some parameters');
-          console.log( target );
-
-          // itemCJ = this.generatePluginInstanceCollectionCJ( params.root_id );
+          var id = Number( target.match(/\d+/)['0'] );
+          itemCJ = this.generatePluginParameterCollectionCJ( id );
 
         }
 

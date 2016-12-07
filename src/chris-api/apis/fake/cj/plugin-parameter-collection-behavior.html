@@ -1,0 +1,39 @@
+<script>
+  /** @polymerBehavior PluginParameterCollection */
+  PluginParameterCollectionCJ = {
+
+    /**
+     */
+    generatePluginParameterCollectionCJ: function( id ){
+
+      var cj = {};
+      cj.collection = {};
+
+      // create the href field
+      cj.collection.href = this.apiRoot + '/plugins/' + id + '/paramters/';
+
+      // create the template field
+      cj.collection.template = {};
+      cj.collection.template.data = this.pluginParameterTemplate();
+
+      // create the items
+      cj.collection.items = [];
+      var items = cj.collection.items;
+
+      // generate random number of items
+      var parameters = this.pluginParameterRaw();
+      console.log( parameters );
+
+      for( var i=0; i< parameters.length; i++ ){
+
+        var item = this.generatePluginParameterCJ(i, parameters[i]);
+        items.push(item);
+
+      }
+
+      return cj;
+
+    }
+
+  }
+</script>

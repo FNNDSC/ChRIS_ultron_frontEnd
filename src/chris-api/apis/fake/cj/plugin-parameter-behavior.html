@@ -16,36 +16,18 @@
 
     },
 
-    generatePluginParameterCJ: function( id ){
+    generatePluginParameterCJ: function( id, data ){
 
-      var cj = {};
-      cj.collection = {};
+      var template = this.pluginParameterTemplate();
 
-      // create the href field
-      cj.collection.href = this.apiRoot + '/plugins/parameters/' + id + '/';
-
-      // create the template field
-      cj.collection.template = {};
-      cj.collection.template.data = this.pluginParameterTemplate();
-
-      // create the items field
-      cj.collection.items = [];
-
-      // generate random data
-      data = {
-          status: feedID < 10 ? 'started' : 'finishedSuccessfully'
-      };
-
-      var item = this.generateItemDataCJ( cj.collection.template.data, data );
+      var item = {};
+      item.data = this.generateItemDataCJ( template, data ).data;
       item.href = this.apiRoot + '/plugins/parameters/' + id + '/';
       item.links = [{
           rel: 'plugin',
           href: this.apiRoot + '/plugins/' + id + '/'
       }];
-
-      cj.collection.items.push( item );
-
-      return cj;
+      return item;
 
     }
 

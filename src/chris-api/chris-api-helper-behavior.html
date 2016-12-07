@@ -214,11 +214,36 @@
       pluginParameterRaw: function(){
 
         // all types here
-
-        // String
-        // Boolean
-        // Integer
-        // List
+        return [
+          {
+            name: 'directory',
+            type: 'string',
+            optional: false,
+            default: '/home',
+            help: 'directory to analyse'
+          },
+          {
+            name: 'verbose',
+            type: 'boolean',
+            optional: false,
+            default: true,
+            help: 'save all log data'
+          },
+          {
+            name: 'priority',
+            type: 'integer',
+            optional: false,
+            default: 5,
+            help: '1: high priority, 10: low priority'
+          },
+          {
+            name: 'pi',
+            type: 'float',
+            optional: false,
+            default: 3.14159,
+            help: 'value of pi'
+          }
+        ]
 
       },
 

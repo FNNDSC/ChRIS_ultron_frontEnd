@@ -66,6 +66,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         </paper-dropdown-menu>
 
+
+        <div>Parameters</div>
+        <template is="dom-repeat" items="{{parameters.data}}">
+          <!--chris parameter -->
+          <paper-item>{{item.data.name}}</paper-item>
+        </template>
+
       </div>
 
     </paper-card>
@@ -86,6 +93,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           selectedPlugin: {
             type: Object,
             observer: '_selectedPluginChanged'
+          },
+
+          parameters: {
+            type: Array,
+            observer: '_parametersChanged'
           }
 
         },
@@ -99,6 +111,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _selectedPluginChanged: function(){
 
           this._fetchParameters();
+
+        },
+
+        _parametersChanged: function(){
+
+          console.log( this.parameters );
 
         },
 
@@ -118,9 +136,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        _handleParameters: function( event ){
+        _handleParameters: function( parameters ){
 
-          console.log( event );
+          this.set('parameters', parameters);
 
         },
 
