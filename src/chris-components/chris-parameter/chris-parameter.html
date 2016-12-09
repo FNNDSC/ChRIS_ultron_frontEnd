@@ -1,0 +1,109 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- CHRIS ELEMENTS -->
+<link rel="import" href="../chris-parameter-boolean/chris-parameter-boolean.html">
+<link rel="import" href="../chris-parameter-number/chris-parameter-number.html">
+<link rel="import" href="../chris-parameter-string/chris-parameter-string.html">
+
+<dom-module id="chris-parameter">
+
+  <style>
+
+    .parameter {
+
+      display: flex;
+
+    }
+
+    chris-parameter-string, chris-parameter-number, chris-parameter-boolean {
+
+      flex: 1
+
+    }
+
+  </style>
+
+  <template>
+
+    <div class="parameter">
+
+      <template is="dom-if" if="{{_isString(type)}}">
+        <chris-parameter-string value="[[default]]" label="{{name}}"></chris-parameter-string>
+      </template>
+
+      <template is="dom-if" if="{{_isBoolean(type)}}">
+        <chris-parameter-boolean value="[[default]]" label="{{name}}"></chris-parameter-boolean>
+      </template>
+
+      <template is="dom-if" if="{{_isInteger(type)}}">
+        <chris-parameter-number value="[[default]]" step="1" label="{{name}}"></chris-parameter-number>
+      </template>
+
+      <template is="dom-if" if="{{_isFloat(type)}}">
+        <chris-parameter-number value="[[default]]" step="0.00000001" label="{{name}}"></chris-parameter-number>
+      </template>
+
+      <paper-icon-button id="help" icon="icons:help-outline" alt="help"></paper-icon-button>
+      <paper-tooltip for="help" animation-delay="0.2">{{help}}</paper-tooltip>
+
+    </div>
+
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-parameter',
+
+        properties: {
+
+          default: {
+            type: String,
+            observer: '_defaultChanged'
+          },
+
+          type: {
+            type: String,
+            observer: '_typeChanged'
+          },
+
+          help:{
+            type: String,
+            observer: '_helpChanged'
+          },
+
+          name: {
+            type: String,
+            value: '_nameChanged'
+          }
+
+        },
+
+        _isString: function( type ){
+
+          return type === 'string';
+
+        },
+
+
+        _isBoolean: function( type ){
+
+          return type === 'boolean';
+
+        },
+
+        _isInteger: function( type ){
+
+          return type === 'integer';
+
+        },
+
+        _isFloat: function( type ){
+
+          return type === 'float';
+
+        }
+
+    });
+  </script>
+</dom-module>

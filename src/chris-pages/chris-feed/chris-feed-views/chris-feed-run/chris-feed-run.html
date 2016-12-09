@@ -15,6 +15,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../../../chris-api/chris-api.html">
+<link rel="import" href="../../../../chris-components/chris-parameter/chris-parameter.html">
 
 <dom-module id="chris-feed-run">
   <template>
@@ -70,7 +71,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <div>Parameters</div>
         <template is="dom-repeat" items="{{parameters.data}}">
           <!--chris parameter -->
-          <paper-item>{{item.data.name}}</paper-item>
+          <chris-parameter
+            name="{{item.data.name}}"
+            type="{{item.data.type}}"
+            help="{{item.data.help}}"
+            default="{{item.data.default}}"
+            ></chris-parameter>
         </template>
 
       </div>
