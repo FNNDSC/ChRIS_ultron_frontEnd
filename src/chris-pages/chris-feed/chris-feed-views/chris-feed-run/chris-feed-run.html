@@ -24,8 +24,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       .content {
 
         background-color: var(--paper-grey-50);
-        @apply(--layout-vertical);
-        @apply(--layout-wrap);
+        @apply --layout-vertical;
+        @apply --layout-wrap;
         padding: 24px;
         max-width: 800px;
         margin: auto;
@@ -43,6 +43,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       background: var(--paper-grey-100);
 
     }
+
+    .submit {
+
+        padding: 16px;
+        font-size: 18px;
+        font-weight: 400;
+        background-color: var(--accent-color);
+        color: #ffffff;
+        margin-top: 24px;
+
+      }
 
     </style>
 
@@ -80,6 +91,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         </template>
 
       </div>
+
+      <paper-button class="submit" raised on-tap="_start">Start plugin</paper-button>
 
     </paper-card>
 
@@ -128,8 +141,6 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _fetchParameters: function(){
 
-          console.log( this.selectedPlugin);
-
           var data = {};
           data.auth = {
             type: 'token',
@@ -151,6 +162,42 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _pluginSelected: function( event ){
 
           this.selectedPlugin = event.currentTarget.plugin;
+
+        },
+
+        _start: function(){
+
+          console.log( 'start plugin' );
+          var data = {};
+          data.auth = {
+            type: 'token',
+            token: sessionStorage.getItem('token')
+          };
+
+          console.log( this.plugin );
+          console.log( this.selectedPlugin );
+
+          //
+          data.body = {};
+          data.body.template = {};
+          data.body.template.data = [
+            {name: 'aet',           value: ''},
+            {name: 'aec',           value: ''},
+            {name: 'aet_listener',  value: ''},
+            {name: 'server_ip',     value: ''},
+            {name: 'server_port',   value: ''},
+            {name: 'series_uids',   value: ''},
+            {name: 'series_file',   value: ''},
+            {name: 'data_location', value: ''},
+            {name: 'previous',      value: ''}
+          ];
+
+          //data.body.data['previous'] = this.plugin.data.id;
+
+          // var request = this.$.ChrisAPI.request( 'POST', this.selectedPlugin.instances, data);
+          // request
+          //   .then( this.handleRetrieve.bind(this) )
+          //   .catch( this.handleRetrieveError.bind(this) );
 
         }
 
