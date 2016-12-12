@@ -65,7 +65,7 @@
           <paper-button class="primary" selected$="{{item.data.selected}}">{{item.data.plugin_name}}</paper-button>
         </div>
         <div class="children">
-          <chris-plugin-tree-recursive tree="{{item.data.children}}"></chris-plugin-tree-recursive>
+          <chris-plugin-tree-recursive id="testC" tree="{{item.data.children}}"></chris-plugin-tree-recursive>
         </div>
       </div>
     </template>
@@ -77,15 +77,25 @@
     properties: {
     
       tree: {
-        type: Array
+        type: Array,
+        observer: '_treeChanged'
       }
 
     },
 
     _selectNode: function( event ){
 
-      //
       this.fire( 'select-node', event.model.__data__.item );
+
+    },
+
+    _treeChanged: function(){
+
+      for( var i=0; i < this.tree.length; i++){
+
+        this.set(['tree',i, 'data', 'children'], this.tree[i].data.children);
+
+      }
 
     }
   });

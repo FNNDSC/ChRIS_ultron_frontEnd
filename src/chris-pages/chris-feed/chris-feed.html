@@ -163,7 +163,7 @@
             <chris-feed-note name="note" notes="{{note}}"></chris-feed-note>
             <chris-feed-comments name="comments" comments="{{comments}}"></chris-feed-comments>
             <chris-feed-plugin name="plugin" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]" on-run-plugin="_runPlugin"></chris-feed-plugin>
-            <chris-feed-run name="run" plugin="[[plugin]]" plugins="[[plugins]]"></chris-feed-run>
+            <chris-feed-run name="run" plugin="[[plugin]]" plugins="[[plugins]]" on-fetch-plugin="_fetchPlugin"></chris-feed-run>
 
           </iron-pages>
 
@@ -511,6 +511,33 @@
       _closeDropdown: function(){
 
         this.$.dropdown.close();
+
+      },
+
+      _fetchPlugin: function( event ){
+
+        // get the plugin
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        // add parameters to help the FAKE API// (not required by real API)
+        data.params = {};
+        data.params.fake_api_previous_id = this.plugin.data.id;
+
+        var fetchPlugin =this.$.ChrisAPI.request('GET', event.detail.href, data);
+        fetchPlugin
+          .then( this._handlePlugin.bind(this) )
+          .catch( this.handleError.bind(this) );
+
+      },
+
+      _handlePlugin: function( event ){
+
+        this.push('pluginInstanceCollection', event.data[0]);
+        this.plugin = event.data[0];   
 
       }
 

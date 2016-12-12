@@ -5,6 +5,9 @@
     pluginInstanceTemplate: function(){
 
       var template = [
+        {'name' : 'id', 'value' : ''},
+        {'name' : 'plugin_name', 'value' : ''},
+        {'name' : 'previous_id', 'value' : ''},
         {'name' : 'status', 'value' : ''}
       ];
 
@@ -12,7 +15,7 @@
 
     },
 
-    generatePluginInstanceCJ: function( id ){
+    generatePluginInstanceCJ: function( id, previous_id ){
 
       var cj = {};
       cj.collection = {};
@@ -29,7 +32,13 @@
 
       var feedID = Math.round( Math.random() * 100 );
 
+      var plugins = this.plugins();
+      var plugin = plugins[Math.floor(Math.random() * plugins.length)];
+
       data = {
+          id: id,
+          plugin_name: plugin.name,
+          previous_id: previous_id,
           status: feedID < 10 ? 'started' : 'finishedSuccessfully'
       };
 

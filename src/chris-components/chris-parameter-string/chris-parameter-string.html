@@ -30,9 +30,8 @@
 
         _valueChanged: function(){
 
-            console.log( this.value );
-            // fire "change-value" + pass value
-
+            this.fire('change-value', this.value );
+            
         }
 
     });

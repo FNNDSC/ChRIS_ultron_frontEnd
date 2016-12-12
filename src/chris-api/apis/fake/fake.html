@@ -144,11 +144,7 @@
         }
         else if( this.method === 'GET' && target === '/plugins/' ){
 
-          console.log( target );
-
           itemCJ = this.generatePluginCollectionCJ();
-
-          console.log( itemCJ );
 
         }
 
@@ -156,7 +152,8 @@
         if( this.method === 'GET' && /^\/plugins\/instances\/(\d+)\//.test(target) ){
 
           var id = Number( target.match(/\d+/)['0'] );
-          itemCJ = this.generatePluginInstanceCJ( id );
+          var previous_id = params.fake_api_previous_id;
+          itemCJ = this.generatePluginInstanceCJ( id, previous_id );
 
         }
         else if( this.method === 'GET' && /^\/plugins\/instances\/search\//.test(target) ){
@@ -207,9 +204,9 @@
             var plugins = this.plugins();
             var plugin = plugins.filter( pluginSelected )[0];
 
-            switch( plugin.name ){
-              case 'pacsquery':
-              case 'pacsretrieve':
+            // switch( plugin.name ){
+            //   case 'pacsquery':
+            //   case 'pacsretrieve':
                   var pluginInstanceID = Math.round( Math.random() * 100 );
                   itemCJ.collection.items[0].data = [
                     {
@@ -225,11 +222,12 @@
                       value: 'chris'
                     }];
                   itemCJ.collection.items[0].href = this.apiRoot + '/plugins/instances/' + pluginInstanceID + '/';
-                  break;
-              default:
-                  break;
+            //       break;
+            //   default:
+            //       break;
 
-            }
+            // }
+
 
           }
 

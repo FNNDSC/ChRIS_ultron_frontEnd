@@ -47,7 +47,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
     </style>
 
-    <chris-plugin-tree-recursive tree="{{tree}}" on-select-node="_selectNode"></chris-plugin-tree-recursive>
+    <chris-plugin-tree-recursive id="test" tree="{{tree}}" on-select-node="_selectNode"></chris-plugin-tree-recursive>
 
   </template>
 
@@ -58,8 +58,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         properties: {
 
           list: {
-            type: Array,
-            observer: '_listChanged'
+            type: Array
           },
 
           tree: {
@@ -73,8 +72,13 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           }
         },
 
+        observers: [
+          '_listChanged(list.splices)',
+          '_treeChanged(tree.splices)'
+        ],
+
         _listChanged: function(){
-          
+
           this._build( this.list );
 
           // select deepest element
@@ -86,7 +90,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _treeChanged: function(){
 
-          //console.log( this.tree );
+          // console.log( this.tree );
 
         },
 

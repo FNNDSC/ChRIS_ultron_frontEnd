@@ -58,7 +58,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     </style>
 
     <!-- API Calls -->
-    <chris-api id="ChrisAPI"
+    <chris-api id="API"
       error="{{error}}">
     </chris-api>
 
@@ -83,10 +83,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         <template is="dom-repeat" items="{{parameters.data}}">
           <!--chris parameter -->
           <chris-parameter
+            parameter="{{item}}"
             name="{{item.data.name}}"
             type="{{item.data.type}}"
             help="{{item.data.help}}"
             default="{{item.data.default}}"
+            on-change-value="_changeValue"
             ></chris-parameter>
         </template>
 
@@ -147,7 +149,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             token: sessionStorage.getItem('token')
           };
 
-          var request =this.$.ChrisAPI.request('GET', this.selectedPlugin.links.parameters, data);
+          var request =this.$.API.request('GET', this.selectedPlugin.links.parameters, data);
           request
             .then( this._handleParameters.bind(this) );
 
@@ -156,6 +158,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _handleParameters: function( parameters ){
 
           this.set('parameters', parameters);
+          this._resetParameters();
+
+        },
+
+        _resetParameters: function(){
+
+          for( var i=0; i < this.parameters.data.length; i++ ){
+
+            this.parameters.data[i].data.value = this.parameters.data[i].data.default;
+
+          }
 
         },
 
@@ -165,39 +178,68 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
+        _changeValue: function( event ){
+
+          console.log( event );
+          event.currentTarget.parameter.data.value = event.detail;
+
+        },
+
         _start: function(){
 
-          console.log( 'start plugin' );
           var data = {};
           data.auth = {
             type: 'token',
             token: sessionStorage.getItem('token')
           };
 
-          console.log( this.plugin );
-          console.log( this.selectedPlugin );
-
-          //
           data.body = {};
           data.body.template = {};
-          data.body.template.data = [
-            {name: 'aet',           value: ''},
-            {name: 'aec',           value: ''},
-            {name: 'aet_listener',  value: ''},
-            {name: 'server_ip',     value: ''},
-            {name: 'server_port',   value: ''},
-            {name: 'series_uids',   value: ''},
-            {name: 'series_file',   value: ''},
-            {name: 'data_location', value: ''},
-            {name: 'previous',      value: ''}
-          ];
+          data.body.template.data = [];
+          data.body.template.data.push({
+            name: 'previous',
+            value: ''
+          })
+          data.body.data = {
+            previous: this.plugin.data.id
+          }
 
-          //data.body.data['previous'] = this.plugin.data.id;
+          for( var i=0; i<this.parameters.data.length; i++ ){
 
-          // var request = this.$.ChrisAPI.request( 'POST', this.selectedPlugin.instances, data);
-          // request
-          //   .then( this.handleRetrieve.bind(this) )
-          //   .catch( this.handleRetrieveError.bind(this) );
+            var name = this.parameters.data[i].data.name;
+            var value = this.parameters.data[i].data.value;
+
+            // fill template
+            var parameter = {
+              name: name,
+              value: ''
+            }
+            data.body.template.data.push( parameter );
+
+            // fill data
+            data.body.data[ name ] = value;
+
+          }
+
+          var request = this.$.API.request( 'POST', this.selectedPlugin.links.instances, data);
+          request
+            .then( this.handleRunPluginDS.bind(this) )
+            .catch( this.handleRunError.bind(this) );
+
+        },
+
+        handleRunPluginDS: function( event ){
+
+          this.fire('fetch-plugin', event.data[0]);
+          // send message to let feed know it has a new plugin
+
+          // exit run page to new plugin
+
+        },
+
+        handleRunError: function( event ){
+
+          console.log( event );
 
         }
 
