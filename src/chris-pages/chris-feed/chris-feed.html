@@ -1,283 +1,77 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../../chris-ultron/chris-ultron.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="iron-image" assetpath="../../../bower_components/iron-image/">
-  <template>
-    <style>
-      :host {
-        display: inline-block;
-        overflow: hidden;
-        position: relative;
-      }
-
-      #sizedImgDiv {
-        @apply(--layout-fit);
-
-        display: none;
-      }
-
-      #img {
-        display: block;
-        width: var(--iron-image-width, auto);
-        height: var(--iron-image-height, auto);
-      }
-
-      :host([sizing]) #sizedImgDiv {
-        display: block;
-      }
-
-      :host([sizing]) #img {
-        display: none;
-      }
-
-      #placeholder {
-        @apply(--layout-fit);
-
-        background-color: inherit;
-        opacity: 1;
-
-        @apply(--iron-image-placeholder);
-      }
-
-      #placeholder.faded-out {
-        transition: opacity 0.5s linear;
-        opacity: 0;
-      }
-    </style>
-
-    <div id="sizedImgDiv" role="img" hidden$="[[_computeImgDivHidden(sizing)]]" aria-hidden$="[[_computeImgDivARIAHidden(alt)]]" aria-label$="[[_computeImgDivARIALabel(alt, src)]]"></div>
-    <img id="img" alt$="[[alt]]" hidden$="[[_computeImgHidden(sizing)]]">
-    <div id="placeholder" hidden$="[[_computePlaceholderHidden(preload, fade, loading, loaded)]]" class$="[[_computePlaceholderClassName(preload, fade, loading, loaded)]]"></div>
-  </template>
-
-  <script>Polymer({is:"iron-image",properties:{src:{observer:"_srcChanged",type:String,value:""},alt:{type:String,value:null},preventLoad:{type:Boolean,value:!1,observer:"_preventLoadChanged"},sizing:{type:String,value:null,reflectToAttribute:!0},position:{type:String,value:"center"},preload:{type:Boolean,value:!1},placeholder:{type:String,value:null,observer:"_placeholderChanged"},fade:{type:Boolean,value:!1},loaded:{notify:!0,readOnly:!0,type:Boolean,value:!1},loading:{notify:!0,readOnly:!0,type:Boolean,value:!1},error:{notify:!0,readOnly:!0,type:Boolean,value:!1},width:{observer:"_widthChanged",type:Number,value:null},height:{observer:"_heightChanged",type:Number,value:null}},observers:["_transformChanged(sizing, position)"],ready:function(){var e=this.$.img;e.onload=function(){this.$.img.src===this._resolveSrc(this.src)&&(this._setLoading(!1),this._setLoaded(!0),this._setError(!1))}.bind(this),e.onerror=function(){this.$.img.src===this._resolveSrc(this.src)&&(this._reset(),this._setLoading(!1),this._setLoaded(!1),this._setError(!0))}.bind(this),this._resolvedSrc=""},_load:function(e){e?this.$.img.src=e:this.$.img.removeAttribute("src"),this.$.sizedImgDiv.style.backgroundImage=e?'url("'+e+'")':"",this._setLoading(!!e),this._setLoaded(!1),this._setError(!1)},_reset:function(){this.$.img.removeAttribute("src"),this.$.sizedImgDiv.style.backgroundImage="",this._setLoading(!1),this._setLoaded(!1),this._setError(!1)},_computePlaceholderHidden:function(){return!this.preload||!this.fade&&!this.loading&&this.loaded},_computePlaceholderClassName:function(){return this.preload&&this.fade&&!this.loading&&this.loaded?"faded-out":""},_computeImgDivHidden:function(){return!this.sizing},_computeImgDivARIAHidden:function(){return""===this.alt?"true":void 0},_computeImgDivARIALabel:function(){if(null!==this.alt)return this.alt;if(""===this.src)return"";var e=new URL(this._resolveSrc(this.src)).pathname.split("/");return e[e.length-1]},_computeImgHidden:function(){return!!this.sizing},_widthChanged:function(){this.style.width=isNaN(this.width)?this.width:this.width+"px"},_heightChanged:function(){this.style.height=isNaN(this.height)?this.height:this.height+"px"},_preventLoadChanged:function(){this.preventLoad||this.loaded||(this._reset(),this._load(this.src))},_srcChanged:function(e,t){var i=this._resolveSrc(e);i!==this._resolvedSrc&&(this._resolvedSrc=i,this._reset(),this.preventLoad||this._load(e))},_placeholderChanged:function(){this.$.placeholder.style.backgroundImage=this.placeholder?'url("'+this.placeholder+'")':""},_transformChanged:function(){var e=this.$.sizedImgDiv.style,t=this.$.placeholder.style;e.backgroundSize=t.backgroundSize=this.sizing,e.backgroundPosition=t.backgroundPosition=this.sizing?this.position:"",e.backgroundRepeat=t.backgroundRepeat=this.sizing?"no-repeat":""},_resolveSrc:function(e){return Polymer.ResolveUrl.resolveUrl(e,this.ownerDocument.baseURI)}});</script>
-</dom-module>
-<dom-module id="paper-card" assetpath="../../../bower_components/paper-card/">
-  <template>
-    <style include="paper-material">
-      :host {
-        display: inline-block;
-        position: relative;
-        box-sizing: border-box;
-        background-color: var(--paper-card-background-color, --primary-background-color);
-        border-radius: 2px;
-
-        @apply(--paper-font-common-base);
-        @apply(--paper-card);
-      }
-
-      /* IE 10 support for HTML5 hidden attr */
-      [hidden] {
-        display: none !important;
-      }
-
-      .header {
-        position: relative;
-        border-top-left-radius: inherit;
-        border-top-right-radius: inherit;
-        overflow: hidden;
-
-        @apply(--paper-card-header);
-      }
-
-      .header iron-image {
-        display: block;
-        width: 100%;
-        --iron-image-width: 100%;
-        pointer-events: none;
-
-        @apply(--paper-card-header-image);
-      }
-
-      .header .title-text {
-        padding: 16px;
-        font-size: 24px;
-        font-weight: 400;
-        color: var(--paper-card-header-color, #000);
-
-        @apply(--paper-card-header-text);
-      }
-
-      .header .title-text.over-image {
-        position: absolute;
-        bottom: 0px;
-
-        @apply(--paper-card-header-image-text);
-      }
-
-      :host ::content .card-content {
-        padding: 16px;
-        position:relative;
-
-        @apply(--paper-card-content);
-      }
-
-      :host ::content .card-actions {
-        border-top: 1px solid #e8e8e8;
-        padding: 5px 16px;
-        position:relative;
-
-        @apply(--paper-card-actions);
-      }
-    </style>
-
-    <div class="header">
-      <iron-image hidden$="[[!image]]" src="[[image]]" alt="[[alt]]" placeholder="[[placeholderImage]]" preload="[[preloadImage]]" fade="[[fadeImage]]"></iron-image>
-      <div hidden$="[[!heading]]" class$="[[_computeHeadingClass(image)]]">[[heading]]</div>
-    </div>
-
-    <content></content>
-  </template>
-
-  <script>Polymer({is:"paper-card",properties:{heading:{type:String,value:"",observer:"_headingChanged"},image:{type:String,value:""},alt:{type:String},preloadImage:{type:Boolean,value:!1},fadeImage:{type:Boolean,value:!1},placeholderImage:{type:String,value:null},elevation:{type:Number,value:1,reflectToAttribute:!0},animatedShadow:{type:Boolean,value:!1},animated:{type:Boolean,reflectToAttribute:!0,readOnly:!0,computed:"_computeAnimated(animatedShadow)"}},_headingChanged:function(e){this.getAttribute("aria-label");this.setAttribute("aria-label",e)},_computeHeadingClass:function(e){var t="title-text";return e&&(t+=" over-image"),t},_computeAnimated:function(e){return e}});</script>
-</dom-module>
-<dom-module id="paper-toggle-button" assetpath="../../../bower_components/paper-toggle-button/">
-  <template strip-whitespace="">
-
-    <style>
-      :host {
-        display: inline-block;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--paper-font-common-base);
-      }
-
-      :host([disabled]) {
-        pointer-events: none;
-      }
-
-      :host(:focus) {
-        outline:none;
-      }
-
-      .toggle-bar {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        border-radius: 8px;
-        pointer-events: none;
-        opacity: 0.4;
-        transition: background-color linear .08s;
-        background-color: var(--paper-toggle-button-unchecked-bar-color, #000000);
-
-        @apply(--paper-toggle-button-unchecked-bar);
-      }
-
-      .toggle-button {
-        position: absolute;
-        top: -3px;
-        left: 0;
-        height: 20px;
-        width: 20px;
-        border-radius: 50%;
-        box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.6);
-        transition: -webkit-transform linear .08s, background-color linear .08s;
-        transition: transform linear .08s, background-color linear .08s;
-        will-change: transform;
-        background-color: var(--paper-toggle-button-unchecked-button-color, --paper-grey-50);
-
-        @apply(--paper-toggle-button-unchecked-button);
-      }
-
-      .toggle-button.dragging {
-        -webkit-transition: none;
-        transition: none;
-      }
-
-      :host([checked]:not([disabled])) .toggle-bar {
-        opacity: 0.5;
-        background-color: var(--paper-toggle-button-checked-bar-color, --primary-color);
-
-        @apply(--paper-toggle-button-checked-bar);
-      }
-
-      :host([disabled]) .toggle-bar {
-        background-color: #000;
-        opacity: 0.12;
-      }
-
-      :host([checked]) .toggle-button {
-        -webkit-transform: translate(16px, 0);
-        transform: translate(16px, 0);
-      }
-
-      :host([checked]:not([disabled])) .toggle-button {
-        background-color: var(--paper-toggle-button-checked-button-color, --primary-color);
-
-        @apply(--paper-toggle-button-checked-button);
-      }
-
-      :host([disabled]) .toggle-button {
-        background-color: #bdbdbd;
-        opacity: 1;
-      }
-
-      .toggle-ink {
-        position: absolute;
-        top: -14px;
-        left: -14px;
-        right: auto;
-        bottom: auto;
-        width: 48px;
-        height: 48px;
-        opacity: 0.5;
-        pointer-events: none;
-        color: var(--paper-toggle-button-unchecked-ink-color, --primary-text-color);
-      }
-
-      :host([checked]) .toggle-ink {
-        color: var(--paper-toggle-button-checked-ink-color, --primary-color);
-      }
-
-      .toggle-container {
-        display: inline-block;
-        position: relative;
-        width: 36px;
-        height: 14px;
-        /* The toggle button has an absolute position of -3px; The extra 1px
-        /* accounts for the toggle button shadow box. */
-        margin: 4px 1px;
-      }
-
-      .toggle-label {
-        position: relative;
-        display: inline-block;
-        vertical-align: middle;
-        padding-left: var(--paper-toggle-button-label-spacing, 8px);
-        pointer-events: none;
-        color: var(--paper-toggle-button-label-color, --primary-text-color);
-      }
-    </style>
-
-    <div class="toggle-container">
-      <div id="toggleBar" class="toggle-bar"></div>
-      <div id="toggleButton" class="toggle-button"></div>
-    </div>
-
-    <div class="toggle-label"><content></content></div>
-
-  </template>
-
-  <script>Polymer({is:"paper-toggle-button",behaviors:[Polymer.PaperCheckedElementBehavior],hostAttributes:{role:"button","aria-pressed":"false",tabindex:0},properties:{},listeners:{track:"_ontrack"},_ontrack:function(t){var e=t.detail;"start"===e.state?this._trackStart(e):"track"===e.state?this._trackMove(e):"end"===e.state&&this._trackEnd(e)},_trackStart:function(t){this._width=this.$.toggleBar.offsetWidth/2,this._trackChecked=this.checked,this.$.toggleButton.classList.add("dragging")},_trackMove:function(t){var e=t.dx;this._x=Math.min(this._width,Math.max(0,this._trackChecked?this._width+e:e)),this.translate3d(this._x+"px",0,0,this.$.toggleButton),this._userActivate(this._x>this._width/2)},_trackEnd:function(t){this.$.toggleButton.classList.remove("dragging"),this.transform("",this.$.toggleButton)},_createRipple:function(){this._rippleContainer=this.$.toggleButton;var t=Polymer.PaperRippleBehavior._createRipple();return t.id="ink",t.setAttribute("recenters",""),t.classList.add("circle","toggle-ink"),t}});</script>
-</dom-module>
-<dom-module id="chris-feed-about" assetpath="../../chris-components/chris-feed-about/">
+<html><head><meta charset="UTF-8"><link rel="import" href="../../chris-ultron.html"></head><body><div hidden="" by-vulcanize=""><iron-iconset-svg name="communication" size="24">
+<svg><defs>
+<g id="business"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"></path></g>
+<g id="call"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></g>
+<g id="call-end"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"></path></g>
+<g id="call-made"><path d="M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5z"></path></g>
+<g id="call-merge"><path d="M17 20.41L18.41 19 15 15.59 13.59 17 17 20.41zM7.5 8H11v5.59L5.59 19 7 20.41l6-6V8h3.5L12 3.5 7.5 8z"></path></g>
+<g id="call-missed"><path d="M19.59 7L12 14.59 6.41 9H11V7H3v8h2v-4.59l7 7 9-9z"></path></g>
+<g id="call-missed-outgoing"><path d="M3 8.41l9 9 7-7V15h2V7h-8v2h4.59L12 14.59 4.41 7 3 8.41z"></path></g>
+<g id="call-received"><path d="M20 5.41L18.59 4 7 15.59V9H5v10h10v-2H8.41z"></path></g>
+<g id="call-split"><path d="M14 4l2.29 2.29-2.88 2.88 1.42 1.42 2.88-2.88L20 10V4zm-4 0H4v6l2.29-2.29 4.71 4.7V20h2v-8.41l-5.29-5.3z"></path></g>
+<g id="chat"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"></path></g>
+<g id="chat-bubble"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></g>
+<g id="chat-bubble-outline"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"></path></g>
+<g id="clear-all"><path d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z"></path></g>
+<g id="comment"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></g>
+<g id="contact-mail"><path d="M21 8V7l-3 2-3-2v1l3 2 3-2zm1-5H2C.9 3 0 3.9 0 5v14c0 1.1.9 2 2 2h20c1.1 0 1.99-.9 1.99-2L24 5c0-1.1-.9-2-2-2zM8 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H2v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1zm8-6h-8V6h8v6z"></path></g>
+<g id="contact-phone"><path d="M22 3H2C.9 3 0 3.9 0 5v14c0 1.1.9 2 2 2h20c1.1 0 1.99-.9 1.99-2L24 5c0-1.1-.9-2-2-2zM8 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H2v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1zm3.85-4h1.64L21 16l-1.99 1.99c-1.31-.98-2.28-2.38-2.73-3.99-.18-.64-.28-1.31-.28-2s.1-1.36.28-2c.45-1.62 1.42-3.01 2.73-3.99L21 8l-1.51 2h-1.64c-.22.63-.35 1.3-.35 2s.13 1.37.35 2z"></path></g>
+<g id="contacts"><path d="M20 0H4v2h16V0zM4 24h16v-2H4v2zM20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 2.75c1.24 0 2.25 1.01 2.25 2.25s-1.01 2.25-2.25 2.25S9.75 10.24 9.75 9 10.76 6.75 12 6.75zM17 17H7v-1.5c0-1.67 3.33-2.5 5-2.5s5 .83 5 2.5V17z"></path></g>
+<g id="dialer-sip"><path d="M17 3h-1v5h1V3zm-2 2h-2V4h2V3h-3v3h2v1h-2v1h3V5zm3-2v5h1V6h2V3h-3zm2 2h-1V4h1v1zm0 10.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.01.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.59l2.2-2.21c.27-.26.35-.65.24-1C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"></path></g>
+<g id="dialpad"><path d="M12 19c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 1c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12-8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-6 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></g>
+<g id="email"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></g>
+<g id="forum"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"></path></g>
+<g id="import-contacts"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"></path></g>
+<g id="import-export"><path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"></path></g>
+<g id="invert-colors-off"><path d="M20.65 20.87l-2.35-2.35-6.3-6.29-3.56-3.57-1.42-1.41L4.27 4.5 3 5.77l2.78 2.78c-2.55 3.14-2.36 7.76.56 10.69C7.9 20.8 9.95 21.58 12 21.58c1.79 0 3.57-.59 5.03-1.78l2.7 2.7L21 21.23l-.35-.36zM12 19.59c-1.6 0-3.11-.62-4.24-1.76C6.62 16.69 6 15.19 6 13.59c0-1.32.43-2.57 1.21-3.6L12 14.77v4.82zM12 5.1v4.58l7.25 7.26c1.37-2.96.84-6.57-1.6-9.01L12 2.27l-3.7 3.7 1.41 1.41L12 5.1z"></path></g>
+<g id="live-help"><path d="M19 2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 16h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 11.9 13 12.5 13 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"></path></g>
+<g id="location-off"><path d="M12 6.5c1.38 0 2.5 1.12 2.5 2.5 0 .74-.33 1.39-.83 1.85l3.63 3.63c.98-1.86 1.7-3.8 1.7-5.48 0-3.87-3.13-7-7-7-1.98 0-3.76.83-5.04 2.15l3.19 3.19c.46-.52 1.11-.84 1.85-.84zm4.37 9.6l-4.63-4.63-.11-.11L3.27 3 2 4.27l3.18 3.18C5.07 7.95 5 8.47 5 9c0 5.25 7 13 7 13s1.67-1.85 3.38-4.35L18.73 21 20 19.73l-3.63-3.63z"></path></g>
+<g id="location-on"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></g>
+<g id="mail-outline"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"></path></g>
+<g id="message"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></g>
+<g id="no-sim"><path d="M18.99 5c0-1.1-.89-2-1.99-2h-7L7.66 5.34 19 16.68 18.99 5zM3.65 3.88L2.38 5.15 5 7.77V19c0 1.1.9 2 2 2h10.01c.35 0 .67-.1.96-.26l1.88 1.88 1.27-1.27L3.65 3.88z"></path></g>
+<g id="phone"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></g>
+<g id="phonelink-erase"><path d="M13 8.2l-1-1-4 4-4-4-1 1 4 4-4 4 1 1 4-4 4 4 1-1-4-4 4-4zM19 1H9c-1.1 0-2 .9-2 2v3h2V4h10v16H9v-2H7v3c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2z"></path></g>
+<g id="phonelink-lock"><path d="M19 1H9c-1.1 0-2 .9-2 2v3h2V4h10v16H9v-2H7v3c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm-8.2 10V9.5C10.8 8.1 9.4 7 8 7S5.2 8.1 5.2 9.5V11c-.6 0-1.2.6-1.2 1.2v3.5c0 .7.6 1.3 1.2 1.3h5.5c.7 0 1.3-.6 1.3-1.2v-3.5c0-.7-.6-1.3-1.2-1.3zm-1.3 0h-3V9.5c0-.8.7-1.3 1.5-1.3s1.5.5 1.5 1.3V11z"></path></g>
+<g id="phonelink-ring"><path d="M20.1 7.7l-1 1c1.8 1.8 1.8 4.6 0 6.5l1 1c2.5-2.3 2.5-6.1 0-8.5zM18 9.8l-1 1c.5.7.5 1.6 0 2.3l1 1c1.2-1.2 1.2-3 0-4.3zM14 1H4c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 19H4V4h10v16z"></path></g>
+<g id="phonelink-setup"><path d="M11.8 12.5v-1l1.1-.8c.1-.1.1-.2.1-.3l-1-1.7c-.1-.1-.2-.2-.3-.1l-1.3.4c-.3-.2-.6-.4-.9-.5l-.2-1.3c0-.1-.1-.2-.3-.2H7c-.1 0-.2.1-.3.2l-.2 1.3c-.3.1-.6.3-.9.5l-1.3-.5c-.1 0-.2 0-.3.1l-1 1.7c-.1.1 0 .2.1.3l1.1.8v1l-1.1.8c-.1.2-.1.3-.1.4l1 1.7c.1.1.2.2.3.1l1.4-.4c.3.2.6.4.9.5l.2 1.3c-.1.1.1.2.2.2h2c.1 0 .2-.1.3-.2l.2-1.3c.3-.1.6-.3.9-.5l1.3.5c.1 0 .2 0 .3-.1l1-1.7c.1-.1 0-.2-.1-.3l-1.1-.9zM8 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM19 1H9c-1.1 0-2 .9-2 2v3h2V4h10v16H9v-2H7v3c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2z"></path></g>
+<g id="portable-wifi-off"><path d="M17.56 14.24c.28-.69.44-1.45.44-2.24 0-3.31-2.69-6-6-6-.79 0-1.55.16-2.24.44l1.62 1.62c.2-.03.41-.06.62-.06 2.21 0 4 1.79 4 4 0 .21-.02.42-.05.63l1.61 1.61zM12 4c4.42 0 8 3.58 8 8 0 1.35-.35 2.62-.95 3.74l1.47 1.47C21.46 15.69 22 13.91 22 12c0-5.52-4.48-10-10-10-1.91 0-3.69.55-5.21 1.47l1.46 1.46C9.37 4.34 10.65 4 12 4zM3.27 2.5L2 3.77l2.1 2.1C2.79 7.57 2 9.69 2 12c0 3.7 2.01 6.92 4.99 8.65l1-1.73C5.61 17.53 4 14.96 4 12c0-1.76.57-3.38 1.53-4.69l1.43 1.44C6.36 9.68 6 10.8 6 12c0 2.22 1.21 4.15 3 5.19l1-1.74c-1.19-.7-2-1.97-2-3.45 0-.65.17-1.25.44-1.79l1.58 1.58L10 12c0 1.1.9 2 2 2l.21-.02.01.01 7.51 7.51L21 20.23 4.27 3.5l-1-1z"></path></g>
+<g id="present-to-all"><path d="M21 3H3c-1.11 0-2 .89-2 2v14c0 1.11.89 2 2 2h18c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 16.02H3V4.98h18v14.04zM10 12H8l4-4 4 4h-2v4h-4v-4z"></path></g>
+<g id="ring-volume"><path d="M23.71 16.67C20.66 13.78 16.54 12 12 12 7.46 12 3.34 13.78.29 16.67c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l2.48 2.48c.18.18.43.29.71.29.27 0 .52-.11.7-.28.79-.74 1.69-1.36 2.66-1.85.33-.16.56-.5.56-.9v-3.1c1.45-.48 3-.73 4.6-.73s3.15.25 4.6.72v3.1c0 .39.23.74.56.9.98.49 1.87 1.12 2.66 1.85.18.18.43.28.7.28.28 0 .53-.11.71-.29l2.48-2.48c.18-.18.29-.43.29-.71 0-.27-.11-.52-.29-.7zM21.16 6.26l-1.41-1.41-3.56 3.55 1.41 1.41s3.45-3.52 3.56-3.55zM13 2h-2v5h2V2zM6.4 9.81L7.81 8.4 4.26 4.84 2.84 6.26c.11.03 3.56 3.55 3.56 3.55z"></path></g>
+<g id="rss-feed"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></g>
+<g id="screen-share"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.11-.9-2-2-2H4c-1.11 0-2 .89-2 2v10c0 1.1.89 2 2 2H0v2h24v-2h-4zm-7-3.53v-2.19c-2.78 0-4.61.85-6 2.72.56-2.67 2.11-5.33 6-5.87V7l4 3.73-4 3.74z"></path></g>
+<g id="speaker-phone"><path d="M7 7.07L8.43 8.5c.91-.91 2.18-1.48 3.57-1.48s2.66.57 3.57 1.48L17 7.07C15.72 5.79 13.95 5 12 5s-3.72.79-5 2.07zM12 1C8.98 1 6.24 2.23 4.25 4.21l1.41 1.41C7.28 4 9.53 3 12 3s4.72 1 6.34 2.62l1.41-1.41C17.76 2.23 15.02 1 12 1zm2.86 9.01L9.14 10C8.51 10 8 10.51 8 11.14v9.71c0 .63.51 1.14 1.14 1.14h5.71c.63 0 1.14-.51 1.14-1.14v-9.71c.01-.63-.5-1.13-1.13-1.13zM15 20H9v-8h6v8z"></path></g>
+<g id="stay-current-landscape"><path d="M1.01 7L1 17c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2H3c-1.1 0-1.99.9-1.99 2zM19 7v10H5V7h14z"></path></g>
+<g id="stay-current-portrait"><path d="M17 1.01L7 1c-1.1 0-1.99.9-1.99 2v18c0 1.1.89 2 1.99 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"></path></g>
+<g id="stay-primary-landscape"><path d="M1.01 7L1 17c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2H3c-1.1 0-1.99.9-1.99 2zM19 7v10H5V7h14z"></path></g>
+<g id="stay-primary-portrait"><path d="M17 1.01L7 1c-1.1 0-1.99.9-1.99 2v18c0 1.1.89 2 1.99 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"></path></g>
+<g id="stop-screen-share"><path d="M21.22 18.02l2 2H24v-2h-2.78zm.77-2l.01-10c0-1.11-.9-2-2-2H7.22l5.23 5.23c.18-.04.36-.07.55-.1V7.02l4 3.73-1.58 1.47 5.54 5.54c.61-.33 1.03-.99 1.03-1.74zM2.39 1.73L1.11 3l1.54 1.54c-.4.36-.65.89-.65 1.48v10c0 1.1.89 2 2 2H0v2h18.13l2.71 2.71 1.27-1.27L2.39 1.73zM7 15.02c.31-1.48.92-2.95 2.07-4.06l1.59 1.59c-1.54.38-2.7 1.18-3.66 2.47z"></path></g>
+<g id="swap-calls"><path d="M18 4l-4 4h3v7c0 1.1-.9 2-2 2s-2-.9-2-2V8c0-2.21-1.79-4-4-4S5 5.79 5 8v7H2l4 4 4-4H7V8c0-1.1.9-2 2-2s2 .9 2 2v7c0 2.21 1.79 4 4 4s4-1.79 4-4V8h3l-4-4z"></path></g>
+<g id="textsms"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"></path></g>
+<g id="voicemail"><path d="M18.5 6C15.46 6 13 8.46 13 11.5c0 1.33.47 2.55 1.26 3.5H9.74c.79-.95 1.26-2.17 1.26-3.5C11 8.46 8.54 6 5.5 6S0 8.46 0 11.5 2.46 17 5.5 17h13c3.04 0 5.5-2.46 5.5-5.5S21.54 6 18.5 6zm-13 9C3.57 15 2 13.43 2 11.5S3.57 8 5.5 8 9 9.57 9 11.5 7.43 15 5.5 15zm13 0c-1.93 0-3.5-1.57-3.5-3.5S16.57 8 18.5 8 22 9.57 22 11.5 20.43 15 18.5 15z"></path></g>
+<g id="vpn-key"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></g>
+</defs></svg>
+</iron-iconset-svg>
+<dom-module id="chris-feed-about" assetpath="chris-feed-views/chris-feed-about/">
   <template>
     <style>
       :host {
         display: block;
-        @apply(--layout-horizontal);
-        @apply(--layout-around-justified);
+      }
+
+      .content {
+
+        background-color: var(--paper-grey-50);
+        @apply(--layout-vertical);
         @apply(--layout-wrap);
-        margin-left: auto;
-        margin-right: auto;
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
+
       }
 
-       paper-card {
-        width: 800px;
-      }
-
-      @media (max-width: 800px) {
-        paper-card {
-          width: 100%;
-        }
-      }
 
       paper-card{
         color: var(--primary-text-color);
@@ -392,7 +186,7 @@
 
     </style>
 
-    <paper-card>
+    <paper-card class="content">
       <div class="center colored" style$="[[_setBackgroundColor(feed.data.color)]]">
         <div class="border-wrap">
           [[feed.data.letter]]
@@ -454,54 +248,7 @@
   </div></paper-card></template>
 
   <script>!function(){"use strict";Polymer({is:"chris-feed-about",properties:{feed:{type:Object}},_setBackgroundColor:function(r){return"background-color: "+r+";"},_setColor:function(r){return"color: "+r+";"},_setStatusIcon:function(r){var o="icons:";return o+="running"===r?"schedule":"error"===r?"clear":"done"},_setFavoriteIcon:function(r){var o="icons:";return o+=r?"favorite":"favorite-border"},_setTagStyle:function(r){return"color: "+r+";"}})}();</script>
-</dom-module><dom-module id="chris-comment" assetpath="../../chris-components/chris-comment/">
-
-  <template>
-
-    <style>
-
-    :host{
-
-      display: block;
-
-    }
-
-    .container{
-
-      min-height: 64px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      border-bottom: 1px solid var(--paper-grey-300);
-
-    }
-
-    .name{
-
-      padding:8px;
-      font-style: bold;
-      font-size: smaller;
-
-    }
-
-    .content{
-
-      padding:8px;
-
-    }
-
-    </style>
-
-    <div class="container" style$="[[_setCommentStyle(comment.data.color)]]">
-      <div class="name pad8">[[comment.data.author]]</div>
-      <div class="content pad8">[[comment.data.content]]</div>
-    </div>
-
-  </template>
-
-  <script>Polymer({is:"chris-comment",properties:{comment:{type:Object,observer:"_commentChanged"},valid:{type:Boolean}},isValid:function(t){if(this.comment){var e=[];return this.comment.data?("string"!=typeof this.comment.data.author&&e.push("author:String"),"string"!=typeof this.comment.data.color&&e.push("color:String"),"string"!=typeof this.comment.data.content&&e.push("content:String"),"string"!=typeof this.comment.data.date&&e.push("date:String"),"string"!=typeof this.comment.data.id&&e.push("id:String")):e.push("comment.data doesn't exist"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_setCommentStyle:function(t){return"border-left: 1px solid "+t},_commentChanged:function(t){!this.isValid(this.comment)}});</script>
-</dom-module>
-<dom-module id="chris-comment-list" assetpath="../../chris-components/chris-comment-list/">
+</dom-module><dom-module id="chris-feed-comments" assetpath="chris-feed-views/chris-feed-comments/">
   <template>
     <style>
 
@@ -537,24 +284,16 @@
 
       .content {
 
-        /*padding: 20px;*/
+        background-color: var(--paper-grey-50);
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
 
       }
-
-      paper-card {
-
-        width: 800px;
-
-      }
-
-    @media (max-width: 800px) {
-
-      paper-card {
-
-        width: 100%;
-
-      }
-    }
 
 
     paper-card{
@@ -571,7 +310,7 @@
     <chris-api id="API" content-type="application/json" ,="" response="{{response}}" on-response="handleItem" error="{{error}}" on-error="handleError">
     </chris-api>
 
-    <paper-card heading="Discussion">
+    <paper-card class="content" heading="Discussion">
 
       <div class="card-content">
 
@@ -602,131 +341,17 @@
 
   </template>
 
-  <script>Polymer({is:"chris-comment-list",properties:{comments:{type:Object,observer:"_commentsChanged"},valid:{type:Boolean}},clear:function(){this.$.comment.value=""},save:function(t){if(13===t.keyCode&&(t.stopPropagation(),t.preventDefault(),""!==this.$.comment.value)){var e={weekday:"long",year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"},i={};i.data={author:"Nicolas Rannou",color:"blue",content:this.$.comment.value,index:this.comments.length+1,date:(new Date).toLocaleTimeString("en-us",e)},i.template=this.comments.template,i.href=this.comments.href,this.push("comments.data",i),this.clear(),this.$.API.request("POST",this.comments.href,{body:i})}},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.pop("comments.data"),this.fire("notification",e.error))}},handleError:function(){},isValid:function(t){if(this.comments){var e=[];return"object"!=typeof this.comments.template&&e.push("template:Object"),"string"!=typeof this.comments.href&&e.push("href:String"),this.comments.data&&this.comments.data.constructor===Array||e.push("data:Array"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_commentsChanged:function(t){!this.isValid(this.comments)}});</script>
+  <script>Polymer({is:"chris-feed-comments",properties:{comments:{type:Object,observer:"_commentsChanged"},valid:{type:Boolean}},clear:function(){this.$.comment.value=""},save:function(t){if(13===t.keyCode&&(t.stopPropagation(),t.preventDefault(),""!==this.$.comment.value)){var e={weekday:"long",year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"},i={};i.data={author:"Nicolas Rannou",color:"blue",content:this.$.comment.value,index:this.comments.length+1,date:(new Date).toLocaleTimeString("en-us",e)},i.template=this.comments.template,i.href=this.comments.href,this.push("comments.data",i),this.clear(),this.$.API.request("POST",this.comments.href,{body:i})}},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.pop("comments.data"),this.fire("notification",e.error))}},handleError:function(){},isValid:function(t){if(this.comments){var e=[];return"object"!=typeof this.comments.template&&e.push("template:Object"),"string"!=typeof this.comments.href&&e.push("href:String"),this.comments.data&&this.comments.data.constructor===Array||e.push("data:Array"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_commentsChanged:function(t){!this.isValid(this.comments)}});</script>
 </dom-module>
-fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-nav/">
-
-  <template>
-
-    <style include="iron-flex iron-flex-alignment">
-    <style>
-
-      :host {
-
-        display: flex;
-        position: absolute;
-      
-      }
-
-      .separator {
-
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--primary-text-color);
-        padding: 16px 16px 0;
-        border-top: 1px solid rgb(224, 224, 224);
-
-      }
-
-      .thread {
-
-        font-weight: bolder;
-        font-size: 24px;
-        margin-top: -12px;
-        padding-right: 4px;
-        color: var(--primary-color);
-
-      }
-
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-    </style>
-
-    
-    <div class="separator">General</div>
-
-    <paper-menu id="labels" class="layout vertical" attr-for-selected="value" on-iron-select="handleSelect">
-
-      <a href="/feed/[[feed]]/about">
-        <paper-icon-item value="all" role="menuitem">
-          <iron-icon icon="icons:list" item-icon=""></iron-icon>About
-        </paper-icon-item>
-      </a>
-
-      <a href="/feed/[[feed]]/note">
-        <paper-icon-item value="favorite" role="menuitem">
-          <iron-icon icon="icons:create" item-icon=""></iron-icon>Note
-        </paper-icon-item>
-      </a>
-
-      <a href="/feed/[[feed]]/comments">
-        <paper-icon-item value="running" role="menuitem">
-          <iron-icon icon="icons:question-answer" item-icon=""></iron-icon>Discussion ([[comments.data.length]])
-        </paper-icon-item>
-      </a>
-
-    </paper-menu>
-
-
-    
-    
-    
-    <div class="separator">Workflow ([[workflow.data.length]])</div>
-
-
-
-    <paper-menu class="layout vertical" attr-for-selected="value" on-iron-select="handleSelect">
-
-      <template is="dom-repeat" items="{{workflow.data}}">
-
-        <a href="/feed/[[feed]]/workflow/[[item.data.id]]">
-
-          
-
-          <paper-item id="{{item.data.label}}">
-            <template is="dom-repeat" items="{{item.data.workflow}}" as="wf">
-              <div class="thread">.</div>
-              
-            </template>
-
-            <span class="title">{{item.data.label}}</span>
-
-          </paper-item>
-
-        </a>
-
-      </template>
-
-    </paper-menu>
-
-
-  </template>
-
-  <script>Polymer({is:"chris-feed-nav",properties:{workflow:{type:Array,observer:"_workflowChanged"},comments:{type:Array},feed:{type:String}},_workflowChanged:function(){console.log(this.workflow)},handleSelect:function(e){console.log(e)},updateCustomFilter:function(){this.customFilter=this.$.customLabels.selectedValues,this.fire("custom-filter-changed")},_setStyle:function(e){return"color: "+e},_setPluginStyle:function(e){return"color: "+e+";"}});</script>
-</dom-module>
-<script>(function(){function e(e){this.tokens=[],this.tokens.links={},this.options=e||a.defaults,this.rules=p.normal,this.options.gfm&&(this.options.tables?this.rules=p.tables:this.rules=p.gfm)}function t(e,t){if(this.options=t||a.defaults,this.links=e,this.rules=u.normal,this.renderer=this.options.renderer||new n,this.renderer.options=this.options,!this.links)throw new Error("Tokens array requires a `links` property.");this.options.gfm?this.options.breaks?this.rules=u.breaks:this.rules=u.gfm:this.options.pedantic&&(this.rules=u.pedantic)}function n(e){this.options=e||{}}function r(e){this.tokens=[],this.token=null,this.options=e||a.defaults,this.options.renderer=this.options.renderer||new n,this.renderer=this.options.renderer,this.renderer.options=this.options}function s(e,t){return e.replace(t?/&/g:/&(?!#?\w+;)/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}function i(e){return e.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/g,function(e,t){return t=t.toLowerCase(),"colon"===t?":":"#"===t.charAt(0)?"x"===t.charAt(1)?String.fromCharCode(parseInt(t.substring(2),16)):String.fromCharCode(+t.substring(1)):""})}function l(e,t){return e=e.source,t=t||"",function n(r,s){return r?(s=s.source||s,s=s.replace(/(^|[^\[])\^/g,"$1"),e=e.replace(r,s),n):new RegExp(e,t)}}function o(){}function h(e){for(var t,n,r=1;r<arguments.length;r++){t=arguments[r];for(n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[n]=t[n])}return e}function a(t,n,i){if(i||"function"==typeof n){i||(i=n,n=null),n=h({},a.defaults,n||{});var l,o,p=n.highlight,u=0;try{l=e.lex(t,n)}catch(e){return i(e)}o=l.length;var c=function(e){if(e)return n.highlight=p,i(e);var t;try{t=r.parse(l,n)}catch(t){e=t}return n.highlight=p,e?i(e):i(null,t)};if(!p||p.length<3)return c();if(delete n.highlight,!o)return c();for(;u<l.length;u++)!function(e){return"code"!==e.type?--o||c():p(e.text,e.lang,function(t,n){return t?c(t):null==n||n===e.text?--o||c():(e.text=n,e.escaped=!0,void(--o||c()))})}(l[u])}else try{return n&&(n=h({},a.defaults,n)),r.parse(e.lex(t,n),n)}catch(e){if(e.message+="\nPlease report this to https://github.com/chjj/marked.",(n||a.defaults).silent)return"<p>An error occured:</p><pre>"+s(e.message+"",!0)+"</pre>";throw e}}var p={newline:/^\n+/,code:/^( {4}[^\n]+\n*)+/,fences:o,hr:/^( *[-*_]){3,} *(?:\n+|$)/,heading:/^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,nptable:o,lheading:/^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,blockquote:/^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,list:/^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,html:/^ *(?:comment *(?:\n|\s*$)|closed *(?:\n{2,}|\s*$)|closing *(?:\n{2,}|\s*$))/,def:/^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,table:o,paragraph:/^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,text:/^[^\n]+/};p.bullet=/(?:[*+-]|\d+\.)/,p.item=/^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/,p.item=l(p.item,"gm")(/bull/g,p.bullet)(),p.list=l(p.list)(/bull/g,p.bullet)("hr","\\n+(?=\\1?(?:[-*_] *){3,}(?:\\n+|$))")("def","\\n+(?="+p.def.source+")")(),p.blockquote=l(p.blockquote)("def",p.def)(),p._tag="(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|[^\\w\\s@]*@)\\b",p.html=l(p.html)("comment",/\x3c!--[\s\S]*?--\x3e/)("closed",/<(tag)[\s\S]+?<\/\1>/)("closing",/<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)(/tag/g,p._tag)(),p.paragraph=l(p.paragraph)("hr",p.hr)("heading",p.heading)("lheading",p.lheading)("blockquote",p.blockquote)("tag","<"+p._tag)("def",p.def)(),p.normal=h({},p),p.gfm=h({},p.normal,{fences:/^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\s*\1 *(?:\n+|$)/,paragraph:/^/,heading:/^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/}),p.gfm.paragraph=l(p.paragraph)("(?!","(?!"+p.gfm.fences.source.replace("\\1","\\2")+"|"+p.list.source.replace("\\1","\\3")+"|")(),p.tables=h({},p.gfm,{nptable:/^ *(\S.*\|.*)\n *([-:]+ *\|[-| :]*)\n((?:.*\|.*(?:\n|$))*)\n*/,table:/^ *\|(.+)\n *\|( *[-:]+[-| :]*)\n((?: *\|.*(?:\n|$))*)\n*/}),e.rules=p,e.lex=function(t,n){var r=new e(n);return r.lex(t)},e.prototype.lex=function(e){return e=e.replace(/\r\n|\r/g,"\n").replace(/\t/g,"    ").replace(/\u00a0/g," ").replace(/\u2424/g,"\n"),this.token(e,!0)},e.prototype.token=function(e,t,n){for(var r,s,i,l,o,h,a,u,c,e=e.replace(/^ +$/gm,"");e;)if((i=this.rules.newline.exec(e))&&(e=e.substring(i[0].length),i[0].length>1&&this.tokens.push({type:"space"})),i=this.rules.code.exec(e))e=e.substring(i[0].length),i=i[0].replace(/^ {4}/gm,""),this.tokens.push({type:"code",text:this.options.pedantic?i:i.replace(/\n+$/,"")});else if(i=this.rules.fences.exec(e))e=e.substring(i[0].length),this.tokens.push({type:"code",lang:i[2],text:i[3]||""});else if(i=this.rules.heading.exec(e))e=e.substring(i[0].length),this.tokens.push({type:"heading",depth:i[1].length,text:i[2]});else if(t&&(i=this.rules.nptable.exec(e))){for(e=e.substring(i[0].length),h={type:"table",header:i[1].replace(/^ *| *\| *$/g,"").split(/ *\| */),align:i[2].replace(/^ *|\| *$/g,"").split(/ *\| */),cells:i[3].replace(/\n$/,"").split("\n")},u=0;u<h.align.length;u++)/^ *-+: *$/.test(h.align[u])?h.align[u]="right":/^ *:-+: *$/.test(h.align[u])?h.align[u]="center":/^ *:-+ *$/.test(h.align[u])?h.align[u]="left":h.align[u]=null;for(u=0;u<h.cells.length;u++)h.cells[u]=h.cells[u].split(/ *\| */);this.tokens.push(h)}else if(i=this.rules.lheading.exec(e))e=e.substring(i[0].length),this.tokens.push({type:"heading",depth:"="===i[2]?1:2,text:i[1]});else if(i=this.rules.hr.exec(e))e=e.substring(i[0].length),this.tokens.push({type:"hr"});else if(i=this.rules.blockquote.exec(e))e=e.substring(i[0].length),this.tokens.push({type:"blockquote_start"}),i=i[0].replace(/^ *> ?/gm,""),this.token(i,t,!0),this.tokens.push({type:"blockquote_end"});else if(i=this.rules.list.exec(e)){for(e=e.substring(i[0].length),l=i[2],this.tokens.push({type:"list_start",ordered:l.length>1}),i=i[0].match(this.rules.item),r=!1,c=i.length,u=0;u<c;u++)h=i[u],a=h.length,h=h.replace(/^ *([*+-]|\d+\.) +/,""),~h.indexOf("\n ")&&(a-=h.length,h=this.options.pedantic?h.replace(/^ {1,4}/gm,""):h.replace(new RegExp("^ {1,"+a+"}","gm"),"")),this.options.smartLists&&u!==c-1&&(o=p.bullet.exec(i[u+1])[0],l===o||l.length>1&&o.length>1||(e=i.slice(u+1).join("\n")+e,u=c-1)),s=r||/\n\n(?!\s*$)/.test(h),u!==c-1&&(r="\n"===h.charAt(h.length-1),s||(s=r)),this.tokens.push({type:s?"loose_item_start":"list_item_start"}),this.token(h,!1,n),this.tokens.push({type:"list_item_end"});this.tokens.push({type:"list_end"})}else if(i=this.rules.html.exec(e))e=e.substring(i[0].length),this.tokens.push({type:this.options.sanitize?"paragraph":"html",pre:!this.options.sanitizer&&("pre"===i[1]||"script"===i[1]||"style"===i[1]),text:i[0]});else if(!n&&t&&(i=this.rules.def.exec(e)))e=e.substring(i[0].length),this.tokens.links[i[1].toLowerCase()]={href:i[2],title:i[3]};else if(t&&(i=this.rules.table.exec(e))){for(e=e.substring(i[0].length),h={type:"table",header:i[1].replace(/^ *| *\| *$/g,"").split(/ *\| */),align:i[2].replace(/^ *|\| *$/g,"").split(/ *\| */),cells:i[3].replace(/(?: *\| *)?\n$/,"").split("\n")},u=0;u<h.align.length;u++)/^ *-+: *$/.test(h.align[u])?h.align[u]="right":/^ *:-+: *$/.test(h.align[u])?h.align[u]="center":/^ *:-+ *$/.test(h.align[u])?h.align[u]="left":h.align[u]=null;for(u=0;u<h.cells.length;u++)h.cells[u]=h.cells[u].replace(/^ *\| *| *\| *$/g,"").split(/ *\| */);this.tokens.push(h)}else if(t&&(i=this.rules.paragraph.exec(e)))e=e.substring(i[0].length),this.tokens.push({type:"paragraph",text:"\n"===i[1].charAt(i[1].length-1)?i[1].slice(0,-1):i[1]});else if(i=this.rules.text.exec(e))e=e.substring(i[0].length),this.tokens.push({type:"text",text:i[0]});else if(e)throw new Error("Infinite loop on byte: "+e.charCodeAt(0));return this.tokens};var u={escape:/^\\([\\`*{}\[\]()#+\-.!_>])/,autolink:/^<([^ >]+(@|:\/)[^ >]+)>/,url:o,tag:/^\x3c!--[\s\S]*?--\x3e|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,link:/^!?\[(inside)\]\(href\)/,reflink:/^!?\[(inside)\]\s*\[([^\]]*)\]/,nolink:/^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,strong:/^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,em:/^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,code:/^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,br:/^ {2,}\n(?!\s*$)/,del:o,text:/^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/};u._inside=/(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/,u._href=/\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/,u.link=l(u.link)("inside",u._inside)("href",u._href)(),u.reflink=l(u.reflink)("inside",u._inside)(),u.normal=h({},u),u.pedantic=h({},u.normal,{strong:/^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,em:/^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/}),u.gfm=h({},u.normal,{escape:l(u.escape)("])","~|])")(),url:/^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,del:/^~~(?=\S)([\s\S]*?\S)~~/,text:l(u.text)("]|","~]|")("|","|https?://|")()}),u.breaks=h({},u.gfm,{br:l(u.br)("{2,}","*")(),text:l(u.gfm.text)("{2,}","*")()}),t.rules=u,t.output=function(e,n,r){var s=new t(n,r);return s.output(e)},t.prototype.output=function(e){for(var t,n,r,i,l="";e;)if(i=this.rules.escape.exec(e))e=e.substring(i[0].length),l+=i[1];else if(i=this.rules.autolink.exec(e))e=e.substring(i[0].length),"@"===i[2]?(n=":"===i[1].charAt(6)?this.mangle(i[1].substring(7)):this.mangle(i[1]),r=this.mangle("mailto:")+n):(n=s(i[1]),r=n),l+=this.renderer.link(r,null,n);else if(this.inLink||!(i=this.rules.url.exec(e))){if(i=this.rules.tag.exec(e))!this.inLink&&/^<a /i.test(i[0])?this.inLink=!0:this.inLink&&/^<\/a>/i.test(i[0])&&(this.inLink=!1),e=e.substring(i[0].length),l+=this.options.sanitize?this.options.sanitizer?this.options.sanitizer(i[0]):s(i[0]):i[0];else if(i=this.rules.link.exec(e))e=e.substring(i[0].length),this.inLink=!0,l+=this.outputLink(i,{href:i[2],title:i[3]}),this.inLink=!1;else if((i=this.rules.reflink.exec(e))||(i=this.rules.nolink.exec(e))){if(e=e.substring(i[0].length),t=(i[2]||i[1]).replace(/\s+/g," "),t=this.links[t.toLowerCase()],!t||!t.href){l+=i[0].charAt(0),e=i[0].substring(1)+e;continue}this.inLink=!0,l+=this.outputLink(i,t),this.inLink=!1}else if(i=this.rules.strong.exec(e))e=e.substring(i[0].length),l+=this.renderer.strong(this.output(i[2]||i[1]));else if(i=this.rules.em.exec(e))e=e.substring(i[0].length),l+=this.renderer.em(this.output(i[2]||i[1]));else if(i=this.rules.code.exec(e))e=e.substring(i[0].length),l+=this.renderer.codespan(s(i[2],!0));else if(i=this.rules.br.exec(e))e=e.substring(i[0].length),l+=this.renderer.br();else if(i=this.rules.del.exec(e))e=e.substring(i[0].length),l+=this.renderer.del(this.output(i[1]));else if(i=this.rules.text.exec(e))e=e.substring(i[0].length),l+=this.renderer.text(s(this.smartypants(i[0])));else if(e)throw new Error("Infinite loop on byte: "+e.charCodeAt(0))}else e=e.substring(i[0].length),n=s(i[1]),r=n,l+=this.renderer.link(r,null,n);return l},t.prototype.outputLink=function(e,t){var n=s(t.href),r=t.title?s(t.title):null;return"!"!==e[0].charAt(0)?this.renderer.link(n,r,this.output(e[1])):this.renderer.image(n,r,s(e[1]))},t.prototype.smartypants=function(e){return this.options.smartypants?e.replace(/---/g,"—").replace(/--/g,"–").replace(/(^|[-\u2014\/(\[{"\s])'/g,"$1‘").replace(/'/g,"’").replace(/(^|[-\u2014\/(\[{\u2018\s])"/g,"$1“").replace(/"/g,"”").replace(/\.{3}/g,"…"):e},t.prototype.mangle=function(e){if(!this.options.mangle)return e;for(var t,n="",r=e.length,s=0;s<r;s++)t=e.charCodeAt(s),Math.random()>.5&&(t="x"+t.toString(16)),n+="&#"+t+";";return n},n.prototype.code=function(e,t,n){if(this.options.highlight){var r=this.options.highlight(e,t);null!=r&&r!==e&&(n=!0,e=r)}return t?'<pre><code class="'+this.options.langPrefix+s(t,!0)+'">'+(n?e:s(e,!0))+"\n</code></pre>\n":"<pre><code>"+(n?e:s(e,!0))+"\n</code></pre>"},n.prototype.blockquote=function(e){return"<blockquote>\n"+e+"</blockquote>\n"},n.prototype.html=function(e){return e},n.prototype.heading=function(e,t,n){return"<h"+t+' id="'+this.options.headerPrefix+n.toLowerCase().replace(/[^\w]+/g,"-")+'">'+e+"</h"+t+">\n"},n.prototype.hr=function(){return this.options.xhtml?"<hr/>\n":"<hr>\n"},n.prototype.list=function(e,t){var n=t?"ol":"ul";return"<"+n+">\n"+e+"</"+n+">\n"},n.prototype.listitem=function(e){return"<li>"+e+"</li>\n"},n.prototype.paragraph=function(e){return"<p>"+e+"</p>\n"},n.prototype.table=function(e,t){return"<table>\n<thead>\n"+e+"</thead>\n<tbody>\n"+t+"</tbody>\n</table>\n"},n.prototype.tablerow=function(e){return"<tr>\n"+e+"</tr>\n"},n.prototype.tablecell=function(e,t){var n=t.header?"th":"td",r=t.align?"<"+n+' style="text-align:'+t.align+'">':"<"+n+">";return r+e+"</"+n+">\n"},n.prototype.strong=function(e){return"<strong>"+e+"</strong>"},n.prototype.em=function(e){return"<em>"+e+"</em>"},n.prototype.codespan=function(e){return"<code>"+e+"</code>"},n.prototype.br=function(){return this.options.xhtml?"<br/>":"<br>"},n.prototype.del=function(e){return"<del>"+e+"</del>"},n.prototype.link=function(e,t,n){if(this.options.sanitize){try{var r=decodeURIComponent(i(e)).replace(/[^\w:]/g,"").toLowerCase()}catch(e){return""}if(0===r.indexOf("javascript:")||0===r.indexOf("vbscript:"))return""}var s='<a href="'+e+'"';return t&&(s+=' title="'+t+'"'),s+=">"+n+"</a>"},n.prototype.image=function(e,t,n){var r='<img src="'+e+'" alt="'+n+'"';return t&&(r+=' title="'+t+'"'),r+=this.options.xhtml?"/>":">"},n.prototype.text=function(e){return e},r.parse=function(e,t,n){var s=new r(t,n);return s.parse(e)},r.prototype.parse=function(e){this.inline=new t(e.links,this.options,this.renderer),this.tokens=e.reverse();for(var n="";this.next();)n+=this.tok();return n},r.prototype.next=function(){return this.token=this.tokens.pop()},r.prototype.peek=function(){return this.tokens[this.tokens.length-1]||0},r.prototype.parseText=function(){for(var e=this.token.text;"text"===this.peek().type;)e+="\n"+this.next().text;return this.inline.output(e)},r.prototype.tok=function(){switch(this.token.type){case"space":return"";case"hr":return this.renderer.hr();case"heading":return this.renderer.heading(this.inline.output(this.token.text),this.token.depth,this.token.text);case"code":return this.renderer.code(this.token.text,this.token.lang,this.token.escaped);case"table":var e,t,n,r,s,i="",l="";for(n="",e=0;e<this.token.header.length;e++)r={header:!0,align:this.token.align[e]},n+=this.renderer.tablecell(this.inline.output(this.token.header[e]),{header:!0,align:this.token.align[e]});for(i+=this.renderer.tablerow(n),e=0;e<this.token.cells.length;e++){for(t=this.token.cells[e],n="",s=0;s<t.length;s++)n+=this.renderer.tablecell(this.inline.output(t[s]),{header:!1,align:this.token.align[s]});l+=this.renderer.tablerow(n)}return this.renderer.table(i,l);case"blockquote_start":for(var l="";"blockquote_end"!==this.next().type;)l+=this.tok();return this.renderer.blockquote(l);case"list_start":for(var l="",o=this.token.ordered;"list_end"!==this.next().type;)l+=this.tok();return this.renderer.list(l,o);case"list_item_start":for(var l="";"list_item_end"!==this.next().type;)l+="text"===this.token.type?this.parseText():this.tok();return this.renderer.listitem(l);case"loose_item_start":for(var l="";"list_item_end"!==this.next().type;)l+=this.tok();return this.renderer.listitem(l);case"html":var h=this.token.pre||this.options.pedantic?this.token.text:this.inline.output(this.token.text);return this.renderer.html(h);case"paragraph":return this.renderer.paragraph(this.inline.output(this.token.text));case"text":return this.renderer.paragraph(this.parseText())}},o.exec=o,a.options=a.setOptions=function(e){return h(a.defaults,e),a},a.defaults={gfm:!0,tables:!0,breaks:!1,pedantic:!1,sanitize:!1,sanitizer:null,mangle:!0,smartLists:!1,silent:!1,highlight:null,langPrefix:"lang-",smartypants:!1,headerPrefix:"",renderer:new n,xhtml:!1},a.Parser=r,a.parser=r.parse,a.Renderer=n,a.Lexer=e,a.lexer=e.lex,a.InlineLexer=t,a.inlineLexer=t.output,a.parse=a,"undefined"!=typeof module&&"object"==typeof exports?module.exports=a:"function"==typeof define&&define.amd?define(function(){return a}):this.marked=a}).call(function(){return this||("undefined"!=typeof window?window:global)}());</script>
-<dom-module id="marked-element" assetpath="../../../bower_components/marked-element/">
+<dom-module id="chris-feed-note" assetpath="chris-feed-views/chris-feed-note/">
   <template>
     <style>
-      /* Thanks IE 10. */
-      .hidden {
-        display: none !important;
+
+      host {
+
+        display: block;
+
       }
-    </style>
-    <content select=".markdown-html"></content>
-    <div id="content" class="hidden"></div>
-  </template>
-
-</dom-module>
-
-<script>"use strict";Polymer({is:"marked-element",properties:{markdown:{observer:"render",type:String,value:null},pedantic:{observer:"render",type:Boolean,value:!1},sanitize:{observer:"render",type:Boolean,value:!1},smartypants:{observer:"render",type:Boolean,value:!1}},ready:function(){if(!this.markdown){var t=Polymer.dom(this).querySelector('[type^="text/markdown"]');null!=t&&(this.markdown=this._unindent(t.textContent))}},attached:function(){this._attached=!0,this._outputElement=this.outputElement,this.render()},detached:function(){this._attached=!1},unindent:function(t){return this._unindent(t)},get outputElement(){var t=Polymer.dom(this).queryDistributedElements(".markdown-html")[0];return t?t:(this.toggleClass("hidden",!1,this.$.content),this.$.content)},render:function(){if(this._attached){if(!this.markdown)return void(Polymer.dom(this._outputElement).innerHTML="");var t={highlight:this._highlight.bind(this),sanitize:this.sanitize,pedantic:this.pedantic,smartypants:this.smartypants};Polymer.dom(this._outputElement).innerHTML=marked(this.markdown,t),this.fire("marked-render-complete")}},_highlight:function(t,e){var n=this.fire("syntax-highlight",{code:t,lang:e});return n.detail.code||t},_unindent:function(t){if(!t)return t;var e=t.replace(/\t/g,"  ").split("\n"),n=e.reduce(function(t,e){if(/^\s*$/.test(e))return t;var n=e.match(/^(\s*)/)[0].length;return null===t?n:n<t?n:t},null);return e.map(function(t){return t.substr(n)}).join("\n")}});</script>
-<dom-module id="chris-note" assetpath="../../chris-components/chris-note/">
-  <template>
-    <style>
 
       .toolbar {
 
@@ -815,22 +440,19 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
 
       }
 
-      paper-card {
+      
+      .content {
 
-          width: 800px;
-
-        }
-
-      @media (max-width: 800px) {
-
-        paper-card {
-
-          width: 100%;
-
-        }
+        background-color: var(--paper-grey-50);
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
 
       }
-
 
       paper-card{
 
@@ -846,7 +468,7 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
     <chris-api id="API" content-type="application/json" ,="" on-response="handleItem" error="{{error}}" on-error="handleError">
     </chris-api>
 
-    <paper-card>
+    <paper-card class="content">
 
       <div class="toolbar">
 
@@ -892,494 +514,469 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
 
   </template>
 
-  <script>Polymer({is:"chris-note",properties:{notes:{type:Object,observer:"_notesChanged"},previousContent:{type:String},editing:{type:Boolean,value:!1},error:{type:Object},valid:{type:Boolean}},_stopEventPropagation:function(t){t.stopPropagation()},edit:function(t){t&&this._stopEventPropagation(t),this.editing=!0,this.previousContent=this.notes.data[0].data.content,this.$.editor.style.display="block"},close:function(t){this._stopEventPropagation(t),this.editing=!1,this.notes.data[0].data.content=this.previousContent,this.$.editor.value=this.previousContent,this.$.md.markdown=this.previousContent,this.$.editor.style.display="none"},save:function(t){t&&this._stopEventPropagation(t),this.editing=!1,this.$.editor.style.display="none";var e=this.notes.data[0];e.template=this.notes.template,e.href=this.notes.href;var i=[{name:"content",value:this.previousContent}];this.$.API.request("PUT",e.href,{body:e,cache:i})},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.notes.data[0].data.content=e.cache[0].value,this.fire("notes-changed"),this.$.editor.value=e.cache[0].value,this.$.md.markdown=e.cache[0].value,this.fire("notification",e.error))}},handleError:function(){console.log(this.error)},_updateContent:function(){this.$.md.markdown=this.$.editor.value},isValid:function(t){if(this.notes){var e=[];return"object"!=typeof this.notes.template&&e.push("template:Object"),"string"!=typeof this.notes.href&&e.push("href:String"),this.notes.data&&this.notes.data.constructor===Array||e.push("data:Array"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_notesChanged:function(t){!this.isValid(this.notes)}});</script>
+  <script>Polymer({is:"chris-feed-note",properties:{notes:{type:Object,observer:"_notesChanged"},previousContent:{type:String},editing:{type:Boolean,value:!1},error:{type:Object},valid:{type:Boolean}},_stopEventPropagation:function(t){t.stopPropagation()},edit:function(t){t&&this._stopEventPropagation(t),this.editing=!0,this.previousContent=this.notes.data[0].data.content,this.$.editor.style.display="block"},close:function(t){this._stopEventPropagation(t),this.editing=!1,this.notes.data[0].data.content=this.previousContent,this.$.editor.value=this.previousContent,this.$.md.markdown=this.previousContent,this.$.editor.style.display="none"},save:function(t){t&&this._stopEventPropagation(t),this.editing=!1,this.$.editor.style.display="none";var e=this.notes.data[0];e.template=this.notes.template,e.href=this.notes.href;var i=[{name:"content",value:this.previousContent}];this.$.API.request("PUT",e.href,{body:e,cache:i})},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.notes.data[0].data.content=e.cache[0].value,this.fire("notes-changed"),this.$.editor.value=e.cache[0].value,this.$.md.markdown=e.cache[0].value,this.fire("notification",e.error))}},handleError:function(){console.log(this.error)},_updateContent:function(){this.$.md.markdown=this.$.editor.value},isValid:function(t){if(this.notes){var e=[];return"object"!=typeof this.notes.template&&e.push("template:Object"),"string"!=typeof this.notes.href&&e.push("href:String"),this.notes.data&&this.notes.data.constructor===Array||e.push("data:Array"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_notesChanged:function(t){!this.isValid(this.notes)}});</script>
 </dom-module>
-<iron-iconset-svg name="communication" size="24">
-<svg><defs>
-<g id="business"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"></path></g>
-<g id="call"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></g>
-<g id="call-end"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"></path></g>
-<g id="call-made"><path d="M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5z"></path></g>
-<g id="call-merge"><path d="M17 20.41L18.41 19 15 15.59 13.59 17 17 20.41zM7.5 8H11v5.59L5.59 19 7 20.41l6-6V8h3.5L12 3.5 7.5 8z"></path></g>
-<g id="call-missed"><path d="M19.59 7L12 14.59 6.41 9H11V7H3v8h2v-4.59l7 7 9-9z"></path></g>
-<g id="call-missed-outgoing"><path d="M3 8.41l9 9 7-7V15h2V7h-8v2h4.59L12 14.59 4.41 7 3 8.41z"></path></g>
-<g id="call-received"><path d="M20 5.41L18.59 4 7 15.59V9H5v10h10v-2H8.41z"></path></g>
-<g id="call-split"><path d="M14 4l2.29 2.29-2.88 2.88 1.42 1.42 2.88-2.88L20 10V4zm-4 0H4v6l2.29-2.29 4.71 4.7V20h2v-8.41l-5.29-5.3z"></path></g>
-<g id="chat"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"></path></g>
-<g id="chat-bubble"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></g>
-<g id="chat-bubble-outline"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"></path></g>
-<g id="clear-all"><path d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z"></path></g>
-<g id="comment"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></g>
-<g id="contact-mail"><path d="M21 8V7l-3 2-3-2v1l3 2 3-2zm1-5H2C.9 3 0 3.9 0 5v14c0 1.1.9 2 2 2h20c1.1 0 1.99-.9 1.99-2L24 5c0-1.1-.9-2-2-2zM8 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H2v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1zm8-6h-8V6h8v6z"></path></g>
-<g id="contact-phone"><path d="M22 3H2C.9 3 0 3.9 0 5v14c0 1.1.9 2 2 2h20c1.1 0 1.99-.9 1.99-2L24 5c0-1.1-.9-2-2-2zM8 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H2v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1zm3.85-4h1.64L21 16l-1.99 1.99c-1.31-.98-2.28-2.38-2.73-3.99-.18-.64-.28-1.31-.28-2s.1-1.36.28-2c.45-1.62 1.42-3.01 2.73-3.99L21 8l-1.51 2h-1.64c-.22.63-.35 1.3-.35 2s.13 1.37.35 2z"></path></g>
-<g id="contacts"><path d="M20 0H4v2h16V0zM4 24h16v-2H4v2zM20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 2.75c1.24 0 2.25 1.01 2.25 2.25s-1.01 2.25-2.25 2.25S9.75 10.24 9.75 9 10.76 6.75 12 6.75zM17 17H7v-1.5c0-1.67 3.33-2.5 5-2.5s5 .83 5 2.5V17z"></path></g>
-<g id="dialer-sip"><path d="M17 3h-1v5h1V3zm-2 2h-2V4h2V3h-3v3h2v1h-2v1h3V5zm3-2v5h1V6h2V3h-3zm2 2h-1V4h1v1zm0 10.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.01.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.59l2.2-2.21c.27-.26.35-.65.24-1C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"></path></g>
-<g id="dialpad"><path d="M12 19c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 1c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12-8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-6 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></g>
-<g id="email"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></g>
-<g id="forum"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"></path></g>
-<g id="import-contacts"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"></path></g>
-<g id="import-export"><path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"></path></g>
-<g id="invert-colors-off"><path d="M20.65 20.87l-2.35-2.35-6.3-6.29-3.56-3.57-1.42-1.41L4.27 4.5 3 5.77l2.78 2.78c-2.55 3.14-2.36 7.76.56 10.69C7.9 20.8 9.95 21.58 12 21.58c1.79 0 3.57-.59 5.03-1.78l2.7 2.7L21 21.23l-.35-.36zM12 19.59c-1.6 0-3.11-.62-4.24-1.76C6.62 16.69 6 15.19 6 13.59c0-1.32.43-2.57 1.21-3.6L12 14.77v4.82zM12 5.1v4.58l7.25 7.26c1.37-2.96.84-6.57-1.6-9.01L12 2.27l-3.7 3.7 1.41 1.41L12 5.1z"></path></g>
-<g id="live-help"><path d="M19 2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 16h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 11.9 13 12.5 13 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"></path></g>
-<g id="location-off"><path d="M12 6.5c1.38 0 2.5 1.12 2.5 2.5 0 .74-.33 1.39-.83 1.85l3.63 3.63c.98-1.86 1.7-3.8 1.7-5.48 0-3.87-3.13-7-7-7-1.98 0-3.76.83-5.04 2.15l3.19 3.19c.46-.52 1.11-.84 1.85-.84zm4.37 9.6l-4.63-4.63-.11-.11L3.27 3 2 4.27l3.18 3.18C5.07 7.95 5 8.47 5 9c0 5.25 7 13 7 13s1.67-1.85 3.38-4.35L18.73 21 20 19.73l-3.63-3.63z"></path></g>
-<g id="location-on"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></g>
-<g id="mail-outline"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"></path></g>
-<g id="message"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></g>
-<g id="no-sim"><path d="M18.99 5c0-1.1-.89-2-1.99-2h-7L7.66 5.34 19 16.68 18.99 5zM3.65 3.88L2.38 5.15 5 7.77V19c0 1.1.9 2 2 2h10.01c.35 0 .67-.1.96-.26l1.88 1.88 1.27-1.27L3.65 3.88z"></path></g>
-<g id="phone"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></g>
-<g id="phonelink-erase"><path d="M13 8.2l-1-1-4 4-4-4-1 1 4 4-4 4 1 1 4-4 4 4 1-1-4-4 4-4zM19 1H9c-1.1 0-2 .9-2 2v3h2V4h10v16H9v-2H7v3c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2z"></path></g>
-<g id="phonelink-lock"><path d="M19 1H9c-1.1 0-2 .9-2 2v3h2V4h10v16H9v-2H7v3c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm-8.2 10V9.5C10.8 8.1 9.4 7 8 7S5.2 8.1 5.2 9.5V11c-.6 0-1.2.6-1.2 1.2v3.5c0 .7.6 1.3 1.2 1.3h5.5c.7 0 1.3-.6 1.3-1.2v-3.5c0-.7-.6-1.3-1.2-1.3zm-1.3 0h-3V9.5c0-.8.7-1.3 1.5-1.3s1.5.5 1.5 1.3V11z"></path></g>
-<g id="phonelink-ring"><path d="M20.1 7.7l-1 1c1.8 1.8 1.8 4.6 0 6.5l1 1c2.5-2.3 2.5-6.1 0-8.5zM18 9.8l-1 1c.5.7.5 1.6 0 2.3l1 1c1.2-1.2 1.2-3 0-4.3zM14 1H4c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 19H4V4h10v16z"></path></g>
-<g id="phonelink-setup"><path d="M11.8 12.5v-1l1.1-.8c.1-.1.1-.2.1-.3l-1-1.7c-.1-.1-.2-.2-.3-.1l-1.3.4c-.3-.2-.6-.4-.9-.5l-.2-1.3c0-.1-.1-.2-.3-.2H7c-.1 0-.2.1-.3.2l-.2 1.3c-.3.1-.6.3-.9.5l-1.3-.5c-.1 0-.2 0-.3.1l-1 1.7c-.1.1 0 .2.1.3l1.1.8v1l-1.1.8c-.1.2-.1.3-.1.4l1 1.7c.1.1.2.2.3.1l1.4-.4c.3.2.6.4.9.5l.2 1.3c-.1.1.1.2.2.2h2c.1 0 .2-.1.3-.2l.2-1.3c.3-.1.6-.3.9-.5l1.3.5c.1 0 .2 0 .3-.1l1-1.7c.1-.1 0-.2-.1-.3l-1.1-.9zM8 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM19 1H9c-1.1 0-2 .9-2 2v3h2V4h10v16H9v-2H7v3c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2z"></path></g>
-<g id="portable-wifi-off"><path d="M17.56 14.24c.28-.69.44-1.45.44-2.24 0-3.31-2.69-6-6-6-.79 0-1.55.16-2.24.44l1.62 1.62c.2-.03.41-.06.62-.06 2.21 0 4 1.79 4 4 0 .21-.02.42-.05.63l1.61 1.61zM12 4c4.42 0 8 3.58 8 8 0 1.35-.35 2.62-.95 3.74l1.47 1.47C21.46 15.69 22 13.91 22 12c0-5.52-4.48-10-10-10-1.91 0-3.69.55-5.21 1.47l1.46 1.46C9.37 4.34 10.65 4 12 4zM3.27 2.5L2 3.77l2.1 2.1C2.79 7.57 2 9.69 2 12c0 3.7 2.01 6.92 4.99 8.65l1-1.73C5.61 17.53 4 14.96 4 12c0-1.76.57-3.38 1.53-4.69l1.43 1.44C6.36 9.68 6 10.8 6 12c0 2.22 1.21 4.15 3 5.19l1-1.74c-1.19-.7-2-1.97-2-3.45 0-.65.17-1.25.44-1.79l1.58 1.58L10 12c0 1.1.9 2 2 2l.21-.02.01.01 7.51 7.51L21 20.23 4.27 3.5l-1-1z"></path></g>
-<g id="present-to-all"><path d="M21 3H3c-1.11 0-2 .89-2 2v14c0 1.11.89 2 2 2h18c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 16.02H3V4.98h18v14.04zM10 12H8l4-4 4 4h-2v4h-4v-4z"></path></g>
-<g id="ring-volume"><path d="M23.71 16.67C20.66 13.78 16.54 12 12 12 7.46 12 3.34 13.78.29 16.67c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l2.48 2.48c.18.18.43.29.71.29.27 0 .52-.11.7-.28.79-.74 1.69-1.36 2.66-1.85.33-.16.56-.5.56-.9v-3.1c1.45-.48 3-.73 4.6-.73s3.15.25 4.6.72v3.1c0 .39.23.74.56.9.98.49 1.87 1.12 2.66 1.85.18.18.43.28.7.28.28 0 .53-.11.71-.29l2.48-2.48c.18-.18.29-.43.29-.71 0-.27-.11-.52-.29-.7zM21.16 6.26l-1.41-1.41-3.56 3.55 1.41 1.41s3.45-3.52 3.56-3.55zM13 2h-2v5h2V2zM6.4 9.81L7.81 8.4 4.26 4.84 2.84 6.26c.11.03 3.56 3.55 3.56 3.55z"></path></g>
-<g id="screen-share"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.11-.9-2-2-2H4c-1.11 0-2 .89-2 2v10c0 1.1.89 2 2 2H0v2h24v-2h-4zm-7-3.53v-2.19c-2.78 0-4.61.85-6 2.72.56-2.67 2.11-5.33 6-5.87V7l4 3.73-4 3.74z"></path></g>
-<g id="speaker-phone"><path d="M7 7.07L8.43 8.5c.91-.91 2.18-1.48 3.57-1.48s2.66.57 3.57 1.48L17 7.07C15.72 5.79 13.95 5 12 5s-3.72.79-5 2.07zM12 1C8.98 1 6.24 2.23 4.25 4.21l1.41 1.41C7.28 4 9.53 3 12 3s4.72 1 6.34 2.62l1.41-1.41C17.76 2.23 15.02 1 12 1zm2.86 9.01L9.14 10C8.51 10 8 10.51 8 11.14v9.71c0 .63.51 1.14 1.14 1.14h5.71c.63 0 1.14-.51 1.14-1.14v-9.71c.01-.63-.5-1.13-1.13-1.13zM15 20H9v-8h6v8z"></path></g>
-<g id="stay-current-landscape"><path d="M1.01 7L1 17c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2H3c-1.1 0-1.99.9-1.99 2zM19 7v10H5V7h14z"></path></g>
-<g id="stay-current-portrait"><path d="M17 1.01L7 1c-1.1 0-1.99.9-1.99 2v18c0 1.1.89 2 1.99 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"></path></g>
-<g id="stay-primary-landscape"><path d="M1.01 7L1 17c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2H3c-1.1 0-1.99.9-1.99 2zM19 7v10H5V7h14z"></path></g>
-<g id="stay-primary-portrait"><path d="M17 1.01L7 1c-1.1 0-1.99.9-1.99 2v18c0 1.1.89 2 1.99 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"></path></g>
-<g id="stop-screen-share"><path d="M21.22 18.02l2 2H24v-2h-2.78zm.77-2l.01-10c0-1.11-.9-2-2-2H7.22l5.23 5.23c.18-.04.36-.07.55-.1V7.02l4 3.73-1.58 1.47 5.54 5.54c.61-.33 1.03-.99 1.03-1.74zM2.39 1.73L1.11 3l1.54 1.54c-.4.36-.65.89-.65 1.48v10c0 1.1.89 2 2 2H0v2h18.13l2.71 2.71 1.27-1.27L2.39 1.73zM7 15.02c.31-1.48.92-2.95 2.07-4.06l1.59 1.59c-1.54.38-2.7 1.18-3.66 2.47z"></path></g>
-<g id="swap-calls"><path d="M18 4l-4 4h3v7c0 1.1-.9 2-2 2s-2-.9-2-2V8c0-2.21-1.79-4-4-4S5 5.79 5 8v7H2l4 4 4-4H7V8c0-1.1.9-2 2-2s2 .9 2 2v7c0 2.21 1.79 4 4 4s4-1.79 4-4V8h3l-4-4z"></path></g>
-<g id="textsms"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"></path></g>
-<g id="voicemail"><path d="M18.5 6C15.46 6 13 8.46 13 11.5c0 1.33.47 2.55 1.26 3.5H9.74c.79-.95 1.26-2.17 1.26-3.5C11 8.46 8.54 6 5.5 6S0 8.46 0 11.5 2.46 17 5.5 17h13c3.04 0 5.5-2.46 5.5-5.5S21.54 6 18.5 6zm-13 9C3.57 15 2 13.43 2 11.5S3.57 8 5.5 8 9 9.57 9 11.5 7.43 15 5.5 15zm13 0c-1.93 0-3.5-1.57-3.5-3.5S16.57 8 18.5 8 22 9.57 22 11.5 20.43 15 18.5 15z"></path></g>
-<g id="vpn-key"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></g>
-</defs></svg>
-</iron-iconset-svg>
-<dom-module id="chris-plugin" assetpath="../../chris-components/chris-plugin/">
+"
+
+
+<dom-module id="chris-feed-plugin" assetpath="chris-feed-views/chris-feed-plugin/">
 
   <template>
 
     <style>
 
-      .plugin{
-
-        /*background-color: white;*/
-
-      }
-
-      .toolbar{
-
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
-        
-        padding: 16px;
-        font-size: 24px;
-        font-weight: 400;
-        color: #737373;
-
-      }
-
-      .title{
-
-        margin-left:8px;
-
-      }
-
-      .spacer {
-
-        @apply(--layout-flex);
-
-      }
-
-      paper-icon-button{
-
-        /*--paper-icon-button-ink-color: var(--paper-grey-300);*/
-
-      }
-
-      paper-icon-button.iron-selected{
-
-        color: var(--accent-color);
-
-      }
-
-      iron-selector{
-
-        border-bottom: 1px solid var(--accent-color);
-        color: var(--secondary-text-color);
-
-      }
-
       .content {
 
-/*
-        padding: 20px;
-        display: block;*/
+        background-color: var(--paper-grey-50);
+        padding: 24px;
+        position: fixed;
+        top: 64px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-flow: row wrap;
+        overflow-y: auto;
 
       }
 
+      .navigation {
 
-/*      .dataview{
-
-        display:none;
-
-      }
-
-      .dataview.iron-selected{
-
-        display: block;
-
-      }*/
-
-      paper-card {
-
-        width: 800px;
+        flex: 1;
+        min-width: 100px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
 
       }
 
-      @media (max-width: 800px) {
+      .viewer, ami-viewer {
 
-        paper-card {
-
-          width: 100%;
-
-        }
-
-      }
-
-      paper-card{
-
-        color: var(--primary-text-color);
-        --paper-card-header-color: var(--secondary-text-color);
-        --paper-card-background-color: var(--paper-grey-100);
-        background: var(--paper-grey-100);
+        flex: 2;
+        height: 100%;
+        min-width: 400px;
+        overflow: hidden;
+        background-color: var(--paper-grey-500);
 
       }
 
-      paper-card .header{
+      .viewer-controls {
+        flex: 1;
+        min-width: 100px;
+        padding: 8px;
+      }
 
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 8px 0;
+      paper-dropdown-menu, paper-slider{
+
+        width:100%;
 
       }
 
-      paper-fab-speed-dial{
+      .paper-range-slider {
+
+        display: flex;
+
+      }
+
+      paper-range-slider {
+
+        --paper-range-slider-knob-color: var(--google-blue-700);
+        --paper-range-slider-active-color: var(--google-blue-700);
+        --paper-range-slider-pin-color: var(--google-blue-700);
+
+      }
+
+      .paper-range-slider paper-input{
+
+        width: 50px;
+        overflow: hidden;
+
+      }
+
+      .files {
+
+        overflow-y: auto;
+
+      }
+
+      #start {
 
         z-index:10;
         position: fixed;
         bottom: 16px;
         right: 16px;
-
-      }
-
-      paper-fab#create {
-
         --paper-fab-background: var(--accent-color);
 
       }
 
-
     </style>
 
-    <paper-card>
+    <ami-loader urls="{{urls}}" series="{{series}}"></ami-loader>
 
-      <div class="toolbar">
+    <div class="content">
 
-        <template is="dom-repeat" items="{{plugin.data.workflow}}">
-          <a href="/detail/[[feedIndex]]/workflow/[[item.id]]">
-          <paper-icon-button icon="[[item.icon]]" style$="{{_setPluginStyle(item.color)}}" alt="More options"></paper-icon-button>
-          </a>&gt;
+      <div class="navigation">
 
-        </template>
+        <div class="header">
 
-      
-        <div class="title" title="">[[plugin.data.label]]
+          <div> Current Plugin: {{plugin.data.id}} : {{plugin.data.plugin_name}} </div>
+          
+          <div> Parent ID: {{plugin.data.previous_id}} </div>
+
+          <div> Children IDs </div>
+
+          <ul>
+            <template is="dom-repeat" items="{{plugin.data.children}}">
+              <li> Children ID:{{item.data.id}} </li>
+            </template>
+          </ul>
+
         </div>
 
-        <div class="spacer"></div>
+        <div>Files</div>
 
-        <iron-selector id="dataButton" attr-for-selected="name" selected="{{selected}}">
-          <paper-icon-button name="chris-dataviews-rows" icon="icons:view-headline"></paper-icon-button>
-          <paper-icon-button name="chris-dataviews-columns" icon="icons:view-week"></paper-icon-button>
-        </iron-selector>
+        <div class="files">
+
+          <ul>
+            <template is="dom-repeat" items="{{files}}" as="file">
+              <li>{{file.data.fname}} </li>
+            </template>
+          <ul>
+
+        </ul></ul></div>
+
       </div>
 
-      <div class="card-content">
+      <div class="viewer">
+        <ami-viewer index="{{index}}" index-max="{{indexMax}}" orientation="{{orientation}}" series="[[series]]">
+        </ami-viewer>
+      </div>
 
+      <div class="viewer-controls">
 
-      <paper-material elevation="1" id="plugin" class="plugin">
-        <div id$="[[plugin.id]]">
-
-          <div class="content">
-
-            <iron-pages role="main" attr-for-selected="name" selected="[[selected]]">
-
-              <chris-dataviews-rows name="chris-dataviews-rows" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-rows>
-              <chris-dataviews-columns name="chris-dataviews-columns" class="dataview" data="[[plugin.data.data]]" path="[[path]]"></chris-dataviews-columns>
-
-            </iron-pages>
-
-          </div>
-
+        <div>Some cool controls</div>
         
+        <paper-dropdown-menu label="Orientation">
+          <paper-listbox class="dropdown-content" selected="{{orientation}}">
+            <paper-item>Acquisition</paper-item>
+            <paper-item>Next</paper-item>
+            <paper-item>Last</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
 
+        <div> Index </div>
+        <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable=""></paper-slider>
+        <div> Window / level (not connected) </div>
+        
+        <div class="paper-range-slider">
+        <paper-input value="{{vmin}}"></paper-input><paper-range-slider value-min="{{vmin}}" value-max="{{vmax}}" style="width:100%"></paper-range-slider><paper-input value="{{vmax}}"></paper-input>
+        </div>
       </div>
+
+      <paper-fab id="start" icon="av:play-arrow" on-tap="_getPlugins"></paper-fab>
+
       
 
-      <paper-fab-speed-dial direction="top">
-        <paper-fab id="create" icon="add" class="dropdown-trigger"></paper-fab>
-        <div class="dropdown-content">
-          <template is="dom-repeat" items="{{plugins.data}}">
-            <a href="/detail/[[feedIndex]]/workflow/[[plugin.data.id]]/plugin/[[item.data.name]]">
-              <paper-fab mini="" id="[[item.data.name]]" icon="[[item.data.icon]]" item="[[item]]" style$="[[_setBackgroundColor(item.data.color)]]"></paper-fab>
-              <paper-tooltip for="[[item.data.name]]" position="left" animation-delay="0">[[item.data.label]]</paper-tooltip>
-              </a>
-          </template>
-        </div>
-      </paper-fab-speed-dial>
+    </div>
 
-  </paper-material></div></paper-card></template>
+  </template>
 
-  <script>Polymer({is:"chris-plugin",properties:{plugin:{type:Object,observer:"_pluginChanged"},plugins:{type:Object,value:{data:[{data:{color:"#009688",name:"mriconvert",label:"MRI Convert",icon:"icons:invert-colors"}},{data:{color:"#F44336",name:"tractography",label:"Tractography",icon:"icons:gesture"}}]}},selected:{type:String,value:"chris-dataviews-rows",observer:"_selectedChanged"},path:{type:Array,observer:"_pathChanged"},feedIndex:{type:String}},_pluginChanged:function(){console.log(this.plugin)},_pathChanged:function(){console.log(this.path)},_selectedChanged:function(){this.importHref(this.resolveUrl("../chris-dataviews/"+this.selected+"/"+this.selected+".html"),function(){},null,!0)},_setPluginStyle:function(e){return"color: "+e+";"},_setBackgroundColor:function(e){return"background-color: "+e+";"}});</script>
+  <script>Polymer({is:"chris-feed-plugin",properties:{plugin:{type:Object,observer:"_pluginChanged"},files:{type:Array,observer:"_filesChanged"}},_pluginChanged:function(){console.log(this.plugin)},_filesChanged:function(){var t=[],r=["36444280","36444294","36444308","36444322","36444336"],a=r.map(function(t){return"https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/"+t});t.push(a);var e=["https://cdn.rawgit.com/FNNDSC/data/master/nrrd/marc_avf/avf_float_32.nrrd"];t.push(e);var n=["https://cdn.rawgit.com/FNNDSC/data/master/nifti/siena/siena.nii.gz"];t.push(n),this.urls=t[Math.floor(Math.random()*t.length)]},_getPlugins:function(){this.fire("run-plugin")},_patchOverlay:function(t){t.target.withBackdrop&&t.target.parentNode.insertBefore(t.target.backdropElement,t.target)}});</script>
 </dom-module>
-<dom-module id="chris-plugin-ds" assetpath="../../chris-components/chris-plugin-ds/">
-  <template>
-    <style>
+<dom-module id="chris-parameter-boolean" assetpath="../../chris-components/chris-parameter-boolean/">
 
-    paper-slider {
-      \
-      width: 100%;
+  <style>
+
+    :host{
+
+      padding: 8px 0;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      margin-top: 22px;
       
     }
 
-    .toolbar {
+  </style>
 
-      min-height: 48px;
-      @apply(--layout-horizontal);
-      @apply(--layout-end);
-      @apply(--layout-wrap);
+  <template>
 
-      padding: 16px;
-      font-size: 24px;
-      font-weight: 400;
-      color: #737373;
+    <paper-checkbox checked="{{value}}"></paper-checkbox> [[label]]
 
-      }
+  </template>
 
-      .name {
+  <script>Polymer({is:"chris-parameter-boolean",properties:{value:{type:String,observer:"_valueChanged"},label:{type:String}},_valueChanged:function(){this.fire("change-value",this.value)}});</script>
+</dom-module>
+&gt;
+<dom-module id="chris-parameter-number" assetpath="../../chris-components/chris-parameter-number/">
 
-        font-size: 16px;
-        font-weight: bold;
-        color: var(--primary-text-color);
+  <template>
 
-      }
+    <paper-input value="{{value}}" type="number" label="[[label]]" step="[[step]]"></paper-input>
 
-      .spacer {
+  </template>
 
-        @apply(--layout-flex);
+  <script>Polymer({is:"chris-parameter-number",properties:{value:{type:String,observer:"_valueChanged"},step:{type:String},label:{type:String}},_valueChanged:function(){this.fire("change-value",this.value)}});</script>
+</dom-module>
+<dom-module id="chris-parameter-string" assetpath="../../chris-components/chris-parameter-string/">
 
-      }
+  <template>
 
-       paper-card {
-        width: 800px;
-      }
+    <paper-input value="{{value}}" label="[[label]]"></paper-input>
 
-      @media (max-width: 800px) {
-        paper-card {
-          width: 100%;
-        }
-      }
+  </template>
 
-      paper-card{
-        color: var(--primary-text-color);
-        --paper-card-header-color: var(--secondary-text-color);
-        --paper-card-background-color: var(--paper-grey-100);
-        background: var(--paper-grey-100);
-      }
+  <script>Polymer({is:"chris-parameter-string",properties:{value:{type:String,observer:"_valueChanged"},label:{type:String}},_valueChanged:function(){this.fire("change-value",this.value)}});</script>
+</dom-module>
+<dom-module id="chris-parameter" assetpath="../../chris-components/chris-parameter/">
 
-      /*from https://github.com/robdodson/contacts-app*/
+  <style>
 
-      .group {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 8px 0;
-        position: relative;
-      }
+    .parameter {
 
-      .item {
-        padding: 10px 72px;
-        color: rgb(102, 102, 102);
-      }
+      display: flex;
 
-      .item iron-icon {
-        position: absolute;
-        left: 16px;
-        top: 24px;
-        color: rgb(33, 33, 33);
-      }
+    }
 
-      .double-line-1 {
-        margin-top: 5px;
-        margin-bottom: 6px;
-      }
+    chris-parameter-string, chris-parameter-number, chris-parameter-boolean {
 
-      .double-line-2 {
-        font-size: 13px;
-        line-height: 13px;
-        color: rgba(0, 0, 0, 0.4);
-      }
+      flex: 1
 
-      .border-wrap{
-        font-size: 64px;
-        text-align: center;
-        position: relative;
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
+    }
+
+  </style>
+
+  <template>
+
+    <div class="parameter">
+
+      <template is="dom-if" if="{{_isString(type)}}">
+        <chris-parameter-string value="[[default]]" label="{{name}}"></chris-parameter-string>
+      </template>
+
+      <template is="dom-if" if="{{_isBoolean(type)}}">
+        <chris-parameter-boolean value="[[default]]" label="{{name}}"></chris-parameter-boolean>
+      </template>
+
+      <template is="dom-if" if="{{_isInteger(type)}}">
+        <chris-parameter-number value="[[default]]" step="1" label="{{name}}"></chris-parameter-number>
+      </template>
+
+      <template is="dom-if" if="{{_isFloat(type)}}">
+        <chris-parameter-number value="[[default]]" step="0.00000001" label="{{name}}"></chris-parameter-number>
+      </template>
+
+      <paper-icon-button id="help" icon="icons:help-outline" alt="help"></paper-icon-button>
+      <paper-tooltip for="help" animation-delay="0.2">{{help}}</paper-tooltip>
+
+    </div>
+
+
+  </template>
+
+  <script>Polymer({is:"chris-parameter",properties:{default:{type:String,observer:"_defaultChanged"},type:{type:String,observer:"_typeChanged"},help:{type:String,observer:"_helpChanged"},name:{type:String,value:"_nameChanged"}},_isString:function(e){return"string"===e},_isBoolean:function(e){return"boolean"===e},_isInteger:function(e){return"integer"===e},_isFloat:function(e){return"float"===e}});</script>
+</dom-module>
+<dom-module id="chris-feed-run" assetpath="chris-feed-views/chris-feed-run/">
+  <template>
+    <style>
+
+      .content {
+
+        background-color: var(--paper-grey-50);
+        @apply --layout-vertical;
+        @apply --layout-wrap;
+        padding: 24px;
+        max-width: 800px;
         margin: auto;
-        margin-top: 32px;
-        margin-bottom: -20px;
-        background: #FFFFFF;
+        margin-top: 24px;
+        margin-bottom: 100px;
+
       }
 
-      .check{
+
+    paper-card{
+
+      color: var(--primary-text-color);
+      --paper-card-header-color: var(--secondary-text-color);
+      --paper-card-background-color: var(--paper-grey-100);
+      background: var(--paper-grey-100);
+
+    }
+
+    .submit {
+
+        padding: 16px;
+        font-size: 18px;
+        font-weight: 400;
+        background-color: var(--accent-color);
+        color: #ffffff;
+        margin-top: 24px;
+
+      }
+
+    </style>
+
+    
+    <chris-api id="API" error="{{error}}">
+    </chris-api>
+
+    <paper-card class="content" heading="Run plugin">
+
+      <div class="card-content">
+
+        <paper-dropdown-menu id="dropdown" label="Plugin to run">
+
+          <paper-listbox class="dropdown-content" selected="{{selectedMenu}}">
+
+            <template is="dom-repeat" items="{{plugins}}">
+              <paper-item plugin="[[item]]" on-tap="_pluginSelected">{{item.data.name}} </paper-item>
+            </template>
+
+          </paper-listbox>
+
+        </paper-dropdown-menu>
+
+
+        <div>Parameters</div>
+        <template is="dom-repeat" items="{{parameters.data}}">
+          
+          <chris-parameter parameter="{{item}}" name="{{item.data.name}}" type="{{item.data.type}}" help="{{item.data.help}}" default="{{item.data.default}}" on-change-value="_changeValue"></chris-parameter>
+        </template>
+
+      </div>
+
+      <paper-button class="submit" raised="" on-tap="_start">Start plugin</paper-button>
+
+    </paper-card>
+
+  </template>
+
+  <script>Polymer({is:"chris-feed-run",properties:{plugin:{type:Object,observer:"_pluginChanged"},selectedPlugin:{type:Object,observer:"_selectedPluginChanged"},parameters:{type:Array,observer:"_parametersChanged"}},_pluginChanged:function(e){console.log(this.plugin)},_selectedPluginChanged:function(){null!==this.selectedPlugin&&this._fetchParameters()},_parametersChanged:function(){console.log(this.parameters)},_fetchParameters:function(){if(null!==this.selectedPlugin){var e={};e.auth={type:"token",token:sessionStorage.getItem("token")};var t=this.$.API.request("GET",this.selectedPlugin.links.parameters,e);t.then(this._handleParameters.bind(this))}},_handleParameters:function(e){this.set("parameters",e),this._resetParameters()},_resetParameters:function(){for(var e=0;e<this.parameters.data.length;e++)this.parameters.data[e].data.value=this.parameters.data[e].data.default},_pluginSelected:function(e){this.selectedPlugin=e.currentTarget.plugin},_changeValue:function(e){console.log(e),e.currentTarget.parameter.data.value=e.detail},_start:function(){var e={};e.auth={type:"token",token:sessionStorage.getItem("token")},e.body={},e.body.template={},e.body.template.data=[],e.body.template.data.push({name:"previous",value:""}),e.body.data={previous:this.plugin.data.id};for(var t=0;t<this.parameters.data.length;t++){var a=this.parameters.data[t].data.name,n=this.parameters.data[t].data.value,s={name:a,value:""};e.body.template.data.push(s),e.body.data[a]=n}var r=this.$.API.request("POST",this.selectedPlugin.links.instances,e);r.then(this.handleRunPluginDS.bind(this)).catch(this.handleRunError.bind(this))},handleRunPluginDS:function(e){this.fire("fetch-plugin",e.data[0]),this.set("selectedPlugin",null),this.set("parameters",[]),this.selectedMenu=null},handleRunError:function(e){console.log(e)}});</script>
+</dom-module>
+<dom-module id="chris-plugin-tree-recursive" assetpath="../../chris-components/chris-plugin-tree-recursive/">
+
+  <template>
+
+    <style>
+
+      :host {
+
         display: flex;
-        position: absolute;
-        right: 20px;
-        bottom: 0;
-        margin-bottom: -10px;
-      }
+        flex: 1;
 
-      .center {
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
-        @apply(--layout-center-justified);
-      }
+        }
 
-      .colored{
-        position:relative;
-      }
+      .plugin, .label, .children {
 
-      .done{
-
-        background-color: var(--paper-light-green-500);
+        display: flex;
 
       }
 
-      .running{
+      .plugin {
 
-        background-color: var(--paper-light-blue-500);
-
-      }
-
-      .error{
-
-        background-color: var(--paper-red-500);
+        flex-direction: column;
+        flex: 1;
 
       }
 
-      .fab{
+      .children {
 
-        margin: 4px;
-
-      }
-
-      paper-swatch-picker {
-
-        margin: 0 10px;
+        flex-direction: row
 
       }
 
-      #favorite[icon="icons:favorite"]{
+      .label {
+
+        /*height: 50px;
+        color: red;*/
+        justify-content: center;
+
+      }
+
+      paper-button.primary {
+
+        background-color: var(--primary-color);
+        color: white;
+        width:100%;
+        margin:0;
+        border-radius: 0;
+        border: 1px solid #dddddd;
+
+      }
+
+      paper-button.primary[selected] {
 
         background-color: var(--accent-color);
 
       }
 
-      #favorite[icon="icons:favorite-border"]{
+    </style>
 
-        background-color: var(--disabled-text-color);
+    <template is="dom-repeat" items="{{tree}}">
+      <div class="plugin">
+        <div class="label" on-tap="_selectNode">
+          <paper-button class="primary" selected$="{{item.data.selected}}">{{item.data.plugin_name}}</paper-button>
+        </div>
+        <div class="children">
+          <chris-plugin-tree-recursive id="testC" tree="{{item.data.children}}"></chris-plugin-tree-recursive>
+        </div>
+      </div>
+    </template>
+  </template>
+
+  <script>Polymer({is:"chris-plugin-tree-recursive",properties:{tree:{type:Array,observer:"_treeChanged"}},_selectNode:function(e){this.fire("select-node",e.model.__data__.item)},_treeChanged:function(){for(var e=0;e<this.tree.length;e++)this.set(["tree",e,"data","children"],this.tree[e].data.children)}});</script>
+
+</dom-module><dom-module id="chris-plugin-tree" assetpath="../../chris-components/chris-plugin-tree/">
+
+  <template>
+
+    <style>
+
+      :host {
+
+        display: block;
+
+        }
+
+      .plugin, .label, .children {
+
+        display: flex;
 
       }
 
-      paper-fab {
+      .plugin {
 
-        z-index:10;
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
+        flex-direction: column
 
       }
 
-      paper-fab#create {
+      .children {
 
-        --paper-fab-background: var(--accent-color);
+        flex-direction: row
+
+      }
+
+      .label {
+
+        height: 50px;
+        color: red;
+        justify-content: center;
 
       }
 
     </style>
 
-    <paper-card>
-
-      <div class="toolbar">
-
-        <div class="title" title="">[[pluginId]]</div>
-
-        <div class="spacer"></div>
-
-        <a href="/detail/[[feedId]]/workflow/[[workId]]">
-          Back to data
-          <paper-icon-button icon="icons:close"></paper-icon-button>
-        </a>
-
-      </div>
-
-      <div class="card-content">
-
-        
-          I am Plugin DS... [[feedId]] = [[workId]] = [[pluginId]]
-
-
-           
-           <template is="dom-repeat" items="{{plugin.data.groups}}" as="group">
-             <div class="group">
-               <div class="group-title">[[group.title]]</div>
-               <div class="group-content">
-                 
-                 <template is="dom-repeat" items="{{plugin.data.parameters}}" as="parameter">
-
-                   <template is="dom-if" if="{{_parameterInGroup(parameter,group)}}">
-
-                    <template is="dom-if" if="{{_isCheckbox(parameter)}}">
-
-                      <paper-checkbox value="{{parameter.value}}">[[parameter.title]]</paper-checkbox>
-
-                    </template>
-
-                    <template is="dom-if" if="{{_isSlider(parameter)}}">
-
-                      <div>[[parameter.title]]</div>
-                      <paper-slider min="{{parameter.min}}" max="{{parameter.max}}" value="{{parameter.value}}"></paper-slider>
-
-                    </template>
-
-                  </template>
-
-                 </template>
-
-               </div>
-             </div>
-           </template>
-
-      </div>
-
-    </paper-card>
-
-    <a href="/home">
-      <paper-fab icon="av:play-arrow" title="run"></paper-fab>
-    </a>
+    <chris-plugin-tree-recursive id="test" tree="{{tree}}" on-select-node="_selectNode"></chris-plugin-tree-recursive>
 
   </template>
 
-  <script>!function(){"use strict";Polymer({is:"chris-plugin-ds",properties:{feedId:{type:String},workId:{type:String},pluginId:{type:String,observer:"_pluginIDChanged"},plugin:{type:Object,value:{href:"plugin/href/etc.",template:"<template obj>",data:{name:"iamthename",title:"I am the TITLE!",color:"#123456",icon:"icons:favorite",groups:[{name:"simple",title:"Simple params",visible:!0},{name:"advanced",title:"Advanced params",visible:!1}],parameters:[{group:"simple",type:"checkbox",title:"I am a check check box..!",default:!1,value:!1},{group:"advanced",type:"slider",title:"I am a slider..!",default:50,min:0,max:100,value:50}]}}}},_isCheckbox:function(e){return"checkbox"===e.type},_isSlider:function(e){return"slider"===e.type},_parameterInGroup:function(e,t){return e.group===t.name},_pluginIDChanged:function(e){console.log(e)},_setBackgroundColor:function(e){return"background-color: "+e+";"},_setColor:function(e){return"color: "+e+";"}})}();</script>
-</dom-module></div><dom-module id="chris-feed">
+  <script>Polymer({is:"chris-plugin-tree",properties:{list:{type:Array},tree:{type:Array,observer:"_treeChanged"},selected:{type:Object,observer:"_selectedChanged"}},observers:["_listChanged(list.splices)","_treeChanged(tree.splices)"],_listChanged:function(){this._build(this.list);var t=this.list;t.sort(this._sortByPathLength),this.selected=t[0]},_treeChanged:function(){},_build:function(t){t.sort(this._sortByPreviousId);for(var e=[],a={},i=0;i<t.length;i++){var s=t[i];if(s.data.children=[],a[s.data.id]=i,""===s.data.previous_id)s.data.path=["tree",0,"data"],e.push(s);else{var d=t[a[s.data.previous_id]].data.path;s.data.path=d.concat(["children",t[a[s.data.previous_id]].data.children.length,"data"]),t[a[s.data.previous_id]].data.children.push(s)}}this.set("tree",e),this.fire("tree-changed",this.tree)},_find:function(t){},_insert:function(t,e){},_flatten:function(){},_sortByPreviousId:function(t,e){return""===t.data.previous_id?-1:""===e.data.previous_id?1:parseInt(t.data.previous_id,10)>parseInt(e.data.previous_id,10)?1:parseInt(t.data.previous_id,10)<parseInt(e.data.previous_id,10)?-1:0},_sortByPathLength:function(t,e){return t.data.path.length<e.data.path.length?1:t.data.path.length>e.data.path.length?-1:0},_selectNode:function(t){t.preventDefault(),t.stopPropagation(),this.selected=t.detail},_selectedChanged:function(){var t=-1;this.selected&&this.selected.data&&this.selected.data.id&&(t=this.selected.data.id),this.list.map(function(e){e.data.selected=e.data.id===t,this.set(e.data.path.concat(["selected"]),e.data.selected)}.bind(this)),this.fire("select-node",this.selected)}});</script>
+</dom-module>
+</div><dom-module id="chris-feed">
 
   <template>
 
     <style include="iron-flex iron-flex-alignment">
-    <style>
 
       :host {
 
@@ -1400,10 +997,11 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
 
       }
 
-      .drawer.content {
+      .content {
 
-        height: 100%;
-        overflow: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
 
       }
 
@@ -1440,54 +1038,62 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
 
       }
 
-      iron-pages{
-        position: relative;
-        max-width: 800px;
-        margin: auto;
-        margin-top: 24px;
-        margin-bottom: 100px;
-        /*min-height: 100vh;*/
-        /*height: 500px;*/
-        /*height: 100%;*/
-        background-color: var(--paper-grey-50);
+      div[main-title] {
+
+        text-align: center;
+      
+     }
+
+      .dropdown-content{
+        margin-top: 64px;
+        background-color: rgba(255, 255, 255, .8);
       }
+
+      @media (max-width: 896px) {
+
+        /*iron-dropdown, .dropdown-content{
+
+          max-width: 100%!important;
+          width: 100%!important;
+
+        }*/
+
+      } 
 
     </style>
 
+    
+    <chris-api id="ChrisAPI" error="{{error}}">
+    </chris-api>
+
     <div id="detail">
 
-      <app-location id="location" route="{{feedRoute}}"></app-location>
-      <app-route route="{{feedRoute}}" pattern="/feed/:index" data="{{feedRouteData}}" tail="{{pageRoute}}"></app-route>
-      <app-route route="{{pageRoute}}" pattern="/:page" data="{{pageRouteData}}" tail="{{pluginRoute}}"></app-route>
-      <app-route route="{{pluginRoute}}" pattern="/:index" data="{{pluginRouteData}}" tail="{{pluginDSRoute}}"></app-route>
-      <app-route route="{{pluginDSRoute}}" pattern="/plugin/:id" data="{{pluginDSRouteData}}"></app-route>
-
-      
-      <chris-api id="ItemAPI" error="{{error}}">
-      </chris-api>
-
-      <app-drawer-layout id="adl" fullbleed="">
-
         
-        <app-drawer>
-
-          <div class="drawer content">
-
-            <app-toolbar>[[feed.data.name]]</app-toolbar>
-            <chris-feed-nav feed="[[feedRouteData.index]]" workflow="[[workflow]]" comments="[[comments]]"></chris-feed-nav>
-
-          </div>
-
-        </app-drawer>
-
-        
-        <app-header-layout has-scrolling-region="" style$="[[_setLayoutStyle(feed.data.color)]]">
+        <app-header-layout id="adl" has-scrolling-region="" style$="[[_setLayoutStyle(feed.data.color)]]" fullbleed="">
 
           <app-header id="header" fixed="" effects="waterfall" style$="[[_setToolbarStyle(feed.data.color)]]">
             <app-toolbar>
-              <paper-icon-button icon="menu" drawer-toggle=""></paper-icon-button>
+              <paper-icon-button icon="icons:arrow-back" on-tap="_exit"></paper-icon-button>
+
               <div main-title="">[[feed.data.name]]</div>
-              <paper-icon-button icon="icons:clear" on-tap="_exit"></paper-icon-button>
+
+              <span>
+                <paper-icon-button icon="icons:apps" on-tap="_openTree"></paper-icon-button>
+                <iron-dropdown id="dropdown" horizontal-align="right" vertical-align="top" on-tap="_closeDropdown">
+                    <div class="plugin dropdown-content" on-select-node="_selectPlugin">
+                      <chris-plugin-tree list="[[pluginInstanceCollection]]" selected="[[plugin]]"></chris-plugin-tree>
+                    </div>
+                </iron-dropdown>
+              </span>
+
+              <iron-selector attr-for-selected="name" selected="{{page}}">
+                <paper-icon-button name="note" icon="editor:mode-edit" on-tap="_deselectPlugin"></paper-icon-button>
+                <paper-icon-button name="comments" icon="communication:forum" on-tap="_deselectPlugin"></paper-icon-button>
+                <paper-icon-button name="about" icon="icons:assignment-ind" on-tap="_deselectPlugin"></paper-icon-button>
+              </iron-selector>
+
+              <paper-icon-button icon="icons:more-vert"></paper-icon-button>
+
             </app-toolbar>
           </app-header>
 
@@ -1496,23 +1102,21 @@ fee<dom-module id="chris-feed-nav" assetpath="../../chris-components/chris-feed-
           <iron-pages selected="[[page]]" attr-for-selected="name">
 
             <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
-            <chris-note name="note" notes="{{note}}"></chris-note>
-            <chris-comment-list name="comments" comments="{{comments}}"></chris-comment-list>
-            <chris-plugin name="workflow" feed-index="[[feedRouteData.index]]" plugin="[[_targetPlugin(pluginRouteData.index)]]"></chris-plugin>
-            <chris-plugin-ds name="plugin" feed-id="[[feedRouteData.index]]" work-id="[[pluginRouteData.index]]" plugin-id="[[pluginDSRouteData.id]]"></chris-plugin-ds>
+            <chris-feed-note name="note" notes="{{note}}"></chris-feed-note>
+            <chris-feed-comments name="comments" comments="{{comments}}"></chris-feed-comments>
+            <chris-feed-plugin name="plugin" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]" on-run-plugin="_runPlugin"></chris-feed-plugin>
+            <chris-feed-run name="run" plugin="[[plugin]]" plugins="[[plugins]]" on-fetch-plugin="_fetchPlugin"></chris-feed-run>
 
-            </iron-pages>
+          </iron-pages>
 
           </div>
 
         </app-header-layout>
 
-      </app-drawer-layout>
-
     </div>
 
   </template>
 
-  <script>Polymer({is:"chris-feed",properties:{feed:{type:Object,observer:"_feedChanged"},workflow:{type:Array},note:{type:Object},comments:{type:Object},details:{type:Object},feedRoute:{type:Object},feedRouteData:{type:Object},pageRoute:{type:Object},pageRouteData:{type:Object},pluginRoute:{type:Object},pluginRouteData:{type:Object},pluginDSRoute:{type:Object},pluginDSRouteData:{type:Object},error:{type:Object},page:{type:String}},observers:["_feedIndexChanged(feedRouteData.index)","_pageDataChanged(pageRouteData.page)","_pluginIndexChanged(pluginRouteData.index)","_pluginDSIdChanged(pluginDSRouteData.id)"],ready:function(e){},_targetPlugin:function(e){if(e){for(var t=0;t<this.workflow.data.length;t++)if(this.workflow.data[t].data.id===e)return this.workflow.data[t];return 0}},_feedIndexChanged:function(e){console.log("_feedIndexChanged "),console.log(e)},_pageDataChanged:function(e){console.log("_pageDataChanged"),console.log(e),"workflow"===e&&console.log(this.pluginDSRouteData),this.page=e||"about"},_pluginIndexChanged:function(e){console.log("_pluginIndexChanged"),console.log(e)},_pluginDSIdChanged:function(e){console.log("_pluginDSIdChanged"),console.log(e),e&&(this.page="plugin")},_feedChanged:function(){console.log(this.feed);var e={};e.auth={type:"token",token:sessionStorage.getItem("token")};var t=this.$.ItemAPI.request("GET",this.feed.links.comments,e);t.then(this.handleComments.bind(this)).catch(this.handleError.bind(this));var n=this.$.ItemAPI.request("GET",this.feed.links.note,e);n.then(this.handleNote.bind(this)).catch(this.handleError.bind(this))},_reset:function(){this.page="about"},handleComments:function(e){if(console.log(e),this.$.adl.resetLayout(),e){var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("comments",e);break;case"note":this.set("note",e);break;case"plugins":this.set("workflow",e)}}},handleNote:function(e){if(console.log(e),this.$.adl.resetLayout(),e){var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("comments",e);break;case"note":this.set("note",e);break;case"plugins":this.set("workflow",e)}}},handleError:function(e){console.error(e)},_setLayoutStyle:function(e){e=e.replace("#","");var t=parseInt(e.substring(0,2),16),n=parseInt(e.substring(2,4),16),o=parseInt(e.substring(4,6),16);return"background-color: rgba("+t+","+n+","+o+", 0.5);"},_setToolbarStyle:function(e){return"background-color: "+e+";"},_exit:function(){this._reset(),this.fire("exit")}});</script>
+  <script>Polymer({is:"chris-feed",properties:{feed:{type:Object,observer:"_feedChanged"},page:{type:String,value:"plugin",observer:"_pageChanged"},pluginInstanceCollection:{type:Array},plugins:{type:Array},plugin:{type:Object,observer:"_pluginChanged"},fileCollection:{type:Array},files:{type:Array},workflow:{type:Array},note:{type:Object},comments:{type:Object},details:{type:Object},error:{type:Object}},ready:function(e){},_feedIndexChanged:function(e){console.log("_feedIndexChanged "),console.log(e)},_pluginIndexChanged:function(e){console.log("_pluginIndexChanged"),console.log(e)},_pluginDSIdChanged:function(e){console.log("_pluginDSIdChanged"),console.log(e)},_feedChanged:function(){console.log(this.feed);var e={};e.auth={type:"token",token:sessionStorage.getItem("token")};var t=this.$.ChrisAPI.request("GET",this.feed.links.comments,e);t.then(this.handleComments.bind(this)).catch(this.handleError.bind(this));var n=this.$.ChrisAPI.request("GET",this.feed.links.note,e);n.then(this.handleNote.bind(this)).catch(this.handleError.bind(this)),e.params={},e.params.root_id=this.feed.data.id;var i=this.$.ChrisAPI.request("GET","/plugins/instances/search/",e);i.then(this._handlePlugins.bind(this)).catch(this.handleError.bind(this))},_reset:function(){},_handleFiles:function(e){this.set("files",e.data),console.log(this.files)},_handlePlugins:function(e){console.log(e),this.set("pluginInstanceCollection",e.data)},handleComments:function(e){if(console.log(e),this.$.adl.resetLayout(),e){var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("comments",e);break;case"note":this.set("note",e);break;case"plugins":this.set("workflow",e)}}},handleNote:function(e){if(console.log(e),this.$.adl.resetLayout(),e){var t=e.href.split(/[\/]+/).pop();switch(t){case"comments":this.set("comments",e);break;case"note":this.set("note",e);break;case"plugins":this.set("workflow",e)}}},handleError:function(e){console.error(e)},_setLayoutStyle:function(e){e=e.replace("#","");var t=parseInt(e.substring(0,2),16),n=parseInt(e.substring(2,4),16),i=parseInt(e.substring(4,6),16);return"background-color: rgba("+t+","+n+","+i+", 0.5);"},_setToolbarStyle:function(e){return"background-color: "+e+";"},_exit:function(){this._reset(),this.fire("exit")},_openTree:function(){console.log(" open tree "),this.$.dropdown.open()},_pageChanged:function(){console.log(this.page)},_selectPlugin:function(e){e.detail.data?this.plugin=e.detail:this._deselectPlugin()},_deselectPlugin:function(){this.plugin=null},_pluginChanged:function(){if(this.page)if(null!==this.plugin){this.page="plugin";var e={};e.auth={type:"token",token:sessionStorage.getItem("token")},e.params={},e.params.plugin_instance=this.feed.data.id;var t=this.$.ChrisAPI.request("GET",this.feed.links.files,e);t.then(this._handleFiles.bind(this)).catch(this.handleError.bind(this))}else this.page="about"},_runPlugin:function(){this.plugin&&(this.page="run")},_closeDropdown:function(){this.$.dropdown.close()},_fetchPlugin:function(e){var t={};t.auth={type:"token",token:sessionStorage.getItem("token")},t.params={},t.params.fake_api_previous_id=this.plugin.data.id;var n=this.$.ChrisAPI.request("GET",e.detail.href,t);n.then(this._handlePlugin.bind(this)).catch(this.handleError.bind(this))},_handlePlugin:function(e){this.push("pluginInstanceCollection",e.data[0]),this.plugin=e.data[0]}});</script>
 </dom-module>
 </body></html>

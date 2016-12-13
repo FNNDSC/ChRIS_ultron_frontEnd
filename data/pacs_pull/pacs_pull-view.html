@@ -1,10 +1,7 @@
-<!-- POLYFILLS -->
-<!-- <script type="text/javascript" src="https://cdn.rawgit.com/fnndsc/ami/dev/external/scripts/babel/polyfill.min.js"></script> -->
-<!-- THREEJS -->
-<link rel="import" href="../../libs/threejs.html">
+<html><head><link rel="import" href="../../libs/threejs.html">
 
-<!-- AMI -->
-<!-- <script type="text/javascript" src="https://cdn.rawgit.com/fnndsc/ami/dev/dist/ami.js"></script> -->
+
+
 
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
@@ -20,7 +17,7 @@
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
-<dom-module id="pacs-pull-plugin-view">
+</head><body><dom-module id="pacs-pull-plugin-view">
 
   <template>
 
@@ -57,19 +54,11 @@
     </style>
 
     <div class="container">
-      <ami-viewer id="viewer"
-        data="[[data]]"
-        index="{{index}}"
-        orientation="{{orientation}}"
-        flip-rows="{{flipRows}}"
-        flip-columns="{{flipColumns}}"
-        index-max="{{indexMax}}"
-        border-color="[[fBorderColor]]"></ami-viewer>
+      <ami-viewer id="viewer" data="[[data]]" index="{{index}}" orientation="{{orientation}}" flip-rows="{{flipRows}}" flip-columns="{{flipColumns}}" index-max="{{indexMax}}" border-color="[[fBorderColor]]"></ami-viewer>
         
       <div class="controls">
 
-<!--         <div>Border Color</div>
-        <paper-swatch-picker column-count=5 color="{{borderColor}}" color-list='["#65a5f2", "#83be54", "#f0d551", "#e5943c", "#a96ddb"]'></paper-swatch-picker> -->
+
         
         <paper-dropdown-menu label="Series">
           <paper-listbox class="dropdown-content" selected="{{seriesidx}}">
@@ -88,10 +77,8 @@
         </paper-dropdown-menu>
         
         <div>Slice Index</div>
-        <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable></paper-slider>
-<!--         
-        <div>Rotation</div>
-        <paper-slider id="rotation" step="90" min="0" max="360" immediate-value="{{rotation}}" editable></paper-slider> -->
+        <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable=""></paper-slider>
+
         
         <paper-checkbox checked="{{flipRows}}">Flip Rows</paper-checkbox>
         <paper-checkbox checked="{{flipColumns}}">Flip Columns</paper-checkbox>
@@ -102,128 +89,6 @@
 
   </template>
 
-  <script>
-    Polymer({
-        is: 'pacs-pull-plugin-view',
-
-        properties: {
-
-          selected: {
-            type: Boolean,
-            value: false,
-            observer: '_selectedChanged'
-          },
-
-          initialized: {
-            type: Boolean,
-            value: false
-          },
-
-          animationFrameID: {
-            type: Number
-          },
-
-          data: {
-            type: Array,
-            value: []
-          },
-          
-          index: {
-            type: Number,
-            value: 0
-          },
-          
-         indexMax: {
-            type: Number,
-            value: 0
-          },
-          
-          orientation: {
-            type:Number,
-            value: 0
-          },
-          
-          rotation: {
-            type:Number,
-            value: 0
-          },
-          
-          flipRows: {
-            type: Boolean,
-            value: false
-          },
-          
-          flipColumns: {
-            type: Boolean,
-            value: false
-          },
-          
-          borderColor: {
-            type: String,
-            value: '#65a5f2',
-            observer: '_colorChanged'
-          },
-          
-          fBoderColor:{
-            type: String
-          }
-
-        },
-
-        ready: function( ){
-
-        },
-
-        _selectedChanged: function( ){
-
-          window.console.log('selected pacs pull');
-
-
-          // init threejs fun
-          if(this.selected && !this.initialized){
-
-            this.init();
-            this.initialized = true;
-
-          }
-
-          if(this.selected){
-
-            this.animate();
-
-          }
-          else{
-            window.cancelAnimationFrame(this.animationFrameID);
-          }
-
-
-        },
-
-        init: function( ){
-          
-          // load the data...
-          var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
-          this.data = t2.map(function(v) {
-            return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
-          });
-
-        },
-
-        // HACK FOR NOW, AMI SHOULD TAKE CARE OF IT
-        _colorChanged: function(){
-          this.fBorderColor = this.borderColor.replace('#','0x');
-        },
-
-        animate: function( ){
-
-          // this.animationFrameID = window.requestAnimationFrame( this.animate.bind(this) );
-
-          // this.mesh.rotation.x += 0.01;
-          // this.mesh.rotation.y += 0.02;
-
-          // this.renderer.render( this.scene, this.camera );
-
-        }
-    });
-  </script>
+  <script>Polymer({is:"pacs-pull-plugin-view",properties:{selected:{type:Boolean,value:!1,observer:"_selectedChanged"},initialized:{type:Boolean,value:!1},animationFrameID:{type:Number},data:{type:Array,value:[]},index:{type:Number,value:0},indexMax:{type:Number,value:0},orientation:{type:Number,value:0},rotation:{type:Number,value:0},flipRows:{type:Boolean,value:!1},flipColumns:{type:Boolean,value:!1},borderColor:{type:String,value:"#65a5f2",observer:"_colorChanged"},fBoderColor:{type:String}},ready:function(){},_selectedChanged:function(){window.console.log("selected pacs pull"),this.selected&&!this.initialized&&(this.init(),this.initialized=!0),this.selected?this.animate():window.cancelAnimationFrame(this.animationFrameID)},init:function(){var e=["36444280","36444294","36444308","36444322","36444336"];this.data=e.map(function(e){return"https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/"+e})},_colorChanged:function(){this.fBorderColor=this.borderColor.replace("#","0x")},animate:function(){}});</script>
 </dom-module>
+</body></html>

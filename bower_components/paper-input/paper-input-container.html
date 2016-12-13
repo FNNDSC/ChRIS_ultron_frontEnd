@@ -35,14 +35,14 @@
       }
 
       .underline {
+        height: 2px;
         position: relative;
       }
 
       .focused-line {
         @apply(--layout-fit);
 
-        background: var(--paper-input-container-focus-color, --primary-color);
-        height: 2px;
+        border-bottom: 2px solid var(--paper-input-container-focus-color, --primary-color);
 
         -webkit-transform-origin: center center;
         transform-origin: center center;
@@ -62,7 +62,7 @@
       }
 
       .underline.is-invalid .focused-line {
-        background: var(--paper-input-container-invalid-color, --error-color);
+        border-color: var(--paper-input-container-invalid-color, --error-color);
         -webkit-transform: none;
         transform: none;
         -webkit-transition: -webkit-transform 0.25s;
@@ -74,8 +74,7 @@
       .unfocused-line {
         @apply(--layout-fit);
 
-        background: var(--paper-input-container-color, --secondary-text-color);
-        height: 1px;
+        border-bottom: 1px solid var(--paper-input-container-color, --secondary-text-color);
 
         @apply(--paper-input-container-underline);
       }
@@ -83,7 +82,6 @@
       :host([disabled]) .unfocused-line {
         border-bottom: 1px dashed;
         border-color: var(--paper-input-container-color, --secondary-text-color);
-        background: transparent;
 
         @apply(--paper-input-container-underline-disabled);
       }
@@ -177,9 +175,15 @@
         color: var(--paper-input-container-input-color, --primary-text-color);
         -webkit-appearance: none;
         text-align: inherit;
+        vertical-align: bottom;
 
         @apply(--paper-font-subhead);
         @apply(--paper-input-container-input);
+      }
+
+      .input-content ::content input::-webkit-outer-spin-button,
+      .input-content ::content input::-webkit-inner-spin-button {
+        @apply(--paper-input-container-input-webkit-spinner);
       }
 
       ::content [prefix] {

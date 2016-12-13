@@ -1,7 +1,6 @@
 <html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 
-<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-icons/social-icons.html">
 
@@ -14,14 +13,9 @@
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
-
-<link rel="import" href="../../chris-api/chris-api.html">
-
 </head><body><dom-module id="chris-feed-preview">
 
   <template>
-
-    <style include="iron-flex iron-flex-alignment">
     <style>
 
       :host{
@@ -46,132 +40,109 @@
 
       }
 
-       .feed.checked {
+      .feed.checked {
 
         background-color: var(--paper-grey-200);
-        border-left: 4px solid var(--accent-color);
 
       }
 
-      /* Check area */
+      /* Selection area */
+      .selection-area {
 
-      .check-area {
-
+        width:48px;
         height: 48px;
-        width: 48px;
-        border-radius: 24px;
-        box-sizing: border-box;
-        @apply(--layout-vertical);
-        @apply(--layout-center);
-        @apply(--layout-center-justified);
-
-      }
-
-      .check-area .invalid {
-
-        color: var(--paper-red-500);
-        border-color: var(--paper-red-500)!important;
-        background-color: #ffffff;
-        border-radius: 26px;
-        cursor: pointer;
-        padding: 0;
-        width: 52px;
-        height: 52px;
-
-      }
-
-      .check-area:hover .invalid {
-
-        background-color: var(--paper-red-500);
-        color: #ffffff;
-
-      }
-
-      .check-area:hover, .checked .check-area {
-
-        background-color: var(--accent-color);
-        border-color: var(--accent-color)!important;
-
-      }
-
-      /* Check area > Letter */
-
-      .letter {
-
-        font-size: 24px;
-
-      }
-
-      .check-area:hover .letter, .checked .letter {
-
-        display:none;
-
-      }
-
-      /* Check area > Checkbox */
-
-
-
-
-
-      /* Title area */
-
-      .title-area {
-
-        width:100%;
-        padding: 8px 16px;
+        font-size: 18px;
         box-sizing: border-box;
         color: var(--primary-text-color);
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        display: flex;
 
+      }
+
+      .checked .selection-area {
+
+        background-color: var(--paper-grey-700);
+
+      }
+
+      .selection-area paper-checkbox {
+
+        display:none;
+        --paper-checkbox-size: 18px;
+        --paper-checkbox-label-spacing: 0px;
+        --paper-checkbox-checked-color: var(--paper-grey-700);
+
+      }
+
+      .selection-area:hover paper-checkbox, .checked .selection-area paper-checkbox {
+
+        display: block;
+
+      }
+
+      .selection-area:hover .letter, .checked .selection-area .letter {
+
+        display: none;
+
+      }
+
+      /* Title area */
+      .title-area {
+
+        flex:1;
+        box-sizing: border-box;
+        color: var(--primary-text-color);
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        display: flex;
+        
       }
 
       .name {
 
+        padding-left: 8px;
         font-size: 16px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
 
       }
 
-      .date, .tags {
+      .date {
 
+        padding-left: 8px;
         font-size: 14px;
         color: var(--secondary-text-color);
-
-      }
-
-      /* Tags area */
-      .tags-area {
-
-        padding: 8px 16px;
-        flex: 1;
-        overflow-y: auto;
-
-      }
-
-      .tag {
-
-        /*opacity: 0.5;*/
-
-      }
-
-      .tag:hover {
-
-        /*opacity: 1;*/
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
 
       }
 
       /* Action area */
      /* width vx flex 1 100%*/
 
+      .feed:hover .actions-area {
+        display:flex;
+      }
+
       .actions-area {
-
-        /*display:none;*/
-
-          color: var(--primary-text-color);
-          padding: 0 16px;
-          box-sizing: border-box;
-          width: 100%;
-          text-align: right;
-          /*border-top: 1px solid var(--divider-color);*/
+        /*or not?*/
+        position: absolute;
+        top: 0;
+        right: 0;
+        display:none;
+        background-color: var(--paper-grey-200);
+        color: var(--primary-text-color);
+        padding: 0 16px;
+        box-sizing: border-box;
+        text-align: right;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
 
         }
 
@@ -183,94 +154,46 @@
           opacity: 1.0;
         }
 
-        .checkbox {
+        paper-menu-button {
 
-          --paper-checkbox-checked-color: var(--accent-color);
-          --paper-checkbox-checked-ink-color: var(--accent-color);
-          --paper-checkbox-unchecked-color: var(--primary-text-color);
-          --paper-checkbox-unchecked-ink-color: var(--accent-color);
-          --paper-checkbox-size: 24px;
-          --paper-checkbox-label-spacing: 0px;
+          padding: 0;
 
         }
 
-        .done{
-
-          color: var(--paper-light-green-500);
-
-        }
-
-        .running{
-
-          color: var(--paper-light-blue-500);
-
-        }
-
-        .error{
-
-          color: var(--paper-red-500);
-  
-        }
-
-
-      /* Content */
-
-      .content {
-
-        margin-top: 8px;
-        min-height: 64px;
-        display: none;
-
-      }
-
-      .feed.open .content {
-
-        display: block;
-
-      }
+      @media (max-width: 896px) {
+          .date {
+            display: none;
+          }
+        } 
 
 
     </style>
 
-    <chris-api id="FeedAPI" content-type="application/json" ,="" on-response="handleFeedDetails" error="{{error}}" on-error="handleError">
-    </chris-api>
-
     <paper-material id="feed" class="feed" elevation="1">
+
+      
+      <div class="selection-area" on-tap="_blockEvents">
+        
+        <div class="letter">{{_firstLetter(feed.data.name)}}</div>
+        <paper-checkbox on-tap="check" checked="{{checked}}"></paper-checkbox>
+
+      </div>
 
       
       <div class="title-area" style$="{{_setBackgroundStyle(feed.data.color)}}">
 
         <div class="name">Feed [[feed.data.id]] - [[feed.data.name]]</div>
+        <div class="date"> [[feed.data.date]] </div>
 
       </div>
 
       
-      
-
-      
       <div class="actions-area" on-tap="_blockEvents">
-
-        <paper-checkbox class="checkbox" checked="{{checked}}"></paper-checkbox>
 
         <paper-icon-button id="share" class="action" icon="social:share" on-tap="share"></paper-icon-button>
         <paper-icon-button id="favorite" class="action" icon$="[[_setFavoriteIcon(feed.data.favorite)]]" on-tap="favorite"></paper-icon-button>
-        
 
         
-
-        <paper-menu-button>
-          <paper-icon-button icon="icons:label-outline" class="dropdown-trigger"></paper-icon-button>
-
-          <paper-menu class="dropdown-content">
-
-            <template is="dom-repeat" items="[[_validateTags(feed.data.tags)]]">
-
-              <paper-item class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></paper-item>
-
-            </template>
-
-          </paper-menu>
-        </paper-menu-button>
 
       </div>
 
@@ -294,15 +217,6 @@
             observer: '_checkedChanged'
           },
 
-          open:{
-            type: Boolean,
-            value: false
-          },
-
-          index: {
-            type: Number
-          },
-
           valid:{
             type: Boolean
           },
@@ -317,37 +231,20 @@
           'updateFavorite(feed.data.favorite)'
         ],
 
-        _setStyle: function( color ){
-
-          return 'border: 4px solid ' + color + ';';
-
-        },
-
         updateFavorite(){
          
         },
 
-        _setStatusIcon: function( status ){
+        _firstLetter: function( value ){
 
-          var icon = 'icons:';
+          return value.charAt(0);
 
-          if( status === 'running'){
+        },
 
-            icon += 'schedule';
+        check: function(){
 
-          }
-          else if( status === 'error' ){
-
-            icon += 'clear';
-
-          }
-          else{
-
-            icon += 'done';
-
-          }
-
-          return icon;
+          event.preventDefault();
+          event.stopPropagation();
 
         },
 
@@ -430,50 +327,6 @@
 
         },
 
-        handleFeedDetails: function( event ){
-
-          // stop ajax propagation
-          event.preventDefault();
-          event.stopPropagation();
-
-          // could/should show nice reload button
-          if( !event.detail ){
-
-            return;
-
-          }
-
-          var response = event.detail;
-
-           // if feed was not updated, fire notification message
-          if( response.error && response.error.code ){
-
-            // restore cache
-            for( var i = 0; i < response.cache.length; i++ ){
-
-              this.set( 'feed.data.' + response.cache[i].name , response.cache[i].value );
-
-            }
-
-
-            // show toast message
-            this.fire( 'notification', response.error );
-
-          }
-
-        },
-
-        handleError: function( event ){
-
-          this.$.FeedDetailsAPI.url = '';
-
-          // stop ajax propagation
-          event.preventDefault();
-          event.stopPropagation();
-          console.log( this.error );
-
-        },
-
         _validateFeed: function(){
 
           if( !this.feed || !this.feed.data ){
@@ -551,9 +404,6 @@
           }
 
           if( error.length > 0){
-
-
-            console.log( error );
 
             // got an error
             this.error = error;

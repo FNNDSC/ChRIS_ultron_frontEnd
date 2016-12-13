@@ -1,0 +1,174 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../../../../chris-ultron.html"></head><body><dom-module id="chris-feed-note">
+  <template>
+    <style>
+
+      host {
+
+        display: block;
+
+      }
+
+      .toolbar {
+
+        min-height: 48px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-wrap);
+
+        padding: 16px;
+        font-size: 24px;
+        font-weight: 400;
+        color: #737373;
+
+      }
+
+      .name {
+
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      paper-icon-button {
+
+        border-bottom: 1px solid var(--accent-color);
+        color: var(--secondary-text-color);
+
+      }
+
+      .content {
+
+        /*padding: 20px;*/
+
+      }
+
+      #editor {
+
+        display: none;
+        width: inherit;
+
+      }
+
+      /* Markdown style */
+
+      .markdown-html pre code {
+
+        display: flex;
+        padding: 10px;
+        color: #ffffff;
+        background-color: var(--paper-grey-800);
+
+      }
+
+      .markdown-html code {
+
+        padding: 10px;
+        background-color: #ffffff;
+        color: var(--accent-color);
+        font-weight: bold;
+
+      }
+
+      .markdown-html blockquote p {
+
+        background-color: #ffffff;
+        padding: 8px;
+
+      }
+
+      .markdown-html table {
+
+        border-collapse: collapse;
+
+      }
+
+      .markdown-html table, .markdown-html th, .markdown-html td {
+
+        border: 1px solid black;
+
+      }
+
+      
+      .content {
+
+        background-color: var(--paper-grey-50);
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
+
+      }
+
+      paper-card{
+
+        color: var(--primary-text-color);
+        --paper-card-header-color: var(--secondary-text-color);
+        --paper-card-background-color: var(--paper-grey-100);
+        background: var(--paper-grey-100);
+
+      }
+
+    </style>
+
+    <chris-api id="API" content-type="application/json" ,="" on-response="handleItem" error="{{error}}" on-error="handleError">
+    </chris-api>
+
+    <paper-card class="content">
+
+      <div class="toolbar">
+
+        <div class="title" title="">Note</div>
+
+        <div class="spacer"></div>
+
+        <template is="dom-if" if="{{!editing}}">
+          <paper-icon-button icon="icons:create" on-tap="edit"></paper-icon-button>
+        </template>
+
+        <template is="dom-if" if="{{editing}}">
+          <paper-icon-button icon="icons:save" on-tap="save"></paper-icon-button>
+          <paper-icon-button icon="icons:close" on-tap="close"></paper-icon-button>
+        </template>
+
+        <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet" target="_blank">
+          <paper-icon-button icon="help-outline"></paper-icon-button>
+        </a>
+
+      </div>
+
+      <div class="card-content">
+
+        <div id="note" class="note">
+
+          
+
+          <div class="content">
+
+            <iron-autogrow-textarea id="editor" value="{{notes.data.0.data.content}}" on-input="_updateContent"></iron-autogrow-textarea>
+
+            <marked-element id="md" markdown="[[notes.data.0.data.content]]">
+              <div class="markdown-html"></div>
+            </marked-element>
+          </div>
+
+        </div>
+
+      </div>
+
+    </paper-card>
+
+  </template>
+
+  <script>Polymer({is:"chris-feed-note",properties:{notes:{type:Object,observer:"_notesChanged"},previousContent:{type:String},editing:{type:Boolean,value:!1},error:{type:Object},valid:{type:Boolean}},_stopEventPropagation:function(t){t.stopPropagation()},edit:function(t){t&&this._stopEventPropagation(t),this.editing=!0,this.previousContent=this.notes.data[0].data.content,this.$.editor.style.display="block"},close:function(t){this._stopEventPropagation(t),this.editing=!1,this.notes.data[0].data.content=this.previousContent,this.$.editor.value=this.previousContent,this.$.md.markdown=this.previousContent,this.$.editor.style.display="none"},save:function(t){t&&this._stopEventPropagation(t),this.editing=!1,this.$.editor.style.display="none";var e=this.notes.data[0];e.template=this.notes.template,e.href=this.notes.href;var i=[{name:"content",value:this.previousContent}];this.$.API.request("PUT",e.href,{body:e,cache:i})},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.notes.data[0].data.content=e.cache[0].value,this.fire("notes-changed"),this.$.editor.value=e.cache[0].value,this.$.md.markdown=e.cache[0].value,this.fire("notification",e.error))}},handleError:function(){console.log(this.error)},_updateContent:function(){this.$.md.markdown=this.$.editor.value},isValid:function(t){if(this.notes){var e=[];return"object"!=typeof this.notes.template&&e.push("template:Object"),"string"!=typeof this.notes.href&&e.push("href:String"),this.notes.data&&this.notes.data.constructor===Array||e.push("data:Array"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_notesChanged:function(t){!this.isValid(this.notes)}});</script>
+</dom-module>
+</body></html>

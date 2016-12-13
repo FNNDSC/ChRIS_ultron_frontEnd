@@ -122,6 +122,19 @@
         pointer-events: none;
         color: var(--paper-toggle-button-label-color, --primary-text-color);
       }
+
+      /* invalid state */
+      :host([invalid]) .toggle-bar {
+        background-color: var(--paper-toggle-button-invalid-bar-color, --error-color);
+      }
+
+      :host([invalid]) .toggle-button {
+        background-color: var(--paper-toggle-button-invalid-button-color, --error-color);
+      }
+
+      :host([invalid]) .toggle-ink {
+        color: var(--paper-toggle-button-invalid-ink-color, --error-color);
+      }
     </style>
 
     <div class="toggle-container">
@@ -133,6 +146,6 @@
 
   </template>
 
-  <script>Polymer({is:"paper-toggle-button",behaviors:[Polymer.PaperCheckedElementBehavior],hostAttributes:{role:"button","aria-pressed":"false",tabindex:0},properties:{},listeners:{track:"_ontrack"},_ontrack:function(t){var e=t.detail;"start"===e.state?this._trackStart(e):"track"===e.state?this._trackMove(e):"end"===e.state&&this._trackEnd(e)},_trackStart:function(t){this._width=this.$.toggleBar.offsetWidth/2,this._trackChecked=this.checked,this.$.toggleButton.classList.add("dragging")},_trackMove:function(t){var e=t.dx;this._x=Math.min(this._width,Math.max(0,this._trackChecked?this._width+e:e)),this.translate3d(this._x+"px",0,0,this.$.toggleButton),this._userActivate(this._x>this._width/2)},_trackEnd:function(t){this.$.toggleButton.classList.remove("dragging"),this.transform("",this.$.toggleButton)},_createRipple:function(){this._rippleContainer=this.$.toggleButton;var t=Polymer.PaperRippleBehavior._createRipple();return t.id="ink",t.setAttribute("recenters",""),t.classList.add("circle","toggle-ink"),t}});</script>
+  <script>Polymer({is:"paper-toggle-button",behaviors:[Polymer.PaperCheckedElementBehavior],hostAttributes:{role:"button","aria-pressed":"false",tabindex:0},properties:{},listeners:{track:"_ontrack"},attached:function(){Polymer.RenderStatus.afterNextRender(this,function(){this.setScrollDirection("y")})},_ontrack:function(t){var e=t.detail;"start"===e.state?this._trackStart(e):"track"===e.state?this._trackMove(e):"end"===e.state&&this._trackEnd(e)},_trackStart:function(t){this._width=this.$.toggleBar.offsetWidth/2,this._trackChecked=this.checked,this.$.toggleButton.classList.add("dragging")},_trackMove:function(t){var e=t.dx;this._x=Math.min(this._width,Math.max(0,this._trackChecked?this._width+e:e)),this.translate3d(this._x+"px",0,0,this.$.toggleButton),this._userActivate(this._x>this._width/2)},_trackEnd:function(t){this.$.toggleButton.classList.remove("dragging"),this.transform("",this.$.toggleButton)},_createRipple:function(){this._rippleContainer=this.$.toggleButton;var t=Polymer.PaperRippleBehavior._createRipple();return t.id="ink",t.setAttribute("recenters",""),t.classList.add("circle","toggle-ink"),t}});</script>
 </dom-module>
 </body></html>

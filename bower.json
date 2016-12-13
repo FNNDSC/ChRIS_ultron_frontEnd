@@ -13,6 +13,7 @@
     "paper-date-picker": "bendavis78/paper-date-picker",
     "paper-fab-transitions": "GabiAxel/paper-fab-transitions#master",
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#master",
+    "paper-range-slider": "git://github.com/IftachSadeh/paper-range-slider#master",
     "ami-loader": "FNNDSC/ami-loader#master",
     "ami-viewer": "FNNDSC/ami-viewer#master",
     "vaadin-grid": "vaadin/vaadin-grid#^1.2.0",
@@ -22,7 +23,7 @@
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
-    "web-component-tester": "^4.0.0",
+    "web-component-tester": "^5.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.23"
   },
   "resolutions": {

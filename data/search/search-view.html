@@ -1,22 +1,18 @@
-<!-- POLYFILLS -->
-<!-- <script type="text/javascript" src="https://cdn.rawgit.com/fnndsc/ami/dev/external/scripts/babel/polyfill.min.js"></script> -->
-<!-- THREEJS -->
-<link rel="import" href="../../libs/threejs.html">
+<html><head><link rel="import" href="../../libs/threejs.html">
 
-<!-- AMI -->
-<!-- <script type="text/javascript" src="https://cdn.rawgit.com/fnndsc/ami/dev/dist/ami.js"></script> -->
+
+
 
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<!-- <link rel="import"
-      href="https://cdn.vaadin.com/vaadin-core-elements/latest/vaadin-grid/vaadin-grid.html"> -->
+
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
-<dom-module id="search-plugin-view">
+</head><body><dom-module id="search-plugin-view">
 
   <template>
 
@@ -35,108 +31,6 @@
 
   </template>
 
-  <script>
-    Polymer({
-        is: 'search-plugin-view',
-        
-        properties: {
-
-          scene: {
-            type: Object
-          },
-
-          camera: {
-            type: Object
-          },
-
-          renderer: {
-            type: Object
-          },
-
-          geometry: {
-            type: Object
-          },
-
-          material: {
-            type: Object
-          },
-
-          mesh: {
-            type: Object
-          },
-
-          selected: {
-            type: Boolean,
-            value: false,
-            observer: '_selectedChanged'
-          },
-
-          initialized: {
-            type: Boolean,
-            value: false
-          },
-
-          animationFrameID: {
-            type: Number
-          }
-
-        },
-
-        ready: function( ){
-
-        },
-
-        _selectedChanged: function( ){
-
-          // init threejs fun
-          if(this.selected && !this.initialized){
-
-            this.init();
-            this.initialized = true;
-
-          }
-
-          if(this.selected){
-
-            this.animate();
-
-          }
-          else{
-            window.cancelAnimationFrame(this.animationFrameID);
-          }
-
-
-        },
-
-        init: function( ){
-          this.scene = new THREE.Scene();
-
-          this.camera = new THREE.PerspectiveCamera( 75, this.$.container.clientWidth / this.$.container.clientHeight, 1, 10000 );
-          this.camera.position.z = 1000;
-
-          this.geometry = new THREE.BoxGeometry( 200, 200, 200 );
-          this.material = new THREE.MeshBasicMaterial( { color: 0xff00ff, wireframe: true } );
-
-          this.mesh = new THREE.Mesh( this.geometry, this.material );
-          this.scene.add( this.mesh );
-
-          this.renderer = new THREE.WebGLRenderer();
-          this.renderer.setSize( this.$.container.clientWidth, this.$.container.clientHeight );
-
-          this.$.container.appendChild( this.renderer.domElement );
-
-        },
-
-        animate: function( ){
-
-          this.animationFrameID = window.requestAnimationFrame( this.animate.bind(this) );
-
-          this.mesh.rotation.x += 0.01;
-          this.mesh.rotation.y += 0.02;
-
-          this.renderer.render( this.scene, this.camera );
-
-        }
-    });
-  </script>
+  <script>Polymer({is:"search-plugin-view",properties:{scene:{type:Object},camera:{type:Object},renderer:{type:Object},geometry:{type:Object},material:{type:Object},mesh:{type:Object},selected:{type:Boolean,value:!1,observer:"_selectedChanged"},initialized:{type:Boolean,value:!1},animationFrameID:{type:Number}},ready:function(){},_selectedChanged:function(){this.selected&&!this.initialized&&(this.init(),this.initialized=!0),this.selected?this.animate():window.cancelAnimationFrame(this.animationFrameID)},init:function(){this.scene=new THREE.Scene,this.camera=new THREE.PerspectiveCamera(75,this.$.container.clientWidth/this.$.container.clientHeight,1,1e4),this.camera.position.z=1e3,this.geometry=new THREE.BoxGeometry(200,200,200),this.material=new THREE.MeshBasicMaterial({color:16711935,wireframe:!0}),this.mesh=new THREE.Mesh(this.geometry,this.material),this.scene.add(this.mesh),this.renderer=new THREE.WebGLRenderer,this.renderer.setSize(this.$.container.clientWidth,this.$.container.clientHeight),this.$.container.appendChild(this.renderer.domElement)},animate:function(){this.animationFrameID=window.requestAnimationFrame(this.animate.bind(this)),this.mesh.rotation.x+=.01,this.mesh.rotation.y+=.02,this.renderer.render(this.scene,this.camera)}});</script>
 </dom-module>
+</body></html>

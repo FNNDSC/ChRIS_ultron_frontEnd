@@ -1,0 +1,51 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../chris-plugin-tree-recursive/chris-plugin-tree-recursive.html">
+
+</head><body><dom-module id="chris-plugin-tree">
+
+  <template>
+
+    <style>
+
+      :host {
+
+        display: block;
+
+        }
+
+      .plugin, .label, .children {
+
+        display: flex;
+
+      }
+
+      .plugin {
+
+        flex-direction: column
+
+      }
+
+      .children {
+
+        flex-direction: row
+
+      }
+
+      .label {
+
+        height: 50px;
+        color: red;
+        justify-content: center;
+
+      }
+
+    </style>
+
+    <chris-plugin-tree-recursive id="test" tree="{{tree}}" on-select-node="_selectNode"></chris-plugin-tree-recursive>
+
+  </template>
+
+  <script>Polymer({is:"chris-plugin-tree",properties:{list:{type:Array},tree:{type:Array,observer:"_treeChanged"},selected:{type:Object,observer:"_selectedChanged"}},observers:["_listChanged(list.splices)","_treeChanged(tree.splices)"],_listChanged:function(){this._build(this.list);var t=this.list;t.sort(this._sortByPathLength),this.selected=t[0]},_treeChanged:function(){},_build:function(t){t.sort(this._sortByPreviousId);for(var e=[],a={},i=0;i<t.length;i++){var s=t[i];if(s.data.children=[],a[s.data.id]=i,""===s.data.previous_id)s.data.path=["tree",0,"data"],e.push(s);else{var d=t[a[s.data.previous_id]].data.path;s.data.path=d.concat(["children",t[a[s.data.previous_id]].data.children.length,"data"]),t[a[s.data.previous_id]].data.children.push(s)}}this.set("tree",e),this.fire("tree-changed",this.tree)},_find:function(t){},_insert:function(t,e){},_flatten:function(){},_sortByPreviousId:function(t,e){return""===t.data.previous_id?-1:""===e.data.previous_id?1:parseInt(t.data.previous_id,10)>parseInt(e.data.previous_id,10)?1:parseInt(t.data.previous_id,10)<parseInt(e.data.previous_id,10)?-1:0},_sortByPathLength:function(t,e){return t.data.path.length<e.data.path.length?1:t.data.path.length>e.data.path.length?-1:0},_selectNode:function(t){t.preventDefault(),t.stopPropagation(),this.selected=t.detail},_selectedChanged:function(){var t=-1;this.selected&&this.selected.data&&this.selected.data.id&&(t=this.selected.data.id),this.list.map(function(e){e.data.selected=e.data.id===t,this.set(e.data.path.concat(["selected"]),e.data.selected)}.bind(this)),this.fire("select-node",this.selected)}});</script>
+</dom-module>
+</body></html>

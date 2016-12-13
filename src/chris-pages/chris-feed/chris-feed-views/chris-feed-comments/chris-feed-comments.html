@@ -1,0 +1,96 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../../../../chris-ultron.html"></head><body><dom-module id="chris-feed-comments">
+  <template>
+    <style>
+
+    .toolbar {
+
+        min-height: 48px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-wrap);
+        border-bottom: 1px solid var(--accent-color);
+
+      }
+
+      .name {
+
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+
+      }
+
+      .spacer {
+
+        @apply(--layout-flex);
+
+      }
+
+      paper-icon-button {
+
+        color: var(--secondary-text-color);
+
+      }
+
+      .content {
+
+        background-color: var(--paper-grey-50);
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
+
+      }
+
+
+    paper-card{
+
+      color: var(--primary-text-color);
+      --paper-card-header-color: var(--secondary-text-color);
+      --paper-card-background-color: var(--paper-grey-100);
+      background: var(--paper-grey-100);
+
+    }
+
+    </style>
+
+    <chris-api id="API" content-type="application/json" ,="" response="{{response}}" on-response="handleItem" error="{{error}}" on-error="handleError">
+    </chris-api>
+
+    <paper-card class="content" heading="Discussion">
+
+      <div class="card-content">
+
+        <div id="commentList" class="comment-list">
+
+          <div id="content" class="content">
+
+            
+            <template is="dom-repeat" items="[[comments.data]]">
+
+              <chris-comment comment="[[item]]"></chris-comment>
+
+            </template>
+
+            
+
+            <paper-input id="comment" label="Add a comment" on-keydown="save" char-counter="" maxlength="120">
+              <paper-icon-button suffix="" icon="icons:clear" on-tap="clear"></paper-icon-button>
+            </paper-input>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </paper-card>
+
+  </template>
+
+  <script>Polymer({is:"chris-feed-comments",properties:{comments:{type:Object,observer:"_commentsChanged"},valid:{type:Boolean}},clear:function(){this.$.comment.value=""},save:function(t){if(13===t.keyCode&&(t.stopPropagation(),t.preventDefault(),""!==this.$.comment.value)){var e={weekday:"long",year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"},i={};i.data={author:"Nicolas Rannou",color:"blue",content:this.$.comment.value,index:this.comments.length+1,date:(new Date).toLocaleTimeString("en-us",e)},i.template=this.comments.template,i.href=this.comments.href,this.push("comments.data",i),this.clear(),this.$.API.request("POST",this.comments.href,{body:i})}},handleItem:function(t){if(t.preventDefault(),t.stopPropagation(),t.detail){var e=t.detail;e.error&&e.error.code&&(this.pop("comments.data"),this.fire("notification",e.error))}},handleError:function(){},isValid:function(t){if(this.comments){var e=[];return"object"!=typeof this.comments.template&&e.push("template:Object"),"string"!=typeof this.comments.href&&e.push("href:String"),this.comments.data&&this.comments.data.constructor===Array||e.push("data:Array"),this.valid=e.length<=0,this.fire("valid-changed"),this.valid||(console.log(e),this.fire("error",e)),this.valid}},_commentsChanged:function(t){!this.isValid(this.comments)}});</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,91 @@
+<html><head><link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+
+
+
+<link rel="import" href="../../../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../../bower_components/paper-item/paper-item.html">
+
+
+<link rel="import" href="../../../../chris-api/chris-api.html">
+<link rel="import" href="../../../../chris-components/chris-parameter/chris-parameter.html">
+
+</head><body><dom-module id="chris-feed-run">
+  <template>
+    <style>
+
+      .content {
+
+        background-color: var(--paper-grey-50);
+        @apply --layout-vertical;
+        @apply --layout-wrap;
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
+
+      }
+
+
+    paper-card{
+
+      color: var(--primary-text-color);
+      --paper-card-header-color: var(--secondary-text-color);
+      --paper-card-background-color: var(--paper-grey-100);
+      background: var(--paper-grey-100);
+
+    }
+
+    .submit {
+
+        padding: 16px;
+        font-size: 18px;
+        font-weight: 400;
+        background-color: var(--accent-color);
+        color: #ffffff;
+        margin-top: 24px;
+
+      }
+
+    </style>
+
+    
+    <chris-api id="API" error="{{error}}">
+    </chris-api>
+
+    <paper-card class="content" heading="Run plugin">
+
+      <div class="card-content">
+
+        <paper-dropdown-menu id="dropdown" label="Plugin to run">
+
+          <paper-listbox class="dropdown-content" selected="{{selectedMenu}}">
+
+            <template is="dom-repeat" items="{{plugins}}">
+              <paper-item plugin="[[item]]" on-tap="_pluginSelected">{{item.data.name}} </paper-item>
+            </template>
+
+          </paper-listbox>
+
+        </paper-dropdown-menu>
+
+
+        <div>Parameters</div>
+        <template is="dom-repeat" items="{{parameters.data}}">
+          
+          <chris-parameter parameter="{{item}}" name="{{item.data.name}}" type="{{item.data.type}}" help="{{item.data.help}}" default="{{item.data.default}}" on-change-value="_changeValue"></chris-parameter>
+        </template>
+
+      </div>
+
+      <paper-button class="submit" raised="" on-tap="_start">Start plugin</paper-button>
+
+    </paper-card>
+
+  </template>
+
+  <script>Polymer({is:"chris-feed-run",properties:{plugin:{type:Object,observer:"_pluginChanged"},selectedPlugin:{type:Object,observer:"_selectedPluginChanged"},parameters:{type:Array,observer:"_parametersChanged"}},_pluginChanged:function(e){console.log(this.plugin)},_selectedPluginChanged:function(){null!==this.selectedPlugin&&this._fetchParameters()},_parametersChanged:function(){console.log(this.parameters)},_fetchParameters:function(){if(null!==this.selectedPlugin){var e={};e.auth={type:"token",token:sessionStorage.getItem("token")};var t=this.$.API.request("GET",this.selectedPlugin.links.parameters,e);t.then(this._handleParameters.bind(this))}},_handleParameters:function(e){this.set("parameters",e),this._resetParameters()},_resetParameters:function(){for(var e=0;e<this.parameters.data.length;e++)this.parameters.data[e].data.value=this.parameters.data[e].data.default},_pluginSelected:function(e){this.selectedPlugin=e.currentTarget.plugin},_changeValue:function(e){console.log(e),e.currentTarget.parameter.data.value=e.detail},_start:function(){var e={};e.auth={type:"token",token:sessionStorage.getItem("token")},e.body={},e.body.template={},e.body.template.data=[],e.body.template.data.push({name:"previous",value:""}),e.body.data={previous:this.plugin.data.id};for(var t=0;t<this.parameters.data.length;t++){var a=this.parameters.data[t].data.name,n=this.parameters.data[t].data.value,s={name:a,value:""};e.body.template.data.push(s),e.body.data[a]=n}var r=this.$.API.request("POST",this.selectedPlugin.links.instances,e);r.then(this.handleRunPluginDS.bind(this)).catch(this.handleRunError.bind(this))},handleRunPluginDS:function(e){this.fire("fetch-plugin",e.data[0]),this.set("selectedPlugin",null),this.set("parameters",[]),this.selectedMenu=null},handleRunError:function(e){console.log(e)}});</script>
+</dom-module>
+</body></html>

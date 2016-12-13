@@ -15,7 +15,12 @@
         overflow: hidden;
       }
 
+      :host([hidden]) {
+        display: none !important;
+      }
+
       #progressContainer {
+        @apply(--paper-progress-container);
         position: relative;
       }
 
@@ -83,8 +88,8 @@
       :host(:not([disabled])) #primaryProgress.indeterminate {
         -webkit-transform-origin: right center;
         transform-origin: right center;
-        -webkit-animation: indeterminate-bar 2s linear infinite;
-        animation: indeterminate-bar 2s linear infinite;
+        -webkit-animation: indeterminate-bar var(--paper-progress-indeterminate-cycle-duration, 2s) linear infinite;
+        animation: indeterminate-bar var(--paper-progress-indeterminate-cycle-duration, 2s) linear infinite;
       }
 
       :host(:not([disabled])) #primaryProgress.indeterminate::after {
@@ -92,8 +97,8 @@
         -webkit-transform-origin: center center;
         transform-origin: center center;
 
-        -webkit-animation: indeterminate-splitter 2s linear infinite;
-        animation: indeterminate-splitter 2s linear infinite;
+        -webkit-animation: indeterminate-splitter var(--paper-progress-indeterminate-cycle-duration, 2s) linear infinite;
+        animation: indeterminate-splitter var(--paper-progress-indeterminate-cycle-duration, 2s) linear infinite;
       }
 
       @-webkit-keyframes indeterminate-bar {

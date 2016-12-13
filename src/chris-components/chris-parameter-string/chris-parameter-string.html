@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+
+</head><body><dom-module id="chris-parameter-string">
+
+  <template>
+
+    <paper-input value="{{value}}" label="[[label]]"></paper-input>
+
+  </template>
+
+  <script>Polymer({is:"chris-parameter-string",properties:{value:{type:String,observer:"_valueChanged"},label:{type:String}},_valueChanged:function(){this.fire("change-value",this.value)}});</script>
+</dom-module>
+</body></html>

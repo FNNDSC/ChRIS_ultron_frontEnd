@@ -1,0 +1,197 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../../../../chris-ultron.html"></head><body><dom-module id="chris-feed-about">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .content {
+
+        background-color: var(--paper-grey-50);
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding: 24px;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 24px;
+        margin-bottom: 100px;
+
+      }
+
+
+      paper-card{
+        color: var(--primary-text-color);
+        --paper-card-header-color: var(--secondary-text-color);
+        --paper-card-background-color: var(--paper-grey-100);
+        background: var(--paper-grey-100);
+      }
+
+      /*from https://github.com/robdodson/contacts-app*/
+
+      .group {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 8px 0;
+        position: relative;
+      }
+
+      .item {
+        padding: 10px 72px;
+        color: rgb(102, 102, 102);
+      }
+
+      .item iron-icon {
+        position: absolute;
+        left: 16px;
+        top: 24px;
+        color: rgb(33, 33, 33);
+      }
+
+      .double-line-1 {
+        margin-top: 5px;
+        margin-bottom: 6px;
+      }
+
+      .double-line-2 {
+        font-size: 13px;
+        line-height: 13px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .border-wrap{
+        font-size: 64px;
+        text-align: center;
+        position: relative;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        margin: auto;
+        margin-top: 32px;
+        margin-bottom: -20px;
+        background: #FFFFFF;
+      }
+
+      .check{
+        display: flex;
+        position: absolute;
+        right: 20px;
+        bottom: 0;
+        margin-bottom: -10px;
+      }
+
+      .center {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        @apply(--layout-center-justified);
+      }
+
+      .colored{
+        position:relative;
+      }
+
+      .done{
+
+        background-color: var(--paper-light-green-500);
+
+      }
+
+      .running{
+
+        background-color: var(--paper-light-blue-500);
+
+      }
+
+      .error{
+
+        background-color: var(--paper-red-500);
+
+      }
+
+      .fab{
+
+        margin: 4px;
+
+      }
+
+      paper-swatch-picker {
+
+        margin: 0 10px;
+
+      }
+
+      #favorite[icon="icons:favorite"]{
+
+        background-color: var(--accent-color);
+
+      }
+
+      #favorite[icon="icons:favorite-border"]{
+
+        background-color: var(--disabled-text-color);
+
+      }
+
+    </style>
+
+    <paper-card class="content">
+      <div class="center colored" style$="[[_setBackgroundColor(feed.data.color)]]">
+        <div class="border-wrap">
+          [[feed.data.letter]]
+        </div>
+        
+      </div>
+
+      <div class="card-content">
+
+        
+
+        
+        <div class="group">
+          <div class="item">
+            <div class="double-line-1">[[feed.data.name]]</div>
+            <div class="double-line-2">Name</div>
+          </div>
+          
+          <div class="item">
+            <iron-icon icon="icons:assignment-ind"></iron-icon>
+            <div class="double-line-1">[[feed.data.date]]</div>
+            <div class="double-line-2">Last modified</div>
+          </div>
+        </div>
+
+        
+      
+
+      
+      <div class="group">
+        <div class="item">
+          <iron-icon icon$="[[_setFavoriteIcon(feed.data.favorite)]]"></iron-icon>
+          <paper-toggle-button class="double-line-1" checked="{{feed.data.favorite}}"></paper-toggle-button>
+
+          <div class="double-line-2">Favorite</div>
+        </div>
+      </div>
+
+      
+
+      
+      <div class="group">
+        <div class="item">
+          <iron-icon icon="icons:label"></iron-icon>
+          <div class="double-line-1">
+            <template is="dom-repeat" items="[[feed.data.tags]]">
+              <span class="tag" style$="{{_setTagStyle(item.color)}}">#<span>{{item.name}}</span></span>
+            </template>
+
+          </div>
+
+            
+
+          <div class="double-line-2">Labels ([[feed.data.tags.length]])</div>
+        </div>
+      </div>
+    
+
+  </div></paper-card></template>
+
+  <script>!function(){"use strict";Polymer({is:"chris-feed-about",properties:{feed:{type:Object}},_setBackgroundColor:function(r){return"background-color: "+r+";"},_setColor:function(r){return"color: "+r+";"},_setStatusIcon:function(r){var o="icons:";return o+="running"===r?"schedule":"error"===r?"clear":"done"},_setFavoriteIcon:function(r){var o="icons:";return o+=r?"favorite":"favorite-border"},_setTagStyle:function(r){return"color: "+r+";"}})}();</script>
+</dom-module></body></html>

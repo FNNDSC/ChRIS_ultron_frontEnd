@@ -1,0 +1,391 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../iron-range-behavior/iron-range-behavior.html">
+<link rel="import" href="../paper-behaviors/paper-inky-focus-behavior.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-progress/paper-progress.html">
+<link rel="import" href="../paper-styles/color.html">
+
+
+
+</head><body><dom-module id="paper-range-slider">
+    <template>
+        <style>
+            /* local styles go here */
+            :host {
+              --paper-range-slider-width: 200px;
+              /*width: var(--paper-range-slider-width);*/
+              /*display: inline-block;*/
+
+              @apply(--layout);
+              @apply(--layout-justified);
+              @apply(--layout-center);
+
+              --paper-range-slider-lower-color:             var(--paper-grey-400);
+              --paper-range-slider-active-color:            var(--primary-color);
+              --paper-range-slider-higher-color:            var(--paper-grey-400);
+              --paper-range-slider-knob-color:              var(--primary-color);
+              --paper-range-slider-pin-color:               var(--primary-color);
+              --paper-range-slider-pin-start-color:         var(--paper-grey-400);
+              --paper-range-slider-knob-start-color:        transparent;
+              --paper-range-slider-knob-start-border-color: var(--paper-grey-400);
+            }
+
+            #sliderOuterDiv_0 {
+              display: inline-block;
+              width: var(--paper-range-slider-width);
+            }
+
+            #sliderOuterDiv_1 {
+              position: relative;
+              height: calc(30px + var(--paper-single-range-slider-height, 2px));
+              margin-left: 0;
+              margin-right: 0;
+              margin-top: 0;
+              margin-bottom: 0;
+            }
+
+            /* mimic the size of the #sliderKnob of paper-single-range-slider */
+            .sliderKnobMinMax {
+              position: absolute;
+              left: 0;
+              top: 0;
+              margin-left: calc(-15px - var(--paper-single-range-slider-height, 2px)/2);
+              width: calc(30px + var(--paper-single-range-slider-height, 2px));
+              height: calc(30px + var(--paper-single-range-slider-height, 2px));
+              /*background: #2196F3; opacity: 0.3;*/
+            }
+
+            .divSpanWidth {
+                position:absolute;
+                width:100%;
+                display:block;
+                top:0px;
+            }
+
+            #sliderMax {
+                --paper-single-range-slider-bar-color:               transparent;
+                --paper-single-range-slider-knob-color:              var(--paper-range-slider-knob-color);
+                --paper-single-range-slider-pin-color:               var(--paper-range-slider-pin-color);
+                --paper-single-range-slider-active-color:            var(--paper-range-slider-active-color);
+                --paper-single-range-slider-secondary-color:         var(--paper-range-slider-higher-color);
+                --paper-single-range-slider-pin-start-color:         var(--paper-range-slider-pin-start-color);
+                --paper-single-range-slider-knob-start-color:        var(--paper-range-slider-knob-start-color);
+                --paper-single-range-slider-knob-start-border-color: var(--paper-range-slider-knob-start-border-color);
+            }
+            #sliderMin {
+                --paper-single-range-slider-active-color:            var(--paper-range-slider-lower-color);
+                --paper-single-range-slider-secondary-color:         transparent;
+                --paper-single-range-slider-knob-color:              var(--paper-range-slider-knob-color);
+                --paper-single-range-slider-pin-color:               var(--paper-range-slider-pin-color);
+                --paper-single-range-slider-pin-start-color:         var(--paper-range-slider-pin-start-color);
+                --paper-single-range-slider-knob-start-color:        var(--paper-range-slider-knob-start-color);
+                --paper-single-range-slider-knob-start-border-color: var(--paper-range-slider-knob-start-border-color);
+            }
+        </style>
+
+        <div id="sliderOuterDiv_0" style="[[style]]">
+            <div id="sliderOuterDiv_1">
+                
+              <div id="backDiv" class="divSpanWidth" on-down="_backDivDown" on-tap="_backDivTap" on-up="_backDivUp" on-track="_backDivOnTrack" on-transitionend="_backDivTransEnd">
+                   
+                  
+                  <div id="backDivInner_0" style="line-height:200%"><br></div>
+              </div>
+
+              
+              <div id="sliderKnobMin" class="sliderKnobMinMax" on-down="_backDivDown" on-up="_backDivUp" on-track="_sliderKnobMinOnTrack"></div>
+              <div id="sliderKnobMax" class="sliderKnobMinMax" on-down="_backDivDown" on-up="_backDivUp" on-track="_sliderKnobMaxOnTrack"></div>
+
+              <div class="divSpanWidth" style="pointer-events: none">
+                <paper-single-range-slider id="sliderMax" disabled$="[[disabled]]" on-down="_sliderMaxDown" on-up="_sliderMaxUp" step="[[step]]" min="[[min]]" max="[[max]]" value="[[valueMax]]" secondary-progress="[[max]]" style="width:100%">
+                </paper-single-range-slider>
+              </div>
+
+              <div class="divSpanWidth" style="pointer-events: none">
+                <paper-single-range-slider id="sliderMin" disabled$="[[disabled]]" on-down="_sliderMinDown" on-up="_sliderMinUp" noink="" step="[[step]]" min="[[min]]" max="[[max]]" value="[[valueMin]]" style="width:100%">
+                </paper-single-range-slider>
+              </div>
+
+              
+              <div id="backDivInner_1" style="line-height:100%"><br></div>
+            </div>
+        </div>
+    </template>
+
+    <script>Polymer({is:"paper-range-slider",behaviors:[Polymer.IronRangeBehavior],properties:{sliderWidth:{type:String,value:"",notify:!0,reflectToAttribute:!0},style:{type:String,value:"",notify:!0,reflectToAttribute:!0},min:{type:Number,value:0,notify:!0,reflectToAttribute:!0},max:{type:Number,value:100,notify:!0,reflectToAttribute:!0},valueMin:{type:Number,value:0,notify:!0,reflectToAttribute:!0},valueMax:{type:Number,value:100,notify:!0,reflectToAttribute:!0},step:{type:Number,value:1,notify:!0,reflectToAttribute:!0},valueDiffMin:{type:Number,value:0,notify:!0,reflectToAttribute:!0},valueDiffMax:{type:Number,value:0,notify:!0,reflectToAttribute:!0},alwaysShowPin:{type:Boolean,value:!1,notify:!0},pin:{type:Boolean,value:!1,notify:!0},snaps:{type:Boolean,value:!1,notify:!0},disabled:{type:Boolean,value:!1,notify:!0},singleSlider:{type:Boolean,value:!1,notify:!0},transDuration:{type:Number,value:250},tapValueExtend:{type:Boolean,value:!0,notify:!0},tapValueReduce:{type:Boolean,value:!1,notify:!0},tapValueMove:{type:Boolean,value:!1,notify:!0}},ready:function(){function i(i){return void 0!=i&&null!=i}i(this._nInitTries)||(this._nInitTries=0);var t=this.$$("#sliderMax").$$("#sliderContainer");if(i(t)&&(t=t.offsetWidth>0),i(t)&&(t=this.$$("#sliderMin").$$("#sliderContainer")),i(t)&&(t=t.offsetWidth>0),i(t))this._renderedReady();else{if(this._nInitTries<1e3){var e=this;setTimeout(function(){e.ready()},10)}else console.error("could not properly initialize the underlying paper-single-range-slider elements ...");this._nInitTries++}},_renderedReady:function(){this.init(),this._setPadding();var i=this;this.$$("#sliderMin").addEventListener("immediate-value-change",function(t){i._setValueMinMax(i._getValuesMinMax(this.immediateValue,null)),i.$.sliderMin._expandKnob(),i.$.sliderMax._expandKnob()}),this.$$("#sliderMax").addEventListener("immediate-value-change",function(t){i._setValueMinMax(i._getValuesMinMax(null,this.immediateValue))}),this.$$("#sliderMin").addEventListener("change",function(t){i._setValueMinMax(i._getValuesMinMax(this.immediateValue,null)),i.alwaysShowPin&&i.$.sliderMin._expandKnob()}),this.$$("#sliderMax").addEventListener("change",function(t){i._setValueMinMax(i._getValuesMinMax(null,this.immediateValue)),i.alwaysShowPin&&i.$.sliderMax._expandKnob()})},_setPadding:function(){var i=document.createElement("div");i.setAttribute("style","position:absolute; top:0px; opacity:0;"),i.innerHTML="invisibleText",document.body.insertBefore(i,document.body.children[0]);var t=i.offsetHeight/2;this.style.paddingTop=t+"px",this.style.paddingBottom=t+"px",i.parentNode.removeChild(i)},_setValueDiff:function(){this._valueDiffMax=Math.max(this.valueDiffMax,0),this._valueDiffMin=Math.max(this.valueDiffMin,0)},_getValuesMinMax:function(i,t){var e=null!=i&&i>=this.min&&i<=this.max,s=null!=t&&t>=this.min&&t<=this.max;if(!e&&!s)return[this.valueMin,this.valueMax];var n=e?i:this.valueMin,a=s?t:this.valueMax;n=Math.min(Math.max(n,this.min),this.max),a=Math.min(Math.max(a,this.min),this.max);var l=a-n;return e?l<this._valueDiffMin?(a=Math.min(this.max,n+this._valueDiffMin),l=a-n,l<this._valueDiffMin&&(n=a-this._valueDiffMin)):l>this._valueDiffMax&&this._valueDiffMax>0&&(a=n+this._valueDiffMax):l<this._valueDiffMin?(n=Math.max(this.min,a-this._valueDiffMin),l=a-n,l<this._valueDiffMin&&(a=n+this._valueDiffMin)):l>this._valueDiffMax&&this._valueDiffMax>0&&(n=a-this._valueDiffMax),[n,a]},_setValueMin:function(i){i=Math.max(i,this.min),this.$$("#sliderMin").value=i,this.valueMin=i},_setValueMax:function(i){i=Math.min(i,this.max),this.$$("#sliderMax").value=i,this.valueMax=i},_setValueMinMax:function(i){this._setValueMin(i[0]),this._setValueMax(i[1]),this._updateSliderKnobMinMax(),this.updateValues()},_setValues:function(i,t){null!=i&&(i<this.min||i>this.max)&&(i=null),null!=t&&(t<this.min||t>this.max)&&(t=null),null!=i&&null!=t&&(i=Math.min(i,t)),this._setValueMinMax(this._getValuesMinMax(i,t))},_updateSliderKnobMinMax:function(){var i=this.$$("#sliderMax").$$("#sliderContainer").offsetWidth,t=i*(this.valueMin-this.min)/(this.max-this.min)+.5*this.$$("#sliderKnobMin").offsetWidth,e=i*(this.valueMax-this.min)/(this.max-this.min)+.5*this.$$("#sliderKnobMax").offsetWidth;this.$$("#sliderKnobMin").style.left=t+"px",this.$$("#sliderKnobMax").style.left=e+"px"},_backDivOnTrack:function(i){switch(i.stopPropagation(),i.detail.state){case"start":this._backDivTrackStart(i);break;case"track":this._backDivTrackDuring(i);break;case"end":this._backDivTrackEnd()}},_backDivTrackStart:function(i){},_backDivTrackDuring:function(i){this._x1_Min=this._x0_Min+i.detail.dx;var t=this._calcStep(this._getRatioPos(this.$$("#sliderMin"),this._x1_Min/this._xWidth));this._x1_Max=this._x0_Max+i.detail.dx;var e=this._calcStep(this._getRatioPos(this.$$("#sliderMax"),this._x1_Max/this._xWidth));t>=this.min&&e<=this.max&&this._setValuesWithCurrentDiff(t,e,!1)},_setValuesWithCurrentDiff:function(i,t,e){var s=this._valueDiffMin,n=this._valueDiffMax;this._valueDiffMin=this.valueMax-this.valueMin,this._valueDiffMax=this.valueMax-this.valueMin,e?this.setValues(i,t):this._setValues(i,t),this._valueDiffMin=s,this._valueDiffMax=n},_backDivTrackEnd:function(){},_sliderKnobMinOnTrack:function(i){this._x1_Min=this._x0_Min+i.detail.dx;var t=this._calcStep(this._getRatioPos(this.$$("#sliderMin"),this._x1_Min/this._xWidth));this._setValues(t,null)},_sliderKnobMaxOnTrack:function(i){this._x1_Max=this._x0_Max+i.detail.dx;var t=this._calcStep(this._getRatioPos(this.$$("#sliderMax"),this._x1_Max/this._xWidth));this._setValues(null,t)},_sliderMinDown:function(){this.$$("#sliderMax")._expandKnob()},_sliderMaxDown:function(i){this.singleSlider?this._setValues(null,this._getEventValue(i)):this.$$("#sliderMin")._expandKnob()},_sliderMinUp:function(){this.alwaysShowPin?this.$$("#sliderMin")._expandKnob():this.$$("#sliderMax")._resetKnob()},_sliderMaxUp:function(){this.alwaysShowPin?this.$$("#sliderMax")._expandKnob():(this.$$("#sliderMin")._resetKnob(),this.singleSlider&&this.$$("#sliderMax")._resetKnob())},_getEventValue:function(i){var t=this.$$("#sliderMax").$$("#sliderContainer").offsetWidth,e=this.$$("#sliderMax").$$("#sliderContainer").getBoundingClientRect(),s=(i.detail.x-e.left)/t,n=this.min+s*(this.max-this.min);return n},_backDivTap:function(i){this._setValueNow=function(i,t){this.tapValueMove?this._setValuesWithCurrentDiff(i,t,!0):this.setValues(i,t)};var t=this._getEventValue(i);if(t>this.valueMin&&t<this.valueMax){if(this.tapValueReduce){var e=t<this.valueMin+(this.valueMax-this.valueMin)/2;e?this._setValueNow(t,null):this._setValueNow(null,t)}}else(this.tapValueExtend||this.tapValueMove)&&(t<this.valueMin&&this._setValueNow(t,null),t>this.valueMax&&this._setValueNow(null,t))},_backDivDown:function(i){this._sliderMinDown(),this._sliderMaxDown(),this._xWidth=this.$$("#sliderMin").$$("#sliderBar").offsetWidth,this._x0_Min=this.$$("#sliderMin").ratio*this._xWidth,this._x0_Max=this.$$("#sliderMax").ratio*this._xWidth},_backDivUp:function(){this._sliderMinUp(),this._sliderMaxUp()},_backDivTransEnd:function(i){},_getRatioPos:function(i,t){return Math.max(i.min,Math.min(i.max,(i.max-i.min)*t+i.min))},init:function(){this.setSingleSlider(this.singleSlider),this.setDisabled(this.disabled),this.alwaysShowPin&&(this.pin=!0),this.$$("#sliderMin").pin=this.pin,this.$$("#sliderMax").pin=this.pin,this.$$("#sliderMin").snaps=this.snaps,this.$$("#sliderMax").snaps=this.snaps,""!=this.sliderWidth&&(this.customStyle["--paper-range-slider-width"]=this.sliderWidth,this.updateStyles()),this.$$("#sliderMin").$$("#sliderBar").$$("#progressContainer").style.background="transparent",this._prevUpdateValues=[this.min,this.max],this._setValueDiff(),this._setValueMinMax(this._getValuesMinMax(this.valueMin,this.valueMax)),this.alwaysShowPin&&(this.$$("#sliderMin")._expandKnob(),this.$$("#sliderMax")._expandKnob())},setValues:function(i,t){this.$$("#sliderMin")._setTransiting(!0),this.$$("#sliderMax")._setTransiting(!0),this._setValues(i,t);var e=this;setTimeout(function(){e.$.sliderMin._setTransiting(!1),e.$.sliderMax._setTransiting(!1)},e.transDuration)},updateValues:function(){this._prevUpdateValues[0]==this.valueMin&&this._prevUpdateValues[1]==this.valueMax||(this._prevUpdateValues=[this.valueMin,this.valueMax],this.async(function(){this.fire("updateValues")}))},setMin:function(i){this.max<i&&(this.max=i),this.min=i,this._prevUpdateValues=[this.min,this.max],this.valueMin<this.min?this._setValues(this.min,null):this._updateSliderKnobMinMax()},setMax:function(i){this.min>i&&(this.min=i),this.max=i,this._prevUpdateValues=[this.min,this.max],this.valueMax>this.max?this._setValues(null,this.max):this._updateSliderKnobMinMax()},setStep:function(i){this.step=i},setValueDiffMin:function(i){this._valueDiffMin=i},setValueDiffMax:function(i){this._valueDiffMax=i},setTapValueExtend:function(i){this.tapValueExtend=i},setTapValueReduce:function(i){this.tapValueReduce=i},setTapValueMove:function(i){this.tapValueMove=i},setDisabled:function(i){this.disabled=i;var t=i?"none":"auto";this.$$("#sliderMax").$$("#sliderKnobInner").style.pointerEvents=t,this.$$("#sliderMin").$$("#sliderKnobInner").style.pointerEvents=t,this.$$("#sliderOuterDiv_1").style.pointerEvents=t,this.$$("#sliderKnobMin").style.pointerEvents=t,this.$$("#sliderKnobMax").style.pointerEvents=t},setSingleSlider:function(i){this.singleSlider=i,i?(this.$$("#backDiv").style.display="none",this.$$("#sliderMax").style.pointerEvents="auto",this.$$("#sliderMax").style.display="",this.$$("#sliderMin").style.display="none",this.$$("#sliderKnobMin").style.pointerEvents="none",this.$$("#sliderKnobMax").style.pointerEvents="none"):(this.$$("#backDiv").style.display="block",this.$$("#sliderMax").style.pointerEvents="none",this.$$("#sliderMax").style.display="",this.$$("#sliderMin").style.display="",this.$$("#sliderKnobMin").style.pointerEvents="auto",this.$$("#sliderKnobMax").style.pointerEvents="auto"),this.$$("#sliderMax").$$("#sliderContainer").style.pointerEvents=this.singleSlider?"auto":"none",this.$$("#sliderMin").$$("#sliderContainer").style.pointerEvents="none"}});</script>
+</dom-module>
+
+
+
+
+<dom-module id="paper-single-range-slider">
+  <template strip-whitespace="">
+    <style>
+      :host {
+        @apply(--layout);
+        @apply(--layout-justified);
+        @apply(--layout-center);
+        width: 200px;
+        cursor: default;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        --paper-progress-active-color: var(--paper-single-range-slider-active-color, --google-blue-700);
+        --paper-progress-secondary-color: var(--paper-single-range-slider-secondary-color, --google-blue-300);
+        --paper-progress-disabled-active-color: var(--paper-single-range-slider-disabled-active-color, --paper-grey-400);
+        --paper-progress-disabled-secondary-color: var(--paper-single-range-slider-disabled-secondary-color, --paper-grey-400);
+      }
+
+      /* focus shows the ripple */
+      :host(:focus) {
+        outline: none;
+      }
+
+      #sliderContainer {
+        position: relative;
+        width: 100%;
+        height: calc(30px + var(--paper-single-range-slider-height, 2px));
+        margin-left: calc(15px + var(--paper-single-range-slider-height, 2px)/2);
+        margin-right: calc(15px + var(--paper-single-range-slider-height, 2px)/2);
+      }
+
+      #sliderContainer:focus {
+        outline: 0;
+      }
+
+      #sliderContainer.editable {
+        margin-top: 12px;
+        margin-bottom: 12px;
+      }
+
+      .bar-container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+      }
+
+      .ring > .bar-container {
+        left: calc(5px + var(--paper-single-range-slider-height, 2px)/2);
+        transition: left 0.18s ease;
+      }
+
+      .ring.expand.dragging > .bar-container {
+        transition: none;
+      }
+
+      .ring.expand:not(.pin) > .bar-container {
+        left: calc(8px + var(--paper-single-range-slider-height, 2px)/2);
+      }
+
+      #sliderBar {
+        padding: 15px 0;
+        width: 100%;
+        background-color: var(--paper-single-range-slider-bar-color, transparent);
+        --paper-progress-container-color: var(--paper-single-range-slider-container-color, --paper-grey-400);
+        --paper-progress-height: var(--paper-single-range-slider-height, 2px);
+      }
+
+      .slider-markers {
+        position: absolute;
+        top: calc(14px + var(--paper-single-range-slider-height,2px)/2);
+        height: var(--paper-single-range-slider-height, 2px);
+        left: 0;
+        right: -1px;
+        box-sizing: border-box;
+        pointer-events: none;
+        @apply(--layout-horizontal);
+      }
+
+      .slider-marker {
+        @apply(--layout-flex);
+      }
+      .slider-markers::after,
+      .slider-marker::after {
+        content: "";
+        display: block;
+        margin-left: -1px;
+        width: 2px;
+        height: 2px;
+        border-radius: 50%;
+        background-color: black;
+      }
+
+      #sliderKnob {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin-left: calc(-15px - var(--paper-single-range-slider-height, 2px)/2);
+        width: calc(30px + var(--paper-single-range-slider-height, 2px));
+        height: calc(30px + var(--paper-single-range-slider-height, 2px));
+
+        /*background: #2196F3;*/
+        
+      }
+
+      .transiting > #sliderKnob {
+        transition: left 0.08s ease;
+      }
+
+      #sliderKnob:focus {
+        outline: none;
+      }
+
+      #sliderKnob.dragging {
+        transition: none;
+      }
+
+      .snaps > #sliderKnob.dragging {
+        transition: -webkit-transform 0.08s ease;
+        transition: transform 0.08s ease;
+      }
+
+      #sliderKnobInner {
+        margin: 10px;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+        background-color: var(--paper-single-range-slider-knob-color, --google-blue-700);
+        border: 2px solid var(--paper-single-range-slider-knob-color, --google-blue-700);
+        border-radius: 50%;
+        /*opacity:.1;*/
+
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+
+        transition-property: -webkit-transform, background-color, border;
+        transition-property: transform, background-color, border;
+        transition-duration: 0.18s;
+        transition-timing-function: ease;
+      }
+
+      .expand:not(.pin) > #sliderKnob > #sliderKnobInner {
+        -webkit-transform: scale(1.5);
+        transform: scale(1.5);
+      }
+
+      .ring > #sliderKnob > #sliderKnobInner {
+        background-color: var(--paper-single-range-slider-knob-start-color, transparent);
+        border: 2px solid var(--paper-single-range-slider-knob-start-border-color, --paper-grey-400);
+      }
+
+      #sliderKnobInner::before {
+        background-color: var(--paper-single-range-slider-pin-color, --google-blue-700);
+      }
+
+      .pin > #sliderKnob > #sliderKnobInner::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        margin-left: -13px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50% 50% 50% 0;
+
+        -webkit-transform: rotate(-45deg) scale(0) translate(0);
+        transform: rotate(-45deg) scale(0) translate(0);
+      }
+
+      #sliderKnobInner::before,
+      #sliderKnobInner::after {
+        transition: -webkit-transform .18s ease, background-color .18s ease;
+        transition: transform .18s ease, background-color .18s ease;
+      }
+
+      .pin.ring > #sliderKnob > #sliderKnobInner::before {
+        background-color: var(--paper-single-range-slider-pin-start-color, --paper-grey-400);
+      }
+
+      .pin.expand > #sliderKnob > #sliderKnobInner::before {
+        -webkit-transform: rotate(-45deg) scale(1) translate(17px, -17px);
+        transform: rotate(-45deg) scale(1) translate(17px, -17px);
+      }
+
+      .pin > #sliderKnob > #sliderKnobInner::after {
+        content: attr(value);
+        position: absolute;
+        top: 0;
+        left: 50%;
+        margin-left: -16px;
+        width: 32px;
+        height: 26px;
+        text-align: center;
+        color: var(--paper-single-range-slider-font-color, #fff);
+        font-size: 10px;
+
+        -webkit-transform: scale(0) translate(0);
+        transform: scale(0) translate(0);
+      }
+
+      .pin.expand > #sliderKnob > #sliderKnobInner::after {
+        -webkit-transform: scale(1) translate(0, -17px);
+        transform: scale(1) translate(0, -17px);
+      }
+
+      /* paper-input */
+      .slider-input {
+        width: 50px;
+        overflow: hidden;
+        --paper-input-container-input: {
+          text-align: center;
+        };
+        @apply(--paper-single-range-slider-input);
+      }
+
+      /* disabled state */
+      #sliderContainer.disabled {
+        pointer-events: none;
+      }
+
+      .disabled > #sliderKnob > #sliderKnobInner {
+        background-color: var(--paper-single-range-slider-disabled-knob-color, --paper-grey-400);
+        border: 2px solid var(--paper-single-range-slider-disabled-knob-color, --paper-grey-400);
+        -webkit-transform: scale3d(0.75, 0.75, 1);
+        transform: scale3d(0.75, 0.75, 1);
+      }
+
+      .disabled.ring > #sliderKnob > #sliderKnobInner {
+        background-color: var(--paper-single-range-slider-knob-start-color, transparent);
+        border: 2px solid var(--paper-single-range-slider-knob-start-border-color, --paper-grey-400);
+      }
+
+      paper-ripple {
+        color: var(--paper-single-range-slider-knob-color, --google-blue-700);
+      }
+    </style>
+
+    <div id="sliderContainer" class$="[[_getClassNames(disabled, pin, snaps, immediateValue, min, expand, dragging, transiting, editable)]]">
+      <div class="bar-container">
+        <paper-progress disabled$="[[disabled]]" id="sliderBar" aria-hidden="true" min="[[min]]" max="[[max]]" step="[[step]]" value="[[immediateValue]]" secondary-progress="[[secondaryProgress]]" on-down="_bardown" on-up="_resetKnob" on-track="_onTrack">
+        </paper-progress>
+      </div>
+
+      <template is="dom-if" if="[[snaps]]">
+        <div class="slider-markers">
+          <template is="dom-repeat" items="[[markers]]">
+            <div class="slider-marker"></div>
+          </template>
+        </div>
+      </template>
+
+      <div id="sliderKnob" on-down="_knobdown" on-up="_resetKnob" on-track="_onTrack" on-transitionend="_knobTransitionEnd">
+          <div id="sliderKnobInner" value$="[[immediateValue]]"></div>
+      </div>
+    </div>
+
+    <template is="dom-if" if="[[editable]]">
+      <paper-input id="input" type="number" step="[[step]]" min="[[min]]" max="[[max]]" class="slider-input" disabled$="[[disabled]]" value="[[immediateValue]]" on-change="_changeValue" on-keydown="_inputKeyDown" no-label-float="">
+      </paper-input>
+    </template>
+  </template>
+
+  <script>Polymer({is:"paper-single-range-slider",behaviors:[Polymer.IronA11yKeysBehavior,Polymer.IronFormElementBehavior,Polymer.PaperInkyFocusBehavior,Polymer.IronRangeBehavior],properties:{snaps:{type:Boolean,value:!1,notify:!0},pin:{type:Boolean,value:!1,notify:!0},secondaryProgress:{type:Number,value:0,notify:!0,observer:"_secondaryProgressChanged"},editable:{type:Boolean,value:!1},immediateValue:{type:Number,value:0,readOnly:!0,notify:!0},maxMarkers:{type:Number,value:0,notify:!0},expand:{type:Boolean,value:!1,readOnly:!0},dragging:{type:Boolean,value:!1,readOnly:!0},transiting:{type:Boolean,value:!1,readOnly:!0},markers:{type:Array,readOnly:!0,value:[]}},observers:["_updateKnob(value, min, max, snaps, step)","_valueChanged(value)","_immediateValueChanged(immediateValue)","_updateMarkers(maxMarkers, min, max, snaps)"],hostAttributes:{role:"slider",tabindex:0},keyBindings:{"left down pagedown home":"_decrementKey","right up pageup end":"_incrementKey"},increment:function(){this.value=this._clampValue(this.value+this.step)},decrement:function(){this.value=this._clampValue(this.value-this.step)},_updateKnob:function(t,e,i,s,a){this.setAttribute("aria-valuemin",e),this.setAttribute("aria-valuemax",i),this.setAttribute("aria-valuenow",t),this._positionKnob(this._calcRatio(t))},_valueChanged:function(){this.fire("value-change")},_immediateValueChanged:function(){this.dragging?this.fire("immediate-value-change"):this.value=this.immediateValue},_secondaryProgressChanged:function(){this.secondaryProgress=this._clampValue(this.secondaryProgress)},_expandKnob:function(){this._setExpand(!0)},_resetKnob:function(){this.cancelDebouncer("expandKnob"),this._setExpand(!1)},_positionKnob:function(t){this._setImmediateValue(this._calcStep(this._calcKnobPosition(t))),this._setRatio(this._calcRatio(this.immediateValue)),this.$.sliderKnob.style.left=100*this.ratio+"%",this.dragging&&(this._knobstartx=this.ratio*this._w,this.translate3d(0,0,0,this.$.sliderKnob))},_calcKnobPosition:function(t){return(this.max-this.min)*t+this.min},_onTrack:function(t){switch(t.stopPropagation(),t.detail.state){case"start":this._trackStart(t);break;case"track":this._trackX(t);break;case"end":this._trackEnd()}},_trackStart:function(t){this._w=this.$.sliderBar.offsetWidth,this._x=this.ratio*this._w,this._startx=this._x,this._knobstartx=this._startx,this._minx=-this._startx,this._maxx=this._w-this._startx,this.$.sliderKnob.classList.add("dragging"),this._setDragging(!0)},_trackX:function(t){this.dragging||this._trackStart(t);var e=Math.min(this._maxx,Math.max(this._minx,t.detail.dx));this._x=this._startx+e;var i=this._calcStep(this._calcKnobPosition(this._x/this._w));this._setImmediateValue(i);var s=this._calcRatio(this.immediateValue)*this._w-this._knobstartx;this.translate3d(s+"px",0,0,this.$.sliderKnob)},_trackEnd:function(){var t=this.$.sliderKnob.style;this.$.sliderKnob.classList.remove("dragging"),this._setDragging(!1),this._resetKnob(),this.value=this.immediateValue,t.transform=t.webkitTransform="",this.fire("change")},_knobdown:function(t){this._expandKnob(),t.preventDefault(),this.focus()},_bardown:function(t){this._w=this.$.sliderBar.offsetWidth;var e=this.$.sliderBar.getBoundingClientRect(),i=(t.detail.x-e.left)/this._w,s=this.ratio;this._setTransiting(!0),this._positionKnob(i),this.debounce("expandKnob",this._expandKnob,60),s===this.ratio&&this._setTransiting(!1),this.async(function(){this.fire("change")}),t.preventDefault(),this.focus()},_knobTransitionEnd:function(t){t.target===this.$.sliderKnob&&this._setTransiting(!1)},_updateMarkers:function(t,e,i,s){s||this._setMarkers([]);var a=Math.round((i-e)/this.step);a>t&&(a=t),this._setMarkers(new Array(a))},_mergeClasses:function(t){return Object.keys(t).filter(function(e){return t[e]}).join(" ")},_getClassNames:function(){return this._mergeClasses({disabled:this.disabled,pin:this.pin,snaps:this.snaps,ring:this.immediateValue<=this.min,expand:this.expand,dragging:this.dragging,transiting:this.transiting,editable:this.editable})},_incrementKey:function(t){this.disabled||("end"===t.detail.key?this.value=this.max:this.increment(),this.fire("change"))},_decrementKey:function(t){this.disabled||("home"===t.detail.key?this.value=this.min:this.decrement(),this.fire("change"))},_changeValue:function(t){this.value=t.target.value,this.fire("change")},_inputKeyDown:function(t){t.stopPropagation()},_createRipple:function(){return this._rippleContainer=this.$.sliderKnob,Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this)},_focusedChanged:function(t){t&&this.ensureRipple(),this.hasRipple()&&(t?this._ripple.style.display="":this._ripple.style.display="none",this._ripple.holdDown=t)}});</script>
+</dom-module>
+</body></html>

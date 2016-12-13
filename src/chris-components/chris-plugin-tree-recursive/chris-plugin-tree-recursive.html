@@ -1,0 +1,78 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+
+</head><body><dom-module id="chris-plugin-tree-recursive">
+
+  <template>
+
+    <style>
+
+      :host {
+
+        display: flex;
+        flex: 1;
+
+        }
+
+      .plugin, .label, .children {
+
+        display: flex;
+
+      }
+
+      .plugin {
+
+        flex-direction: column;
+        flex: 1;
+
+      }
+
+      .children {
+
+        flex-direction: row
+
+      }
+
+      .label {
+
+        /*height: 50px;
+        color: red;*/
+        justify-content: center;
+
+      }
+
+      paper-button.primary {
+
+        background-color: var(--primary-color);
+        color: white;
+        width:100%;
+        margin:0;
+        border-radius: 0;
+        border: 1px solid #dddddd;
+
+      }
+
+      paper-button.primary[selected] {
+
+        background-color: var(--accent-color);
+
+      }
+
+    </style>
+
+    <template is="dom-repeat" items="{{tree}}">
+      <div class="plugin">
+        <div class="label" on-tap="_selectNode">
+          <paper-button class="primary" selected$="{{item.data.selected}}">{{item.data.plugin_name}}</paper-button>
+        </div>
+        <div class="children">
+          <chris-plugin-tree-recursive id="testC" tree="{{item.data.children}}"></chris-plugin-tree-recursive>
+        </div>
+      </div>
+    </template>
+  </template>
+
+  <script>Polymer({is:"chris-plugin-tree-recursive",properties:{tree:{type:Array,observer:"_treeChanged"}},_selectNode:function(e){this.fire("select-node",e.model.__data__.item)},_treeChanged:function(){for(var e=0;e<this.tree.length;e++)this.set(["tree",e,"data","children"],this.tree[e].data.children)}});</script>
+
+</dom-module></body></html>

@@ -1,0 +1,21 @@
+<html><head><link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="chris-file-tree">
+
+  <template>
+
+    <style>
+
+      :host {
+
+        display: block;
+
+        }
+
+    </style>
+
+  </template>
+
+  <script>Polymer({is:"chris-file-tree",properties:{list:{type:Object,observer:"_listChanged"},tree:{type:Array,observer:"_treeChanged"}},_listChanged:function(){this._build(this.list)},_treeChanged:function(){console.log(this.tree)},_build:function(e){e.sort(this._sortByPreviousId);for(var t=[],i={},s=0;s<e.length;s++){var r=e[s];if(r.children=[],i[r.id]=s,""===r.previous_id)r.path=["tree",0],t.push(r);else{var n=e[i[r.previous_id]].path;r.path=n.concat(["children",e[i[r.previous_id]].children.length]),e[i[r.previous_id]].children.push(r)}}this.set("tree",t),this.fire("tree-changed",this.tree)},_sortByPreviousId:function(e,t){return""===e.previous_id?-1:""===t.previous_id?1:parseInt(e.previous_id)>parseInt(t.previous_id)?1:parseInt(e.previous_id)<parseInt(t.previous_id)?-1:0},_sortByPathLength:function(e,t){return parseInt(e.path.length)<parseInt(t.path.length)?1:parseInt(e.path.length)>parseInt(t.path.length)?-1:0},_selectNode:function(e){e.preventDefault(),e.stopPropagation(),this.selected=e.detail},_selectedChanged:function(){var e=this;this.list.map(function(t){t.selected=t.id===e.selected.id,e.set(t.path.concat(["selected"]),t.selected)}),console.log("fire select-node"),this.fire("select-node",this.selected)}});</script>
+</dom-module>
+</body></html>

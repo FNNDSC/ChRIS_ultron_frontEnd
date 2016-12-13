@@ -12,6 +12,8 @@
         white-space: nowrap;
         cursor: pointer;
         --calculated-paper-checkbox-size: var(--paper-checkbox-size, 18px);
+        /* -1px is a sentinel for the default and is replaced in `attached`. */
+        --calculated-paper-checkbox-ink-size: var(--paper-checkbox-ink-size, -1px);
         @apply(--paper-font-common-base);
         line-height: 0;
         -webkit-tap-highlight-color: transparent;
@@ -45,22 +47,22 @@
 
         /* Center the ripple in the checkbox by negative offsetting it by
          * (inkWidth - rippleWidth) / 2 */
-        top: calc(0px - (2.66 * var(--calculated-paper-checkbox-size) - var(--calculated-paper-checkbox-size)) / 2);
-        left: calc(0px - (2.66 * var(--calculated-paper-checkbox-size) - var(--calculated-paper-checkbox-size)) / 2);
-        width: calc(2.66 * var(--calculated-paper-checkbox-size));
-        height: calc(2.66 * var(--calculated-paper-checkbox-size));
-        color: var(--paper-checkbox-unchecked-ink-color, --primary-text-color);
+        top: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
+        left: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
+        width: var(--calculated-paper-checkbox-ink-size);
+        height: var(--calculated-paper-checkbox-ink-size);
+        color: var(--paper-checkbox-unchecked-ink-color, var(--primary-text-color));
         opacity: 0.6;
         pointer-events: none;
       }
 
       :host-context([dir="rtl"]) #ink {
-        right: calc(0px - (2.66 * var(--calculated-paper-checkbox-size) - var(--calculated-paper-checkbox-size)) / 2);
+        right: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
         left: auto;
       }
 
       #ink[checked] {
-        color: var(--paper-checkbox-checked-ink-color, --primary-color);
+        color: var(--paper-checkbox-checked-ink-color, var(--primary-color));
       }
 
       #checkbox {
@@ -68,7 +70,7 @@
         box-sizing: border-box;
         height: 100%;
         border: solid 2px;
-        border-color: var(--paper-checkbox-unchecked-color, --primary-text-color);
+        border-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
         border-radius: 2px;
         pointer-events: none;
         -webkit-transition: background-color 140ms, border-color 140ms;
@@ -100,8 +102,8 @@
       }
 
       #checkbox.checked {
-        background-color: var(--paper-checkbox-checked-color, --primary-color);
-        border-color: var(--paper-checkbox-checked-color, --primary-color);
+        background-color: var(--paper-checkbox-checked-color, var(--primary-color));
+        border-color: var(--paper-checkbox-checked-color, var(--primary-color));
       }
 
       #checkmark {
@@ -132,12 +134,12 @@
         padding-left: var(--paper-checkbox-label-spacing, 8px);
         white-space: normal;
         line-height: normal;
-        color: var(--paper-checkbox-label-color, --primary-text-color);
+        color: var(--paper-checkbox-label-color, var(--primary-text-color));
         @apply(--paper-checkbox-label);
       }
 
       :host([checked]) #checkboxLabel {
-        color: var(--paper-checkbox-label-checked-color, --paper-checkbox-label-color);
+        color: var(--paper-checkbox-label-checked-color, var(--paper-checkbox-label-color, var(--primary-text-color)));
         @apply(--paper-checkbox-label-checked);
       }
 
@@ -154,11 +156,11 @@
 
       :host([disabled]) #checkbox {
         opacity: 0.5;
-        border-color: var(--paper-checkbox-unchecked-color, --primary-text-color);
+        border-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
       }
 
       :host([disabled][checked]) #checkbox {
-        background-color: var(--paper-checkbox-unchecked-color, --primary-text-color);
+        background-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
         opacity: 0.5;
       }
 
@@ -168,7 +170,7 @@
 
       /* invalid state */
       #checkbox.invalid:not(.checked) {
-        border-color: var(--paper-checkbox-error-color, --error-color);
+        border-color: var(--paper-checkbox-error-color, var(--error-color));
       }
     </style>
 
@@ -181,6 +183,6 @@
     <div id="checkboxLabel"><content></content></div>
   </template>
 
-  <script>Polymer({is:"paper-checkbox",behaviors:[Polymer.PaperCheckedElementBehavior],hostAttributes:{role:"checkbox","aria-checked":!1,tabindex:0},properties:{ariaActiveAttribute:{type:String,value:"aria-checked"}},_computeCheckboxClass:function(e,r){var t="";return e&&(t+="checked "),r&&(t+="invalid"),t},_computeCheckmarkClass:function(e){return e?"":"hidden"},_createRipple:function(){return this._rippleContainer=this.$.checkboxContainer,Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this)}});</script>
+  <script>Polymer({is:"paper-checkbox",behaviors:[Polymer.PaperCheckedElementBehavior],hostAttributes:{role:"checkbox","aria-checked":!1,tabindex:0},properties:{ariaActiveAttribute:{type:String,value:"aria-checked"}},attached:function(){var e=this.getComputedStyleValue("--calculated-paper-checkbox-ink-size");if("-1px"===e){var t=parseFloat(this.getComputedStyleValue("--calculated-paper-checkbox-size")),a=Math.floor(8/3*t);a%2!==t%2&&a++,this.customStyle["--paper-checkbox-ink-size"]=a+"px",this.updateStyles()}},_computeCheckboxClass:function(e,t){var a="";return e&&(a+="checked "),t&&(a+="invalid"),a},_computeCheckmarkClass:function(e){return e?"":"hidden"},_createRipple:function(){return this._rippleContainer=this.$.checkboxContainer,Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this)}});</script>
 </dom-module>
 </body></html>
