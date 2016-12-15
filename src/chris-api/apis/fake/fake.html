@@ -152,7 +152,12 @@
         if( this.method === 'GET' && /^\/plugins\/instances\/(\d+)\//.test(target) ){
 
           var id = Number( target.match(/\d+/)['0'] );
-          var previous_id = params.fake_api_previous_id;
+          var previous_id = -1;
+          if( params && params.fake_api_previous_id ){
+
+            previous_id = params.fake_api_previous_id;
+
+          }
           itemCJ = this.generatePluginInstanceCJ( id, previous_id );
 
         }

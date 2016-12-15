@@ -1,6 +1,6 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/chris-ultron/chris-ultron.html",
+  "shell": "src/chris-ultron.html",
   "fragments": [
   	"src/chris-pages/chris-home/chris-home.html",
   	"src/chris-pages/chris-login/chris-login.html",
@@ -14,5 +14,15 @@
     "src/chris-apps/chris-apps-viewer/chris-apps-viewer.html",
   	"src/chris-components/chris-dataviews/chris-dataviews-rows/chris-dataviews-rows.html",
     "src/chris-components/chris-dataviews/chris-dataviews-columns/chris-dataviews-columns.html"
+  ],
+  "sourceGlobs": [
+   "src/**/*",
+   "data/**/*",
+   "images/**/*",
+   "bower.json"
+  ],
+  "includeDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ]
 }

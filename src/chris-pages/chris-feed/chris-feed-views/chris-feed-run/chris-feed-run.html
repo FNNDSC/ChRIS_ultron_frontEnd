@@ -66,9 +66,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <div class="card-content">
 
-        <paper-dropdown-menu label="Plugin to run">
+        <paper-dropdown-menu id="dropdown" label="Plugin to run">
 
-          <paper-listbox class="dropdown-content">
+          <paper-listbox class="dropdown-content" selected={{selectedMenu}}>
 
             <template is="dom-repeat" items="{{plugins}}">
               <paper-item plugin="[[item]]" on-tap="_pluginSelected">{{item.data.name}} </paper-item>
@@ -131,6 +131,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _selectedPluginChanged: function(){
 
+          if( this.selectedPlugin === null ){
+
+            return;
+
+          }
+
           this._fetchParameters();
 
         },
@@ -142,6 +148,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         _fetchParameters: function(){
+
+          if( this.selectedPlugin === null ){
+
+            return;
+
+          }
 
           var data = {};
           data.auth = {
@@ -231,9 +243,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         handleRunPluginDS: function( event ){
 
           this.fire('fetch-plugin', event.data[0]);
-          // send message to let feed know it has a new plugin
 
-          // exit run page to new plugin
+          this.set( 'selectedPlugin', null) ;
+          this.set( 'parameters', []) ;
+          this.selectedMenu = null;
 
         },
 

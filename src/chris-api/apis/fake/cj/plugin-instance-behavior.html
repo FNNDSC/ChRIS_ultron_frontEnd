@@ -35,6 +35,13 @@
       var plugins = this.plugins();
       var plugin = plugins[Math.floor(Math.random() * plugins.length)];
 
+      // ensure previous_id 
+      if( previous_id >= 0 && previous_id >= id ){
+
+        id += previous_id;
+
+      }
+
       data = {
           id: id,
           plugin_name: plugin.name,
