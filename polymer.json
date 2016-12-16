@@ -3,6 +3,7 @@
   "shell": "src/chris-ultron.html",
   "fragments": [
   	"src/chris-pages/chris-home/chris-home.html",
+    "src/chris-pages/chris-warning-404/chris-warning-404.html",
   	"src/chris-pages/chris-login/chris-login.html",
     "src/chris-pages/chris-feed/chris-feed.html",
     "src/chris-pages/chris-feed/chris-feed-views/chris-feed-about/chris-feed-about.html",

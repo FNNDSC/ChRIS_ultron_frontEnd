@@ -66,7 +66,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
       <template>
 
-        <div class="feedContainer" style$="z-index: [[getIndex(index)]]">
+        <!--style$="z-index: [[getIndex(index)]]" //HACK for dropdown in iron list-->
+        <div class="feedContainer">
             <chris-feed-preview tabindex$="[[tabIndex]]" index="[[index]]" feed="[[feed]]" on-tap="_openFeed"></chris-feed-preview>
         </div>
 

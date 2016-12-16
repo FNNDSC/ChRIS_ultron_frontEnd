@@ -192,46 +192,32 @@
           observer: '_pageChanged'
         },
 
-        pluginInstanceCollection: {
-          type: Array
-        },
+        pluginInstanceCollection: Array,
 
-        plugins: {
-          type: Array
-        },
+        plugins: Array,
 
         plugin:{
           type: Object,
           observer: '_pluginChanged'
         },
 
-        fileCollection: {
-          type: Array
-        },
+        fileCollection: Array,
 
-        files: {
-          type: Array
-        },
+        files: Array,
 
-        workflow: {
-          type: Array
-        },
+        workflow: Array,
 
-        note:{
-          type: Object,
-        },
+        note: Object,
 
-        comments: {
-          type: Object
-        },
+        comments: Object,
 
-        details:{
-          type: Object
-        },
+        details: Object,
 
-        error: {
-          type: Object
-        }
+        error: Object,
+
+        route: Object,
+        
+        routeData: Object
 
       },
 
@@ -267,8 +253,6 @@
       },
 
       _feedChanged: function(){
-
-        console.log( this.feed );
 
         var data = {};
         data.auth = {

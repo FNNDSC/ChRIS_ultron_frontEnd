@@ -37,6 +37,7 @@
   <!-- Tile icon for Win8 (144x144) -->
   <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
+  <!-- should be lazy loaded... -->
   <link rel="import" href="/src/chris-ultron.html" async>
 
   <style>
@@ -87,7 +88,6 @@
           && typeof window.unwrap !== 'undefined' // required by vaadin elements
           ) {
         // browser has web components
-        console.log( typeof window.unwrap !== 'undefined' );
       } else {
         var e = document.createElement('script');
         e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';

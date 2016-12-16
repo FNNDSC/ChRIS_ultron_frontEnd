@@ -1,0 +1,119 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- POLYMER / PAPER -->
+<!--DOES NOT WORK IF LOADING ELEMENTS-->
+<!--<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">-->
+
+<dom-module id="chris-warning-404">
+
+  <template>
+
+    <style>
+      :host {
+
+        display: flex;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        background-color: var(--dark-primary-color);
+        --paper-input-container-focus-color: var(--accent-color);
+
+      }
+
+      .spacer {
+
+        flex: 1;
+
+      }
+
+      .container{
+
+        max-width: 800px;
+        margin: auto;
+        margin-top: 60px;
+        margin-bottom: 60px;
+        position: relative;
+        display:flex;
+        flex-direction:column;
+        align-items: center;
+        justify-content: center;
+
+      }
+
+      .title {
+
+        text-align: center;
+        font-size: 24px;
+        color: var(--dark-primary-color);
+        padding: 10px;
+
+      }
+
+      paper-material{
+
+        background-color: var(--paper-grey-50);
+        padding:20px;
+        opacity:1;
+
+      }
+
+      paper-button#login {
+
+        margin-top: 32px;
+        background: var(--accent-color);
+        color: white;
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        display: flex;
+        flex-direction: row;
+
+      }
+
+    </style>
+
+        <div class="container">
+      <paper-material elevation=5>
+        <div class="horizontal-section">
+
+          <section>
+
+            <div class="title">
+              <div> Ooops... </div>
+              <div> Page not found :/ </div>
+            </div>
+          </section>
+
+          <section>
+            <paper-button id="login" on-click="_goHome">
+              <div id="loginLabel">Go home!</div>
+            </paper-button>
+          </section>
+
+        </div>
+
+      </paper-material>
+
+      <div class="spacer"></div>
+
+      <chris-footer><chris-footer>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'chris-warning-404',
+      
+      _goHome: function(){
+
+        this.fire('go-home');
+
+      }
+
+    });
+  </script>
+</dom-module>

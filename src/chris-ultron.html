@@ -42,14 +42,14 @@
     <chris-ultron-config></chris-ultron-config>
     <chris-api id="ChrisAPI" error="{{error}}"></chris-api>
 
-    <app-location id="location" route="{{route}}"></app-location>
+    <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
         pattern="/:page"
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
 
-    <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
+    <iron-pages role="main" selected="[[page]]" attr-for-selected="name" fallback-selection="404">
 
       <chris-login name="login" on-login="_login"></chris-login>
 
@@ -62,21 +62,25 @@
         on-fetch-feeds='_fetchFeeds'
         on-open-feed="_openFeed"
         on-save-feed="_saveFeed"
-        on-exit="_exitToLogin"
+        on-exit="_logout"
         on-open-app="_openApp"></chris-home>
 
       <chris-app
         name="app"
         app="[[openApp]]"
         plugins="[[plugins]]"
-        on-exit="_exitToHome"
+        on-exit="_goHome"
         on-add-feed="_addFeed"></chris-app>
 
       <chris-feed
         name="feed"
         feed="[[openFeed]]"
         plugins="[[plugins]]"
-        on-exit="_exitToHome"></chris-feed>
+        on-exit="_goHome"></chris-feed>
+
+      <chris-warning-404
+        name="warning-404"
+        on-go-home="_goHome"></chris-warning-404>
 
     </iron-pages>
 
@@ -93,9 +97,9 @@
 
       properties: {
 
-        loggedIn:{
+        authenticated:{
           type: Boolean,
-          observer: '_loggedInChanged'
+          observer: '_authenticatedChanged'
         },
 
         page: {
@@ -104,37 +108,15 @@
           observer: '_pageChanged'
         },
 
-        route: {
-          type: Object
-        },
+        openApp: Object,
 
-        routeData: {
-          type: Object
-        },
+        feeds: Array,
 
-        subroute: {
-          type: Object
-        },
+        plugins: Array,
 
-        openApp: {
-          type: Object
-        },
+        openFeed: Object,
 
-        feeds: {
-          type: Array
-        },
-
-        plugins: {
-          type: Array
-        },
-
-        openFeed: {
-          type: Object
-        },
-
-        labels: {
-          type: Array
-        },
+        labels: Array,
 
         filter: {
           type: Array,
@@ -147,16 +129,10 @@
         '_routePageChanged(routeData.page)'
       ],
 
-      _login: function( event ){
-
-        this.loggedIn = event.detail.success;
-        
-      },
-
       _openFeed: function( event ){
 
         this.openFeed = event.detail;
-        this.set('route.path', '/feed/' + this.openFeed.data.id);
+        this.set('route.path', `/feed/${this.openFeed.data.id}/`);
 
       },
 
@@ -226,8 +202,6 @@
 
       _handlePlugins: function( response ){
 
-        console.log( response );
-
         this.set( 'plugins', response.data );
 
       },
@@ -293,34 +267,34 @@
 
       _routePageChanged: function( page ) {
 
-        console.log( page );
+        // redirection for login page
+        if( !this.authenticated && page !== 'login' ){
 
-        this.page = page || 'login';
+          this.set( 'route.path', `/login/` );
 
+        } else if( this.authenticated && page === 'login' ){
+
+          this.set( 'route.path', `/home/` );
+
+        } else {
+
+          this.page = page || 'home';
+
+        }
+        
       },
 
-      _loggedInChanged: function( loggedIn ){
+      _authenticatedChanged: function( authenticated ){
 
-        if( loggedIn ){
-
-          this.page = 'home';
-
-        }
-        else{
-
-          this.page = 'login';
-
-        }
-
-        this.$.location.path = this.page;
+        var page = authenticated ? 'home' : 'login';
+        this.set( 'route.path', `/${page}/` );
 
       },
 
       _pageChanged: function( page ) {
 
-        // load page import on demand.
-        this.importHref(
-          this.resolveUrl( './chris-pages/chris-' + page + '/chris-' + page + '.html' ), null, null, true );
+        var resolvedPageUrl = this.resolveUrl(`./chris-pages/chris-${page}/chris-${page}.html`);
+        this.importHref(resolvedPageUrl, null, this._go404, true );
 
       },
 
@@ -334,19 +308,17 @@
 
       ready: function(){
 
-        console.log('ready');
         this._fetchPlugins();
 
-        //if username and token are stored, we are still loggedIn in
+        //if username and token are stored, we are still authenticated in
         if ( sessionStorage.getItem( 'username' ) &&
              sessionStorage.getItem( 'token' ) ) {
 
-          this.loggedIn = true;
+          this.authenticated = true;
 
-        }
-        else{
+        } else {
 
-          this.loggedIn = false;
+          this.authenticated = false;
 
         }
 
@@ -355,7 +327,7 @@
       _openApp: function( event ){
 
         this.openApp = event.detail;
-        this.set('route.path', '/app/' + this.openApp.name);
+        this.set('route.path', `/app/${this.openApp.name}/`);
 
       },
 
@@ -371,18 +343,31 @@
         
       },
 
-      _exitToHome: function(){
+      _goHome: function(){
 
-        this.set('route.path', '/home/');
+        this.set('route.path', `/home/`);
 
       },
 
-      _exitToLogin: function(){
+      _go404: function(){
 
+        this.page = 'warning-404';
+
+      },
+
+      _login: function( event ){
+
+        this.authenticated = event.detail.success;
+        
+      },
+
+      _logout: function(){
+
+        // should happen in the login page.
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('token');
 
-        this.set('route.path', '/login/');
+        this.authenticated = false;
 
       }
       
