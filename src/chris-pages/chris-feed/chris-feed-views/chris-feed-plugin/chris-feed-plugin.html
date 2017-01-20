@@ -207,7 +207,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           files: {
             type: Array,
             observer: '_filesChanged'
-          }
+          },
+
+          tree: Array
 
         },
 
@@ -218,7 +220,84 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         _filesChanged: function(){
-          
+
+          // generate tree structure
+          console.log( this.files );
+          var map = {};
+          var tree = [];
+          var nodes = [];
+
+          // create the root
+          var rootNode = {
+            id: '/',
+            path: [],
+            children: [],
+            parent: null,
+            selected: false,
+            label: '/'
+          }
+          tree.push( rootNode );
+          nodes.push( rootNode );
+          map[rootNode.id] = nodes.length - 1;;
+
+          for( var i = 0; i < this.files.length; i++ ){
+            var file = this.files[i];
+            var path = this.files[i].data.fname.split('/');
+            var parentid = '/';
+            var id = '/';
+
+            // prepare the directory
+            for( var j=0; j < path.length - 1; j++ ){
+
+              if( path[j] !== '' ){
+
+                parentid = id;
+                id += path[j] + '/';
+
+                if( !map.hasOwnProperty(id) ){
+
+                  // add node in tree
+                  var node = {
+                    id: id,
+                    path: id.split('/'),
+                    children: [],
+                    parent: map[parentid],
+                    type: 'directory',
+                    selected: false,
+                    label: path[j]
+                  }
+
+                  nodes.push( node );
+                  map[id] = nodes.length - 1;
+                  nodes[map[parentid]].children.push( node );
+
+                }
+
+              }
+
+            }
+
+            // add the file
+            var node = {
+              id: this.files[i].data.fname,
+              path: path,
+              children: [],
+              parent: map[id],
+              type: 'file',
+              selected: false,
+              file: file,
+              label: path[path.length - 1]
+            }
+
+            nodes.push( node );
+            map[this.files[i].data.fname] = nodes.length - 1;
+            nodes[map[id]].children.push( node );
+            
+          }
+
+          this.set('tree', tree);
+          console.log( this.tree );
+
           var datasets = [];
 
           var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
