@@ -1,0 +1,68 @@
+<link rel="import" href="../../../../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../../../../bower_components/iron-pages/iron-pages.html">
+
+<!--<link rel="import" href="../../../../../../bower_components/paper-progress/paper-progress.html">-->
+<link rel="import" href="../../../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../../../../bower_components/paper-tabs/paper-tab.html">
+
+<dom-module id="module-manager">
+    <template>
+        <style>
+        .controls-pages {
+            flex: 1;
+            display:flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+        paper-tab {
+            text-transform: uppercase;
+        }
+        </style>
+
+        <paper-tabs selected="{{selected}}">
+            <template is="dom-repeat" items="{{modules}}"><paper-tab>{{item.label}}</paper-tab></template>
+            <!-- POLYMER 2.0 -->
+            <!--<dom-repeat items="{{modules}}">
+                <template><paper-tab>{{item.label}}</paper-tab></template>
+            </dom-repeat>-->
+        </paper-tabs>
+
+        <iron-pages class="controls-pages" selected="{{selected}}">
+          <slot id="modules"></slot>
+        </iron-pages>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'module-manager',
+            properties :{
+                modules: {
+                    type: Array,
+                    value: [],
+                },
+                selected: {
+                    type: String,
+                    value: 0,
+                },
+            },
+            ready: function() {
+                const nodes = this.$.modules.getDistributedNodes();
+                for (var i = 0; i < nodes.length; i++) {
+                    var node = nodes[i];
+                    if(node.classList && node.classList.contains('module')){
+                        const id = node.id;
+                        const label = node.getAttribute('label');
+                        const module = {
+                            id: id,
+                            label: label,
+                            node: node,
+                        };
+                        this.push('modules', module);
+                    }
+                }
+            }
+        });
+    </script>
+
+</dom-module>

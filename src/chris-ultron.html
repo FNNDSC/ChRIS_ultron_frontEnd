@@ -132,7 +132,7 @@
       _openFeed: function( event ){
 
         this.openFeed = event.detail;
-        this.set('route.path', `/feed/${this.openFeed.data.id}/`);
+        this.set('route.path', '/feed/' + this.openFeed.data.id + '/');
 
       },
 
@@ -270,11 +270,11 @@
         // redirection for login page
         if( !this.authenticated && page !== 'login' ){
 
-          this.set( 'route.path', `/login/` );
+          this.set( 'route.path', '/login/' );
 
         } else if( this.authenticated && page === 'login' ){
 
-          this.set( 'route.path', `/home/` );
+          this.set( 'route.path', '/home/' );
 
         } else {
 
@@ -287,13 +287,13 @@
       _authenticatedChanged: function( authenticated ){
 
         var page = authenticated ? 'home' : 'login';
-        this.set( 'route.path', `/${page}/` );
+        this.set( 'route.path', '/' + page + '/' );
 
       },
 
       _pageChanged: function( page ) {
 
-        var resolvedPageUrl = this.resolveUrl(`./chris-pages/chris-${page}/chris-${page}.html`);
+        var resolvedPageUrl = this.resolveUrl('./chris-pages/chris-' + page + '/chris-' + page + '.html');
         this.importHref(resolvedPageUrl, null, this._go404, true );
 
       },
@@ -327,7 +327,7 @@
       _openApp: function( event ){
 
         this.openApp = event.detail;
-        this.set('route.path', `/app/${this.openApp.name}/`);
+        this.set('route.path', '/app/' + this.openApp.name + '/');
 
       },
 
@@ -345,7 +345,7 @@
 
       _goHome: function(){
 
-        this.set('route.path', `/home/`);
+        this.set('route.path', '/home/');
 
       },
 

@@ -1,0 +1,344 @@
+<!--
+@license
+Copyright (c) 2016 FNNDSC. All rights reserved.
+-->
+
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+
+<!--IRON ELEMENTS -->
+<link rel="import" href="../../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../../bower_components/iron-icons/av-icons.html">"
+
+<!-- PAPER ELEMENTS -->
+<link rel="import" href="../../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../../bower_components/paper-range-slider/paper-range-slider.html">
+<link rel="import" href="../../../../../bower_components/paper-slider/paper-slider.html">
+
+<!-- AMI -->
+<link rel="import" href="../../../../../bower_components/ami-loader/ami-loader.html">
+<link rel="import" href="../../../../../bower_components/ami-viewer/ami-viewer.html">
+
+<dom-module id="chris-feed-plugin">
+
+  <template>
+
+    <style>
+
+      .content {
+
+        background-color: var(--paper-grey-50);
+        padding: 24px;
+        position: fixed;
+        top: 64px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-flow: row wrap;
+        overflow-y: auto;
+
+      }
+
+      .navigation {
+
+        flex: 1;
+        min-width: 100px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+
+      }
+
+      .viewer, ami-viewer {
+
+        flex: 2;
+        height: 100%;
+        min-width: 400px;
+        overflow: hidden;
+        background-color: var(--paper-grey-500);
+
+      }
+
+      .viewer-controls {
+        flex: 1;
+        min-width: 100px;
+        padding: 8px;
+      }
+
+      paper-dropdown-menu, paper-slider{
+
+        width:100%;
+
+      }
+
+      .paper-range-slider {
+
+        display: flex;
+
+      }
+
+      paper-range-slider {
+
+        --paper-range-slider-knob-color: var(--google-blue-700);
+        --paper-range-slider-active-color: var(--google-blue-700);
+        --paper-range-slider-pin-color: var(--google-blue-700);
+
+      }
+
+      .paper-range-slider paper-input{
+
+        width: 50px;
+        overflow: hidden;
+
+      }
+
+      .files {
+
+        overflow-y: auto;
+
+      }
+
+      #start {
+
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        --paper-fab-background: var(--accent-color);
+
+      }
+
+    </style>
+
+    <ami-loader urls="{{urls}}" series="{{series}}"></ami-loader>
+
+    <div class="content">
+
+      <div class="navigation">
+
+        <div class="header">
+
+          <div> Current Plugin: {{plugin.data.id}} : {{plugin.data.plugin_name}} </div>
+          
+          <div> Parent ID: {{plugin.data.previous_id}} </div>
+
+          <div> Children IDs </div>
+
+          <ul>
+            <template is="dom-repeat" items="{{plugin.data.children}}">
+              <li> Children ID:{{item.data.id}} </li>
+            </template>
+          </ul>
+
+        </div>
+
+        <div>Files</div>
+
+        <div class="files">
+
+          <ul>
+            <template is="dom-repeat" items="{{files}}" as="file">
+              <li>{{file.data.fname}} </li>
+            </template>
+          <ul>
+
+        </div>
+
+      </div>
+
+      <div class="viewer">
+        <ami-viewer
+          index="{{index}}"
+          index-max="{{indexMax}}"
+          orientation="{{orientation}}"
+          series="[[series]]">
+        </ami-viewer>
+      </div>
+
+      <div class="viewer-controls">
+
+        <div>Some cool controls</div>
+        
+        <paper-dropdown-menu label="Orientation">
+          <paper-listbox class="dropdown-content" selected="{{orientation}}">
+            <paper-item>Acquisition</paper-item>
+            <paper-item>Next</paper-item>
+            <paper-item>Last</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <div> Index </div>
+        <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable></paper-slider>
+        <div> Window / level (not connected) </div>
+        
+        <div class="paper-range-slider">
+        <paper-input value="{{vmin}}"></paper-input><paper-range-slider value-min="{{vmin}}" value-max="{{vmax}}" style="width:100%"></paper-range-slider><paper-input value="{{vmax}}"></paper-input>
+        </div>
+      </div>
+
+      <paper-fab id="start" icon="av:play-arrow" on-tap="_getPlugins"></paper-fab>
+
+      <!--<paper-dialog id="modal" modal on-iron-overlay-opened="_patchOverlay">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <div class="buttons">
+          <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
+        </div>
+      </paper-dialog>-->
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+        is: 'chris-feed-plugin',
+
+        properties: {
+
+          plugin: {
+            type: Object,
+            observer: '_pluginChanged'
+          },
+
+          files: {
+            type: Array,
+            observer: '_filesChanged'
+          },
+
+          tree: Array
+
+        },
+
+        _pluginChanged: function(){
+          
+          console.log( this.plugin);
+
+        },
+
+        _filesChanged: function(){
+
+          // generate tree structure
+          console.log( this.files );
+          var map = {};
+          var tree = [];
+          var nodes = [];
+
+          // create the root
+          var rootNode = {
+            id: '/',
+            path: [],
+            children: [],
+            parent: null,
+            selected: false,
+            label: '/'
+          }
+          tree.push( rootNode );
+          nodes.push( rootNode );
+          map[rootNode.id] = nodes.length - 1;;
+
+          for( var i = 0; i < this.files.length; i++ ){
+            var file = this.files[i];
+            var path = this.files[i].data.fname.split('/');
+            var parentid = '/';
+            var id = '/';
+
+            // prepare the directory
+            for( var j=0; j < path.length - 1; j++ ){
+
+              if( path[j] !== '' ){
+
+                parentid = id;
+                id += path[j] + '/';
+
+                if( !map.hasOwnProperty(id) ){
+
+                  // add node in tree
+                  var node = {
+                    id: id,
+                    path: id.split('/'),
+                    children: [],
+                    parent: map[parentid],
+                    type: 'directory',
+                    selected: false,
+                    label: path[j]
+                  }
+
+                  nodes.push( node );
+                  map[id] = nodes.length - 1;
+                  nodes[map[parentid]].children.push( node );
+
+                }
+
+              }
+
+            }
+
+            // add the file
+            var node = {
+              id: this.files[i].data.fname,
+              path: path,
+              children: [],
+              parent: map[id],
+              type: 'file',
+              selected: false,
+              file: file,
+              label: path[path.length - 1]
+            }
+
+            nodes.push( node );
+            map[this.files[i].data.fname] = nodes.length - 1;
+            nodes[map[id]].children.push( node );
+            
+          }
+
+          this.set('tree', tree);
+          console.log( this.tree );
+
+          var datasets = [];
+
+          var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
+          var t2Full = t2.map(function(v) {
+            return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
+          });
+          datasets.push( t2Full );
+
+          var nrrdFull = ['https://cdn.rawgit.com/FNNDSC/data/master/nrrd/marc_avf/avf_float_32.nrrd'];
+          datasets.push( nrrdFull );
+
+          var niftiFull = ['https://cdn.rawgit.com/FNNDSC/data/master/nifti/siena/siena.nii.gz'];
+          datasets.push( niftiFull );
+
+          this.urls = datasets[ Math.floor(Math.random()*datasets.length) ];
+
+        },
+
+        _getPlugins: function(){
+
+          // get all plugins to dropdown menu
+
+          // each plugin, get parameters
+
+          // this.$.modal.open();
+          // fire selected plugin
+          this.fire('run-plugin');
+
+        },
+
+        // https://github.com/PolymerElements/paper-dialog/issues/7
+        _patchOverlay: function ( e ) {
+
+          if ( e.target.withBackdrop ) {
+
+            e.target.parentNode.insertBefore( e.target.backdropElement, e.target );
+
+          }
+
+        }
+
+    });
+  </script>
+</dom-module>

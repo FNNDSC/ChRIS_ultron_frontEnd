@@ -310,11 +310,11 @@
 
         // format query...
         // loop through series
-        let filter = [];
+        var filter = [];
         for( var i=0; i<this.results.length; i++ ){
 
           // fill row (with extra info for move)
-          let row = {};
+          var row = {};
           row.PatientID = this.results[i].PatientID.value;
           row.PatientName = this.results[i].PatientName.value;
           row.StudyDescription = this.results[i].StudyDescription.value;

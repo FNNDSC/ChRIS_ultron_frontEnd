@@ -1,0 +1,95 @@
+<link rel="import" href="../../../../../../bower_components/polymer/polymer.html">
+
+<dom-module id="list-to-tree">
+  <script>
+    Polymer({
+        is: 'list-to-tree',
+        properties: {
+          list: {
+            type: Array,
+            observer: '_listChanged',
+          },
+          tree: {
+            type: Array,
+            observer: '_treeChanged',
+          }
+        },
+        // observers: [
+        // //   '_listChanged(list.splices)',
+        // //   '_treeChanged(tree.splices)'
+        // ],
+        _listChanged: function(){
+
+          // generate tree structure
+          var map = {};
+          var tree = [];
+          var nodes = [];
+          // create the root
+          var rootNode = {
+            id: '/',
+            path: [],
+            children: [],
+            parent: null,
+            selected: false,
+            label: '/'
+          }
+          tree.push( rootNode );
+          nodes.push( rootNode );
+          map[rootNode.id] = nodes.length - 1;;
+          for( var i = 0; i < this.list.length; i++ ){
+            var file = this.list[i];
+            var path = this.list[i].data.fname.split('/');
+            var parentid = '/';
+            var id = '/';
+            // prepare the directory
+            for( var j=0; j < path.length - 1; j++ ){
+              if( path[j] !== '' ){
+                parentid = id;
+                id += path[j] + '/';
+                if( !map.hasOwnProperty(id) ){
+                  // add node in tree
+                  var node = {
+                    id: id,
+                    path: id.split('/'),
+                    children: [],
+                    parent: map[parentid],
+                    type: 'directory',
+                    selected: false,
+                    label: path[j]
+                  }
+                  nodes.push( node );
+                  map[id] = nodes.length - 1;
+                  nodes[map[parentid]].children.push( node );
+                }
+              }
+            }
+            // add the file
+            var node = {
+              id: this.list[i].data.fname,
+              path: path,
+              children: [],
+              parent: map[id],
+              type: 'file',
+              selected: false,
+              file: file,
+              label: path[path.length - 1]
+            }
+            nodes.push( node );
+            map[this.list[i].data.fname] = nodes.length - 1;
+            nodes[map[id]].children.push( node );
+            
+          }
+          this.set('tree', tree);
+          var  event = new CustomEvent(('tree-changed'), {
+            detail: {
+              tree:this.tree}
+            });
+          this.dispatchEvent(event);
+
+        },
+        _treeChanged: function(){
+          // console.log( this.tree );
+        },
+    });
+  </script>
+</dom-module>

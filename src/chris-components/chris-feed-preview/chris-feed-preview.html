@@ -243,7 +243,7 @@
           'updateFavorite(feed.data.favorite)'
         ],
 
-        updateFavorite(){
+        updateFavorite: function() {
          
         },
 
@@ -325,7 +325,7 @@
           //console.log(this.feed.data.favorite);
 
           // update feed favorite
-          var cache = [ { 'name': 'favorite', 'value': this.feed.data.favorite } ];
+          var cache = [ { name: 'favorite', value: this.feed.data.favorite } ];
           this.set(['feed', 'data', 'favorite'], !this.feed.data.favorite);
 
           // fire save feed

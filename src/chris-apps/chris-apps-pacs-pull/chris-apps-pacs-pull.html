@@ -235,7 +235,7 @@
           event.stopPropagation();
 
           // create the feed:
-          let feed = {
+          var feed = {
             data: {
               color: '#353535',
               date: 'I am the date',
@@ -263,7 +263,7 @@
         _feedIdChanged: function( event ){
 
           event.preventDefault();
-          let feedID = event.detail;
+          var feedID = event.detail;
           this.feedid = feedID;
 
         }

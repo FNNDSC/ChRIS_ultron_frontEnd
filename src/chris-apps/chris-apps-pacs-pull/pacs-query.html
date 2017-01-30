@@ -335,7 +335,7 @@
 
       handlePacsQuery: function( response ){
 
-        let p1 = new Promise(
+        var p1 = new Promise(
 
            function(resolve, reject){
              window.setTimeout(
@@ -357,7 +357,7 @@
         console.log( response );
 
         // new feed
-        let data = {};
+        var data = {};
         data.auth = {
           type: 'token',
           token: sessionStorage.getItem( 'token' )
@@ -368,16 +368,16 @@
 
         console.log( response.data[0].href );
 
-        let waitPromise = new Promise(
+        var waitPromise = new Promise(
 
-           (resolve, reject) => {
+           function(resolve, reject){
 
              var remaningAttemps = 6;
 
              function run(){
               //
               this.$.API.request( 'GET', response.data[0].href , data ).
-              then( ( response2 ) => {
+              then( function( response2 ){
                 // check depdending on status
                 console.log( response2 );
                 if( remaningAttemps < 5 && response2.data[0].data.status === 'finishedSuccessfully'){
@@ -397,13 +397,13 @@
 
                 }
                 
-              });
+              }.bind(this));
              }
 
              run = run.bind(this);
              run();
 
-           }
+           }.bind(this)
 
 
         );
@@ -416,12 +416,12 @@
 
         console.log( response );
 
-        let feed = response.data[0].links.feed;
-        let id = Number( feed.match(/\d+/)['0'] );
+        var feed = response.data[0].links.feed;
+        var id = Number( feed.match(/\d+/)['0'] );
 
         this.fire('feedid-changed', id);
 
-        console.log(`FEED: ${feed}`);
+        console.log('FEED: ' + feed);
         // need to push feed id to pacs-pull app
 
         var data = {};

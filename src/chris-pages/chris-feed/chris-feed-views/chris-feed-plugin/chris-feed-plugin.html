@@ -1,193 +1,178 @@
 <!--
 @license
-Copyright (c) 2016 FNNDSC. All rights reserved.
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
 <link rel="import" href="../../../../../bower_components/polymer/polymer.html">
-
-<!--IRON ELEMENTS -->
-<link rel="import" href="../../../../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../../../../bower_components/iron-icons/av-icons.html">"
-
-<!-- PAPER ELEMENTS -->
-<link rel="import" href="../../../../../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../../../../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../../../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../../../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../../../../bower_components/paper-range-slider/paper-range-slider.html">
 <link rel="import" href="../../../../../bower_components/paper-slider/paper-slider.html">
 
-<!-- AMI -->
-<link rel="import" href="../../../../../bower_components/ami-loader/ami-loader.html">
-<link rel="import" href="../../../../../bower_components/ami-viewer/ami-viewer.html">
+<script>
+  // create THREE Namespace
+  var THREE = THREE || {};
+</script>
+<link rel="import" href="../../../../../bower_components/ami-import/ami-import.html">
+<script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/STLLoader.js"></script>
+
+
+<link rel="import" href="ami-3d/ami-3d.html">
+
+<link rel="import" href="module-manager/module-manager.html">
+<link rel="import" href="module-fileBrowser/module-fileBrowser.html">
+<link rel="import" href="module-scene/module-scene.html">
+<link rel="import" href="module-editor/module-editor.html">
 
 <dom-module id="chris-feed-plugin">
-
   <template>
-
     <style>
+      :host {
+        --app-primary-color: #424242;
+        --app-light-primary-color: #eeeeee;
 
-      .content {
+        --app-secondary-color: #212121;
 
-        background-color: var(--paper-grey-50);
-        padding: 24px;
-        position: fixed;
-        top: 64px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        flex-flow: row wrap;
-        overflow-y: auto;
+        --app-third-color: #757575;
 
-      }
+        --app-accent-color: #03a9f4;
+        --app-light-accent-color: #b3e5fc;
+        --app-dark-accent-color: #01579b;
 
-      .navigation {
+        --paper-tab-ink: var(--app-accent-color);
+        --paper-tabs-selection-bar-color: var(--app-accent-color);
 
-        flex: 1;
-        min-width: 100px;
-        padding: 8px;
+        --paper-slider-knob-color: var(--app-accent-color);
+        --paper-slider-pin-color: var(--app-accent-color);
+        --paper-slider-active-color: var(--app-accent-color);
+
+        --paper-fab-background: var(--app-accent-color);
+        --paper-fab-keyboard-focus-background: var(--app-dark-accent-color);
+
+        --paper-input-container-focus-color: var(--app-dark-accent-color);
+
         display: flex;
         flex-direction: column;
 
-      }
+        background-color: #eeeeee;
 
-      .viewer, ami-viewer {
-
-        flex: 2;
-        height: 100%;
-        min-width: 400px;
-        overflow: hidden;
-        background-color: var(--paper-grey-500);
-
-      }
-
-      .viewer-controls {
-        flex: 1;
-        min-width: 100px;
-        padding: 8px;
-      }
-
-      paper-dropdown-menu, paper-slider{
-
-        width:100%;
-
-      }
-
-      .paper-range-slider {
-
-        display: flex;
+        position: absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
 
       }
 
       paper-range-slider {
+        --paper-range-slider-knob-color: var(--app-accent-color);
+        --paper-range-slider-active-color: var(--app-accent-color);
+        --paper-range-slider-pin-color: var(--app-accent-color);
+      }
 
-        --paper-range-slider-knob-color: var(--google-blue-700);
-        --paper-range-slider-active-color: var(--google-blue-700);
-        --paper-range-slider-pin-color: var(--google-blue-700);
-
+      .paper-range-slider {
+        display: flex;
       }
 
       .paper-range-slider paper-input{
-
         width: 50px;
         overflow: hidden;
-
       }
 
-      .files {
-
-        overflow-y: auto;
-
+      app-toolbar {
+        color: #fff;
+        background-color: var(--app-primary-color);
       }
 
-      #start {
+      .content {
+        flex: 1;
 
-        z-index:10;
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
-        --paper-fab-background: var(--accent-color);
-
+        display: flex;
+        flex-direction: row;
       }
 
+      .controls {
+        min-width: 400px;
+        max-width: 400px;
+        height:100%;
+
+        display: flex;
+        flex-direction: column;
+
+        background-color: var(--app--light-primary-color);
+      }
+
+      .renderers {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+
+        background-color: #353535;
+      }
+
+      .renderers > div {
+        box-sizing:border-box;
+        border: 1px solid rgba(0, 0, 0, .2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      div.v1 {
+        border-top: 1px solid #ffeb3b;
+      }
+
+      .big {
+        height: 70%;
+        width:100%;
+      }
+
+      div.v2 {
+        border-top: 1px solid #f44336;
+      }
+
+      div.v3 {
+        border-top: 1px solid #4caf50;
+      }
+
+      div.v4 {
+        border-top: 1px solid #2196f3;
+      }
+
+      .small {
+        height: 30%;
+        flex: 1;
+        position: relative;
+      }
+
+      paper-slider {
+        width: 100%;
+        position: absolute;
+        bottom: 0px;
+      }
     </style>
-
-    <ami-loader urls="{{urls}}" series="{{series}}"></ami-loader>
 
     <div class="content">
 
-      <div class="navigation">
+      <module-manager id="manager" class="controls">
+        <module-fileBrowser id="module-fileBrowser" class="module" label="data" list=[[list]] files=[[files]] on-load-data="_loadData"></module-fileBrowser>
+        <module-scene id="module-scene" class="module" label="scene" scene="[[scene]]" on-state-changed="_stateChanged"></module-scene>
+        <module-editor id="module-editor" class="module" label="editor"></module-editor>
+      </module-manager>
 
-        <div class="header">
-
-          <div> Current Plugin: {{plugin.data.id}} : {{plugin.data.plugin_name}} </div>
-          
-          <div> Parent ID: {{plugin.data.previous_id}} </div>
-
-          <div> Children IDs </div>
-
-          <ul>
-            <template is="dom-repeat" items="{{plugin.data.children}}">
-              <li> Children ID:{{item.data.id}} </li>
-            </template>
-          </ul>
-
+      <div class="renderers">
+        <ami-3d id='r3d' class="v1 big"></ami-3d>
+        <div class="v2 small">
+          <paper-slider value="21" pin></paper-slider>
         </div>
-
-        <div>Files</div>
-
-        <div class="files">
-
-          <ul>
-            <template is="dom-repeat" items="{{files}}" as="file">
-              <li>{{file.data.fname}} </li>
-            </template>
-          <ul>
-
+        <div class="v3 small">
+          <paper-slider value="21" pin></paper-slider>
         </div>
-
-      </div>
-
-      <div class="viewer">
-        <ami-viewer
-          index="{{index}}"
-          index-max="{{indexMax}}"
-          orientation="{{orientation}}"
-          series="[[series]]">
-        </ami-viewer>
-      </div>
-
-      <div class="viewer-controls">
-
-        <div>Some cool controls</div>
-        
-        <paper-dropdown-menu label="Orientation">
-          <paper-listbox class="dropdown-content" selected="{{orientation}}">
-            <paper-item>Acquisition</paper-item>
-            <paper-item>Next</paper-item>
-            <paper-item>Last</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-
-        <div> Index </div>
-        <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable></paper-slider>
-        <div> Window / level (not connected) </div>
-        
-        <div class="paper-range-slider">
-        <paper-input value="{{vmin}}"></paper-input><paper-range-slider value-min="{{vmin}}" value-max="{{vmax}}" style="width:100%"></paper-range-slider><paper-input value="{{vmax}}"></paper-input>
+        <div class="v4 small">
+          <paper-slider value="21" pin></paper-slider>
         </div>
       </div>
-
-      <paper-fab id="start" icon="av:play-arrow" on-tap="_getPlugins"></paper-fab>
-
-      <!--<paper-dialog id="modal" modal on-iron-overlay-opened="_patchOverlay">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        <div class="buttons">
-          <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
-        </div>
-      </paper-dialog>-->
 
     </div>
 
@@ -195,150 +180,282 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
   <script>
     Polymer({
-        is: 'chris-feed-plugin',
-
-        properties: {
-
-          plugin: {
-            type: Object,
-            observer: '_pluginChanged'
-          },
-
-          files: {
+      is: 'chris-feed-plugin',
+      properties :{
+        list: {
             type: Array,
-            observer: '_filesChanged'
-          },
-
-          tree: Array
-
+            observer: '_listChanged',
         },
-
-        _pluginChanged: function(){
-          
-          console.log( this.plugin);
-
+        files: {
+          type: Array,
+          value: [
+            {data:{
+              fname: 'dicom/adi_brain/36444280',
+            }},
+            {data:{
+              fname: 'dicom/adi_brain/36444294',
+            }},
+            {data:{
+              fname: 'dicom/adi_brain/36444308',
+            }},
+            {data:{
+              fname: 'dicom/adi_brain/36444322',
+            }},
+            {data:{
+              fname: 'dicom/adi_brain/36444336',
+            }},
+            {data:{
+              fname: 'nifti/eun_brain/eun_uchar_8.nii.gz',
+            }},
+            {data:{
+              fname: 'stl/adi_brain/WM.stl',
+            }},
+            {data:{
+              fname: 'options.json',
+            }},
+          ]
         },
-
-        _filesChanged: function(){
-
-          // generate tree structure
-          console.log( this.files );
-          var map = {};
-          var tree = [];
-          var nodes = [];
-
-          // create the root
-          var rootNode = {
-            id: '/',
-            path: [],
-            children: [],
-            parent: null,
-            selected: false,
-            label: '/'
-          }
-          tree.push( rootNode );
-          nodes.push( rootNode );
-          map[rootNode.id] = nodes.length - 1;;
-
-          for( var i = 0; i < this.files.length; i++ ){
-            var file = this.files[i];
-            var path = this.files[i].data.fname.split('/');
-            var parentid = '/';
-            var id = '/';
-
-            // prepare the directory
-            for( var j=0; j < path.length - 1; j++ ){
-
-              if( path[j] !== '' ){
-
-                parentid = id;
-                id += path[j] + '/';
-
-                if( !map.hasOwnProperty(id) ){
-
-                  // add node in tree
-                  var node = {
-                    id: id,
-                    path: id.split('/'),
-                    children: [],
-                    parent: map[parentid],
-                    type: 'directory',
-                    selected: false,
-                    label: path[j]
-                  }
-
-                  nodes.push( node );
-                  map[id] = nodes.length - 1;
-                  nodes[map[parentid]].children.push( node );
-
-                }
-
-              }
-
-            }
-
-            // add the file
-            var node = {
-              id: this.files[i].data.fname,
-              path: path,
-              children: [],
-              parent: map[id],
-              type: 'file',
-              selected: false,
-              file: file,
-              label: path[path.length - 1]
-            }
-
-            nodes.push( node );
-            map[this.files[i].data.fname] = nodes.length - 1;
-            nodes[map[id]].children.push( node );
-            
-          }
-
-          this.set('tree', tree);
-          console.log( this.tree );
-
-          var datasets = [];
-
-          var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
-          var t2Full = t2.map(function(v) {
-            return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
-          });
-          datasets.push( t2Full );
-
-          var nrrdFull = ['https://cdn.rawgit.com/FNNDSC/data/master/nrrd/marc_avf/avf_float_32.nrrd'];
-          datasets.push( nrrdFull );
-
-          var niftiFull = ['https://cdn.rawgit.com/FNNDSC/data/master/nifti/siena/siena.nii.gz'];
-          datasets.push( niftiFull );
-
-          this.urls = datasets[ Math.floor(Math.random()*datasets.length) ];
-
+        sceneMap: {
+          type: Object,
+          value: new Map(),
+          // observer: '_sceneChanged',
         },
-
-        _getPlugins: function(){
-
-          // get all plugins to dropdown menu
-
-          // each plugin, get parameters
-
-          // this.$.modal.open();
-          // fire selected plugin
-          this.fire('run-plugin');
-
+        scene: {
+          type: Array,
+          value: [],
+          observer: '_sceneChanged',
         },
+        objectsMap: {
+          type: Object,
+          value: new Map(),
+        }
+      },
 
-        // https://github.com/PolymerElements/paper-dialog/issues/7
-        _patchOverlay: function ( e ) {
+      observers: [
+        '_sceneChanged(scene.*)',
+      ],
 
-          if ( e.target.withBackdrop ) {
+      _listChanged: function(){
+          console.log(this.list);
+      },
 
-            e.target.parentNode.insertBefore( e.target.backdropElement, e.target );
+      _loadData: function(event) {
+        var data = event.detail.data;
+        var formatedData = this.analyze(data);
 
+        // load if not alread in scene!
+        if(formatedData.type !== null && !this.sceneMap.has(data.id)) {
+          this.sceneMap.set(data.id, formatedData);
+          // go to scene page
+          this.$.manager.selected = 1;
+
+          // add to the scene
+          this.push('scene', formatedData);
+
+          if(formatedData.type === 'volume'){
+            // load the data! 
+            var LoadersVolume = AMI.default.Loaders.Volume;
+            var loader = new LoadersVolume();
+            var files = formatedData.files.map(function(v) {
+              return 'https://cdn.rawgit.com/FNNDSC/data/master/' + v;
+            });
+
+            // load sequence for all files
+            // load a volume
+            loader.load(files)
+            .then(function() {
+              var series = loader.data[0].mergeSeries(loader.data);
+              var stack = series[0].stack[0];
+              stack.prepare();
+
+              // update object
+              var obj = this.sceneMap.get(data.id);
+              this.updateVolumeObject(obj, stack);
+
+              // update ready to make sure all watchers get notifies
+              var pos = this.scene.map(function(e) { return e.id; }).indexOf(data.id);
+              this.set(['scene', pos, 'ready'], obj.ready);
+
+              // select it
+              this.$['module-scene'].selected = pos;
+
+              // visualize it
+              var HelpersStack = AMI.default.Helpers.Stack;
+              var stackHelper = new HelpersStack(stack);
+              stackHelper.bbox.color = 0x8BC34A;
+              stackHelper.border.color = 0xF44336;
+              this._updateState(data, stackHelper, obj.state);
+              this.$.r3d.add(stackHelper);
+              this.objectsMap.set(data.id, stackHelper);
+            }.bind(this));
+
+          } else if(formatedData.type === 'mesh') {
+            // load a mesh
+            var files = formatedData.files.map(function(v) {
+              return 'https://cdn.rawgit.com/FNNDSC/data/master/' + v;
+            });
+            var loaderSTL = new THREE.STLLoader();
+            loaderSTL.load(files[0],
+              function(geometry) {
+
+                var material = new THREE.MeshPhongMaterial(
+                  {color: 0xF44336, specular: 0x111111, shininess: 100, transparent: true, opacity: 1});
+                var mesh = new THREE.Mesh(geometry, material);
+                // to LPS space
+                var RASToLPS = new THREE.Matrix4();
+                RASToLPS.set(-1, 0, 0, 0,
+                              0, -1, 0, 0,
+                              0, 0, 1, 0,
+                              0, 0, 0, 1);
+                mesh.applyMatrix(RASToLPS);
+
+                // update object
+                var obj = this.sceneMap.get(data.id);
+                this.updateMeshObject(obj, geometry, material);
+
+                // update ready to make sure all watchers get notifies
+                var pos = this.scene.map(function(e) { return e.id; }).indexOf(data.id);
+                this.set(['scene', pos, 'ready'], obj.ready);
+
+                // select it
+                this.$['module-scene'].selected = pos;
+
+                // visualize it                
+                this._updateState(data, mesh, obj.state);
+                this.$.r3d.add(mesh);
+                this.objectsMap.set(data.id, mesh);
+            }.bind(this));
           }
 
         }
+      },
 
+      _stateChanged: function(event) {
+        var mesh = this.objectsMap.get(event.detail.id);
+        var data = this.sceneMap.get(event.detail.id);
+        this._updateState(data, mesh, event.detail.state);
+      },
+
+      _updateState: function(data, mesh, state) {
+        mesh.visible = state.visible;
+
+        if(data.type === 'volume') {
+          mesh.slice.windowCenter = state.windowLevel[0];
+          mesh.slice.windowWidth = state.windowLevel[1];
+          mesh.slice.interpolation = state.interpolation? 1 : 0;
+        } else if(data.type === 'mesh') {
+          mesh.material.opacity = state.opacity;
+          mesh.material.color.set(state.color);
+          mesh.material.shininess = state.shininess;
+        }
+      },
+
+      _sceneChanged: function(){
+
+        //console.log(this.scene);
+
+      },
+
+      updateVolumeObject: function(object, stack) {
+        // update information
+        object.info = {
+          minMax: stack.minMax,
+          size: [stack.columns, stack.rows],
+          images: stack.frame.length,
+          seriesNumber: null,
+          thickness: stack.sliceThickness,
+          patientID: null,
+          patientBirthdate: null,
+          patientAge: null,
+          studyDescription: null,
+          seriesDescription: null,
+          stationName: null,
+          modality: stack.modality,
+          sequenceName: null,
+          studyDate: null,
+          seriesDate: null,
+          acquisitionDate: null,
+          acquisitionTime: null,
+        };
+
+        // update state
+        object.state = {
+          visible: true,
+          interpolation: true,
+          windowLevel: [stack.windowCenter, stack.windowWidth],
+          threshold: null,
+          lut: 'B/W',
+        };
+
+        // ready!
+        object.ready = true;
+      },
+  
+      updateMeshObject: function(object, geometry, material) {
+        // update information
+        object.info = {
+
+        };
+
+        // update state
+        object.state = {
+          visible: true,
+          color: '#' + material.color.getHexString(),
+          opacity: material.opacity,
+          shininess: material.shininess,
+        };
+
+        // ready!
+        object.ready = true;
+      },
+
+      analyze: function(data) {
+        var target = {
+          id: data.id,
+          files: [],
+          type: null,
+          ready: false,
+        };
+
+        if(data.children.length <= 0) {
+          // single file
+          target.files.push(data.id);
+        } else {
+          // get list of FILES in the directory
+          for(var i = 0; i<data.children.length; i++) {
+            if(data.children[i].children.length <= 0) {
+              target.files.push(data.children[i].id);
+            }
+          }
+        }
+
+        if(target.files.length > 0) {
+          // we are on something!
+          // no extension, .dcm, .nii or .nii.gz: type volume
+          if(target.files[0].includes('.stl')) {
+            target.type = 'mesh';
+          } else {
+            target.type = 'volume';
+          }
+        }
+
+        return target;
+      },
+
+      clickInput: function(evt) {
+        this.$.filesinput.click();
+      },
+
+      localFS_load: function(evt) {
+        // convert files object to an array
+        var files = [];
+        for ( var i = 0; i < evt.target.files.length; i++ ) {
+          files.push( evt.target.files[i] );
+        }
+        this.files =  files;
+        console.log(this.files);
+        // process files then add it to scene if makes sense.
+      }
     });
   </script>
 </dom-module>

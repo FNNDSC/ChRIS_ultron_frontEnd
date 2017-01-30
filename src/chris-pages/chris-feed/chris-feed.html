@@ -135,20 +135,20 @@
 
               <div main-title>[[feed.data.name]]</div>
 
-              <span>
+              <!--<span>
                 <paper-icon-button icon="icons:apps" on-tap="_openTree"></paper-icon-button>
                 <iron-dropdown id="dropdown" horizontal-align="right" vertical-align="top" on-tap="_closeDropdown">
                     <div class="plugin dropdown-content" on-select-node="_selectPlugin">
                       <chris-plugin-tree list="[[pluginInstanceCollection]]" selected="[[plugin]]"></chris-plugin-tree>
                     </div>
                 </iron-dropdown>
-              </span>
+              </span>-->
 
-              <iron-selector attr-for-selected="name" selected="{{page}}">
+              <!--<iron-selector attr-for-selected="name" selected="{{page}}">
                 <paper-icon-button name="note" icon="editor:mode-edit" on-tap="_deselectPlugin"></paper-icon-button>
                 <paper-icon-button name="comments" icon="communication:forum" on-tap="_deselectPlugin"></paper-icon-button>
                 <paper-icon-button name="about" icon="icons:assignment-ind" on-tap="_deselectPlugin"></paper-icon-button>
-              </iron-selector>
+              </iron-selector>-->
 
               <paper-icon-button icon="icons:more-vert"></paper-icon-button>
 
@@ -157,15 +157,15 @@
 
           <div id="content" class="main content">
 
-          <iron-pages selected="[[page]]" attr-for-selected="name">
+          <!--<iron-pages selected="[[page]]" attr-for-selected="name">-->
 
-            <chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
+            <!--<chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
             <chris-feed-note name="note" notes="{{note}}"></chris-feed-note>
-            <chris-feed-comments name="comments" comments="{{comments}}"></chris-feed-comments>
-            <chris-feed-plugin name="plugin" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]" on-run-plugin="_runPlugin"></chris-feed-plugin>
-            <chris-feed-run name="run" plugin="[[plugin]]" plugins="[[plugins]]" on-fetch-plugin="_fetchPlugin"></chris-feed-run>
+            <chris-feed-comments name="comments" comments="{{comments}}"></chris-feed-comments>-->
+            <chris-feed-plugin name="plugin" list="[[pluginInstanceCollection]]" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]" on-run-plugin="_runPlugin"></chris-feed-plugin>
+            <!--<chris-feed-run name="run" plugin="[[plugin]]" plugins="[[plugins]]" on-fetch-plugin="_fetchPlugin"></chris-feed-run>-->
 
-          </iron-pages>
+          <!--</iron-pages>-->
 
           </div>
 
@@ -192,8 +192,10 @@
           observer: '_pageChanged'
         },
 
-        pluginInstanceCollection: Array,
-
+        pluginInstanceCollection: {
+          type: Array,
+          observer: '_listChanged',
+        },
         plugins: Array,
 
         plugin:{
@@ -254,6 +256,8 @@
 
       _feedChanged: function(){
 
+        console.log('feed changed');
+
         var data = {};
         data.auth = {
           type: 'token',
@@ -275,6 +279,7 @@
         // get plugins
         data.params = {};
         data.params.root_id = this.feed.data.id;
+        console.log('go search..');
         var requestPlugins =this.$.ChrisAPI.request('GET', '/plugins/instances/search/', data);
         requestPlugins
           .then( this._handlePlugins.bind(this) )
@@ -301,6 +306,8 @@
       },
 
       _handlePlugins: function( response ){
+
+        console.log('handle plugins...');
 
         console.log( response );
 
@@ -523,7 +530,11 @@
         this.push('pluginInstanceCollection', event.data[0]);
         this.plugin = event.data[0];   
 
-      }
+      },
+
+      // _listChanged: function(){
+      //   console.log(this.pluginInstanceCollection);
+      // }
 
     });
   </script>
