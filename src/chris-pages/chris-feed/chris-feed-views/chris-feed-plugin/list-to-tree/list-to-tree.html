@@ -1,0 +1,5 @@
+<html><head><link rel="import" href="../../../../../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="list-to-tree">
+  <script>Polymer({is:"list-to-tree",properties:{list:{type:Array,observer:"_listChanged"},tree:{type:Array,observer:"_treeChanged"}},_listChanged:function(){var e={},t=[],r=[],i={id:"/",path:[],children:[],parent:null,selected:!1,label:"/"};t.push(i),r.push(i),e[i.id]=r.length-1;for(var l=0;l<this.list.length;l++){for(var s=this.list[l],h=this.list[l].data.fname.split("/"),a="/",n="/",d=0;d<h.length-1;d++)if(""!==h[d]&&(a=n,n+=h[d]+"/",!e.hasOwnProperty(n))){var p={id:n,path:n.split("/"),children:[],parent:e[a],type:"directory",selected:!1,label:h[d]};r.push(p),e[n]=r.length-1,r[e[a]].children.push(p)}var p={id:this.list[l].data.fname,path:h,children:[],parent:e[n],type:"file",selected:!1,file:s,label:h[h.length-1]};r.push(p),e[this.list[l].data.fname]=r.length-1,r[e[n]].children.push(p)}this.set("tree",t);var c=new CustomEvent("tree-changed",{detail:{tree:this.tree}});this.dispatchEvent(c)},_treeChanged:function(){}});</script>
+</dom-module></body></html>

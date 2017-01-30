@@ -1,0 +1,72 @@
+<html><head><link rel="import" href="../../../../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../../../bower_components/iron-icons/editor-icons.html">
+
+<link rel="import" href="../../../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../../../../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../../../../../bower_components/paper-menu/paper-submenu.html">
+
+</head><body><dom-module id="recursive-tree">
+
+  <template>
+    <style>
+    paper-menu {
+        padding-left: 15px;
+    }
+
+    paper-item, paper-icon-item {
+        --paper-item: {
+            cursor: pointer;
+        };
+    }
+
+    .avatar {
+      display: inline-block;
+      box-sizing: border-box;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--paper-amber-500);
+    }
+
+    .grey {
+      background-color: #d9d9d9;
+    }
+
+    </style>
+
+    <template is="dom-repeat" items="{{tree}}">
+      <paper-submenu class="menu-content" label="{{item.label}}">
+
+        <paper-icon-item class="menu-trigger">
+            
+            
+            <paper-icon-button item-icon="" icon$="{{_computeIcon(item)}}" alt="favourite this!" class="avatar grey" on-tap="_view">
+            </paper-icon-button>
+            <paper-item-body two-line="">
+            <div>{{item.label}}</div>
+            <div secondary="">contains {{item.children.length}} files</div>
+            </paper-item-body>
+            <paper-icon-button icon="icons:visibility" alt="favourite this!" on-tap="_view">
+            </paper-icon-button>
+        </paper-icon-item>
+
+          
+          <template is="dom-if" if="{{item.children.length}}">
+            <paper-menu class="menu-content">
+                <recursive-tree tree="{{item.children}}"></recursive-tree>
+            </paper-menu>
+          </template>
+      </paper-submenu>
+    </template>
+
+  </template>
+
+  <script>Polymer({is:"recursive-tree",properties:{tree:{type:Array,observer:"_treeChanged"}},_selectNode:function(e){console.log(e)},_treeChanged:function(){},_view:function(e){e.stopPropagation(),e.preventDefault(),console.log(e.model.__data__.item);var e=new CustomEvent("load-data",{detail:{data:e.model.__data__.item}});this.dispatchEvent(e)},_computeIcon:function(e){return e.children.length?"icons:folder":"editor:insert-drive-file"}});</script>
+
+</dom-module></body></html>

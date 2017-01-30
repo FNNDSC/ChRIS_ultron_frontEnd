@@ -1,0 +1,184 @@
+<html><head><link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+
+
+<link rel="import" href="../../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../../bower_components/iron-icons/av-icons.html"></head><body>"
+
+
+<link rel="import" href="../../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../../bower_components/paper-range-slider/paper-range-slider.html">
+<link rel="import" href="../../../../../bower_components/paper-slider/paper-slider.html">
+
+
+<link rel="import" href="../../../../../bower_components/ami-loader/ami-loader.html">
+<link rel="import" href="../../../../../bower_components/ami-viewer/ami-viewer.html">
+
+<dom-module id="chris-feed-plugin">
+
+  <template>
+
+    <style>
+
+      .content {
+
+        background-color: var(--paper-grey-50);
+        padding: 24px;
+        position: fixed;
+        top: 64px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-flow: row wrap;
+        overflow-y: auto;
+
+      }
+
+      .navigation {
+
+        flex: 1;
+        min-width: 100px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+
+      }
+
+      .viewer, ami-viewer {
+
+        flex: 2;
+        height: 100%;
+        min-width: 400px;
+        overflow: hidden;
+        background-color: var(--paper-grey-500);
+
+      }
+
+      .viewer-controls {
+        flex: 1;
+        min-width: 100px;
+        padding: 8px;
+      }
+
+      paper-dropdown-menu, paper-slider{
+
+        width:100%;
+
+      }
+
+      .paper-range-slider {
+
+        display: flex;
+
+      }
+
+      paper-range-slider {
+
+        --paper-range-slider-knob-color: var(--google-blue-700);
+        --paper-range-slider-active-color: var(--google-blue-700);
+        --paper-range-slider-pin-color: var(--google-blue-700);
+
+      }
+
+      .paper-range-slider paper-input{
+
+        width: 50px;
+        overflow: hidden;
+
+      }
+
+      .files {
+
+        overflow-y: auto;
+
+      }
+
+      #start {
+
+        z-index:10;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        --paper-fab-background: var(--accent-color);
+
+      }
+
+    </style>
+
+    <ami-loader urls="{{urls}}" series="{{series}}"></ami-loader>
+
+    <div class="content">
+
+      <div class="navigation">
+
+        <div class="header">
+
+          <div> Current Plugin: {{plugin.data.id}} : {{plugin.data.plugin_name}} </div>
+          
+          <div> Parent ID: {{plugin.data.previous_id}} </div>
+
+          <div> Children IDs </div>
+
+          <ul>
+            <template is="dom-repeat" items="{{plugin.data.children}}">
+              <li> Children ID:{{item.data.id}} </li>
+            </template>
+          </ul>
+
+        </div>
+
+        <div>Files</div>
+
+        <div class="files">
+
+          <ul>
+            <template is="dom-repeat" items="{{files}}" as="file">
+              <li>{{file.data.fname}} </li>
+            </template>
+          <ul>
+
+        </ul></ul></div>
+
+      </div>
+
+      <div class="viewer">
+        <ami-viewer index="{{index}}" index-max="{{indexMax}}" orientation="{{orientation}}" series="[[series]]">
+        </ami-viewer>
+      </div>
+
+      <div class="viewer-controls">
+
+        <div>Some cool controls</div>
+        
+        <paper-dropdown-menu label="Orientation">
+          <paper-listbox class="dropdown-content" selected="{{orientation}}">
+            <paper-item>Acquisition</paper-item>
+            <paper-item>Next</paper-item>
+            <paper-item>Last</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <div> Index </div>
+        <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable=""></paper-slider>
+        <div> Window / level (not connected) </div>
+        
+        <div class="paper-range-slider">
+        <paper-input value="{{vmin}}"></paper-input><paper-range-slider value-min="{{vmin}}" value-max="{{vmax}}" style="width:100%"></paper-range-slider><paper-input value="{{vmax}}"></paper-input>
+        </div>
+      </div>
+
+      <paper-fab id="start" icon="av:play-arrow" on-tap="_getPlugins"></paper-fab>
+
+      
+
+    </div>
+
+  </template>
+
+  <script>Polymer({is:"chris-feed-plugin",properties:{plugin:{type:Object,observer:"_pluginChanged"},files:{type:Array,observer:"_filesChanged"},tree:Array},_pluginChanged:function(){console.log(this.plugin)},_filesChanged:function(){console.log(this.files);var e={},t=[],a=[],r={id:"/",path:[],children:[],parent:null,selected:!1,label:"/"};t.push(r),a.push(r),e[r.id]=a.length-1;for(var i=0;i<this.files.length;i++){for(var n=this.files[i],l=this.files[i].data.fname.split("/"),s="/",h="/",p=0;p<l.length-1;p++)if(""!==l[p]&&(s=h,h+=l[p]+"/",!e.hasOwnProperty(h))){var d={id:h,path:h.split("/"),children:[],parent:e[s],type:"directory",selected:!1,label:l[p]};a.push(d),e[h]=a.length-1,a[e[s]].children.push(d)}var d={id:this.files[i].data.fname,path:l,children:[],parent:e[h],type:"file",selected:!1,file:n,label:l[l.length-1]};a.push(d),e[this.files[i].data.fname]=a.length-1,a[e[h]].children.push(d)}this.set("tree",t),console.log(this.tree);var o=[],c=["36444280","36444294","36444308","36444322","36444336"],f=c.map(function(e){return"https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/"+e});o.push(f);var g=["https://cdn.rawgit.com/FNNDSC/data/master/nrrd/marc_avf/avf_float_32.nrrd"];o.push(g);var u=["https://cdn.rawgit.com/FNNDSC/data/master/nifti/siena/siena.nii.gz"];o.push(u),this.urls=o[Math.floor(Math.random()*o.length)]},_getPlugins:function(){this.fire("run-plugin")},_patchOverlay:function(e){e.target.withBackdrop&&e.target.parentNode.insertBefore(e.target.backdropElement,e.target)}});</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,141 @@
+<html><head><link rel="import" href="../../../../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../../../../bower_components/paper-tabs/paper-tab.html">
+
+</head><body><dom-module id="module-editor">
+    <template>
+        <style>
+        :host{
+            flex:1;
+            display:flex;
+            flex-direction: column;
+        }
+
+        paper-fab {
+            bottom: 20px;
+            right: 20px;
+            position: absolute;
+        }
+
+        #filesinput {
+            display: none;
+        }
+
+        .controls-editor-general {
+            margin: 10px;
+        }
+
+        .controls-scene-select {
+            position: relative;
+            padding: 10px;
+            flex: 1;
+            min-height: 100px;
+            max-height: 300px;
+            display:flex;
+        }
+
+        .controls-scene-select-list {
+            flex:1;
+
+            border: 1px solid #424242;
+            background-color: #fff;
+
+            overflow: auto;
+        }
+
+        .controls-editor-segment {
+            flex: 1;
+        }
+
+        paper-dropdown-menu {
+            width: 100%;
+        }
+
+        </style>
+
+        <div class="controls-editor-general">
+
+            <paper-dropdown-menu label="Segmentation">
+            <paper-listbox class="dropdown-content">
+                <paper-item>Create new segmentation</paper-item>
+            </paper-listbox>
+            </paper-dropdown-menu>
+
+            <paper-dropdown-menu label="Master Volume">
+            <paper-listbox class="dropdown-content">
+                <paper-item>t1 brain scan</paper-item>
+                <paper-item>t2 from the foot</paper-item>
+                <paper-item>something else</paper-item>
+            </paper-listbox>
+            </paper-dropdown-menu>
+
+        </div>
+
+
+        <div class="controls-scene-select">
+            <div class="controls-scene-select-list">
+
+                <paper-item>t1 from brain</paper-item>
+                <paper-item>mesh from freesurfer</paper-item>
+                <paper-item>another t1</paper-item>
+                <paper-item>t1 from brain</paper-item>
+                <paper-item>mesh from freesurfer</paper-item>
+                <paper-item>another t1</paper-item>
+                <paper-item>t1 from brain</paper-item>
+                <paper-item>mesh from freesurfer</paper-item>
+                <paper-item>another t1</paper-item>
+                <paper-item>t1 from brain</paper-item>
+                <paper-item>mesh from freesurfer</paper-item>
+                <paper-item>another t1</paper-item>
+
+            </div>
+
+            <paper-fab mini="" icon="icons:add" title="add" on-tap="clickInput"></paper-fab>
+            <input type="file" id="filesinput" on-change="localFS_load" multiple="">
+
+        </div>
+
+            <div class="controls-editor-segment">
+
+              <paper-tabs selected="{{selected}}">
+                <paper-tab>EDIT</paper-tab>
+                <paper-tab>ABOUT</paper-tab>
+                <paper-tab>MORE</paper-tab>
+              </paper-tabs>
+
+                <iron-pages class="controls-editor-segment-pages" selected="{{selected}}">
+                  
+                  
+                  <div class="controls-scene-properties-appearance">
+                    EDIT
+                  </div>
+
+                  
+                  <div class="controls-scene-properties-info">
+                    ABOUT
+                  </div>
+
+                  
+                  <div>SETTINGS</div>
+                </iron-pages>
+
+            </div>
+
+          
+
+        
+
+      
+
+    </template>
+    <script>Polymer({is:"module-editor",properties:{files:{type:Array,value:[]},plugin:{type:Object,value:{}},selected:{type:String,value:0}}});</script>
+
+</dom-module></body></html>

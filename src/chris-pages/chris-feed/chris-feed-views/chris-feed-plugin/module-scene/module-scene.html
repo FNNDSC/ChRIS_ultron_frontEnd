@@ -1,0 +1,239 @@
+<html><head><link rel="import" href="../../../../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../../../../../bower_components/iron-icons/editor-icons.html">
+
+<link rel="import" href="../../../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../../../../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../../../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../../../../../bower_components/paper-range-slider/paper-range-slider.html">
+<link rel="import" href="../../../../../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../../../../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
+<link rel="import" href="../../../../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="module-scene-icons.html">
+
+</head><body><dom-module id="module-scene">
+    <template>
+        <style>
+        :host{
+            flex:1;
+            display:flex;
+            flex-direction: column;
+        }
+
+        paper-range-slider {
+            --paper-range-slider-knob-color: var(--app-accent-color);
+            --paper-range-slider-active-color: var(--app-accent-color);
+            --paper-range-slider-pin-color: var(--app-accent-color);
+        }
+
+        .paper-range-slider{
+            display: flex;
+        }
+
+        .paper-range-slider paper-input{
+            width: 50px;
+            overflow: hidden;
+        }
+
+        paper-progress {
+            --paper-progress-active-color: var(--app-accent-color);
+        }
+
+        .controls-scene-select {
+            position: relative;
+            padding: 10px;
+            flex: 1;
+            min-height: 100px;
+            max-height: 300px;
+            display:flex;
+        }
+
+        .controls-scene-select-list {
+            flex:1;
+
+            border: 1px solid #424242;
+            background-color: #fff;
+
+            overflow: auto;
+        }
+        
+        paper-fab {
+            bottom: 20px;
+            right: 20px;
+            position: absolute;
+        }
+
+        #filesinput {
+            display: none;
+        }
+
+        .controls-scene-properties {
+            flex:1;
+        }
+
+        .controls-scene-properties-pages {
+            margin: 10px;
+        }
+
+        paper-dropdown-menu {
+            width: 100%;
+        }
+
+        paper-item, paper-icon-item {
+            --paper-item: {
+                cursor: pointer;
+            };
+            --paper-item-selected: {
+                background-color: var(--app-light-accent-color);
+            }
+        }
+
+        .avatar {
+            display: inline-block;
+            box-sizing: border-box;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--paper-amber-500);
+        }
+
+        .grey {
+            background-color: #d9d9d9;
+        }
+        
+        paper-progress {
+            width: inherit;
+        }
+
+        .oneliner {
+            display: flex;
+            align-items: center;
+        }
+
+        .oneliner > paper-toggle-button {
+            margin-right: 4px;
+        }
+
+        paper-slider {
+            width: 100%;
+        }
+        </style>
+
+        <div class="controls-scene-select">
+            <div class="controls-scene-select-list">
+
+                <paper-listbox selected="{{selected}}">
+
+                    <template is="dom-repeat" items="[[scene]]">
+                        <paper-icon-item class="menu-trigger">
+                            <paper-icon-button item-icon="" icon$="{{_computeIcon(item)}}" alt="favourite this!" class="avatar grey">
+                            </paper-icon-button>
+                            <paper-item-body two-line="">
+
+                                <template is="dom-if" if="{{item.ready}}">
+                                    <div>[[item.id]]</div>
+                                    <div secondary="">[[item.info.modality]] ([[item.info.images]] images)</div>
+                                </template>
+
+                                <template is="dom-if" if="{{!item.ready}}">
+                                    <div secondary="">Loading data...</div>
+                                    <paper-progress indeterminate="" class="blue"></paper-progress>
+                                </template>
+
+                            </paper-item-body>
+                        </paper-icon-item>
+                    </template>
+
+                </paper-listbox>
+
+            </div>
+
+            <paper-fab mini="" icon="icons:add" title="add" on-tap="clickInput"></paper-fab>
+            <input type="file" id="filesinput" on-change="localFS_load" multiple="">
+
+        </div>
+
+        <div class="controls-scene-properties">
+            <div class="controls-scene-properties-controls">
+
+            <paper-tabs selected="{{selectedProperty}}">
+                <paper-tab>STYLE</paper-tab>
+                <paper-tab>ABOUT</paper-tab>
+                <paper-tab>MORE</paper-tab>
+            </paper-tabs>
+
+            <iron-pages class="controls-scene-properties-pages" selected="{{selectedProperty}}">
+                
+                <div class="controls-scene-properties-appearance">
+                    
+                    <template is="dom-if" if="{{_volumeSelected(scene,selected)}}">
+
+                        <div>
+                            <div class="oneliner"><paper-toggle-button checked="{{visibleVolumeValue}}"></paper-toggle-button>Show/Hide</div>
+                        </div>
+
+                        <div>
+                            <div class="oneliner"><paper-toggle-button checked="{{interpolationValue}}"></paper-toggle-button>Voxel interpolation</div>
+                        </div>
+
+                        <div>
+                            <div>Window/Level</div>
+                            <div class="paper-range-slider">
+                            <paper-input value="{{wlminValue}}"></paper-input><paper-range-slider min="{{wlmin}}" max="{{wlmax}}" value-min="{{wlminValue}}" value-max="{{wlmaxValue}}" style="width:100%"></paper-range-slider><paper-input value="{{wlmaxValue}}"></paper-input>
+                            </div>
+                        </div>
+                        
+                    </template>
+
+                    
+                    <template is="dom-if" if="{{_meshSelected(scene,selected)}}">
+
+                        <div>
+                            <div class="oneliner"><paper-toggle-button checked="{{visibleMeshValue}}"></paper-toggle-button>Show/Hide</div>
+                        </div>
+
+                        <div>
+                            <div class="oneliner"><paper-swatch-picker color="{{colorValue}}"></paper-swatch-picker>Color</div>
+                        </div>
+
+                        <div>
+                            <div>Opacity</div>
+                            <paper-slider editable="" immediate-value="{{opacityValue}}" value="{{opacityValue}}" min="0" max="1" step="0.01"></paper-slider>
+                        </div>
+                        <div>
+                            <div>Shininess</div>
+                            <paper-slider editable="" immediate-value="{{shininessValue}}" value="{{shininessValue}}" min="0" max="100"></paper-slider>
+                        </div>
+                    </template>
+                
+                </div>
+
+                <div class="controls-scene-properties-info">
+                <div>Image dimensions</div>
+                <div>Orientation</div>
+                <div>Nb of vertices</div>
+                ...
+                </div>
+
+                <div>SETTINGS</div>
+            </iron-pages>
+
+            </div>
+        </div>
+
+    </template>
+    <script>Polymer({is:"module-scene",properties:{scene:{type:Array,value:[]},selected:{type:Number,observer:"_selectedChanged"},selectedProperty:{type:Number,value:0},updateState:{type:Boolean},visibleVolumeValue:{type:Boolean,value:!1},interpolationValue:{type:Boolean,value:!1},wlmin:{type:Number},wlmax:{type:Number},wlminValue:{type:Number,value:0},wlmaxValue:{type:Number,value:100},wlValue:{type:Array,computed:"_computeWindowLevel(wlminValue, wlmaxValue)"},thmin:{type:Number},thmax:{type:Number},thminValue:{type:Number,value:0},thmaxValue:{type:Number,value:100},visibleMeshValue:{type:Boolean,value:!1},opacityValue:{type:Number,value:0},colorValue:{type:String,value:"#FFFFFF"},shininessValue:{type:Number,value:"50"}},observers:["_sceneChanged(scene.*)","_updateState(visibleVolumeValue, interpolationValue, wlminValue, wlmaxValue, visibleMeshValue, opacityValue, colorValue, shininessValue)"],_sceneChanged:function(e){if(e.path.includes(".splices")){var t=e.value.keySplices;if(t[0].added.length>=0){t[0].added[0]}else{t[0].removed[0]}}else e.path.includes(".#")&&console.log(e)},_computeIcon:function(e){return"volume"===e.type?"myicons:filter":"myicons:whatshot"},_selectedChanged:function(){console.log("selected changed"),this.updateState=!1,this.setStyle(this.scene[this.selected]),this.updateState=!0},setStyle:function(e){console.log("set style"),console.log(e),"volume"===e.type?(this.wlmin=e.info.minMax[0],this.wlmax=e.info.minMax[1],this.thmin=e.info.minMax[0],this.thmax=e.info.minMax[1],this.visibleVolumeValue=e.state.visible,this.interpolationValue=e.state.interpolation,this.wlminValue=e.state.windowLevel[0]-e.state.windowLevel[1]/2,this.wlmaxValue=e.state.windowLevel[0]+e.state.windowLevel[1]/2):"mesh"===e.type&&(this.visibleMeshValue=e.state.visible,this.opacityValue=e.state.opacity,this.colorValue=e.state.color,this.shininessValue=e.state.shininess)},_updateState:function(){if(console.log("updateState"),this.updateState){var e=this.scene[this.selected];"volume"===e.type?(e.state.visible=this.visibleVolumeValue,e.state.interpolation=this.interpolationValue,e.state.windowLevel=this.wlValue):"mesh"===e.type&&(e.state.visible=this.visibleMeshValue,e.state.opacity=this.opacityValue,e.state.color=this.colorValue,e.state.shininess=this.shininessValue);var t=new CustomEvent("state-changed",{detail:{id:e.id,state:e.state}});this.dispatchEvent(t)}},_volumeSelected:function(e,t){return!!e&&"volume"===e[t].type},_meshSelected:function(e,t){return!!e&&"mesh"===e[t].type},_computeWindowLevel:function(e,t){var l=t-e,a=e+l/2;return[a,l]}});</script>
+
+</dom-module></body></html>

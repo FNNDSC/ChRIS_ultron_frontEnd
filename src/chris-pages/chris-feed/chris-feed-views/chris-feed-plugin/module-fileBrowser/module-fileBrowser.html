@@ -1,0 +1,94 @@
+<html><head><link rel="import" href="../../../../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../../../bower_components/iron-icons/editor-icons.html">
+
+<link rel="import" href="../../../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../../../../../bower_components/paper-menu/paper-submenu.html">
+
+<link rel="import" href="../../../../../chris-components/chris-plugin-tree/chris-plugin-tree.html">
+<link rel="import" href="../recursive-tree/recursive-tree.html">
+<link rel="import" href="../list-to-tree/list-to-tree.html">
+
+
+
+</head><body><dom-module id="module-fileBrowser">
+    <template>
+        <style>
+        :host{
+            flex:1;
+            display:flex;
+            flex-direction: column;
+        }
+        .controls-filebrowser-select {
+            position: relative;
+            padding: 10px;
+            flex: 1;
+            display:flex;
+            flex-direction: column;
+        }
+
+        .controls-filebrowser-quicknav {
+            border: 1px solid #424242;
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .controls-filebrowser-process {
+            /*border: 1px solid #424242;
+            background-color: #fff;*/
+            padding: 10px;
+            /*margin-bottom: 10px;*/
+            display:flex;
+        }
+
+        .controls-filebrowser-process > paper-button {
+            flex: 1;
+            background-color: var(--app-accent-color);
+            color: #ffffff;
+        }
+
+        .controls-scene-select-list {
+            flex:1;
+
+            border: 1px solid #424242;
+            background-color: #fff;
+
+            overflow: auto;
+        }
+
+        paper-item {
+            --paper-item: {
+                cursor: pointer;
+            };
+        }
+        </style>
+
+          
+            <div class="controls-filebrowser-select">
+
+              <div class="controls-filebrowser-quicknav">
+                <chris-plugin-tree list="[[list]]"></chris-plugin-tree>
+              </div>
+
+              <list-to-tree list="[[files]]" on-tree-changed="_treeChanged"></list-to-tree>
+
+              
+              <div class="controls-scene-select-list">
+                  <recursive-tree tree="{{tree}}" on-select-node="_selectNode"></recursive-tree>
+              </div>
+
+              <div class="controls-filebrowser-process">
+                <paper-button>Process data</paper-button>
+              </div>
+            </div>
+
+    </template>
+    <script>Polymer({is:"module-fileBrowser",properties:{list:{type:Array,observer:"_listChanged"},files:{type:Array},tree:{type:Array,value:[]},plugin:{type:Object,value:{}}},_listChanged:function(){console.log(this.list)},_treeChanged:function(e){console.log(e.detail.tree),this.set("tree",e.detail.tree[0].children)}});</script>
+
+</dom-module></body></html>

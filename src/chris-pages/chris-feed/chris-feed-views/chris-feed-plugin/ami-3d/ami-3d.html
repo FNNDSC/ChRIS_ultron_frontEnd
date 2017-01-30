@@ -1,0 +1,25 @@
+<html><head><link rel="import" href="../../../../../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="ami-3d">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        
+      }
+      #container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    </style>
+
+    <div id="container"></div>
+
+  </template>
+
+  <script>Polymer({is:"ami-3d",properties:{meshes:{type:Array,value:[]},scene:{type:Object,value:null},camera:{type:Object,value:null},controls:{type:Object,value:null},renderer:{type:Object,value:null},animationFrameID:{type:Number,value:-1},init:{type:Boolean,value:!1}},_init:function(){var e=(AMI.default.Loaders.Volume,AMI.default.Controls.Trackball);this.renderer=new THREE.WebGLRenderer({antialias:!0}),this.renderer.setSize(this.$.container.clientWidth,this.$.container.clientHeight),this.renderer.setClearColor(3487029,1),this.renderer.setPixelRatio(window.devicePixelRatio),this.$.container.appendChild(this.renderer.domElement),this.scene=new THREE.Scene,this.camera=new THREE.PerspectiveCamera(45,this.$.container.clientWidth/this.$.container.clientHeight,.01,1e7),this.camera.position.x=150,this.camera.position.y=-150,this.camera.position.z=100,this.light=new THREE.DirectionalLight(16777215,1),this.light.position.copy(this.camera.position),this.scene.add(this.light),this.controls=new e(this.camera,this.$.container),this._onWindowResize=this._onWindowResize.bind(this),window.addEventListener("resize",this._onWindowResize,!1),this.animate(),this.init=!0},animate:function(){this.animationFrameID=window.requestAnimationFrame(this.animate.bind(this)),this.controls.update(),this.light.position.copy(this.camera.position),this.renderer.render(this.scene,this.camera)},_onWindowResize:function(e){this.camera.aspect=this.$.container.clientWidth/this.$.container.clientHeight,this.camera.updateProjectionMatrix(),this.renderer.setSize(this.$.container.clientWidth,this.$.container.clientHeight)},add:function(e){if(this.init||this._init(),this.scene.add(e),e.stack){var i=e.stack.worldCenter();this.camera.lookAt(i.x,i.y,i.z),this.camera.updateProjectionMatrix(),this.controls.target.set(i.x,i.y,i.z),this.controls.handleResize()}}});</script>
+</dom-module></body></html>

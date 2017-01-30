@@ -1,0 +1,36 @@
+<html><head><link rel="import" href="../../../../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../../../../bower_components/iron-pages/iron-pages.html">
+
+
+<link rel="import" href="../../../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../../../../bower_components/paper-tabs/paper-tab.html">
+
+</head><body><dom-module id="module-manager">
+    <template>
+        <style>
+        .controls-pages {
+            flex: 1;
+            display:flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+        paper-tab {
+            text-transform: uppercase;
+        }
+        </style>
+
+        <paper-tabs selected="{{selected}}">
+            <template is="dom-repeat" items="{{modules}}"><paper-tab>{{item.label}}</paper-tab></template>
+            
+            
+        </paper-tabs>
+
+        <iron-pages class="controls-pages" selected="{{selected}}">
+          <slot id="modules"></slot>
+        </iron-pages>
+
+    </template>
+    <script>Polymer({is:"module-manager",properties:{modules:{type:Array,value:[]},selected:{type:String,value:0}},ready:function(){const e=this.$.modules.getDistributedNodes();for(var t=0;t<e.length;t++){var s=e[t];if(s.classList&&s.classList.contains("module")){const l=s.id,i=s.getAttribute("label"),o={id:l,label:i,node:s};this.push("modules",o)}}}});</script>
+
+</dom-module></body></html>

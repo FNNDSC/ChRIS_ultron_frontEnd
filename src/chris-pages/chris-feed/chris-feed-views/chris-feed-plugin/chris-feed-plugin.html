@@ -1,168 +1,154 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../../../../chris-ultron.html"></head><body>"
-
-
-<dom-module id="chris-feed-plugin">
-
+<html><head><meta charset="UTF-8"><link rel="import" href="../../../../chris-ultron.html"></head><body><div hidden="" by-vulcanize=""><script>var THREE=THREE||{};</script><script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/STLLoader.js"></script></div><dom-module id="chris-feed-plugin">
   <template>
-
     <style>
+      :host {
+        --app-primary-color: #424242;
+        --app-light-primary-color: #eeeeee;
 
-      .content {
+        --app-secondary-color: #212121;
 
-        background-color: var(--paper-grey-50);
-        padding: 24px;
-        position: fixed;
-        top: 64px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        flex-flow: row wrap;
-        overflow-y: auto;
+        --app-third-color: #757575;
 
-      }
+        --app-accent-color: #03a9f4;
+        --app-light-accent-color: #b3e5fc;
+        --app-dark-accent-color: #01579b;
 
-      .navigation {
+        --paper-tab-ink: var(--app-accent-color);
+        --paper-tabs-selection-bar-color: var(--app-accent-color);
 
-        flex: 1;
-        min-width: 100px;
-        padding: 8px;
+        --paper-slider-knob-color: var(--app-accent-color);
+        --paper-slider-pin-color: var(--app-accent-color);
+        --paper-slider-active-color: var(--app-accent-color);
+
+        --paper-fab-background: var(--app-accent-color);
+        --paper-fab-keyboard-focus-background: var(--app-dark-accent-color);
+
+        --paper-input-container-focus-color: var(--app-dark-accent-color);
+
         display: flex;
         flex-direction: column;
 
-      }
+        background-color: #eeeeee;
 
-      .viewer, ami-viewer {
-
-        flex: 2;
-        height: 100%;
-        min-width: 400px;
-        overflow: hidden;
-        background-color: var(--paper-grey-500);
-
-      }
-
-      .viewer-controls {
-        flex: 1;
-        min-width: 100px;
-        padding: 8px;
-      }
-
-      paper-dropdown-menu, paper-slider{
-
-        width:100%;
-
-      }
-
-      .paper-range-slider {
-
-        display: flex;
+        position: absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
 
       }
 
       paper-range-slider {
+        --paper-range-slider-knob-color: var(--app-accent-color);
+        --paper-range-slider-active-color: var(--app-accent-color);
+        --paper-range-slider-pin-color: var(--app-accent-color);
+      }
 
-        --paper-range-slider-knob-color: var(--google-blue-700);
-        --paper-range-slider-active-color: var(--google-blue-700);
-        --paper-range-slider-pin-color: var(--google-blue-700);
-
+      .paper-range-slider {
+        display: flex;
       }
 
       .paper-range-slider paper-input{
-
         width: 50px;
         overflow: hidden;
-
       }
 
-      .files {
-
-        overflow-y: auto;
-
+      app-toolbar {
+        color: #fff;
+        background-color: var(--app-primary-color);
       }
 
-      #start {
+      .content {
+        flex: 1;
 
-        z-index:10;
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
-        --paper-fab-background: var(--accent-color);
-
+        display: flex;
+        flex-direction: row;
       }
 
+      .controls {
+        min-width: 400px;
+        max-width: 400px;
+        height:100%;
+
+        display: flex;
+        flex-direction: column;
+
+        background-color: var(--app--light-primary-color);
+      }
+
+      .renderers {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+
+        background-color: #353535;
+      }
+
+      .renderers > div {
+        box-sizing:border-box;
+        border: 1px solid rgba(0, 0, 0, .2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      div.v1 {
+        border-top: 1px solid #ffeb3b;
+      }
+
+      .big {
+        height: 70%;
+        width:100%;
+      }
+
+      div.v2 {
+        border-top: 1px solid #f44336;
+      }
+
+      div.v3 {
+        border-top: 1px solid #4caf50;
+      }
+
+      div.v4 {
+        border-top: 1px solid #2196f3;
+      }
+
+      .small {
+        height: 30%;
+        flex: 1;
+        position: relative;
+      }
+
+      paper-slider {
+        width: 100%;
+        position: absolute;
+        bottom: 0px;
+      }
     </style>
-
-    <ami-loader urls="{{urls}}" series="{{series}}"></ami-loader>
 
     <div class="content">
 
-      <div class="navigation">
+      <module-manager id="manager" class="controls">
+        <module-filebrowser id="module-fileBrowser" class="module" label="data" list="[[list]]" files="[[files]]" on-load-data="_loadData"></module-filebrowser>
+        <module-scene id="module-scene" class="module" label="scene" scene="[[scene]]" on-state-changed="_stateChanged"></module-scene>
+        <module-editor id="module-editor" class="module" label="editor"></module-editor>
+      </module-manager>
 
-        <div class="header">
-
-          <div> Current Plugin: {{plugin.data.id}} : {{plugin.data.plugin_name}} </div>
-          
-          <div> Parent ID: {{plugin.data.previous_id}} </div>
-
-          <div> Children IDs </div>
-
-          <ul>
-            <template is="dom-repeat" items="{{plugin.data.children}}">
-              <li> Children ID:{{item.data.id}} </li>
-            </template>
-          </ul>
-
+      <div class="renderers">
+        <ami-3d id="r3d" class="v1 big"></ami-3d>
+        <div class="v2 small">
+          <paper-slider value="21" pin=""></paper-slider>
         </div>
-
-        <div>Files</div>
-
-        <div class="files">
-
-          <ul>
-            <template is="dom-repeat" items="{{files}}" as="file">
-              <li>{{file.data.fname}} </li>
-            </template>
-          <ul>
-
-        </ul></ul></div>
-
-      </div>
-
-      <div class="viewer">
-        <ami-viewer index="{{index}}" index-max="{{indexMax}}" orientation="{{orientation}}" series="[[series]]">
-        </ami-viewer>
-      </div>
-
-      <div class="viewer-controls">
-
-        <div>Some cool controls</div>
-        
-        <paper-dropdown-menu label="Orientation">
-          <paper-listbox class="dropdown-content" selected="{{orientation}}">
-            <paper-item>Acquisition</paper-item>
-            <paper-item>Next</paper-item>
-            <paper-item>Last</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-
-        <div> Index </div>
-        <paper-slider id="slider" min="0" max="{{indexMax}}" value="{{index}}" immediate-value="{{index}}" editable=""></paper-slider>
-        <div> Window / level (not connected) </div>
-        
-        <div class="paper-range-slider">
-        <paper-input value="{{vmin}}"></paper-input><paper-range-slider value-min="{{vmin}}" value-max="{{vmax}}" style="width:100%"></paper-range-slider><paper-input value="{{vmax}}"></paper-input>
+        <div class="v3 small">
+          <paper-slider value="21" pin=""></paper-slider>
+        </div>
+        <div class="v4 small">
+          <paper-slider value="21" pin=""></paper-slider>
         </div>
       </div>
-
-      <paper-fab id="start" icon="av:play-arrow" on-tap="_getPlugins"></paper-fab>
-
-      
 
     </div>
 
   </template>
 
-  <script>Polymer({is:"chris-feed-plugin",properties:{plugin:{type:Object,observer:"_pluginChanged"},files:{type:Array,observer:"_filesChanged"}},_pluginChanged:function(){console.log(this.plugin)},_filesChanged:function(){var t=[],r=["36444280","36444294","36444308","36444322","36444336"],a=r.map(function(t){return"https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/"+t});t.push(a);var e=["https://cdn.rawgit.com/FNNDSC/data/master/nrrd/marc_avf/avf_float_32.nrrd"];t.push(e);var n=["https://cdn.rawgit.com/FNNDSC/data/master/nifti/siena/siena.nii.gz"];t.push(n),this.urls=t[Math.floor(Math.random()*t.length)]},_getPlugins:function(){this.fire("run-plugin")},_patchOverlay:function(t){t.target.withBackdrop&&t.target.parentNode.insertBefore(t.target.backdropElement,t.target)}});</script>
-</dom-module>
-</body></html>
+  <script>Polymer({is:"chris-feed-plugin",properties:{list:{type:Array,observer:"_listChanged"},files:{type:Array,value:[{data:{fname:"dicom/adi_brain/36444280"}},{data:{fname:"dicom/adi_brain/36444294"}},{data:{fname:"dicom/adi_brain/36444308"}},{data:{fname:"dicom/adi_brain/36444322"}},{data:{fname:"dicom/adi_brain/36444336"}},{data:{fname:"nifti/eun_brain/eun_uchar_8.nii.gz"}},{data:{fname:"stl/adi_brain/WM.stl"}},{data:{fname:"options.json"}}]},sceneMap:{type:Object,value:new Map},scene:{type:Array,value:[],observer:"_sceneChanged"},objectsMap:{type:Object,value:new Map}},observers:["_sceneChanged(scene.*)"],_listChanged:function(){console.log(this.list)},_loadData:function(e){var t=e.detail.data,i=this.analyze(t);if(null!==i.type&&!this.sceneMap.has(t.id))if(this.sceneMap.set(t.id,i),this.$.manager.selected=1,this.push("scene",i),"volume"===i.type){var a=AMI.default.Loaders.Volume,n=new a,s=i.files.map(function(e){return"https://cdn.rawgit.com/FNNDSC/data/master/"+e});n.load(s).then(function(){var e=n.data[0].mergeSeries(n.data),i=e[0].stack[0];i.prepare();var a=this.sceneMap.get(t.id);this.updateVolumeObject(a,i);var s=this.scene.map(function(e){return e.id}).indexOf(t.id);this.set(["scene",s,"ready"],a.ready),this.$["module-scene"].selected=s;var l=AMI.default.Helpers.Stack,d=new l(i);d.bbox.color=9159498,d.border.color=16007990,this._updateState(t,d,a.state),this.$.r3d.add(d),this.objectsMap.set(t.id,d)}.bind(this))}else if("mesh"===i.type){var s=i.files.map(function(e){return"https://cdn.rawgit.com/FNNDSC/data/master/"+e}),l=new THREE.STLLoader;l.load(s[0],function(e){var i=new THREE.MeshPhongMaterial({color:16007990,specular:1118481,shininess:100,transparent:!0,opacity:1}),a=new THREE.Mesh(e,i),n=new THREE.Matrix4;n.set(-1,0,0,0,0,-1,0,0,0,0,1,0,0,0,0,1),a.applyMatrix(n);var s=this.sceneMap.get(t.id);this.updateMeshObject(s,e,i);var l=this.scene.map(function(e){return e.id}).indexOf(t.id);this.set(["scene",l,"ready"],s.ready),this.$["module-scene"].selected=l,this._updateState(t,a,s.state),this.$.r3d.add(a),this.objectsMap.set(t.id,a)}.bind(this))}},_stateChanged:function(e){var t=this.objectsMap.get(e.detail.id),i=this.sceneMap.get(e.detail.id);this._updateState(i,t,e.detail.state)},_updateState:function(e,t,i){t.visible=i.visible,"volume"===e.type?(t.slice.windowCenter=i.windowLevel[0],t.slice.windowWidth=i.windowLevel[1],t.slice.interpolation=i.interpolation?1:0):"mesh"===e.type&&(t.material.opacity=i.opacity,t.material.color.set(i.color),t.material.shininess=i.shininess)},_sceneChanged:function(){},updateVolumeObject:function(e,t){e.info={minMax:t.minMax,size:[t.columns,t.rows],images:t.frame.length,seriesNumber:null,thickness:t.sliceThickness,patientID:null,patientBirthdate:null,patientAge:null,studyDescription:null,seriesDescription:null,stationName:null,modality:t.modality,sequenceName:null,studyDate:null,seriesDate:null,acquisitionDate:null,acquisitionTime:null},e.state={visible:!0,interpolation:!0,windowLevel:[t.windowCenter,t.windowWidth],threshold:null,lut:"B/W"},e.ready=!0},updateMeshObject:function(e,t,i){e.info={},e.state={visible:!0,color:"#"+i.color.getHexString(),opacity:i.opacity,shininess:i.shininess},e.ready=!0},analyze:function(e){var t={id:e.id,files:[],type:null,ready:!1};if(e.children.length<=0)t.files.push(e.id);else for(var i=0;i<e.children.length;i++)e.children[i].children.length<=0&&t.files.push(e.children[i].id);return t.files.length>0&&(t.files[0].includes(".stl")?t.type="mesh":t.type="volume"),t},clickInput:function(e){this.$.filesinput.click()},localFS_load:function(e){for(var t=[],i=0;i<e.target.files.length;i++)t.push(e.target.files[i]);this.files=t,console.log(this.files)}});</script>
+</dom-module></body></html>
