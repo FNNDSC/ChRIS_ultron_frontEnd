@@ -508,20 +508,28 @@
         data.body = {};
         data.body.template = {};
         data.body.template.data = [
-          {name: 'aet',           value: ''},
-          {name: 'aec',           value: ''},
-          {name: 'aet_listener',  value: ''},
-          {name: 'server_ip',     value: ''},
-          {name: 'server_port',   value: ''},
-          {name: 'series_uids',   value: ''},
-          {name: 'series_file',   value: ''},
-          {name: 'data_location', value: ''},
-          {name: 'previous',      value: ''}
+          {name: 'aet', value: ''},
+          {name: 'aec', value: ''},
+          {name: 'aet_listener', value: ''},
+          {name: 'server_ip', value: ''},
+          {name: 'server_port', value: ''},
+          {name: 'previous_id', value: ''}
         ];
 
+        // required values
         data.body.data = this.pacsSettings;
-        data.body.data['series_uids'] = '0,1';
-        data.body.data['previous']    = this.previous;
+        data.body.data['previous_id']    = this.previous;
+
+        var uids = [];
+        for( var j=0; j<this.selection.length; j++){
+          uids.push(this.selection[j]['uid']);
+        }
+
+        if(uids.length > 0) {
+          data.body.template.data.push(
+            {name: 'series_uids', value: ''});
+          data.body.data['series_uids'] = uids.join(',');
+        }
 
         var request = this.$.API.request( 'POST', this.instances, data);
         request

@@ -79,6 +79,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _listChanged: function(){
 
+          console.log(this.list);
+
           this._build( this.list );
 
           // select deepest element
@@ -96,6 +98,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _build: function( list ){
 
+          console.log(list);
+
           // sort by previous id
           list.sort( this._sortByPreviousId );
 
@@ -110,18 +114,14 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
             node.data.children = [];
             map[node.data.id] = i;
 
-            if( node.data.previous_id === '' ){
-
+            if(node.data.previous_id === null || node.data.previous_id === '') {
               node.data.path = ['tree', 0, 'data'];
               tree.push( node );
-              
             }
             else{
-              
               var previousPath = list[map[node.data.previous_id]].data.path;
               node.data.path = previousPath.concat( ['children', list[map[node.data.previous_id]].data.children.length, 'data'] );
               list[map[node.data.previous_id]].data.children.push(node);
-
             }
 
           }

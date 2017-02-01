@@ -26,6 +26,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="module-scene/module-scene.html">
 <link rel="import" href="module-editor/module-editor.html">
 
+<link rel="import" href="../../../../chris-api/chris-api.html">
+
 <dom-module id="chris-feed-plugin">
   <template>
     <style>
@@ -153,6 +155,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+    <!-- API Calls -->
+    <chris-api id="API"
+      error="{{error}}">
+    </chris-api>
+
     <div class="content">
 
       <module-manager id="manager" class="controls">
@@ -188,32 +195,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         files: {
           type: Array,
-          value: [
-            {data:{
-              fname: 'dicom/adi_brain/36444280',
-            }},
-            {data:{
-              fname: 'dicom/adi_brain/36444294',
-            }},
-            {data:{
-              fname: 'dicom/adi_brain/36444308',
-            }},
-            {data:{
-              fname: 'dicom/adi_brain/36444322',
-            }},
-            {data:{
-              fname: 'dicom/adi_brain/36444336',
-            }},
-            {data:{
-              fname: 'nifti/eun_brain/eun_uchar_8.nii.gz',
-            }},
-            {data:{
-              fname: 'stl/adi_brain/WM.stl',
-            }},
-            {data:{
-              fname: 'options.json',
-            }},
-          ]
         },
         sceneMap: {
           type: Object,
@@ -241,6 +222,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _loadData: function(event) {
         var data = event.detail.data;
+        console.log(data);
         var formatedData = this.analyze(data);
 
         // load if not alread in scene!
@@ -256,15 +238,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             // load the data! 
             var LoadersVolume = AMI.default.Loaders.Volume;
             var loader = new LoadersVolume();
-            var files = formatedData.files.map(function(v) {
-              return 'https://cdn.rawgit.com/FNNDSC/data/master/' + v;
-            });
+
+            var dataAPI = {};
+            var _data = [];
+            dataAPI.auth = {
+              type: 'token',
+              token: sessionStorage.getItem('token')
+            };
+
+            function fetch(url) {
+              this.$.API.handleAs = 'arraybuffer';
+              return this.$.API.request( 'GET', url, dataAPI );
+            }
+            fetch = fetch.bind(this);
+
+            // default load sequence promise
+            function loadSequence(url) {
+              return fetch(url)
+                .then((rawdata) => {
+                  console.log(rawdata);
+                  return loader.parse({
+                    url: url,
+                    buffer: rawdata,
+                    });
+                })
+                .then((parsedData) => {
+                  _data.push(parsedData);
+                })
+                .catch(function(error) {
+                  window.console.log('oops... something went wrong...');
+                  window.console.log(error);
+                });
+            }
+
+            function load(url) {
+              // if we load a single file, convert it to an array
+              if(!Array.isArray(url)) {
+                url = [url];
+              }
+
+              console.log(url);
+
+              var loadSequences = [];
+              url.forEach((file) => {
+              loadSequences.push(
+                loadSequence(file)
+                );
+              });
+
+              return Promise.all(loadSequences);
+            }
 
             // load sequence for all files
             // load a volume
-            loader.load(files)
+            load(formatedData.files)
             .then(function() {
-              var series = loader.data[0].mergeSeries(loader.data);
+              console.log(_data);
+              var series = _data[0].mergeSeries(_data);
               var stack = series[0].stack[0];
               stack.prepare();
 
@@ -415,16 +445,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           files: [],
           type: null,
           ready: false,
+
         };
 
         if(data.children.length <= 0) {
           // single file
-          target.files.push(data.id);
+          target.files.push(data.file.links.file_resource);
         } else {
           // get list of FILES in the directory
           for(var i = 0; i<data.children.length; i++) {
             if(data.children[i].children.length <= 0) {
-              target.files.push(data.children[i].id);
+              target.files.push(data.children[i].file.links.file_resource);
             }
           }
         }

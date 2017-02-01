@@ -302,21 +302,24 @@
           {name: 'aec', value: ''},
           {name: 'server_ip', value: ''},
           {name: 'server_port', value: ''},
-          {name: 'modalities_in_study', value: ''},
-          {name: 'patient_name', value: ''},
-          {name: 'patient_sex', value: ''},
-          {name: 'patient_id', value: ''},
-          {name: 'study_description', value: ''},
-          {name: 'study_date', value: ''},
-          {name: 'series_description', value: ''},
-          {name: 'performed_station_aet', value: ''}
+          // {name: 'modalities_in_study', value: ''},
+          // {name: 'patient_name', value: ''},
+          // {name: 'patient_sex', value: ''},
+          // {name: 'study_description', value: ''},
+          // {name: 'study_date', value: ''},
+          // {name: 'series_description', value: ''},
+          // {name: 'performed_station_aet', value: ''}
         ];
 
-
-
         data.body.data = this.pacsSettings;
-        data.body.data['patient_id'] = this.patientID;
-        data.body.data['study_date'] = this.studyDate;
+
+        if(this.patientID !== ''){
+          data.body.template.data.push(
+            {name: 'patient_id', value: ''});
+
+          data.body.data['patient_id'] = this.patientID;
+
+        }
 
         var request = this.$.API.request( 'POST', this.instances, data );
         request
@@ -462,10 +465,9 @@
 
       },
 
-      handlePacsQueryError: function( response ){
-
+      handlePacsQueryError: function(response) {
         console.log( 'error:' + response );
-
+        console.log(response);
       }
 
     });

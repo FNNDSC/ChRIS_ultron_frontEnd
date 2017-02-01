@@ -159,6 +159,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         formatJsonCollectionResponse: function( itemObj ){
 
+          console.log(itemObj);
+          if(!itemObj) return;
+
           // if no . collection, just return
           // we just have a regular object
           if( !itemObj.collection ){

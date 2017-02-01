@@ -99,6 +99,7 @@
                 },
                 files: {
                     type: Array,
+                    observer: 'filesChanged',
                 },
                 tree: {
                     type: Array,
@@ -112,6 +113,10 @@
 
             _listChanged: function(){
                 console.log(this.list);
+            },
+
+            _filesChanged: function(){
+                console.log(this.files);
             },
 
             _treeChanged: function(event){

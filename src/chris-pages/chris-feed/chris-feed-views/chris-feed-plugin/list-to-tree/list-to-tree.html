@@ -20,6 +20,8 @@
         // ],
         _listChanged: function(){
 
+          console.log(this.list);
+
           // generate tree structure
           var map = {};
           var tree = [];
@@ -38,7 +40,7 @@
           map[rootNode.id] = nodes.length - 1;;
           for( var i = 0; i < this.list.length; i++ ){
             var file = this.list[i];
-            var path = this.list[i].data.fname.split('/');
+            var path = this.list[i].data.relative_fname.split('/');
             var parentid = '/';
             var id = '/';
             // prepare the directory
@@ -65,17 +67,17 @@
             }
             // add the file
             var node = {
-              id: this.list[i].data.fname,
+              id: this.list[i].data.relative_fname,
               path: path,
               children: [],
               parent: map[id],
               type: 'file',
               selected: false,
-              file: file,
-              label: path[path.length - 1]
+              file: this.list[i],
+              label: path[path.length - 1],
             }
             nodes.push( node );
-            map[this.list[i].data.fname] = nodes.length - 1;
+            map[this.list[i].data.relative_fname] = nodes.length - 1;
             nodes[map[id]].children.push( node );
             
           }

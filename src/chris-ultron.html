@@ -161,9 +161,19 @@
       },
 
       _handleFeeds: function( response ){
+        // format feeds
+        for(var i = 0; i < response.data.length; i++){
+          this._formatFeed(response.data[i]);
+        }
 
         this.set( 'feeds', response );
 
+      },
+
+      _formatFeed: function(feed){
+        // /plugins/instances/<id>/
+        var pluginInstance = Number(feed.links.plugin_inst.match(/\d+/)['0'])
+        feed.data['plugin_instance'] = pluginInstance;
       },
 
       _fetchLabels: function(){

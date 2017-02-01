@@ -13,6 +13,8 @@
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
+<link rel="import" href="../../../bower_components/moment-element/moment-element.html">
+
 <dom-module id="chris-feed-preview">
 
   <template>
@@ -183,7 +185,7 @@
       <div class="title-area" style$="{{_setBackgroundStyle(feed.data.color)}}">
 
         <div class="name">Feed [[feed.data.id]] - [[feed.data.name]]</div>
-        <div class="date"> [[feed.data.date]] </div>
+        <div class="date"> <moment-element datetime="[[feed.data.creation_date]]" from="now"></moment-element></div>
 
       </div>
 

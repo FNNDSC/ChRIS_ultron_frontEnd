@@ -162,7 +162,7 @@
             <!--<chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
             <chris-feed-note name="note" notes="{{note}}"></chris-feed-note>
             <chris-feed-comments name="comments" comments="{{comments}}"></chris-feed-comments>-->
-            <chris-feed-plugin name="plugin" list="[[pluginInstanceCollection]]" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]" on-run-plugin="_runPlugin"></chris-feed-plugin>
+            <chris-feed-plugin name="plugin" list="[[pluginInstanceCollection]]" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]" on-run-plugin="_runPlugin" on-select-node="_selectPlugin"></chris-feed-plugin>
             <!--<chris-feed-run name="run" plugin="[[plugin]]" plugins="[[plugins]]" on-fetch-plugin="_fetchPlugin"></chris-feed-run>-->
 
           <!--</iron-pages>-->
@@ -278,18 +278,11 @@
 
         // get plugins
         data.params = {};
-        data.params.root_id = this.feed.data.id;
-        console.log('go search..');
+        data.params.root_id = this.feed.data.plugin_instance;
         var requestPlugins =this.$.ChrisAPI.request('GET', '/plugins/instances/search/', data);
         requestPlugins
           .then( this._handlePlugins.bind(this) )
           .catch( this.handleError.bind(this) );
-        
-        // get files
-        // var requestFiles = this.$.ChrisAPI.request( 'GET', this.feed.links.files, data );
-        // requestFiles
-        //   .then( this._handleFiles.bind(this) )
-        //   .catch( this.handleError.bind(this) );
       },
 
       _reset: function(){
@@ -298,21 +291,43 @@
 
       },
 
-      _handleFiles: function( response ){
+      _handleFiles: function(response){
+        console.log('handle files');
+        var files = [];
+        // format plugin
+        for(var i = 0; i < response.data.length; i++){
+          this._handleFile(response.data[i]);
+          console.log('loopin');
+          console.log(response.data[i].data.plugin_inst_id);
+          console.log(this.feed.data);
+          if(response.data[i].data.plugin_inst_id === this.plugin.data.id) files.push(response.data[i]); 
+        }
 
-        this.set('files', response.data );
-        console.log( this.files );
+        console.log(files);
 
+        this.set('files', files );
       },
 
-      _handlePlugins: function( response ){
+      _handleFile: function(file){
+        // create relative path
+        var relative_fname = file.data.fname.split('_' + file.data.plugin_inst_id + '/data/')[1];
+        file.data.relative_fname = relative_fname;
+      },
 
-        console.log('handle plugins...');
+      _handlePlugins: function(response) {
 
-        console.log( response );
+        // format plugin
+        for(var i = 0; i < response.data.length; i++){
+          this._handlePlugin(response.data[i]);
+        }
 
         this.set('pluginInstanceCollection', response.data );
+      },
 
+      _handlePlugin: function(plugin){
+        // console.log(plugin);
+        // if plugin not ready watch it!
+        // when success, if selected, re-fetch the files
       },
 
       handleComments: function( response ){
@@ -398,10 +413,10 @@
       _setLayoutStyle: function( color ){
 
         // convert hex color to rgb in order to set the alpha channel
-        color = color.replace('#','');
-        var r = parseInt(color.substring(0,2), 16);
-        var g = parseInt(color.substring(2,4), 16);
-        var b = parseInt(color.substring(4,6), 16);
+        //color = color.replace('#','');
+        var r = 121; //parseInt(color.substring(0,2), 16);
+        var g = 121; //parseInt(color.substring(2,4), 16);
+        var b = 121; //parseInt(color.substring(4,6), 16);
 
         return 'background-color: rgba(' + r + ',' + g + ',' + b + ', 0.5);';
 
@@ -464,6 +479,8 @@
 
         //
         if( this.plugin !== null ){
+
+          console.log(this.plugin);
           
           this.page = 'plugin';
           // retrieve files for this plugin
@@ -472,8 +489,6 @@
             type: 'token',
             token: sessionStorage.getItem('token')
           };
-          data.params = {};
-          data.params.plugin_instance = this.feed.data.id;
 
           var requestFiles = this.$.ChrisAPI.request( 'GET', this.feed.links.files, data );
           requestFiles
@@ -505,32 +520,32 @@
 
       },
 
-      _fetchPlugin: function( event ){
+      // _fetchPlugin: function( event ){
 
-        // get the plugin
-        var data = {};
-        data.auth = {
-          type: 'token',
-          token: sessionStorage.getItem('token')
-        };
+      //   // get the plugin
+      //   var data = {};
+      //   data.auth = {
+      //     type: 'token',
+      //     token: sessionStorage.getItem('token')
+      //   };
 
-        // add parameters to help the FAKE API// (not required by real API)
-        data.params = {};
-        data.params.fake_api_previous_id = this.plugin.data.id;
+      //   // add parameters to help the FAKE API// (not required by real API)
+      //   data.params = {};
+      //   data.params.fake_api_previous_id = this.plugin.data.id;
 
-        var fetchPlugin =this.$.ChrisAPI.request('GET', event.detail.href, data);
-        fetchPlugin
-          .then( this._handlePlugin.bind(this) )
-          .catch( this.handleError.bind(this) );
+      //   var fetchPlugin =this.$.ChrisAPI.request('GET', event.detail.href, data);
+      //   fetchPlugin
+      //     .then( this._handlePlugin.bind(this) )
+      //     .catch( this.handleError.bind(this) );
 
-      },
+      // },
 
-      _handlePlugin: function( event ){
+      // _handlePlugin: function( event ){
 
-        this.push('pluginInstanceCollection', event.data[0]);
-        this.plugin = event.data[0];   
+      //   this.push('pluginInstanceCollection', event.data[0]);
+      //   this.plugin = event.data[0];   
 
-      },
+      // },
 
       // _listChanged: function(){
       //   console.log(this.pluginInstanceCollection);
