@@ -219,6 +219,9 @@
     Polymer({
       is: 'pacs-move',
       properties: {
+        plugin: {
+          type: Object,
+        },
 
         results: {
           type: Array,
@@ -259,9 +262,7 @@
       },
 
       ready: function(){
-
         var grid = this.$.grid;
-
         grid.addEventListener('sort-order-changed', function() {
 
           var sortOrder = grid.sortOrder[0];
@@ -274,6 +275,7 @@
               a = a[path[i]];
               b = b[path[i]];
             }
+
             if (!isNaN(a)) {
               res = parseInt(a, 10) - parseInt(b, 10);
             } else {
@@ -285,7 +287,6 @@
             }
             return res;
           });
-
         });
 
         var self = this;
@@ -293,26 +294,21 @@
 
           var selection = [];
           grid.selection.selected(function(index) {
-
             // should fetch selection from the filter
             // so indices match
-            selection.push( self.filter[index] );
-
+            selection.push(self.filter[index]);
           });
 
-          self.set('selection', selection );
+          self.set('selection', selection);
 
         });
-
       },
 
       _resultsChanged: function(){
-
         // format query...
         // loop through series
         var filter = [];
-        for( var i=0; i<this.results.length; i++ ){
-
+        for(var i=0; i<this.results.length; i++) {
           // fill row (with extra info for move)
           var row = {};
           row.PatientID = this.results[i].PatientID.value;
@@ -322,61 +318,48 @@
           row.NumberOfSeriesRelatedInstances = this.results[i].NumberOfSeriesRelatedInstances.value;
           row.uid = this.results[i].uid.value;
 
-          filter.push( row );
+          filter.push(row);
         }
 
-        this.set( 'filter', filter );
+        this.set('filter', filter);
 
         // fill table
         this.$.grid.items = filter;
-
       },
 
-      _filterExpChanged: function( value ){
-
+      _filterExpChanged: function(value) {
         // make sure we are not sensitive to capital letters
         value = value.toLowerCase();
 
         var filterResponse = this.results.filter(function(val) {
 
-          if ( value ) {
-
+          if(value) {
             // split on white space
             var values = value.split(" ");
             var match = 0;
 
-            for( var i = 0; i< values.length; i++ ){
-
+            for(var i = 0; i< values.length; i++) {
               if(
                 ((val.PatientID.value.toLowerCase()).indexOf(values[i]) > -1) ||
                 ((val.PatientName.value.toLowerCase()).indexOf(values[i]) > -1) ||
                 ((val.StudyDescription.value.toLowerCase()).indexOf(values[i]) > -1) ||
                 ((val.SeriesDescription.value.toLowerCase()).indexOf(values[i]) > -1) ||
-                ((val.NumberOfSeriesRelatedInstances.value.toLowerCase()).indexOf(values[i]) > -1) ){
+                ((val.NumberOfSeriesRelatedInstances.value.toLowerCase()).indexOf(values[i]) > -1)) {
                 match += 1;
               }
-
             }
-
-            if( match === values.length ){
-
+            if(match === values.length) {
               return true
-
-            }
-            else{
-
+            } else{
               return false;
-
             }
-
           } else {
             return true;
           }
         });
 
         var filter = [];
-        for( var i=0; i<filterResponse.length; i++ ){
-
+        for(var i=0; i<filterResponse.length; i++) {
           // fill row (with extra info for move)
           var row = {};
           row.PatientID = filterResponse[i].PatientID.value;
@@ -387,36 +370,29 @@
           row.uid = filterResponse[i].uid.value;
 
           filter.push( row );
-
         }
 
-        this.set( 'filter', filter );
+        this.set('filter', filter);
 
         // fill table
         this.$.grid.items = this.filter;
-
       },
 
-      _selectionChanged: function(){
-
+      _selectionChanged: function() {
         // update state of button
         this.$.retrieve.disabled = this.selection.length > 0 ? false : true;
         this.$.csv.disabled = this.selection.length > 0 ? false : true;
-
       },
 
-      _getCSV: function(){
-
+      _getCSV: function() {
         // convert selection to csv
-        var csv = this.toCSV( this.selection );
+        var csv = this.toCSV(this.selection);
 
         // download CSV
-        this.downloadCSV( csv );
-
+        this.downloadCSV(csv);
       },
 
-      toCSV: function( data ){
-
+      toCSV: function(data) {
         // filter results by selection.uid
         var uids = [];
         for( var j=0; j<data.length; j++){
@@ -469,13 +445,10 @@
         }
 
         return csv;
-
       },
 
       // http://halistechnology.com/2015/05/28/use-javascript-to-export-your-data-as-csv/
-      downloadCSV: function( csv ) {
-
-
+      downloadCSV: function(csv) {
         if (csv == null) return;
 
         var now = new Date();
@@ -496,8 +469,7 @@
         document.body.removeChild(link);
     },
 
-      _retrieve: function(){
-
+      _retrieve: function() {
         var data = {};
         data.auth = {
           type: 'token',
@@ -531,27 +503,21 @@
           data.body.data['series_uids'] = uids.join(',');
         }
 
-        var request = this.$.API.request( 'POST', this.instances, data);
+        var request = this.$.API.request('POST', this.plugin.links.instances, data);
         request
-          .then( this.handleRetrieve.bind(this) )
-          .catch( this.handleRetrieveError.bind(this) );
+          .then(this.handleRetrieve.bind(this))
+          .catch(this.handleRetrieveError.bind(this));
 
       },
 
-      handleRetrieve: function( response ){
-
-        console.log( 'retrieve returned' );
-        console.log( response );
-
-        this.fire('add-feed');
-
+      handleRetrieve: function(response) {
+        var newFeedEvent = new CustomEvent('finished-retrieve');
+        this.dispatchEvent(newFeedEvent);
       },
 
-      handleRetrieveError: function( response ){
-
-        console.log( 'retrieve errored' );
-        console.log( response );
-
+      handleRetrieveError: function(response) {
+        console.log('retrieve errored');
+        console.log(response);
       }
     });
 

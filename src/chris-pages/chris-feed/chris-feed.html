@@ -120,7 +120,7 @@
     </style>
 
     <!-- API Calls -->
-    <chris-api id="ChrisAPI"
+    <chris-api id="API"
       error="{{error}}">
     </chris-api>
 
@@ -265,13 +265,13 @@
         };
 
         // get comments
-        var requestComments = this.$.ChrisAPI.request( 'GET', this.feed.links.comments, data );
+        var requestComments = this.$.API.request( 'GET', this.feed.links.comments, data );
         requestComments
           .then( this.handleComments.bind(this) )
           .catch( this.handleError.bind(this) );
 
         // get note
-        var requestNote = this.$.ChrisAPI.request( 'GET', this.feed.links.note, data );
+        var requestNote = this.$.API.request( 'GET', this.feed.links.note, data );
         requestNote
           .then( this.handleNote.bind(this) )
           .catch( this.handleError.bind(this) );
@@ -279,7 +279,7 @@
         // get plugins
         data.params = {};
         data.params.root_id = this.feed.data.plugin_instance;
-        var requestPlugins =this.$.ChrisAPI.request('GET', '/plugins/instances/search/', data);
+        var requestPlugins =this.$.API.request('GET', '/plugins/instances/search/', data);
         requestPlugins
           .then( this._handlePlugins.bind(this) )
           .catch( this.handleError.bind(this) );
@@ -316,7 +316,7 @@
 
       _handlePlugins: function(response) {
 
-        // format plugin
+        // process plugin
         for(var i = 0; i < response.data.length; i++){
           this._handlePlugin(response.data[i]);
         }
@@ -328,6 +328,18 @@
         // console.log(plugin);
         // if plugin not ready watch it!
         // when success, if selected, re-fetch the files
+
+        // start probing if needed
+        if(plugin.data.status === 'started') {
+          this._waitUntilPluginFinishes(plugin)
+          .then(function(data){
+            if(plugin.data.id === this.plugin.data.id) {
+              this._pluginChanged();
+              this.set(['plugin', 'data', 'status'], plugin.data.status);
+            }
+          }.bind(this));
+        }
+  
       },
 
       handleComments: function( response ){
@@ -490,10 +502,14 @@
             token: sessionStorage.getItem('token')
           };
 
-          var requestFiles = this.$.ChrisAPI.request( 'GET', this.feed.links.files, data );
-          requestFiles
-            .then( this._handleFiles.bind(this) )
-            .catch( this.handleError.bind(this) );
+        data.params = {};
+        data.params.limit = 99999;
+        data.params.page_size = 99999;
+          
+        var requestFiles = this.$.API.request( 'GET', this.feed.links.files, data );
+        requestFiles
+          .then( this._handleFiles.bind(this) )
+          .catch( this.handleError.bind(this) );
 
         }
         else{
@@ -520,6 +536,46 @@
 
       },
 
+      _waitUntilPluginFinishes: function(plugin){
+
+        // new feed
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem( 'token' )
+        };
+        var waitPromise = new Promise(
+           function(resolve, reject) {
+             var remaningAttemps = 6;
+
+             function run() {
+              this.$.API.request('GET', plugin.href , data).
+              then( function(response2) {
+                console.log(plugin);
+                // check depdending on status
+                console.log(response2);
+                if(remaningAttemps < 5 && response2.data[0].data.status === 'finishedSuccessfully') {
+                  resolve(response2);
+                } else {
+                  remaningAttemps--;
+                  if(remaningAttemps <= 0) {
+                    reject(response2);
+                  } else {
+                    setTimeout(run, 1000);
+                  }
+                }
+              }.bind(this));
+             }
+
+             run = run.bind(this);
+             run();
+
+           }.bind(this)
+        );
+
+        return waitPromise;
+      }
+
       // _fetchPlugin: function( event ){
 
       //   // get the plugin
@@ -533,7 +589,7 @@
       //   data.params = {};
       //   data.params.fake_api_previous_id = this.plugin.data.id;
 
-      //   var fetchPlugin =this.$.ChrisAPI.request('GET', event.detail.href, data);
+      //   var fetchPlugin =this.$.API.request('GET', event.detail.href, data);
       //   fetchPlugin
       //     .then( this._handlePlugin.bind(this) )
       //     .catch( this.handleError.bind(this) );

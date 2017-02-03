@@ -84,7 +84,7 @@
 
       }
 
-      .selection-area:hover .letter, .checked .selection-area .letter {
+      .selection-area:hover .thumbnail, .checked .selection-area .thumbnail {
 
         display: none;
 
@@ -176,7 +176,7 @@
       <!-- Selection Area-->
       <div class="selection-area" on-tap="_blockEvents">
         <!-- circle with first letter of name-->
-        <div class="letter">{{_firstLetter(feed.data.name)}}</div>
+        <div class="thumbnail"><iron-icon icon="[[feed.data.icon]]" style$="{{_setStyle(feed.data.color)}}"></iron-icon></div>
         <paper-checkbox on-tap="check" checked="{{checked}}"></paper-checkbox>
 
       </div>
@@ -184,7 +184,7 @@
       <!-- Title Area -->
       <div class="title-area" style$="{{_setBackgroundStyle(feed.data.color)}}">
 
-        <div class="name">Feed [[feed.data.id]] - [[feed.data.name]]</div>
+        <div class="name">Feed [[feed.data.id]] - [[feed.data.label]]</div>
         <div class="date"> <moment-element datetime="[[feed.data.creation_date]]" from="now"></moment-element></div>
 
       </div>
@@ -457,6 +457,12 @@
 
           event.preventDefault();
           event.stopPropagation();
+
+        },
+
+        _setStyle: function( color ){
+
+          return 'color: ' + color;
 
         }
 

@@ -243,12 +243,12 @@
 
       properties: {
 
-        instances: {
-          type: String
+        plugin: {
+          type: Object,
         },
 
         pacsSettings: {
-          type: Object
+          type: Object,
         },
 
         patientID: {
@@ -313,15 +313,15 @@
 
         data.body.data = this.pacsSettings;
 
-        if(this.patientID !== ''){
+        if(this.patientID !== '') {
           data.body.template.data.push(
             {name: 'patient_id', value: ''});
-
           data.body.data['patient_id'] = this.patientID;
-
         }
 
-        var request = this.$.API.request( 'POST', this.instances, data );
+        console.log(data);
+
+        var request = this.$.API.request( 'POST', this.plugin.links.instances, data );
         request
           .then( this.handlePacsQuery.bind(this) )
           .then( this.waitUntilFinished.bind(this) )
@@ -355,10 +355,7 @@
 
       },
 
-      waitUntilFinished: function( response ){
-
-        console.log( response );
-
+      waitUntilFinished: function(response) {
         // new feed
         var data = {};
         data.auth = {
@@ -415,25 +412,30 @@
 
       },
 
-      getFeedFiles: function( response ){
+      getFeedFiles: function( plugin ){
 
-        console.log( response );
+        var feedLink = plugin.data[0].links.feed;
 
-        var feed = response.data[0].links.feed;
-        var id = Number( feed.match(/\d+/)['0'] );
+        // let the world know that we have a new feed
+        var id = Number( feedLink.match(/\d+/)['0'] );
+        var newFeedEvent = new CustomEvent(
+          'new-feed',
+          {detail: {
+             id: id,
+             link: feedLink,
+             }
+          }
+        );
+        this.dispatchEvent(newFeedEvent);
 
-        this.fire('feedid-changed', id);
-
-        console.log('FEED: ' + feed);
-        // need to push feed id to pacs-pull app
-
+        // get the files
         var data = {};
         data.auth = {
           type: 'token',
           token: sessionStorage.getItem('token')
         };
 
-        return this.$.API.request( 'GET', feed + 'files/', data );
+        return this.$.API.request( 'GET', feedLink + 'files/', data );
 
       },
 

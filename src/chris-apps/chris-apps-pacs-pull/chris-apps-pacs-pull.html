@@ -44,23 +44,22 @@
 
         <pacs-query
           id="find"
-          instances="[[pacsqueryInstances]]"
+          plugin="[[pacsqueryPlugin]]",
           pacs-settings="[[pacsSettings]]"
           on-pacs-settings-changed="_pacsSettingsChanged"
           on-results-changed="_resultsChanged"
           on-previous-changed="_previousChanged"
-          on-searching-changed="_searchingChanged"
-          on-feedid-changed="_feedIdChanged">
+          on-searching-changed="_searchingChanged">
         </pacs-query>
 
         <pacs-move
           id="move"
-          instances="[[pacsretrieveInstances]]"
+          plugin="[[pacsretrievePlugin]]"
           pacs-settings="[[pacsSettings]]"
           results="[[results]]"
           previous="[[previous]]"
           searching="[[searching]]"
-          on-add-feed="_addFeed"></pacs-move>
+          on-finished-retrieve="_exitApp"></pacs-move>
 
       </iron-pages>
 
@@ -76,44 +75,44 @@
           page: {
             type: Number,
             value: 0,
-            observer: '_pageChanged'
+            observer: '_pageChanged',
           },
 
           feedid: {
             type: Number,
-            value: -1
+            value: -1,
           },
 
           plugins: {
             type: Array,
-            observer: '_pluginsChanged'
+            observer: '_pluginsChanged',
           },
 
           searching: {
             type: Boolean,
-            value: false
+            value: false,
           },
 
           previous: {
             type: Number,
-            value: 0
+            value: 0,
           },
 
           results: {
             type: Array,
-            value: []
+            value: [],
           },
 
           pacsSettings:{
-            type: Object
+            type: Object,
           },
 
-          pacsqueryInstances: {
-            type: String
+          pacsqueryPlugin: {
+            type: Object,
           },
 
-          pacsretrieveInstances: {
-            type: String
+          pacsretrievePlugin: {
+            type: Object,
           }
 
         },
@@ -122,12 +121,8 @@
           ChrisApps
         ],
 
-        ready: function(){
-
-          console.log('I am ready');
-
+        ready: function() {
           this.toolbar = this.$.toolbar;
-
           // PACS Default settings
           this.pacsSettings = {
             aet: 'CHRIS-ULTRON-AET',
@@ -135,137 +130,73 @@
             aet_listener: 'CHRIS-ULTRON-LIS',
             data_location: '/tmp/host/data',
             server_ip: '192.168.1.110',
-            server_port: '4242'
+            server_port: '4242',
           };
-
         },
 
-        _pluginsChanged: function( ){
-
-          for( var i = 0; i < this.plugins.length; i++ ){
-
-            if( this.plugins[i].data.name === 'pacsquery' ){
-
-              this.pacsqueryInstances = this.plugins[i].links.instances;
-
+        _pluginsChanged: function() {
+          for(var i = 0; i < this.plugins.length; i++) {
+            if(this.plugins[i].data.name === 'pacsquery') {
+              this.pacsqueryPlugin = this.plugins[i];
             }
 
-            if( this.plugins[i].data.name === 'pacsretrieve' ){
-
-              this.pacsretrieveInstances = this.plugins[i].links.instances;
-
+            if(this.plugins[i].data.name === 'pacsretrieve') {
+              this.pacsretrievePlugin = this.plugins[i];
             }
-
           }
-
         },
 
-        handleError: function( error ){
-
+        handleError: function(error){
           console.log( error );
-
         },
 
-        _resultsChanged: function( event ){
-
+        _resultsChanged: function(event) {
           this.searching = false;
           this.results = event.detail;
-
         },
 
-        _previousChanged: function( event ){
-
+        _previousChanged: function(event) {
           this.previous = event.detail;
-
         },
 
-        _searchingChanged: function( event ){
-
+        _searchingChanged: function(event) {
           this.searching = event.detail;
-          console.log( this.searching );
           this.page = 1;
-
         },
 
-        _pacsSettingsChanged: function( event ){
-
+        _pacsSettingsChanged: function(event) {
           this.set(event.detail.path, event.detail.value);
-
         },
 
-        _hideButton: function(page, searching){
-
+        _hideButton: function(page, searching) {
           // show if we areon page 1 and not searching
           var show = (this.page === 1) && (!searching);
 
           // else hide!
           return !show;
-
         },
 
-        _pageChange: function( value ){
-
-          if( typeof value === 'object'){
-
+        _pageChange: function(value) {
+          if(typeof value === 'object') {
             value = 0;
-
           }
 
           this.page = value;
-
         },
 
-        _pageChanged: function(){
+        _pageChanged: function() {
 
-          if( this.page === 0){
-
+          if(this.page === 0) {
             // clean up results
             this.results = [];
             this.previous = '';
 
             // stop kill promise..?
-
           }
         },
 
-        _addFeed: function( event ){
-
-          //
-          event.preventDefault();
-          event.stopPropagation();
-
-          // create the feed:
-          var feed = {
-            data: {
-              color: '#353535',
-              date: 'I am the date',
-              favorite: false,
-              id: this.feedid,
-              letter: 'P',
-              name: 'chris',
-              status: 'finishedSuccessfully',
-              tags: []
-            },
-            href: '/' + this.feedid,
-            links: {
-              comments: '/' + this.feedid + '/comments/',
-              note: '/' + this.feedid + '/note/',
-              plugins: '/' + this.feedid + '/plugins/'
-            }
-          }
-
-          // fire new add-event 
-          this.fire('add-feed', feed);
+        _exitApp: function() {
           this.fire('exit-app');
-
-        },
-
-        _feedIdChanged: function( event ){
-
-          event.preventDefault();
-          var feedID = event.detail;
-          this.feedid = feedID;
-
         }
 
     });

@@ -10,6 +10,7 @@
 <!--  CHRIS ELEMENTS -->
 <link rel="import" href="chris-ultron-config.html">
 <link rel="import" href="chris-api/chris-api.html">
+<link rel="import" href="chris-behaviors/feed-behavior/feed-behavior.html">
 
 <dom-module id="chris-ultron">
   <template>
@@ -61,7 +62,6 @@
         on-fetch-labels="_fetchLabels"
         on-fetch-feeds='_fetchFeeds'
         on-open-feed="_openFeed"
-        on-save-feed="_saveFeed"
         on-exit="_logout"
         on-open-app="_openApp"></chris-home>
 
@@ -70,7 +70,7 @@
         app="[[openApp]]"
         plugins="[[plugins]]"
         on-exit="_goHome"
-        on-add-feed="_addFeed"></chris-app>
+        on-new-feed="_fetchFeed"></chris-app>
 
       <chris-feed
         name="feed"
@@ -94,6 +94,8 @@
     Polymer({
 
       is: 'chris-ultron',
+
+      behaviors: [ FeedBehavior ],
 
       properties: {
 
@@ -153,6 +155,8 @@
 
         data.params = {};
         data.params.filter = this.filter;
+        data.params.limit = 20;
+        data.params.page_size = 20;
 
         var request =this.$.ChrisAPI.request('GET', 'feeds', data);
         request
@@ -163,17 +167,10 @@
       _handleFeeds: function( response ){
         // format feeds
         for(var i = 0; i < response.data.length; i++){
-          this._formatFeed(response.data[i]);
+          response.data[i] = this.__formatFeed(response.data[i]);
         }
 
         this.set( 'feeds', response );
-
-      },
-
-      _formatFeed: function(feed){
-        // /plugins/instances/<id>/
-        var pluginInstance = Number(feed.links.plugin_inst.match(/\d+/)['0'])
-        feed.data['plugin_instance'] = pluginInstance;
       },
 
       _fetchLabels: function(){
@@ -212,36 +209,9 @@
 
       _handlePlugins: function( response ){
 
+        console.log(response.data);
+
         this.set( 'plugins', response.data );
-
-      },
-
-      _saveFeed: function( event ){
-
-        var feed = event.detail.feed;
-        var cache = event.detail.cache;
-
-        var data = {};
-        // authentification
-        data.auth = {
-          type: 'token',
-          token: sessionStorage.getItem('token')
-        };
-
-        // data and template
-        data.body = {};
-        data.body.data = feed.data;
-        data.body.template = {};
-        data.body.template.data = this.feeds.template.data;
-
-        // cache
-        data.cache = cache;
-
-        // save the feed
-        //this.$.ChrisAPI.apiError = true;
-        var request = this.$.ChrisAPI.request('PUT', feed.href, data);
-        request
-          .then( this.handleFeed.bind(this) );
 
       },
 
@@ -341,16 +311,31 @@
 
       },
 
-      _addFeed: function( event ){
+      _fetchFeed: function(event) {
+        var feedLink = event.detail.link;
 
-        var feed = event.detail;
-        
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token')
+        };
+
+        var request =this.$.ChrisAPI.request('GET', feedLink, data);
+        request
+          .then( function(response) {
+            var feed = response.data[0];
+            feed = this.__formatFeed(feed);
+            this._addFeed(feed);
+          }.bind(this));
+
+      },
+
+      _addFeed: function(feed) {
         // prepend feed
         this.unshift('feeds.data', feed);
 
         // scroll to top of the page
         window.scrollTo(0, 0);
-        
       },
 
       _goHome: function(){

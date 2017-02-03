@@ -1,0 +1,31 @@
+<script>
+  /** @polymerBehavior PluginBehavior */
+  PluginBehavior = {
+
+      __pluginsStyles: function() {
+        // define plugins style
+        const pluginStyleMap = [
+           ['', {
+            label: 'No Name',
+            color: '#607D8B',
+            letter: 'NN',
+            icon: 'icons:bug-report',
+          }],
+          ['pacsquery', {
+            label: 'Pacs Query',
+            color: '#2196F3',
+            letter: 'PQ',
+            icon: 'icons:cloud',
+          }],
+          ['pacsretrieve', {
+            label: 'Pacs Retrieve',
+            color: '#CDDC39',
+            letter: 'PR',
+            icon: 'icons:cloud-download',
+          }],
+        ];
+        return new Map(pluginStyleMap);
+      },
+
+  }
+</script>
