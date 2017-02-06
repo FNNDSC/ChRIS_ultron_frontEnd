@@ -28,6 +28,7 @@
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../chris-api/chris-api.html">
 <link rel="import" href="../../chris-components/chris-plugin-tree/chris-plugin-tree.html">
+<link rel="import" href="../../chris-behaviors/plugin-behavior/plugin-behavior.html">
 
 <dom-module id="chris-feed">
 
@@ -133,7 +134,7 @@
             <app-toolbar>
               <paper-icon-button icon="icons:arrow-back" on-tap="_exit"></paper-icon-button>
 
-              <div main-title>[[feed.data.name]]</div>
+              <div main-title>[[feed.data.label]] (#[[feed.data.id]])</div>
 
               <!--<span>
                 <paper-icon-button icon="icons:apps" on-tap="_openTree"></paper-icon-button>
@@ -178,6 +179,9 @@
   <script>
     Polymer({
       is: 'chris-feed',
+
+      behaviors: [PluginBehavior],
+
       properties: {
 
         feed: {
@@ -222,6 +226,10 @@
         routeData: Object
 
       },
+
+            observers: [
+        '_listChanged(pluginInstanceCollection.*)',
+      ],
 
       ready: function( event ){
 
@@ -291,31 +299,12 @@
 
       },
 
-      _handleFiles: function(response){
-        console.log('handle files');
-        var files = [];
-        // format plugin
-        for(var i = 0; i < response.data.length; i++){
-          this._handleFile(response.data[i]);
-          console.log('loopin');
-          console.log(response.data[i].data.plugin_inst_id);
-          console.log(this.feed.data);
-          if(response.data[i].data.plugin_inst_id === this.plugin.data.id) files.push(response.data[i]); 
-        }
-
+      _handleFiles: function(files){
         console.log(files);
-
         this.set('files', files );
       },
 
-      _handleFile: function(file){
-        // create relative path
-        var relative_fname = file.data.fname.split('_' + file.data.plugin_inst_id + '/data/')[1];
-        file.data.relative_fname = relative_fname;
-      },
-
       _handlePlugins: function(response) {
-
         // process plugin
         for(var i = 0; i < response.data.length; i++){
           this._handlePlugin(response.data[i]);
@@ -325,21 +314,39 @@
       },
 
       _handlePlugin: function(plugin){
-        // console.log(plugin);
-        // if plugin not ready watch it!
-        // when success, if selected, re-fetch the files
+        // 
+        this.__formatPlugin(plugin, this.feed);
 
         // start probing if needed
         if(plugin.data.status === 'started') {
-          this._waitUntilPluginFinishes(plugin)
-          .then(function(data){
+          //
+          var data = {};
+          data.auth = {
+            type: 'token',
+            token: sessionStorage.getItem( 'token' )
+          };
+          this.__waitEndPlugin(this.$.API, data, plugin)
+          .then(function(response){
+            console.log(response);
+
+
+              // also update plugin collectiojn
+              for(var i=0; i<this.pluginInstanceCollection.length; i++){
+                if(this.pluginInstanceCollection[i].data.id === plugin.data.id) {
+                  console.log('set yo!');
+                  this.set(['pluginInstanceCollection', i, 'data', 'status'], response.data.status);
+                }
+              }
+
             if(plugin.data.id === this.plugin.data.id) {
+              console.log(response.data.status);
+              this.set(['plugin', 'data', 'status'], response.data.status);
+              // trigger files fetching
               this._pluginChanged();
-              this.set(['plugin', 'data', 'status'], plugin.data.status);
+
             }
           }.bind(this));
         }
-  
       },
 
       handleComments: function( response ){
@@ -464,6 +471,10 @@
 
       _selectPlugin: function( event ){
 
+        console.log('selecet plugin');
+
+        console.log(event);
+
         if( event.detail.data ){
 
           this.plugin = event.detail;
@@ -505,11 +516,11 @@
         data.params = {};
         data.params.limit = 99999;
         data.params.page_size = 99999;
-          
-        var requestFiles = this.$.API.request( 'GET', this.feed.links.files, data );
-        requestFiles
-          .then( this._handleFiles.bind(this) )
-          .catch( this.handleError.bind(this) );
+
+        var getFiles = this.__getFilesPlugin(this.$.API, data, this.plugin);
+        getFiles
+          .then(this._handleFiles.bind(this))
+          .catch(this.handleError.bind(this));
 
         }
         else{
@@ -535,47 +546,6 @@
         this.$.dropdown.close();
 
       },
-
-      _waitUntilPluginFinishes: function(plugin){
-
-        // new feed
-        var data = {};
-        data.auth = {
-          type: 'token',
-          token: sessionStorage.getItem( 'token' )
-        };
-        var waitPromise = new Promise(
-           function(resolve, reject) {
-             var remaningAttemps = 6;
-
-             function run() {
-              this.$.API.request('GET', plugin.href , data).
-              then( function(response2) {
-                console.log(plugin);
-                // check depdending on status
-                console.log(response2);
-                if(remaningAttemps < 5 && response2.data[0].data.status === 'finishedSuccessfully') {
-                  resolve(response2);
-                } else {
-                  remaningAttemps--;
-                  if(remaningAttemps <= 0) {
-                    reject(response2);
-                  } else {
-                    setTimeout(run, 1000);
-                  }
-                }
-              }.bind(this));
-             }
-
-             run = run.bind(this);
-             run();
-
-           }.bind(this)
-        );
-
-        return waitPromise;
-      }
-
       // _fetchPlugin: function( event ){
 
       //   // get the plugin
@@ -603,9 +573,9 @@
 
       // },
 
-      // _listChanged: function(){
-      //   console.log(this.pluginInstanceCollection);
-      // }
+      _listChanged: function(){
+        console.log(this.pluginInstanceCollection);
+      }
 
     });
   </script>

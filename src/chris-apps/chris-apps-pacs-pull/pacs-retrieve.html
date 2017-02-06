@@ -14,10 +14,10 @@
 <!-- EXTERNAL ELEMENTS -->
 <script src="https://cdn.vaadin.com/vaadin-core-elements/latest/webcomponentsjs/webcomponents-lite.min.js"></script>
 <link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
-<link rel="import" href="../../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../chris-api/chris-api.html">
+<link rel="import" href="../../chris-behaviors/plugin-behavior/plugin-behavior.html">
 
 <dom-module id="pacs-move">
 
@@ -218,6 +218,9 @@
 
     Polymer({
       is: 'pacs-move',
+
+      behaviors: [PluginBehavior],
+
       properties: {
         plugin: {
           type: Object,
@@ -261,7 +264,7 @@
         }
       },
 
-      ready: function(){
+      ready: function() {
         var grid = this.$.grid;
         grid.addEventListener('sort-order-changed', function() {
 
@@ -304,7 +307,7 @@
         });
       },
 
-      _resultsChanged: function(){
+      _resultsChanged: function() {
         // format query...
         // loop through series
         var filter = [];
@@ -467,7 +470,7 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    },
+      },
 
       _retrieve: function() {
         var data = {};
@@ -503,9 +506,8 @@
           data.body.data['series_uids'] = uids.join(',');
         }
 
-        var request = this.$.API.request('POST', this.plugin.links.instances, data);
-        request
-          .then(this.handleRetrieve.bind(this))
+        var start = this.__startPlugin(this.$.API, this.plugin, data);
+        start.then(this.handleRetrieve.bind(this))
           .catch(this.handleRetrieveError.bind(this));
 
       },

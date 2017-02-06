@@ -48,7 +48,7 @@
           pacs-settings="[[pacsSettings]]"
           on-pacs-settings-changed="_pacsSettingsChanged"
           on-results-changed="_resultsChanged"
-          on-previous-changed="_previousChanged"
+          on-plugin-started="_previousChanged"
           on-searching-changed="_searchingChanged">
         </pacs-query>
 
@@ -156,7 +156,23 @@
         },
 
         _previousChanged: function(event) {
-          this.previous = event.detail;
+          var plugin = event.detail.plugin;
+          this.previous = plugin.data.id;
+
+          // new feed fire!
+          var feedLink = plugin.links.feed;
+          // let the world know that we have a new feed
+          var id = Number( feedLink.match(/\d+/)['0'] );
+          var newFeedEvent = new CustomEvent(
+            'new-feed',
+            {detail: {
+              id: id,
+              link: feedLink,
+              },
+            }
+          );
+          this.dispatchEvent(newFeedEvent);
+
         },
 
         _searchingChanged: function(event) {
@@ -197,7 +213,9 @@
 
         _exitApp: function() {
           this.fire('exit-app');
-        }
+        },
+
+        // new feed
 
     });
   </script>

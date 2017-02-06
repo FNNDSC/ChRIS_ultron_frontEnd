@@ -1,31 +1,151 @@
+<link rel="import" href="../file-behavior/file-behavior.html">
+
 <script>
   /** @polymerBehavior PluginBehavior */
   PluginBehavior = {
 
-      __pluginsStyles: function() {
-        // define plugins style
-        const pluginStyleMap = [
-           ['', {
-            label: 'No Name',
-            color: '#607D8B',
-            letter: 'NN',
-            icon: 'icons:bug-report',
-          }],
-          ['pacsquery', {
-            label: 'Pacs Query',
-            color: '#2196F3',
-            letter: 'PQ',
-            icon: 'icons:cloud',
-          }],
-          ['pacsretrieve', {
-            label: 'Pacs Retrieve',
-            color: '#CDDC39',
-            letter: 'PR',
-            icon: 'icons:cloud-download',
-          }],
-        ];
-        return new Map(pluginStyleMap);
-      },
+    __formatPlugin: function(plugin, feed) {
+      // add link to feed
+      plugin.links['feed'] = feed.href;
+      // add extra properties for nice UX
+      const pluginStyle = this.__pluginsStyles().get(plugin.data['plugin_name']);
+      plugin.data['color'] = pluginStyle.color;
+      plugin.data['label'] = pluginStyle.label;
+      plugin.data['letter'] = pluginStyle.letter;
+      plugin.data['icon'] = pluginStyle.icon;
+    },
 
+    __pluginsStyles: function() {
+      // define plugins style
+      const pluginStyleMap = [
+          ['', {
+          label: 'No Name',
+          color: '#607D8B',
+          letter: 'NN',
+          icon: 'icons:bug-report',
+        }],
+        ['pacsquery', {
+          label: 'Pacs Query',
+          color: '#2196F3',
+          letter: 'PQ',
+          icon: 'icons:cloud',
+        }],
+        ['pacsretrieve', {
+          label: 'Pacs Retrieve',
+          color: '#CDDC39',
+          letter: 'PR',
+          icon: 'icons:cloud-download',
+        }],
+      ];
+      return new Map(pluginStyleMap);
+    },
+
+    __startPlugin: function(api, plugin, data){
+      return api.request( 'POST', plugin.links.instances, data );
+    },
+
+    __wait: function(milliseconds, response) {
+      var wait = new Promise(
+          function(resolve, reject) {
+            window.setTimeout(
+              function() {
+                resolve(response);
+                },
+            milliseconds
+          );
+          }
+      );
+      return wait;
+    },
+
+    __notifyPluginStarted: function(plugin) {
+      var pluginStartedEvent = new CustomEvent(
+        'plugin-started',
+        {detail:
+          {id: plugin.data.id,
+          plugin: plugin,
+          },
+        }
+      );
+      this.dispatchEvent(pluginStartedEvent);
+    },
+
+    __notifyPluginEnded: function(plugin) {
+      var pluginStartedEvent = new CustomEvent(
+        'plugin-ended',
+        {detail:
+          {id: plugin.data.id,
+          plugin: plugin
+          },
+        }
+      );
+      this.dispatchEvent(pluginStartedEvent);
+    },
+
+    __waitEndPlugin: function(api, data, response) {
+      // also works with collections
+      var plugin = response;
+      if(Array.isArray(plugin.data)) {
+        plugin = plugin.data[0];
+      }
+  
+      this.__notifyPluginStarted(plugin);
+
+      var waitForEnd = new Promise(
+          function(resolve, reject){
+            var remainingAttemps = 60;
+            var timeout = 1000;
+
+            function run() {
+            // get plugin status
+            api.request('GET', plugin.href , data).
+            then( function(response2) {
+              // check depdending on status
+              if(remainingAttemps > 0 && response2.data[0].data.status !== 'started') {
+                this.__notifyPluginEnded(plugin);
+                resolve(response2.data[0]);
+              } else {
+                remainingAttemps--;
+                if(remainingAttemps <= 0) {
+                  reject(response2);
+                } else {
+                  setTimeout(run, timeout);
+                }
+              }
+            }.bind(this));
+            }
+
+            run = run.bind(this);
+            run();
+          }.bind(this)
+      );
+
+      return waitForEnd;
+    },
+
+    __getFilesPlugin: function(api, data, plugin){
+      // get files
+      return api.request( 'GET', plugin.links.feed + 'files/', data ).
+        // filter in files that belong to plugin
+        then(this.__filterFilesPlugin.bind(this, plugin));
+    },
+
+    __filterFilesPlugin: function(plugin, files){
+      return new Promise(
+          function(resolve, reject) {
+            var filter = [];
+            // filter/format files
+            for(var i = 0; i < files.data.length; i++) {
+              if(files.data[i].data.plugin_inst_id === plugin.data.id) {
+                var formatFile = this.__formatFile(files.data[i]);
+                filter.push(formatFile); 
+              }
+            }
+
+            resolve(filter);
+      }.bind(this));
+    }
   }
+
+  PluginBehavior = [FileBehavior, PluginBehavior]
 </script>

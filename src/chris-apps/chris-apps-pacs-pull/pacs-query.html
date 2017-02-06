@@ -19,6 +19,7 @@
 
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../chris-api/chris-api.html">
+<link rel="import" href="../../chris-behaviors/plugin-behavior/plugin-behavior.html">
 
 <dom-module id="pacs-query">
 
@@ -26,19 +27,14 @@
     <style>
 
       host {
-
         display: block;
-
       }
 
       .spacer {
-
         @apply(--layout-flex);
-
       }
 
       .content {
-
         background-color: var(--paper-grey-50);
         @apply(--layout-vertical);
         @apply(--layout-wrap);
@@ -47,84 +43,64 @@
         margin: auto;
         margin-top: 24px;
         margin-bottom: 100px;
-
       }
 
       .item {
-
         @apply(--layout-horizontal);
         padding: 10px 72px;
-
       }
 
       .group {
-
         @apply(--layout-vertical);
         position: relative;
         padding: 8px 0;
-
       }
 
       .name {
-
         font-size: 18px;
         font-weight: 400;
         color: #737373;
-
       }
 
       .submit {
-
         padding: 16px;
         font-size: 18px;
         font-weight: 400;
         background-color: var(--accent-color);
         color: #ffffff;
         margin-top: 24px;
-
       }
 
       .tool {
-
         @apply(--layout-horizontal);
         cursor: pointer;
         /*padding: 8px 14px;*/
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
       }
 
       paper-textarea {
-
         width: 100%;
-
       }
 
       paper-input {
-
         width: 100%;
-
       }
 
       .flex {
-
         @apply(--layout-flex);
         @apply(--layout-horizontal);
         align-items: center;
         justify-content: flex-start;
-
       }
 
       .labelContainer, vaadin-date-picker {
-
         display: flex;
         flex-direction: row;
         flex: 1;
         height: 100%;
-
       }
 
       .label {
-
         font: inherit;
         color: #737373;
         -webkit-transition: -webkit-transform 0.25s, width 0.25s;
@@ -140,7 +116,6 @@
         font-weight: 400;
         line-height: 24px;
         align-self: flex-end;
-
       }
 
     </style>
@@ -241,6 +216,8 @@
 
       is: 'pacs-query',
 
+      behaviors: [PluginBehavior],
+
       properties: {
 
         plugin: {
@@ -263,30 +240,22 @@
 
       },
 
-
-      _toggleAdvanced: function(){
-
+      _toggleAdvanced: function() {
         this.$.advanced.toggle();
         this.$.advancedIcon.icon = this.$.advanced.opened ? 'icons:expand-less' : 'icons:expand-more';
-
       },
 
-      _toggleSimple: function(){
-
+      _toggleSimple: function() {
         this.$.simple.toggle();
         this.$.simpleIcon.icon = this.$.simple.opened ? 'icons:expand-less' : 'icons:expand-more';
-
       },
 
-      _toggleSettings: function(){
-
+      _toggleSettings: function() {
         this.$.settings.toggle();
         this.$.settingsIcon.icon = this.$.settings.opened ? 'icons:expand-less' : 'icons:expand-more';
-
       },
 
-      _find: function(){
-
+      _find: function() {
         // get data for pacs find
         var data = {};
         data.auth = {
@@ -319,133 +288,22 @@
           data.body.data['patient_id'] = this.patientID;
         }
 
-        console.log(data);
-
-        var request = this.$.API.request( 'POST', this.plugin.links.instances, data );
-        request
-          .then( this.handlePacsQuery.bind(this) )
-          .then( this.waitUntilFinished.bind(this) )
-          .then( this.getFeedFiles.bind(this) )
-          .then( this.handleFeedFiles.bind(this) )
-          .then( this.getFileContent.bind(this) )
-          .then( this.handleFileContent.bind(this) )
-          .catch( this.handlePacsQueryError.bind(this) );
+        var start = this.__startPlugin(this.$.API, this.plugin, data);
+        start
+          // https://github.com/FNNDSC/ChRIS_ultron_backEnd/issues/17
+          .then(this.__wait.bind(this, 1000))
+          .then(this.__waitEndPlugin.bind(this, this.$.API, data))
+          .then(this.__getFilesPlugin.bind(this, this.$.API, data))
+          .then(this.getFileContent.bind(this))
+          .then(this.handleFileContent.bind(this))
+          .catch(this.handlePacsQueryError.bind(this));
           
           //
           this.fire( 'searching-changed', true );
-
       },
 
-      handlePacsQuery: function( response ){
-
-        var p1 = new Promise(
-
-           function(resolve, reject){
-             window.setTimeout(
-               function(){resolve(response)},
-                  1000
-              );
-
-           }
-
-        );
-
-        return p1;
-        
-
-      },
-
-      waitUntilFinished: function(response) {
-        // new feed
-        var data = {};
-        data.auth = {
-          type: 'token',
-          token: sessionStorage.getItem( 'token' )
-        };
-
-        //
-        this.fire( 'previous-changed', response.data[0].data.id );
-
-        console.log( response.data[0].href );
-
-        var waitPromise = new Promise(
-
-           function(resolve, reject){
-
-             var remaningAttemps = 6;
-
-             function run(){
-              //
-              this.$.API.request( 'GET', response.data[0].href , data ).
-              then( function( response2 ){
-                // check depdending on status
-                console.log( response2 );
-                if( remaningAttemps < 5 && response2.data[0].data.status === 'finishedSuccessfully'){
-
-                  resolve(response2);
-
-                }
-                else{
-                  remaningAttemps--;
-                  if( remaningAttemps <= 0){
-                    reject(response2);
-                  }
-                  else{
-                    setTimeout(run, 1000);
-                  }
-                  
-
-                }
-                
-              }.bind(this));
-             }
-
-             run = run.bind(this);
-             run();
-
-           }.bind(this)
-
-
-        );
-
-        return waitPromise;
-
-      },
-
-      getFeedFiles: function( plugin ){
-
-        var feedLink = plugin.data[0].links.feed;
-
-        // let the world know that we have a new feed
-        var id = Number( feedLink.match(/\d+/)['0'] );
-        var newFeedEvent = new CustomEvent(
-          'new-feed',
-          {detail: {
-             id: id,
-             link: feedLink,
-             }
-          }
-        );
-        this.dispatchEvent(newFeedEvent);
-
-        // get the files
-        var data = {};
-        data.auth = {
-          type: 'token',
-          token: sessionStorage.getItem('token')
-        };
-
-        return this.$.API.request( 'GET', feedLink + 'files/', data );
-
-      },
-
-      handleFeedFiles: function( response ){
-
-        return response.data[0].links.file_resource;
-
-      },
-
-      getFileContent: function( file ){
+      getFileContent: function(files){
+        var file = files[0].links.file_resource;
 
         var data = {};
         data.auth = {
@@ -453,22 +311,16 @@
           token: sessionStorage.getItem('token')
         };
 
-        return this.$.API.request( 'GET', file, data );
-
+        return this.$.API.request('GET', file, data);
       },
 
-      handleFileContent: function( response ){
-
-        console.log( response );
-
-        this.fire( 'results-changed', response.data );
-
+      handleFileContent: function(response) {
+        this.fire('results-changed', response.data);
         return 'Done'
-
       },
 
       handlePacsQueryError: function(response) {
-        console.log( 'error:' + response );
+        console.log('error:' + response);
         console.log(response);
       }
 

@@ -72,7 +72,7 @@
     <template is="dom-repeat" items="{{tree}}">
       <div class="plugin">
         <div class="label" on-tap="_selectNode">
-          <paper-button class="primary" selected$="{{item.data.selected}}"><iron-icon icon$="{{_setIcon(item.data.status)}}" item-icon></iron-icon>{{item.data.plugin_name}}</paper-button>     
+          <paper-button class="primary" selected$="{{item.data.selected}}"><iron-icon icon$="{{_setIcon(item.data.status)}}" item-icon></iron-icon>{{item.data.label}}</paper-button>     
         </div>
         <div class="children">
           <chris-plugin-tree-recursive id="testC" tree="{{item.data.children}}"></chris-plugin-tree-recursive>
@@ -92,6 +92,11 @@
       }
 
     },
+
+    observers: [
+          '_treeChanged(tree.*)',
+        ],
+
 
     _selectNode: function(event) {
       this.fire('select-node', event.model.__data__.item);

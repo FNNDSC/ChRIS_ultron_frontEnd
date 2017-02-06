@@ -1,0 +1,13 @@
+<script>
+  /** @polymerBehavior FileBehavior */
+  FileBehavior = {
+
+      __formatFile: function(file){
+          // add relative file name property
+        var relative_fname = file.data.fname.split('_' + file.data.plugin_inst_id + '/data/')[1];
+        file.data.relative_fname = relative_fname;
+
+        return file;
+      },
+  }
+</script>

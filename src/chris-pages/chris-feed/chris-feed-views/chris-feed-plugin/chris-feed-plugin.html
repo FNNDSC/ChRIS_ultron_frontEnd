@@ -190,8 +190,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'chris-feed-plugin',
       properties :{
         list: {
-            type: Array,
-            observer: '_listChanged',
+            type: Array
         },
         files: {
           type: Array,
@@ -214,6 +213,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       observers: [
         '_sceneChanged(scene.*)',
+        '_listChanged(list.*)'
       ],
 
       _listChanged: function(){

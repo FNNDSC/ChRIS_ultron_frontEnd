@@ -73,7 +73,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         },
 
         observers: [
-          '_listChanged(list.splices)',
+          '_listChanged(list.*)',
           '_treeChanged(tree.splices)'
         ],
 
@@ -87,6 +87,11 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           var list = this.list;
           list.sort( this._sortByPathLength );
           this.selected = list[0];
+
+
+          //
+          // update list and tree
+          this._selectedChanged();
 
         },
 
@@ -146,17 +151,17 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
         _sortByPreviousId: function( a, b ){
 
             // special case for the root
-            if( a.data.previous_id === '' ){
+            if(a.data.previous_id === '' ||  a.data.previous_id === null) {
               return -1;
             }
-            if( b.data.previous_id === '' ){
+            if(b.data.previous_id === '' || b.data.previous_id === null) {
               return 1;
             }
 
-            if ( parseInt( a.data.previous_id, 10 ) > parseInt( b.data.previous_id, 10 ) ) {
+            if(parseInt(a.data.previous_id, 10) > parseInt(b.data.previous_id, 10)) {
               return 1;
             }
-            if ( parseInt( a.data.previous_id, 10 ) < parseInt( b.data.previous_id, 10 ) ) {
+            if(parseInt(a.data.previous_id, 10) < parseInt(b.data.previous_id, 10)) {
               return -1;
             }
             // a must be equal to b
@@ -189,6 +194,8 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         _selectedChanged: function(){
 
+          console.log('selected changed');
+
           var selectedId = -1;
 
           if( this.selected && this.selected.data && this.selected.data.id ){
@@ -197,19 +204,33 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           }
 
+          //
+          //
+          // MAGICS
+          //
+          //
+
           // update list and tree
+
+                      console.log('selected changed');
+
           this.list.map(function(obj){
 
-            obj.data.selected = ( obj.data.id === selectedId );
+            console.log(obj);
+            console.log(obj.data.selected);
+            console.log(obj.data.status);
+
+            obj.data.selected = (obj.data.id === selectedId);
             // required so polymer auto bindings kick in
             this.set(obj.data.path.concat(['selected']), obj.data.selected );
+            this.set(obj.data.path.concat(['status']), obj.data.status );
 
           }.bind(this));
 
           // fire event!
           this.fire( 'select-node', this.selected );
 
-        }
+        },
 
     });
   </script>

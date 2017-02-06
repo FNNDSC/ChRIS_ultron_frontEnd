@@ -111,6 +111,10 @@
                 },
             },
 
+            observers: [
+                '_listChanged(list.*)'
+            ],
+
             _listChanged: function(){
                 console.log(this.list);
             },
