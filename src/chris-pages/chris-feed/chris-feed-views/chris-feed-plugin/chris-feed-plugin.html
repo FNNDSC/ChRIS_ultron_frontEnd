@@ -9,7 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../../../../bower_components/paper-slider/paper-slider.html">
+
+<link rel="import" href="../../../../../bower_components/iron-pages/iron-pages.html">
 
 <script>
   // create THREE Namespace
@@ -25,6 +26,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="module-fileBrowser/module-fileBrowser.html">
 <link rel="import" href="module-scene/module-scene.html">
 <link rel="import" href="module-editor/module-editor.html">
+
+<link rel="import" href="../chris-feed-run/chris-feed-run.html">
 
 <link rel="import" href="../../../../chris-api/chris-api.html">
 
@@ -153,6 +156,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         position: absolute;
         bottom: 0px;
       }
+
+      iron-pages {
+        width: 100%;
+        height: 100%;
+        display: flex;
+      }
     </style>
 
     <!-- API Calls -->
@@ -163,23 +172,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="content">
 
       <module-manager id="manager" class="controls">
-        <module-fileBrowser id="module-fileBrowser" class="module" label="data" list=[[list]] files=[[files]] on-load-data="_loadData"></module-fileBrowser>
+        <module-fileBrowser id="module-fileBrowser" class="module" label="data" list=[[list]] files=[[files]] on-load-data="_loadData" on-process-data="_processData"></module-fileBrowser>
         <module-scene id="module-scene" class="module" label="scene" scene="[[scene]]" on-state-changed="_stateChanged"></module-scene>
         <module-editor id="module-editor" class="module" label="editor"></module-editor>
       </module-manager>
 
-      <div class="renderers">
-        <ami-3d id='r3d' class="v1 big"></ami-3d>
-        <div class="v2 small">
-          <paper-slider value="21" pin></paper-slider>
+      <iron-pages selected="[[view]]" attr-for-selected="name">
+
+        <div name="viewer" class="renderers">
+          <ami-3d id='r3d' class="v1 big"></ami-3d>
+          <div class="v2 small">
+            <paper-slider value="21" pin></paper-slider>
+          </div>
+          <div class="v3 small">
+            <paper-slider value="21" pin></paper-slider>
+          </div>
+          <div class="v4 small">
+            <paper-slider value="21" pin></paper-slider>
+          </div>
         </div>
-        <div class="v3 small">
-          <paper-slider value="21" pin></paper-slider>
-        </div>
-        <div class="v4 small">
-          <paper-slider value="21" pin></paper-slider>
-        </div>
-      </div>
+
+        <chris-feed-run name="runner" plugin="[[plugin]]" plugins="[[plugins]]"></chris-feed-run>
+
+      </iron-pages>
+
+
 
     </div>
 
@@ -189,8 +206,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'chris-feed-plugin',
       properties :{
+        plugins: {
+          type: Array,
+        },
         list: {
-            type: Array
+          type: Array
         },
         files: {
           type: Array,
@@ -208,12 +228,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         objectsMap: {
           type: Object,
           value: new Map(),
+        },
+        view: {
+          type: String,
+          value: 'viewer',
         }
       },
 
       observers: [
         '_sceneChanged(scene.*)',
-        '_listChanged(list.*)'
+        '_listChanged(list.*)',
       ],
 
       _listChanged: function(){
@@ -486,6 +510,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.files =  files;
         console.log(this.files);
         // process files then add it to scene if makes sense.
+      },
+
+      _processData: function(){
+        this.view = 'runner';
       }
     });
   </script>

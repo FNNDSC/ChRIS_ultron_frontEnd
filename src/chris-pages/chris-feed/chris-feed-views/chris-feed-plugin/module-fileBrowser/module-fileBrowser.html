@@ -84,7 +84,7 @@
               </div>
 
               <div class="controls-filebrowser-process">
-                <paper-button>Process data</paper-button>
+                <paper-button on-tap="_processData">Process data</paper-button>
               </div>
             </div>
 
@@ -115,19 +115,24 @@
                 '_listChanged(list.*)'
             ],
 
-            _listChanged: function(){
+            _listChanged: function() {
                 console.log(this.list);
             },
 
-            _filesChanged: function(){
+            _filesChanged: function() {
                 console.log(this.files);
             },
 
-            _treeChanged: function(event){
+            _treeChanged: function(event) {
                 console.log(event.detail.tree);
                 // hack to hide the root
                 this.set('tree', event.detail.tree[0].children);
-            }
+            },
+
+            _processData: function() {
+                var event = new CustomEvent('process-data');
+                this.dispatchEvent(event);
+            },
         });
     </script>
 

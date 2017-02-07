@@ -163,7 +163,7 @@
             <!--<chris-feed-about name="about" feed="{{feed}}"></chris-feed-about>
             <chris-feed-note name="note" notes="{{note}}"></chris-feed-note>
             <chris-feed-comments name="comments" comments="{{comments}}"></chris-feed-comments>-->
-            <chris-feed-plugin name="plugin" list="[[pluginInstanceCollection]]" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]" on-run-plugin="_runPlugin" on-select-node="_selectPlugin"></chris-feed-plugin>
+            <chris-feed-plugin name="plugin" list="[[pluginInstanceCollection]]" feed-index="[[feedRouteData.index]]" plugin="[[plugin]]" files="[[files]]" on-run-plugin="_runPlugin" on-select-node="_selectPlugin" plugins="[[plugins]]" on-fetch-plugin="_fetchPlugin"></chris-feed-plugin>
             <!--<chris-feed-run name="run" plugin="[[plugin]]" plugins="[[plugins]]" on-fetch-plugin="_fetchPlugin"></chris-feed-run>-->
 
           <!--</iron-pages>-->
@@ -200,6 +200,7 @@
           type: Array,
           observer: '_listChanged',
         },
+
         plugins: Array,
 
         plugin:{
@@ -546,25 +547,34 @@
         this.$.dropdown.close();
 
       },
-      // _fetchPlugin: function( event ){
+  
+      _fetchPlugin: function( event ){
+        var plugin = event.detail;
+        console.log(plugin);
+        // format plugin
+        this.push('pluginInstanceCollection', plugin);
+        this._handlePlugin(plugin);
 
-      //   // get the plugin
-      //   var data = {};
-      //   data.auth = {
-      //     type: 'token',
-      //     token: sessionStorage.getItem('token')
-      //   };
 
-      //   // add parameters to help the FAKE API// (not required by real API)
-      //   data.params = {};
-      //   data.params.fake_api_previous_id = this.plugin.data.id;
+      //   this.plugin = event.data[0];  
 
-      //   var fetchPlugin =this.$.API.request('GET', event.detail.href, data);
-      //   fetchPlugin
-      //     .then( this._handlePlugin.bind(this) )
-      //     .catch( this.handleError.bind(this) );
+        // // get the plugin
+        // var data = {};
+        // data.auth = {
+        //   type: 'token',
+        //   token: sessionStorage.getItem('token')
+        // };
 
-      // },
+        // // add parameters to help the FAKE API// (not required by real API)
+        // data.params = {};
+        // data.params.fake_api_previous_id = this.plugin.data.id;
+
+        // var fetchPlugin =this.$.API.request('GET', event.detail.href, data);
+        // fetchPlugin
+        //   .then( this._handlePlugin.bind(this) )
+        //   .catch( this.handleError.bind(this) );
+
+      },
 
       // _handlePlugin: function( event ){
 

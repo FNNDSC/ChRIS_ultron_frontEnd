@@ -185,7 +185,7 @@
       <div class="title-area" style$="{{_setBackgroundStyle(feed.data.color)}}">
 
         <div class="name">Feed [[feed.data.id]] - [[feed.data.label]]</div>
-        <div class="date"> <moment-element datetime="[[feed.data.creation_date]]" from="now"></moment-element></div>
+        <div class="date"> <moment-element id="datetime" datetime="[[feed.data.creation_date]]" from="now"></moment-element></div>
 
       </div>
 
@@ -244,6 +244,16 @@
         observers: [
           'updateFavorite(feed.data.favorite)'
         ],
+
+        ready: function(){
+          
+          // update timestamp every 5mn
+          window.setInterval(function(){
+            this.$.datetime.from = '';
+            this.$.datetime.from = 'now';
+          }.bind(this), 300000);
+
+        },
 
         updateFavorite: function() {
          

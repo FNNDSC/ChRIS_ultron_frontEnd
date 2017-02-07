@@ -15,12 +15,14 @@
 
         display: flex;
         flex: 1;
+        width: 100%;
 
         }
 
       .plugin, .label, .children {
 
         display: flex;
+        width: 100%;
 
       }
 
@@ -28,12 +30,15 @@
 
         flex-direction: column;
         flex: 1;
-
+        width: 100%;
+        display: flex;
+        min-width: 0;
       }
 
       .children {
 
-        flex-direction: row
+        flex-direction: row;
+        width: 100%;
 
       }
 
@@ -62,17 +67,61 @@
 
       }
 
-      iron-icon {
-        right: 10px;
-        position: absolute;
+      iron-icon {    white-space: nowrap;
+        /*right: 10px;*/
+        /*position: absolute;*/
+            /*width: 30px;
+    height: 30px;*/
       }
+
+      .labelyo {
+        flex-grow: 1;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        display: flex;
+                min-width: 10px;
+      }
+      paper-button {
+        display: flex;
+        min-width: 0;
+      }
+
+      #okbutton {
+            display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+      }
+
+      #okgo {
+            -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    min-width: 0;
+      }
+
+      .labelyo {
+        white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+      }
+
+
 
     </style>
 
     <template is="dom-repeat" items="{{tree}}">
       <div class="plugin">
         <div class="label" on-tap="_selectNode">
-          <paper-button class="primary" selected$="{{item.data.selected}}"><iron-icon icon$="{{_setIcon(item.data.status)}}" item-icon></iron-icon>{{item.data.label}}</paper-button>     
+          <paper-button id="okbutton" class="primary" selected$="{{item.data.selected}}">
+            <div id="okgo">
+              <div class="labelyo">{{item.data.label}}</div>
+            </div>
+            <iron-icon icon$="{{_setIcon(item.data.status)}}" item-icon></iron-icon>
+          </paper-button>     
         </div>
         <div class="children">
           <chris-plugin-tree-recursive id="testC" tree="{{item.data.children}}"></chris-plugin-tree-recursive>

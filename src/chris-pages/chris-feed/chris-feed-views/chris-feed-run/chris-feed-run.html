@@ -16,22 +16,22 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 <!-- CHRIS ELEMENTS -->
 <link rel="import" href="../../../../chris-api/chris-api.html">
 <link rel="import" href="../../../../chris-components/chris-parameter/chris-parameter.html">
+<link rel="import" href="../../../../chris-behaviors/plugin-behavior/plugin-behavior.html">
 
 <dom-module id="chris-feed-run">
   <template>
     <style>
 
-      .content {
+      :host {
+        width: 100%;
+        margin:6px;
+      }
 
+      .content {
         background-color: var(--paper-grey-50);
         @apply --layout-vertical;
         @apply --layout-wrap;
         padding: 24px;
-        max-width: 800px;
-        margin: auto;
-        margin-top: 24px;
-        margin-bottom: 100px;
-
       }
 
 
@@ -43,6 +43,12 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
       background: var(--paper-grey-100);
 
     }
+
+      paper-card {
+    --paper-card: {
+      width: 100%;
+    };
+  }
 
     .submit {
 
@@ -71,7 +77,9 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           <paper-listbox class="dropdown-content" selected={{selectedMenu}}>
 
             <template is="dom-repeat" items="{{plugins}}">
-              <paper-item plugin="[[item]]" on-tap="_pluginSelected">{{item.data.name}} </paper-item>
+              <template is="dom-if" if="{{_isDSPlugin(item.data.type)}}">
+                <paper-item plugin="[[item]]" on-tap="_pluginSelected">{{item.data.name}} - {{item.data.type}}</paper-item>
+              </template>
             </template>
 
           </paper-listbox>
@@ -84,6 +92,7 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
           <!--chris parameter -->
           <chris-parameter
             parameter="{{item}}"
+            optional="{{item.data.optional}}"
             name="{{item.data.name}}"
             type="{{item.data.type}}"
             help="{{item.data.help}}"
@@ -104,84 +113,72 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
     Polymer({
         is: 'chris-feed-run',
 
+        behaviors: [PluginBehavior],
+
         properties: {
+
+          plugins: {
+            type: Array,
+          },
 
           plugin: {
             type: Object,
-            observer: '_pluginChanged'
+            observer: '_pluginChanged',
           },
 
           selectedPlugin: {
             type: Object,
-            observer: '_selectedPluginChanged'
+            observer: '_selectedPluginChanged',
           },
 
           parameters: {
             type: Array,
-            observer: '_parametersChanged'
+            observer: '_parametersChanged',
           }
 
         },
 
-        _pluginChanged: function( event ){
-
-          console.log( this.plugin );
-
+        _pluginChanged: function(event) {
+          console.log(this.plugin);
         },
 
-        _selectedPluginChanged: function(){
-
-          if( this.selectedPlugin === null ){
-
+        _selectedPluginChanged: function() {
+          if(this.selectedPlugin === null) {
             return;
-
           }
 
           this._fetchParameters();
-
         },
 
-        _parametersChanged: function(){
-
-          console.log( this.parameters );
-
+        _parametersChanged: function() {
+          console.log(this.parameters);
         },
 
-        _fetchParameters: function(){
-
-          if( this.selectedPlugin === null ){
-
+        _fetchParameters: function() {
+          if(this.selectedPlugin === null) {
             return;
-
           }
 
           var data = {};
           data.auth = {
             type: 'token',
-            token: sessionStorage.getItem('token')
+            token: sessionStorage.getItem('token'),
           };
 
           var request =this.$.API.request('GET', this.selectedPlugin.links.parameters, data);
           request
-            .then( this._handleParameters.bind(this) );
-
+            .then(this._handleParameters.bind(this));
         },
 
-        _handleParameters: function( parameters ){
-
+        _handleParameters: function(parameters) {
           this.set('parameters', parameters);
           this._resetParameters();
-
         },
 
-        _resetParameters: function(){
-
-          for( var i=0; i < this.parameters.data.length; i++ ){
-
+        _resetParameters: function() {
+          for(var i=0; i < this.parameters.data.length; i++) {
             this.parameters.data[i].data.value = this.parameters.data[i].data.default;
-
           }
-
         },
 
         _pluginSelected: function( event ){
@@ -197,50 +194,48 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
         },
 
-        _start: function(){
-
+        _start: function() {
           var data = {};
           data.auth = {
             type: 'token',
-            token: sessionStorage.getItem('token')
+            token: sessionStorage.getItem('token'),
           };
 
           data.body = {};
           data.body.template = {};
           data.body.template.data = [];
           data.body.template.data.push({
-            name: 'previous',
-            value: ''
+            name: 'previous_id',
+            value: '',
           })
           data.body.data = {
-            previous: this.plugin.data.id
+            previous_id: this.plugin.data.id
           }
 
-          for( var i=0; i<this.parameters.data.length; i++ ){
-
+          for(var i=0; i<this.parameters.data.length; i++) {
             var name = this.parameters.data[i].data.name;
             var value = this.parameters.data[i].data.value;
 
             // fill template
             var parameter = {
               name: name,
-              value: ''
+              value: '',
             }
-            data.body.template.data.push( parameter );
+            data.body.template.data.push(parameter);
 
             // fill data
             data.body.data[ name ] = value;
-
           }
 
-          var request = this.$.API.request( 'POST', this.selectedPlugin.links.instances, data);
-          request
-            .then( this.handleRunPluginDS.bind(this) )
-            .catch( this.handleRunError.bind(this) );
-
+          var start = this.__startPlugin(this.$.API, this.selectedPlugin, data);
+          start
+            .then(this.handleRunPluginDS.bind(this))
+            .catch(this.handleRunError.bind(this));
         },
 
-        handleRunPluginDS: function( event ){
+        handleRunPluginDS: function(event) {
+
+          console.log(event);
 
           this.fire('fetch-plugin', event.data[0]);
 
@@ -254,6 +249,10 @@ Copyright (c) 2016 FNNDSC. All rights reserved.
 
           console.log( event );
 
+        },
+
+        _isDSPlugin: function(type) {
+          return type === 'ds';
         }
 
     });
