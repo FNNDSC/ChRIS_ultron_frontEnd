@@ -52,8 +52,8 @@
 
       paper-button.primary {
 
-        background-color: var(--primary-color);
-        color: white;
+        /*background-color: var(--primary-color);*/
+        /*color: white;*/
         width:100%;
         margin:0;
         border-radius: 0;
@@ -62,26 +62,9 @@
       }
 
       paper-button.primary[selected] {
-
-        background-color: var(--accent-color);
-
+        border-color: var(--accent-color);
       }
 
-      iron-icon {    white-space: nowrap;
-        /*right: 10px;*/
-        /*position: absolute;*/
-            /*width: 30px;
-    height: 30px;*/
-      }
-
-      .labelyo {
-        flex-grow: 1;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        display: flex;
-                min-width: 10px;
-      }
       paper-button {
         display: flex;
         min-width: 0;
@@ -107,9 +90,19 @@
         white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: center;
       }
 
+      iron-icon {
+        /*opacity: 0.5;*/
+      }
 
+      .iconWrap {
+        box-sizing: border-box;
+        border: 2px solid #212121;
+        border-radius: 50%;
+        padding: 4px;
+      }
 
     </style>
 
@@ -120,7 +113,10 @@
             <div id="okgo">
               <div class="labelyo">{{item.data.label}}</div>
             </div>
-            <iron-icon icon$="{{_setIcon(item.data.status)}}" item-icon></iron-icon>
+            <!--<div class="iconWrap" style$="{{_setStyle(item.data)}}">-->
+              <iron-icon icon$="{{item.data.icon}}" style$="{{_setStyle(item.data.status)}}" item-icon></iron-icon>
+              <div></div>
+            <!--</div>-->
           </paper-button>     
         </div>
         <div class="children">
@@ -165,6 +161,18 @@
       } else {
         return 'icons:clear';
       }
+    },
+
+    _setStyle: function(status) {
+      // set color
+      var color = '#ff5722';
+      if(status === 'started') {
+        color = '#00bcd4';
+      } else if(status === 'finishedSuccessfully') {
+        color = '#8bc34a';
+      }
+
+      return 'color: ' + color;
     }
   });
 </script>
