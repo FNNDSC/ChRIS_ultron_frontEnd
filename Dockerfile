@@ -5,15 +5,13 @@ MAINTAINER fnndsc "dev@babymri.org"
 RUN npm install -g bower polymer-cli
 
 # Install bower deps
-RUN mkdir -p /src/chris-ultron
-WORKDIR /src/chris-ultron
-
 COPY bower.json /src/chris-ultron/
-RUN echo '{ "allow_root": true }' > /root/.bowerrc
-RUN bower install
+WORKDIR /src/chris-ultron
+RUN echo '{ "allow_root": true }' > /root/.bowerrc \
+  && bower install
 
 # Bundle app source
-ADD . /src/chris-ultron
+COPY . /src/chris-ultron
 
 # Start dev server
 EXPOSE 8080
