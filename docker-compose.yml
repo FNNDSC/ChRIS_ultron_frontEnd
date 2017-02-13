@@ -2,9 +2,12 @@ version: '2'
 
 services:
   web:
+    #build: .
     image: fnndsc/chris_dev_frontend
     ports:
      - "8080:8080"
     volumes:
      - .:/src/chris-ultron
-     - /src/chris-ultron/bower_components
+    labels:
+      name: "ChRIS_ultronfrontEnd"
+      role: "Frontend development server"
