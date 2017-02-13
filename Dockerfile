@@ -7,8 +7,7 @@ RUN npm install -g bower polymer-cli
 # Install bower deps
 COPY bower.json /src/chris-ultron/
 WORKDIR /src/chris-ultron
-RUN echo '{ "allow_root": true }' > /root/.bowerrc \
-  && bower install
+RUN bower install --allow-root
 
 # Bundle app source
 COPY . /src/chris-ultron
