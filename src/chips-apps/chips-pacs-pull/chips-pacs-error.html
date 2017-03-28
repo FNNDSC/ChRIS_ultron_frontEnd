@@ -1,0 +1,98 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="chips-pacs-error">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        width: 100%;
+      }
+
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: 840px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #ffffff;
+      }
+
+      paper-button {
+        margin-top: 32px;
+        margin-bottom: 16px;
+        background: var(--accent-color);
+        color: white;
+        display: flex;
+        flex-direction: row;
+      }
+
+      .log {
+        padding: 24px;
+        margin: 24px;
+        background: #212121;
+        color: #fff;
+      }
+
+      @media (max-width: 840px) {
+        .container {
+          width: 100%;
+        }
+      }
+    </style>
+
+
+    <div class="container">
+      <div>
+        Oh no, something went wrong...
+      </div>
+      <div>
+          If the error persists, please contact dev@babymri.org with all the error details below.
+      </div>
+
+      <paper-button on-tap="_openQuery">Back to the Query</paper-button>
+
+      <div class="log">
+        Error details:
+        <div>
+        [[error.data]]
+        </div>
+        <div>
+        [[error.command]]
+        </div>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class ChipsPacsError extends Polymer.Element {
+      static get is() {
+        return 'chips-pacs-error';
+      }
+
+      static get properties() {
+        return {
+          error: {
+            type: Object,
+          },
+        };
+      }
+
+      _openQuery() {
+        var pageEvent = new CustomEvent(
+          'page', {detail: {
+              page: 'query',
+            },
+          }
+        );
+        this.dispatchEvent(pageEvent);
+      }
+    }
+
+    window.customElements.define(ChipsPacsError.is, ChipsPacsError);
+  </script>
+</dom-module>

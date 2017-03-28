@@ -1,0 +1,392 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="chips-ultron-theme.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+
+<link rel="import" href="chips-api/chips-api.html">
+
+
+<dom-module id="chips-ultron">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <chips-api id="API"></chips-api>
+    <paper-toast id="toast"></paper-toast>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <iron-pages
+        selected="[[page]]"
+        attr-for-selected="name"
+        fallback-selection="error404"
+        role="main"
+        >
+      <chips-app
+        name="app"
+        route="[[subroute]]"
+        plugins="[[plugins]]"
+        on-page="_handlePage">
+      </chips-app>
+      <chips-home
+        name="home"
+        feeds="[[feeds]]"
+        feeds-status="[[feedsStatus]]"
+        on-feeds="_handleFeeds"
+        apps="[[apps]]"
+        on-page="_handlePage"
+        on-notification="_handleNotification"
+        on-login="_handleLogin"></chips-home>
+      <chips-login
+        name="login"
+        on-error="_handleError"
+        on-login="_handleLogin"></chips-login>
+      <chips-error404 name="error404"></chips-error404>
+    </iron-pages>
+  
+  </template>
+
+  <script>
+    class ChipsUltron extends Polymer.Element {
+
+      static get is() {
+        return 'chips-ultron';
+      }
+
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged',
+          },
+          routeData: Object,
+          subroute: Object,
+          loadComplete: {
+            type: Boolean,
+            value: false,
+          },
+          feeds: {
+            type: Array,
+            value: [],
+          },
+          feedsStatus: {
+            type: String,
+            value: '',
+          },
+          plugins: {
+            type: Array,
+            value: [],
+          },
+          pluginsStatus: {
+            type: String,
+            value: '',
+          },
+          apps: {
+            type: Array,
+            value: [],
+          },
+          notification: {
+            type: Object,
+            value: {},
+            observer: '_notificationChanged',
+          },
+          login: {
+            type: Boolean,
+            observer: '_loginChanged',
+          },
+          offline: {
+            type: Boolean,
+            value: false,
+            readOnly: true,
+          },
+          serverAvailable: {
+            type: Boolean,
+            observer: '_serverAvailableChanged',
+          },
+        };
+      }
+
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)',
+        ];
+      }
+
+      ready() {
+        super.ready();
+        this._notifyNetworkStatusBounded = this._notifyNetworkStatus.bind(this);
+
+        this.apps = [{
+          name: 'pacs-pull',
+          color: '#000044',
+          icon: 'my-icons:pacs-pull',
+          label: 'Pacs Pull',
+        },
+        {
+          name: 'local-viewer',
+          color: '#000044',
+          icon: 'my-icons:local-viewer',
+          label: 'Local Viewer',
+        }];
+
+        if (sessionStorage.getItem('username') &&
+            sessionStorage.getItem('token')) {
+          this.login = true;
+        } else {
+          this.login = false;
+        }
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        window.addEventListener('online', this._notifyNetworkStatusBounded);
+        window.addEventListener('offline', this._notifyNetworkStatusBounded);
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        window.addEventListener('online', this._notifyNetworkStatusBounded);
+        window.addEventListener('offline', this._notifyNetworkStatusBounded);
+      }
+
+      _fetchPlugins() {
+        this.pluginsStatus = 'fetching';
+
+        // through the API
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        data.params = {};
+        data.params.limit = 9999;
+        data.params.page_size = 9999;
+        this.$.API.request('GET', 'plugins', data)
+          .then(this._handlePluginsResponse.bind(this))
+          .catch(this._handlePluginsError.bind(this));
+      }
+
+      _handlePluginsResponse(response) {
+        this.pluginsStatus = 'success';
+        this.plugins = response.data;
+      }
+
+      _handlePluginsError(error) {
+        this.pluginStatus = 'error';
+        this.notification = error.notification;
+        this._handleErrorStatus(error.status);
+      }
+
+      _fetchFeeds(from, to) {
+        this.feedsStatus = 'fetching';
+
+        // through the API
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        data.params = {};
+        data.params.filter = this.filter;
+        data.params.limit = 20;
+        data.params.page_size = 20;
+        this.$.API.request('GET', 'feeds', data)
+          .then(this._handleFeedsResponse.bind(this))
+          .catch(this._handleFeedsError.bind(this));
+      }
+
+      _handleFeeds(response) {
+        if (response &&
+            response.detail &&
+            response.detail.feeds) {
+          const feeds = response.detail.feeds;
+
+          switch (feeds.action) {
+            case 'reload':
+              this._fetchFeeds(0, 20);
+              break;
+            case 'next':
+              // this._fechtNextFeeds();
+              break;
+            default:
+              break;
+          }
+        }
+      }
+
+      _handlePage(response) {
+        if (response &&
+            response.detail &&
+            response.detail.page) {
+          this.set('route.path', `/${response.detail.page}/`);
+        }
+      }
+
+      _handleFeedsResponse(response) {
+        this.feedsStatus = 'success';
+        console.log(response);
+      }
+
+      _handleLogin(event) {
+        this.login = event.detail.login;
+      }
+
+      _handleFeedsError(error) {
+        this.feedsStatus = 'error';
+        this.notification = error.notification;
+        this._handleErrorStatus(error.status);
+      }
+
+      _handleError(response) {
+        if (response &&
+            response.detail &&
+            response.detail.error) {
+          const error = response.detail.error;
+          this.notification = error.notification;
+          this._handleErrorStatus(error.status);
+        }
+      }
+
+      _handleErrorStatus(errorStatus) {
+        switch (errorStatus) {
+          case 401:
+            this.login = false;
+            break;
+          case 404:
+            this.serverAvailable = false;
+            break;
+          default:
+            console.log(`Unknown error ${errorStatus}`);
+            break;
+        }
+      }
+
+      _notificationChanged(notification) {
+        if (!notification.text) return;
+
+        this.$.toast.text = notification.text;
+        this.$.toast.show();
+      }
+
+      _handleNotification(event) {
+        this.notification = event.detail.notification;
+      }
+
+      _routePageChanged(page) {
+        // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (page === undefined) {
+          return;
+        }
+
+        // If no page was found in the route data, page will be an empty string.
+        // Deault to 'home' in that case.
+        this.page = page || 'home';
+      }
+
+      _pageChanged(page, oldPage) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('chips-' + page + '.html');
+        Polymer.importHref(
+            resolvedPageUrl,
+            this._pageLoaded.bind(this, Boolean(oldPage)),
+            this._showPage404.bind(this),
+            true);
+      }
+
+      _pageLoaded(shouldResetLayout) {
+        this._ensureLazyLoaded();
+      }
+
+      _ensureLazyLoaded() {
+        // load lazy resources after render and set `loadComplete` when done.
+        if (!this.loadComplete) {
+          Polymer.RenderStatus.afterNextRender(this, () => {
+            Polymer.importHref(this.resolveUrl('lazy-resources.html'), () => {
+              this._notifyNetworkStatus();
+              // app loaded message
+              this.loadComplete = true;
+              // this.notification = {
+              //   text: 'CHIPS loaded!',
+              // };
+              // Load pre-caching Service Worker
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js');
+              }
+            });
+          });
+        }
+      }
+
+      _loginChanged(login) {
+        // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (login === undefined) {
+          return;
+        }
+
+        const username = sessionStorage.getItem('username');
+        if (username) {
+          this.notification = {
+            text: login? `Welcome, ${username}!` : `Come back soon, ${username}!`,
+          };
+        }
+
+        if (!login) {
+          sessionStorage.removeItem('username');
+          sessionStorage.removeItem('token');
+          this.feeds = [];
+          this.set('route.path', '/login/');
+        } else {
+          if (this.page === 'login') {
+            this.set('route.path', '/home/');
+          }
+          this._fetchFeeds(0, 20);
+          this._fetchPlugins();
+        }
+      }
+
+      _serverAvailableChanged(serverAvailable) {
+        // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (serverAvailable === undefined) {
+          return;
+        }
+
+        console.log(`server available? ${serverAvailable}`);
+      }
+
+      _showPage404() {
+        this.page = 'error404';
+      }
+
+      _notifyNetworkStatus() {
+        const oldOffline = this.offline;
+        this._setOffline(!window.navigator.onLine);
+        // Show the snackbar if the user is offline when starting a new session
+        // or if the network status changed.
+        if (this.offline || (!this.offline && oldOffline === true)) {
+          this.notification = {
+            text: this.offline ?
+              'You are offline' : 'You are online',
+          };
+        }
+      }
+    }
+
+    window.customElements.define(ChipsUltron.is, ChipsUltron);
+  </script>
+</dom-module>

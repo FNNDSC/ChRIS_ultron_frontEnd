@@ -1,0 +1,229 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="chips-api/chips-api.html">
+
+<dom-module id="chips-login">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        background-color: var(--dark-primary-color);
+      }
+
+      .container{
+        color: #ffffff;
+        max-width: 800px;
+        margin: auto;
+        margin-top: 60px;
+        margin-bottom: 60px;
+        position: relative;
+        display:flex;
+        flex-direction:column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .title {
+        text-align: center;
+        font-size: 24px;
+        color: #ffffff;
+        padding: 10px;
+      }
+
+      paper-input {
+        --paper-input-container-color: var(--text-primary-color);
+        --paper-input-container-input-color: var(--text-primary-color);
+      }
+
+      paper-button#login {
+        margin-top: 32px;
+        background: var(--accent-color);
+        color: white;
+        display: flex;
+        flex-direction: row;
+      }
+
+      paper-spinner {
+        margin:6px;
+        --paper-spinner-layer-1-color: white;
+        --paper-spinner-layer-2-color: white;
+        --paper-spinner-layer-3-color: white;
+        --paper-spinner-layer-4-color: white;
+      }
+
+      #loginSpinner{
+        display: none;
+      }
+
+      a {
+        color: var(--accent-color);
+      }
+    </style>
+
+    <chips-api
+      id="API"
+      on-error="_blockEvent"></chips-api>
+
+    <div class="container">
+      <div class="horizontal-section">
+
+        <section>
+          <div class="title">Welcome to CHIPS Ultron</div>
+        </section>
+
+        <section>
+          <div>
+            <paper-input id="username"
+              type="username"
+              value="{{_username}}"
+              required
+              error-message="Username is required"
+              label="Username"
+              onfocusout="validate()"
+              on-keypress="keypressHandler">
+            </paper-input>
+            <paper-input id="password"
+              type="password"
+              value="{{_password}}"
+              required
+              error-message="Password is required"
+              label="Password"
+              onfocusout="validate()"
+              on-keypress="keypressHandler">
+            </paper-input>
+          </div>
+        </section>
+
+        <section>
+          <paper-button id="login" on-click="login">
+            <div id="loginLabel">Log In</div> <paper-spinner active id="loginSpinner"></paper-spinner>
+          </paper-button>
+        </section>
+
+        <section>
+          <div>
+            <br>
+            New to <a href="https://github.com/FNNDSC">ChRIS</a>? <a href="https://github.com/FNNDSC">Register</a> for an account.
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>
+    class ChipsLogin extends Polymer.Element {
+      static get is() {
+        return 'chips-login';
+      }
+
+      static get properties() {
+        return {
+          _username: {
+            type: String,
+            value: '',
+          },
+          _password: {
+            type: String,
+            value: '',
+          },
+        };
+      }
+
+      keypressHandler(evt) {
+        if (evt.charCode === 13) {
+          // try to log in
+          this.login();
+        }
+      }
+
+      login() {
+        // validate inputs
+        this.$.username.validate();
+        this.$.password.validate();
+
+        if (!this.$.username.invalid &&
+            !this.$.password.invalid &&
+            !this.$.login.disabled) {
+          this.$.login.disabled = true;
+          this.$.loginLabel.style.display = 'none';
+          this.$.loginSpinner.style.display = 'block';
+
+          // prepare data
+          var data = {};
+
+          data.auth = {
+            type: 'none',
+          };
+
+          data.body = {
+            'username': this._username,
+            'password': this._password,
+          };
+
+          // need to pass username and password
+          var request = this.$.API.request('POST', 'login', data);
+          request
+            .then(this.handleResponse.bind(this))
+            .catch(this.handleError.bind(this));
+          }
+        }
+
+        handleResponse(response) {
+          if (!response) return;
+
+          this.$.login.disabled = false;
+          this.$.loginLabel.style.display = 'block';
+          this.$.loginSpinner.style.display = 'none';
+
+          this._password = '';
+
+          if (response.token) {
+            sessionStorage.setItem('username', this._username);
+            sessionStorage.setItem('token', response.token);
+    
+            const loginEvent = new CustomEvent('login', {detail: {
+              login: true,
+            }});
+            this.dispatchEvent(loginEvent);
+            return;
+          }
+        }
+
+        handleError(error) {
+          this.$.login.disabled = false;
+          this.$.loginLabel.style.display = 'block';
+          this.$.loginSpinner.style.display = 'none';
+
+          // 400 invalid login
+          // update default notification text
+          if (error.status === 400) {
+            error.notification.text = 'Invalid credentials';
+          }
+
+          const errorEvent = new CustomEvent('error', {detail: {
+              error,
+          }});
+          this.dispatchEvent(errorEvent);
+        }
+
+        _blockEvent(event) {
+          event.stopPropagation();
+        }
+
+    }
+
+    window.customElements.define(ChipsLogin.is, ChipsLogin);
+  </script>
+</dom-module>

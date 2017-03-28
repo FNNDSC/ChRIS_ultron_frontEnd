@@ -1,0 +1,146 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="chips-pacs-query.html">
+<link rel="import" href="chips-pacs-move.html">
+<link rel="import" href="chips-pacs-error.html">
+
+<dom-module id="chips-pacs-pull">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        position: relative;
+      }
+
+      iron-pages {
+        display: flex;
+        width: 100%;
+      }
+    </style>
+
+    <iron-pages
+      selected="{{page}}"
+      attr-for-selected="name"
+      fallback-selection="error404"
+      role="main">
+        <chips-pacs-query
+            id="query"
+            name="query"
+            on-response="_handleResponse"
+            settings="{{settings}}"
+            instance="{{queryInstance}}"></chips-pacs-query>
+        <chips-pacs-move
+            id="move"
+            name="move"
+            data="[[data]]"
+            settings="[[settings]]"
+            previous-instance="[[queryInstance]]"
+            on-response="_handleResponse"
+            on-page="_handlePage"></chips-pacs-move>
+        <chips-pacs-error
+            id="error"
+            name="error"
+            on-page="_handlePage"
+            error="[[error]]"></chips-pacs-error>
+      </iron-pages>
+  </template>
+
+  <script>
+    class ChipsPacsPull extends Polymer.Element {
+      static get is() {
+        return 'chips-pacs-pull';
+      }
+    
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            value: 'query',
+          },
+          plugins: {
+            type: Array,
+            value: [],
+            observer: '_pluginsChanged',
+          },
+          settings: {
+            type: Object,
+            value: {
+              aet: 'CHIPS',
+              aec: 'ORTHANC',
+              aet_listener: 'CHIPS',
+              server_ip: '192.168.1.110',
+              server_port: '4242',
+            },
+          },
+          data: {
+            type: Object,
+          },
+          error: {
+            type: Object,
+          },
+          queryInstance: {
+            type: Number,
+            value: -1,
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      _pluginsChanged(plugins) {
+        // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (plugins === undefined) {
+          return;
+        }
+
+        for (let i = 0; i < this.plugins.length; i++) {
+            if (this.plugins[i].data.name === 'pacsquery') {
+              this.$.query.target = plugins[i].links.instances;
+            }
+            if (this.plugins[i].data.name === 'pacsretrieve') {
+              this.$.move.target = plugins[i].links.instances;
+            }
+          }
+      }
+
+      _handleResponse(response) {
+        if (response) {
+          const data = response.detail.data;
+          if (data.status === 'error') {
+            this.error = data;
+            this.page = 'error';
+          } else if (data.status === 'close') {
+            const closeEvent = new CustomEvent('close');
+            this.dispatchEvent(closeEvent);
+          } else {
+            this.data = data.data;
+            this.page = 'move';
+          }
+        }
+      }
+
+      _handlePage(event) {
+        event.stopPropagation();
+
+        if (event &&
+            event.detail) {
+          const page = event.detail.page;
+          this.page = page;
+        }
+      }
+
+      reset() {
+        this.page = 'query';
+      }
+
+    }
+
+    window.customElements.define(ChipsPacsPull.is, ChipsPacsPull);
+  </script>
+</dom-module>

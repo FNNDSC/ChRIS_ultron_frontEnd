@@ -1,0 +1,320 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="../../chips-api/chips-api.html">
+<link rel="import" href="../../chips-behaviors/chips-plugin-behavior.html">
+
+<dom-module id="chips-pacs-query">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        width: 100%;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        width: 840px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #ffffff;
+      }
+
+      .content {
+        flex:1;
+        padding: 24px;
+      }
+
+      section {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        padding: 8px 0;
+      }
+
+      .collapser {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--divider-color);
+      }
+
+      .item {
+        padding: 10px 72px;
+      }
+
+      paper-button {
+        margin-top: 32px;
+        margin-bottom: 16px;
+        background: var(--accent-color);
+        color: white;
+        display: flex;
+        flex-direction: row;
+      }
+
+      .loading {
+        display: flex;
+        height:100%;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: 840px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #ffffff;
+      }
+
+      @media (max-width: 840px) {
+        .container {
+          width: 100%;
+        }
+      }
+    </style>
+
+    <chips-api
+      id="API"
+      on-response="_blockEvent"
+      on-error="_blockEvent"></chips-api>
+
+    <div class="container">
+      <!-- Loading overlay -->
+      <template is="dom-if" if="[[loading]]">
+        <div class="loading">
+            <paper-spinner active>...</paper-spinner>
+            <template is="dom-repeat" items="[[loadingSteps]]">
+              <div>[[index]] - [[item]]</div>
+            </template>
+        </div>
+      </template>
+
+      <!-- Query content -->
+      <template is="dom-if" if="[[!loading]]">
+        <div class="content">
+          <section>
+
+            <div class="collapser" on-tap="_toggleSimple">
+              Simple query
+              <paper-icon-button id="iconSimple" icon="my-icons:expand-less"></paper-icon-button>
+            </div>
+
+            <iron-collapse id="sectionSimple" opened>
+              <div class="item">
+                <paper-textarea id="patientIDInput" label="Patient IDs" value="{{patientID}}"></paper-textarea>
+              </div>
+            </iron-collapse>
+          </section>
+
+          <section>
+
+            <div class="collapser" on-tap="_toggleSettings">
+              Settings
+              <paper-icon-button id="iconSettings" icon="my-icons:expand-less"></paper-icon-button>
+            </div>
+
+            <iron-collapse id="sectionSettings" opened>
+              <div class="item">
+                <paper-input label="PACS Server IP" value="{{settings.server_ip}}"></paper-input>
+              </div>
+              <div class="item">
+                <paper-input label="PACS Server Port" value="{{settings.server_port}}"></paper-input>
+              </div>
+              <div class="item">
+                <paper-input label="Calling AET" value="{{settings.aec}}"></paper-input>
+              </div>
+              <div class="item">
+                <paper-input label="Called AET" value="{{settings.aet}}"></paper-input>
+              </div>
+            </iron-collapse>
+          </section>
+        </div>
+        <div class="action">
+          <paper-button on-tap="queryPacs">Query the PACS</paper-button>
+        </div>
+      </template>
+    </div>
+
+  </template>
+
+  <script>
+    class ChipsPacsQuery extends PluginBehavior(Polymer.Element) {
+      static get is() {
+        return 'chips-pacs-query';
+      }
+    
+      static get properties() {
+        return {
+          patientID: {
+            type: String,
+            value: '',
+          },
+          settings: {
+            type: Object,
+          },
+          target: {
+            type: String,
+            value: '',
+          },
+          loading: {
+            type: Boolean,
+            value: false,
+          },
+          loadingSteps: {
+            type: Array,
+            value: [],
+          },
+          instance: {
+            type: Number,
+            value: -1,
+            notify: true,
+          },
+        };
+      }
+
+      _toggleSimple() {
+        this.$.sectionSimple.toggle();
+        this.$.iconSimple.icon =
+          this.$.sectionSimple.opened ?
+            'my-icons:expand-less' : 'my-icons:expand-more';
+      }
+
+      _toggleSettings() {
+        this.$.sectionSettings.toggle();
+        this.$.iconSettings.icon =
+          this.$.sectionSettings.opened ?
+            'my-icons:expand-less' : 'my-icons:expand-more';
+      }
+
+      queryPacs() {
+        // get data for pacs find
+        const data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        //
+        data.body = {};
+        data.body.template = {};
+        data.body.template.data = [
+          {name: 'aet', value: ''},
+          {name: 'aec', value: ''},
+          {name: 'server_ip', value: ''},
+          {name: 'server_port', value: ''},
+        ];
+        data.body.data = this.settings;
+
+        const validPID = this.validatePatientID();
+        if (validPID) {
+          const formattedPID = this.formatPatientID();
+          if (formattedPID !== '') {
+            data.body.template.data.push(
+              {name: 'patient_id', value: ''});
+            data.body.data['patient_id'] = formattedPID;
+          }
+        }
+
+        this.loading = true;
+        this.loadingSteps = [];
+        this.loadingSteps.push('Starting PACS Query...');
+
+        // ready to start the query sequence!
+        const start = this.__startPlugin(this.$.API, this.target, data);
+        start.then((response) => {
+            // console.log(response);
+            this.instance = Number(response.data[0].data.id);
+            this.push('loadingSteps', 'Contacting the PACS Server...');
+            return response;
+          })
+          // https://github.com/FNNDSC/ChRIS_ultron_backEnd/issues/17
+          .then(this.__wait.bind(this, 1000))
+          .then((response) => {
+            this.push('loadingSteps', 'Waiting for answer...');
+            return response;
+          })
+          .then(this.__waitEndPlugin.bind(this, this.$.API, data))
+          .then((response) => {
+            this.push('loadingSteps', 'Processing results...');
+            return response;
+          })
+          .then(this.__getFilesPlugin.bind(this, this.$.API, data))
+          .then(this._getFileContent.bind(this))
+          .then(this._handleQueryResponse.bind(this))
+          .catch(this._handleQueryError.bind(this));
+      }
+
+      _getFileContent(files) {
+        var file = files[0].links.file_resource;
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        return this.$.API.request('GET', file, data);
+      }
+
+      validatePatientID() {
+        // only letters, return and comma are valid characters
+        const re = /[^a-zA-Z0-9\n\,\ ]/;
+        const foundInvalid = this.patientID.match(re);
+
+        if (foundInvalid && foundInvalid.length > 0) {
+          this.$.patientIDInput.errorMessage =
+            'Some of the characters are not valid.';
+          this.$.patientIDInput.invalid = true;
+          return false;
+        }
+
+        return true;
+      }
+
+      formatPatientID() {
+        // replace line break and spaces by commas
+        const re = /[\n\ ]/gi;
+        const formattedPatientID = this.patientID
+          .trim()
+          .replace(re, ',');
+        return formattedPatientID;
+      }
+
+      _handleQueryResponse(response) {
+        this.loading = false;
+        this.loadingSteps = [];
+
+        var queryResponseEvent = new CustomEvent(
+          'response', {detail: {
+              data: response,
+            },
+          }
+        );
+        this.dispatchEvent(queryResponseEvent);
+      }
+
+      _handleQueryError(error) {
+        this.loading = false;
+        this.loadingSteps = [];
+
+        var queryResponseEvent = new CustomEvent(
+          'response', {detail: {
+              data: error,
+            },
+          }
+        );
+        this.dispatchEvent(queryResponseEvent);
+      }
+
+      _blockEvent(event) {
+        event.stopPropagation();
+      }
+    }
+
+    window.customElements.define(ChipsPacsQuery.is, ChipsPacsQuery);
+  </script>
+</dom-module>

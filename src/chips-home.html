@@ -1,0 +1,284 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-if.html">
+
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="my-icons.html">
+
+<dom-module id="chips-home">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      app-drawer-layout:not([narrow]) [drawer-toggle] {
+        display: none;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--dark-primary-color);
+      }
+
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        text-decoration: none;
+        color: var(--primary-text-color);
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+
+      .fit {
+        position: absolute;
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: auto;
+        margin: 0;
+      }
+
+      paper-button#errorButton {
+        margin-top: 32px;
+        background: var(--accent-color);
+        color: white;
+        display: flex;
+        flex-direction: row;
+      }
+
+      .apps-list {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        color: #ffffff;
+        padding: 8px;
+      }
+
+      .apps-list-opened {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+
+      .apps-list-element {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 4px;
+      }
+
+      .apps-list-element {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 4px;
+      }
+
+      .apps-list-element > paper-fab[mini] {
+        margin: 0 8px;
+      }
+    </style>
+
+    <app-drawer-layout fullbleed>
+      <!-- Drawer content -->
+      <app-drawer id="drawer" slot="drawer">
+        <app-toolbar>Menu</app-toolbar>
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <!--<a name="home" href="/home">View One</a>
+          <a name="view2" href="/view2">View Two</a>
+          <a name="view3" href="/view3">View Three</a>-->
+        </iron-selector>
+      </app-drawer>
+
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region>
+
+        <app-header slot="header" condenses reveals effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
+            <div main-title>CHIPS [[version]]</div>
+            <paper-icon-button icon="my-icons:exit-to-app" on-tap="_login"></paper-icon-button>
+          </app-toolbar>
+
+          <!--is fetching-->
+          <template is="dom-if" if="{{_isFeedsFetching(feedsStatus)}}">
+            <paper-progress class="fit" indeterminate></paper-progress>
+          </template>
+        </app-header>
+
+        <template is="dom-if" if="{{_isFeedsFetching(feedsStatus)}}">
+          Fetching feeds...
+        </template>
+
+        <!--is error-->
+        <template is="dom-if" if="{{_isFeedsError(feedsStatus)}}">
+          <paper-button id="errorButton" on-click="_reloadFeeds">
+            <div>reload the feeds</div>
+          </paper-button>
+        </template>
+
+
+        <!--is success -->
+        <template is="dom-if" if="{{_isFeedsSuccess(feedsStatus)}}">
+          <div>Success message</div>
+          <div>
+             <!-- is empty-->
+            <template is="dom-if" if="{{_isFeedsEmpty(feeds)}}">
+              <div>No feeds</div>
+            </template>
+           
+            <template is="dom-repeat" items="{{feeds}}">
+              <div># [[index]]</div>
+            </template>
+          </div>
+
+          <div class="apps-list apps-list-opened" hidden$="{{!appsListOpened}}">
+            <template is="dom-repeat" items="{{apps}}">
+              <div class="apps-list-element">[[item.label]] <paper-fab mini item="[[item]]" icon$="[[item.icon]]" on-tap="_openApp"></paper-fab></div>
+            </template>
+            <div class="apps-list-element">
+              <paper-fab icon="my-icons:close" title="heart" on-tap="_closeAppsList"></paper-fab>
+            </div>
+          </div>
+
+          <div class="apps-list" hidden$="{{appsListOpened}}">
+            <div class="apps-list-element">
+              <paper-fab icon="my-icons:add" title="heart" on-tap="_openAppsList"></paper-fab>
+            </div>
+          </div>
+        </template>
+
+      </app-header-layout>
+    </app-drawer-layout>
+
+  </template>
+
+  <script>
+    class ChipsHome extends Polymer.Element {
+      static get is() {
+        return 'chips-home';
+      }
+
+      static get properties() {
+        return {
+          version: {
+            type: String,
+            value: '0.0',
+          },
+          feeds: {
+            type: Array,
+            value: [],
+          },
+          apps: {
+            type: Array,
+            value: [],
+          },
+          feedsStatus: {
+            type: String,
+            value: '',
+            observer: '_feedsStatusChanged',
+          },
+          appsListOpened: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.version = ChipsConfiguration.version;
+      }
+
+      _login() {
+        const loginEvent = new CustomEvent('login', {detail: {
+          login: false,
+        }});
+        this.dispatchEvent(loginEvent);
+      }
+
+      _reloadFeeds() {
+        // fire reload feeds event
+        const feedsEvent = new CustomEvent('feeds', {detail: {
+          feeds: {
+            action: 'reload',
+          },
+        }});
+        this.dispatchEvent(feedsEvent);
+      }
+
+      _showAppsList() {
+        // add a class
+      }
+
+      _hideAppList() {
+        // add a class
+      }
+
+      _feedsStatusChanged(feedsStatus) {
+        // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (feedsStatus === undefined) {
+          return;
+        }
+      }
+
+      _isFeedsFetching(item) {
+        return item === 'fetching';
+      }
+
+      _isFeedsSuccess(item) {
+        return item === 'success';
+      }
+
+      _isFeedsError(item) {
+        return item === 'error';
+      }
+
+      _isFeedsEmpty(item) {
+        return item.length <= 0;
+      }
+
+      _openAppsList() {
+        this.appsListOpened = true;
+      }
+
+      _closeAppsList() {
+        this.appsListOpened = false;
+      }
+
+      _openApp(event) {
+        // fire reload feeds event
+        const pageEvent = new CustomEvent('page', {detail: {
+          page: `app/${event.model.__data.item.name}`,
+        }});
+        this.dispatchEvent(pageEvent);
+        this.appsListOpened = false;
+      }
+    }
+
+    window.customElements.define(ChipsHome.is, ChipsHome);
+  </script>
+</dom-module>

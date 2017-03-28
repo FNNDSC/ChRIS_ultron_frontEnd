@@ -1,0 +1,167 @@
+<link rel="import" href="chips-file-behavior.html">
+
+<script>
+  /* exported PluginBehavior */
+
+  const PluginBehavior = (superclass) => class extends FileBehavior(superclass) {
+
+    __formatPlugin(plugin, feed) {
+      // add link to feed
+      plugin.links['feed'] = feed.href;
+      // add extra properties for nice UX
+      const pluginStyle = this.__pluginsStyles().get(plugin.data['plugin_name']);
+      plugin.data['color'] = pluginStyle.color;
+      plugin.data['label'] = pluginStyle.label;
+      plugin.data['letter'] = pluginStyle.letter;
+      plugin.data['icon'] = pluginStyle.icon;
+    }
+
+    __pluginsStyles() {
+      // define plugins style
+      const pluginStyleMap = [
+          ['', {
+          label: 'No Name',
+          color: '#607D8B',
+          letter: 'NN',
+          icon: 'icons:bug-report',
+        }],
+        ['pacsquery', {
+          label: 'Pacs Query',
+          color: '#2196F3',
+          letter: 'PQ',
+          icon: 'icons:cloud',
+        }],
+        ['pacsretrieve', {
+          label: 'Pacs Retrieve',
+          color: '#CDDC39',
+          letter: 'PR',
+          icon: 'icons:cloud-download',
+        }],
+        ['simpledsapp', {
+          label: 'Simple DS App',
+          color: '#CDDC39',
+          letter: 'PR',
+          icon: 'icons:content-copy',
+        }],
+        ['simplefsapp', {
+          label: 'Simple FS App',
+          color: '#CDDC39',
+          letter: 'PR',
+          icon: 'icons:cloud-download',
+        }],
+      ];
+      return new Map(pluginStyleMap);
+    }
+
+    __startPlugin(api, target, data) {
+      return api.request('POST', target, data);
+    }
+
+    __wait(milliseconds, response) {
+      var wait = new Promise(
+          (resolve, reject) => {
+            window.setTimeout(
+            () => {
+              resolve(response);
+            },
+            milliseconds
+          );
+        }
+      );
+      return wait;
+    }
+
+    __notifyPluginStarted(plugin) {
+      var pluginStartedEvent = new CustomEvent(
+        'plugin-started',
+        {detail:
+          {
+            id: plugin.data.id,
+            plugin: plugin,
+          },
+        }
+      );
+      this.dispatchEvent(pluginStartedEvent);
+    }
+
+    __notifyPluginEnded(plugin) {
+      var pluginStartedEvent = new CustomEvent(
+        'plugin-ended',
+        {detail:
+          {
+            id: plugin.data.id,
+            plugin: plugin,
+          },
+        }
+      );
+      this.dispatchEvent(pluginStartedEvent);
+    }
+
+    // TODO: cleanup
+    __waitEndPlugin(api, data, response) {
+      // also works with collections
+      var plugin = response;
+      if (Array.isArray(plugin.data)) {
+        plugin = plugin.data[0];
+      }
+  
+      this.__notifyPluginStarted(plugin);
+      var waitForEnd = new Promise(
+          function(resolve, reject) {
+            var remainingAttemps = 60;
+            var timeout = 1000;
+            function run() {
+            // get plugin status
+            api.request('GET', plugin.href, data).
+            then(function(response2) {
+              // check depdending on status
+              if (remainingAttemps > 0 &&
+                  response2.data[0].data.status !== 'started') {
+                this.__notifyPluginEnded(plugin);
+                resolve(response2.data[0]);
+              } else {
+                remainingAttemps--;
+                if (remainingAttemps <= 0) {
+                  const error = {
+                    status: 'error',
+                    data: `Feed: ${response2.data[0].href}`,
+                    command: 'timeout in __waitEndPlugin',
+                  };
+                  reject(error);
+                } else {
+                  setTimeout(run, timeout);
+                }
+              }
+            }.bind(this));
+            }
+            run = run.bind(this);
+            run();
+          }.bind(this)
+      );
+      return waitForEnd;
+    }
+
+    __getFilesPlugin(api, data, plugin) {
+      // get files
+      return api.request('GET', plugin.links.feed + 'files/', data).
+        // filter in files that belong to plugin
+        then(this.__filterFilesPlugin.bind(this, plugin));
+    }
+
+    __filterFilesPlugin(plugin, files) {
+      return new Promise(
+        (resolve, reject) => {
+          var filter = [];
+          // filter/format files
+          for (var i = 0; i < files.data.length; i++) {
+            if (files.data[i].data.plugin_inst_id === plugin.data.id) {
+              var formatFile = this.__formatFile(files.data[i]);
+              filter.push(formatFile);
+            }
+          }
+
+          resolve(filter);
+      });
+    }
+  };
+</script>

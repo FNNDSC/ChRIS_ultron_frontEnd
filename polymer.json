@@ -1,0 +1,44 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/chips-ultron.html",
+  "fragments": [
+    "src/chips-home.html",
+    "src/chips-login.html",
+    "src/chips-app.html",
+    "src/chips-error404.html",
+    "src/chips-apps/chips-pacs-pull/chips-pacs-pull.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "CNAME",
+    "manifest.json",
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "lint": {
+    "rules": ["polymer-2"]
+  },
+  "builds": [
+    {
+      "name": "es6",
+      "bundle": false,
+      "js": { "compile": false, "minify": false },
+      "css": { "minify": false },
+      "html": { "minify": false },
+      "addServiceWorker": false,
+      "insertPrefetchLinks": false
+    },
+    {
+      "name": "es5",
+      "bundle": false,
+      "js": { "compile": true, "minify": false },
+      "css": { "minify": false },
+      "html": { "minify": false },
+      "addServiceWorker": false,
+      "insertPrefetchLinks": false
+    }
+  ]
+}

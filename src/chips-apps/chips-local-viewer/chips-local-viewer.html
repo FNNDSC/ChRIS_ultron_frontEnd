@@ -1,0 +1,25 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="chips-local-viewer">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        background-color: var(--dark-ligth-color);
+      }
+    </style>
+
+    Local Viewer!
+
+  </template>
+
+  <script>
+    class ChipsLocalViewer extends Polymer.Element {
+      static get is() {
+        return 'chips-local-viewer';
+      }
+    }
+
+    window.customElements.define(ChipsLocalViewer.is, ChipsLocalViewer);
+  </script>
+</dom-module>

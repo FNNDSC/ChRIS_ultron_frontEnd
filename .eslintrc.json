@@ -1,0 +1,27 @@
+{
+  "extends": ["eslint:recommended", "google"],
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "plugins": [
+    "html"
+  ],
+  "rules": {
+    "space-in-parens": ["error", "never"],
+    "keyword-spacing": "error",
+    "new-cap": ["error", { "capIsNewExceptions": ["Polymer", "UltronAPIMixin", "FileBehavior", "PluginBehavior"] }],
+    "no-var": "off",
+    "require-jsdoc": "off"
+  },
+  "globals": {
+    "Polymer": true,
+    "ChipsConfiguration": true,
+    "UltronAPIMixin": true,
+    "FileBehavior": true,
+    "PluginBehavior": true
+  }
+}
