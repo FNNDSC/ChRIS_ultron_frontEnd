@@ -24,6 +24,22 @@ Use **git** to fetch the source code.
 
     git clone https://github.com/FNNDSC/ChRIS_ultron_frontEnd.git
 
+## Adjust the settings
+
+### Ultron API settings
+
+The `ultron-api` address should be updated to reflect your setup.
+
+For instance, if the `ultron-api` is available at: `http://local:8050/api/v1`, then update the following [line](https://github.com/FNNDSC/ChRIS_ultron_frontEnd/blob/polymer20/index.html#L75) accordingly.
+
+At this point you should be able to log into the front-end.
+
+### Pacs pull settings
+
+The `pacs-pull` application lets you define the PACS settings.
+
+Make sure that your `PACS Server` can move data to the `dicom listener` provided by the `ultron-api` dock. See the [pypx documentation](https://github.com/FNNDSC/pypx/wiki/dicom_listener#orthanc-setup) for more details.
+
 ## For users
 
 ### Start the dock
@@ -41,14 +57,6 @@ Go to [http://localhost:8060](http://localhost:8060).
 You should see the `Login` of the website.
 
     Pro-tip: To stop the server, hit `control` + `c` keys at the same.
-
-### Edit the settings
-
-The `ultron-api` address should be updated to reflect your setup.
-
-For instance, if the `ultron-api` is available at: `http://local:8050/api/v1`, then update the following [line](https://github.com/FNNDSC/ChRIS_ultron_frontEnd/blob/polymer20/index.html#L75) accordingly.
-
-At this point you should be able to log into the front-end.
 
 ## For developers
 
