@@ -3,7 +3,7 @@
 - [Pre-requisites](#pre-requisites)
   - [Get the source code](#get-the-source-code)
 - [For users](#for-users)
-  - [Start the server](#start-the-server)
+  - [Start the dock](#start-the-dock)
 - [For developers](#for-developers)
   - [Install NPM](#install-npm)
   - [Install Bower](#install-bower)
@@ -43,6 +43,12 @@ You should see the `Login` of the website.
     Pro-tip: To stop the server, hit `control` + `c` keys at the same.
 
 ### Edit the settings
+
+The `ultron-api` address should be updated to reflect your setup.
+
+For instance, if the `ultron-api` is available at: `http://local:8050/api/v1`, then update the following [line](https://github.com/FNNDSC/ChRIS_ultron_frontEnd/blob/polymer20/index.html#L75) accordingly.
+
+At this point you should be able to log into the front-end.
 
 ## For developers
 
