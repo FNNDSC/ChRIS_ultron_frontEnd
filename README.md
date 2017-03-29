@@ -1,97 +1,84 @@
-# Polymer App Toolbox - Starter Kit
+# chris-ultron front end.
 
-[![Build Status](https://travis-ci.org/PolymerElements/polymer-starter-kit.svg?branch=master)](https://travis-ci.org/PolymerElements/polymer-starter-kit)
+- [Pre-requisites](#pre-requisites)
+  - [Get the source code](#get-the-source-code)
+- [For users](#for-users)
+  - [Start the server](#start-the-server)
+- [For developers](#for-developers)
+  - [Install NPM](#install-npm)
+  - [Install Bower](#install-bower)
+  - [Get the polymer cli](#get-the-latest-polymer-cli)
+  - [Install the npm/bower dependencies](#install-the-npm-bower-dependencies)
+  - [Start the default development server](#start-the-default-development-server)
+  - [Build](#build)
+  - [Preview the build](#preview-the-build)
+  - [Run tests](#run-tests)
 
-This template is a starting point for building apps using a drawer-based
-layout. The layout is provided by `app-layout` elements.
+[Table of contents generated with markdown-toc](http://ecotrust-canada.github.io/markdown-toc/)
 
-This template, along with the `polymer-cli` toolchain, also demonstrates use
-of the "PRPL pattern" This pattern allows fast first delivery and interaction with
-the content at the initial route requested by the user, along with fast subsequent
-navigation by pre-caching the remaining components required by the app and
-progressively loading them on-demand as the user navigates through the app.
+## Pre-requisites
 
-The PRPL pattern, in a nutshell:
+### Get the source code
 
-* **Push** components required for the initial route
-* **Render** initial route ASAP
-* **Pre-cache** components for remaining routes
-* **Lazy-load** and progressively upgrade next routes on-demand
+Use **git** to fetch the source code.
 
-### Migrating from Polymer Starter Kit v1?
+    git clone https://github.com/FNNDSC/ChRIS_ultron_frontEnd.git
 
-[Check out our blog post that covers what's changed in PSK2 and how to migrate!](https://www.polymer-project.org/1.0/blog/2016-08-18-polymer-starter-kit-or-polymer-cli.html)
+## For users
 
-### Quickstart
+### Start the dock
 
-We've recorded a Polycast to get you up and running with PSK2 fast!
+``` diff
+- If the command does not work, please contact the dev team.
+```
 
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=HgJ0XCyBwzY&list=PLNYkxOF6rcIDdS7HWIC_BYRunV6MHs5xo&index=10">
-    <img src="https://img.youtube.com/vi/HgJ0XCyBwzY/0.jpg" alt="Polymer Starter Kit 2 video">
-  </a>
-</p>
+This command serves the app at [http://localhost:8060](http://localhost:8060):
 
-### Setup
+    docker-compose up
 
-##### Prerequisites
+Go to [http://localhost:8060](http://localhost:8060).
 
-First, install [Polymer CLI](https://github.com/Polymer/polymer-cli) using
-[npm](https://www.npmjs.com) (we assume you have pre-installed [node.js](https://nodejs.org)).
+You should see the `Login` of the website.
 
-    npm install -g polymer-cli
+    Pro-tip: To stop the server, hit `control` + `c` keys at the same.
 
-##### Initialize project from template
+### Edit the settings
 
-    mkdir my-app
-    cd my-app
-    polymer init starter-kit
+## For developers
 
-### Start the development server
+### Install npm
 
-This command serves the app at `http://localhost:8080` and provides basic URL
-routing for the app:
+[NPM Official Website](https://nodejs.org/en/download/)
 
-    polymer serve --open
+### Install bower
+
+    npm install -g bower
+
+### Get the latest polymer cli
+
+    npm install -g polymer-cli@next
+
+### Install the npm/bower dependencies
+
+    bower install && \
+    npm install
+
+### Start the default development server
+
+This command serves the app at [http://localhost:8081](http://localhost:8081):
+
+    polymer serve
 
 ### Build
 
-This command performs HTML, CSS, and JS minification on the application
-dependencies, and generates a service-worker.js file with code to pre-cache the
-dependencies based on the entrypoint and fragments specified in `polymer.json`.
-The minified files are output to the `build/unbundled` folder, and are suitable
-for serving from a HTTP/2+Push compatible server.
-
-In addition the command also creates a fallback `build/bundled` folder,
-generated using fragment bundling, suitable for serving from non
-H2/push-compatible servers or to clients that do not support H2/Push.
+This command builds the app at `/build/`. There is a `es5` and `es6` build. We currently use the `es6` build.
 
     polymer build
 
 ### Preview the build
 
-This command serves the minified version of the app at `http://localhost:8080`
-in an unbundled state, as it would be served by a push-compatible server:
-
-    polymer serve build/unbundled
-
-This command serves the minified version of the app at `http://localhost:8080`
-generated using fragment bundling:
-
-    polymer serve build/bundled
+    polymer serve build/bunes6ed
 
 ### Run tests
 
-This command will run [Web Component Tester](https://github.com/Polymer/web-component-tester)
-against the browsers currently installed on your machine:
-
     polymer test
-
-### Adding a new view
-
-You can extend the app by adding more views that will be demand-loaded
-e.g. based on the route, or to progressively render non-critical sections of the
-application. Each new demand-loaded fragment should be added to the list of
-`fragments` in the included `polymer.json` file. This will ensure those
-components and their dependencies are added to the list of pre-cached components
-and will be included in the `bundled` build.
