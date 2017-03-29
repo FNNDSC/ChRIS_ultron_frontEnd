@@ -2,19 +2,22 @@
 
 - [Pre-requisites](#pre-requisites)
   - [Get the source code](#get-the-source-code)
+- [Adjust the settings](#adjust-the-settings)
+  - [Ultron API settings](#ultron-api-settings)
+  - [Pacs pull settings](#pacs-pull-settings)
 - [For users](#for-users)
   - [Start the dock](#start-the-dock)
 - [For developers](#for-developers)
-  - [Install NPM](#install-npm)
-  - [Install Bower](#install-bower)
-  - [Get the polymer cli](#get-the-latest-polymer-cli)
+  - [Install npm](#install-npm)
+  - [Install bower](#install-bower)
+  - [Get the latest polymer cli](#get-the-latest-polymer-cli)
   - [Install the npm/bower dependencies](#install-the-npm-bower-dependencies)
   - [Start the default development server](#start-the-default-development-server)
   - [Build](#build)
   - [Preview the build](#preview-the-build)
   - [Run tests](#run-tests)
 
-[Table of contents generated with markdown-toc](http://ecotrust-canada.github.io/markdown-toc/)
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 ## Pre-requisites
 
