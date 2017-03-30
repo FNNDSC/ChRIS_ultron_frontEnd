@@ -39,6 +39,7 @@
         name="app"
         route="[[subroute]]"
         plugins="[[plugins]]"
+        on-feeds="_handleFeeds"
         on-page="_handlePage">
       </chips-app>
       <chips-home
@@ -191,8 +192,7 @@
         this._handleErrorStatus(error.status);
       }
 
-      _fetchFeeds(from, to) {
-    console.log(from, to);
+      _fetchFeeds(from, to, filter = null) {
         this.feedsStatus = 'fetching';
         const pageSize = to - from;
 
@@ -203,11 +203,20 @@
           token: sessionStorage.getItem('token'),
         };
         data.params = {};
-        data.params.filter = this.filter;
+
+        let searchSuffix = '';
+        if (filter !== null) {
+          searchSuffix = 'Search';
+          for (let i = 0; i<filter.length; i++) {
+            data.params[filter[i].filter] = filter[i].value;
+          }
+        }
+
         data.params.offset = from;
         data.params.limit = pageSize;
         data.params.page_size = pageSize;
-        this.$.API.request('GET', 'feeds', data)
+        this.$.API.request('GET', `feeds${searchSuffix}`, data)
+        // this.$.API.request('GET', 'feeds', data)
           .then(this._handleFeedsResponse.bind(this))
           .catch(this._handleFeedsError.bind(this));
       }
@@ -227,6 +236,16 @@
               this._fetchFeeds(lastFeed, lastFeed + 20);
               break;
             }
+            case 'last': {
+              const nextFeedId = this.feeds[0].data.id + 1;
+              this._fetchFeeds(0, 1000, [
+                {filter: 'min_id',
+                 value: nextFeedId,
+                },
+              ]);
+              console.log(this.feeds[0].data.id);
+              break;
+            }
             default:
               break;
           }
@@ -242,14 +261,19 @@
       }
 
       _handleFeedsResponse(response) {
-        console.log(response);
         this.feedsStatus = 'success';
         const feeds = response.data;
         for (let i =0; i<feeds.length; i++) {
           this.__formatFeed(feeds[i]);
-          console.log(feeds[i]);
           this.push('feeds', feeds[i]);
         }
+
+        // not efficient...
+        this.feeds.sort(function(a, b) {
+          return b.data.id - a.data.id;
+        });
+
+        console.log(this.feeds);
       }
 
       _handleLogin(event) {

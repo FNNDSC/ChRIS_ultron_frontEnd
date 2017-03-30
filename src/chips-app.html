@@ -154,6 +154,13 @@
           },
         });
         this.dispatchEvent(closeEvent);
+        // fetch last feeds
+        const feedsEvent = new CustomEvent('feeds', {detail: {
+          feeds: {
+            action: 'last',
+          },
+        }});
+        this.dispatchEvent(feedsEvent);
       }
     }
 
