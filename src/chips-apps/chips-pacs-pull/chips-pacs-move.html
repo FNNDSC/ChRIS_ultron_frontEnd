@@ -274,7 +274,7 @@
         this.dispatchEvent(closeEvent);
       }
 
-      _handleRetrieveError(response) {
+      _handleRetrieveError(error) {
         const moveResponseEvent = new CustomEvent(
           'response', {detail: {
               data: error,

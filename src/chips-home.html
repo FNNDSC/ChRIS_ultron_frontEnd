@@ -8,12 +8,18 @@
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
+
 <link rel="import" href="my-icons.html">
+
+<link rel="import" href="chips-elements/chips-feed-card.html">
 
 <dom-module id="chips-home">
   <template>
@@ -99,21 +105,46 @@
       .apps-list-element > paper-fab[mini] {
         margin: 0 8px;
       }
+
+      .loader {
+        background-color: #0b8043;
+        text-align: center;
+        height: 44px;
+        font: 13px arial;
+        line-height: 44px;
+        color: white;
+        position:relative;
+      }
+
+      .loader.success, .loader.error {
+        visibility: hidden;
+      }
+
+      .feeds {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+      }
     </style>
+
+    <iron-scroll-threshold id="scrollThreshold"
+      scroll-target="{{_getScrollTarget()}}"
+      lower-threshold="50"
+      on-lower-threshold="_nextFeeds">
+    </iron-scroll-threshold>
 
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
       <app-drawer id="drawer" slot="drawer">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <!--<a name="home" href="/home">View One</a>
-          <a name="view2" href="/view2">View Two</a>
-          <a name="view3" href="/view3">View Three</a>-->
         </iron-selector>
       </app-drawer>
 
       <!-- Main content -->
-      <app-header-layout has-scrolling-region>
+      <app-header-layout id="layout" has-scrolling-region>
 
         <app-header slot="header" condenses reveals effects="waterfall">
           <app-toolbar>
@@ -121,16 +152,7 @@
             <div main-title>CHIPS [[version]]</div>
             <paper-icon-button icon="my-icons:exit-to-app" on-tap="_login"></paper-icon-button>
           </app-toolbar>
-
-          <!--is fetching-->
-          <template is="dom-if" if="{{_isFeedsFetching(feedsStatus)}}">
-            <paper-progress class="fit" indeterminate></paper-progress>
-          </template>
         </app-header>
-
-        <template is="dom-if" if="{{_isFeedsFetching(feedsStatus)}}">
-          Fetching feeds...
-        </template>
 
         <!--is error-->
         <template is="dom-if" if="{{_isFeedsError(feedsStatus)}}">
@@ -141,17 +163,20 @@
 
 
         <!--is success -->
-        <template is="dom-if" if="{{_isFeedsSuccess(feedsStatus)}}">
-          <div>Success message</div>
-          <div>
-             <!-- is empty-->
-            <template is="dom-if" if="{{_isFeedsEmpty(feeds)}}">
-              <div>No feeds</div>
-            </template>
-           
-            <template is="dom-repeat" items="{{feeds}}">
-              <div># [[index]]</div>
-            </template>
+        <template is="dom-if" if="[[!_isFeedsError(feedsStatus)]]">
+          <div class="success">
+            <div>
+              <!-- is empty-->
+              <template is="dom-if" if="[[_isFeedsEmpty(feeds.length)]]">
+                <div>No feeds</div>
+              </template>
+            
+              <div class="feeds">
+              <template is="dom-repeat" items="[[feeds]]">
+                <chips-feed-card feed="[[item.data]]"></chips-feed-card>
+              </template>
+              </div>
+            </div>
           </div>
 
           <div class="apps-list apps-list-opened" hidden$="{{!appsListOpened}}">
@@ -168,6 +193,12 @@
               <paper-fab icon="my-icons:add" title="heart" on-tap="_openAppsList"></paper-fab>
             </div>
           </div>
+
+          <div class$="{{_loaderStyle(feedsStatus)}}">
+            <div>Fetching new items...</div>
+            <paper-progress class="fit" indeterminate></paper-progress>
+          </div>
+          
         </template>
 
       </app-header-layout>
@@ -257,8 +288,8 @@
         return item === 'error';
       }
 
-      _isFeedsEmpty(item) {
-        return item.length <= 0;
+      _isFeedsEmpty(length) {
+        return length <= 0;
       }
 
       _openAppsList() {
@@ -276,6 +307,31 @@
         }});
         this.dispatchEvent(pageEvent);
         this.appsListOpened = false;
+      }
+
+      _nextFeeds() {
+    console.log(this.feedsStatus);
+
+        if (this.feedsStatus === 'fetching' || this.feedsStatus=== '') {
+          this.shadowRoot.querySelector('#scrollThreshold').clearTriggers();
+          return;
+        }
+        // fire reload feeds event
+        const feedsEvent = new CustomEvent('feeds', {detail: {
+          feeds: {
+            action: 'next',
+          },
+        }});
+        this.dispatchEvent(feedsEvent);
+        this.shadowRoot.querySelector('#scrollThreshold').clearTriggers();
+      }
+
+      _getScrollTarget() {
+        return this.$.layout.$.contentContainer;
+      }
+
+      _loaderStyle(status) {
+        return `loader ${status}`;
       }
     }
 

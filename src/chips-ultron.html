@@ -7,6 +7,7 @@
 
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 
+<link rel="import" href="chips-behaviors/chips-feed-behavior.html">
 <link rel="import" href="chips-api/chips-api.html">
 
 
@@ -59,7 +60,7 @@
   </template>
 
   <script>
-    class ChipsUltron extends Polymer.Element {
+    class ChipsUltron extends FeedBehavior(Polymer.Element) {
 
       static get is() {
         return 'chips-ultron';
@@ -191,7 +192,9 @@
       }
 
       _fetchFeeds(from, to) {
+    console.log(from, to);
         this.feedsStatus = 'fetching';
+        const pageSize = to - from;
 
         // through the API
         var data = {};
@@ -201,8 +204,9 @@
         };
         data.params = {};
         data.params.filter = this.filter;
-        data.params.limit = 20;
-        data.params.page_size = 20;
+        data.params.offset = from;
+        data.params.limit = pageSize;
+        data.params.page_size = pageSize;
         this.$.API.request('GET', 'feeds', data)
           .then(this._handleFeedsResponse.bind(this))
           .catch(this._handleFeedsError.bind(this));
@@ -218,9 +222,11 @@
             case 'reload':
               this._fetchFeeds(0, 20);
               break;
-            case 'next':
-              // this._fechtNextFeeds();
+            case 'next': {
+              const lastFeed = this.feeds.length;
+              this._fetchFeeds(lastFeed, lastFeed + 20);
               break;
+            }
             default:
               break;
           }
@@ -236,8 +242,14 @@
       }
 
       _handleFeedsResponse(response) {
-        this.feedsStatus = 'success';
         console.log(response);
+        this.feedsStatus = 'success';
+        const feeds = response.data;
+        for (let i =0; i<feeds.length; i++) {
+          this.__formatFeed(feeds[i]);
+          console.log(feeds[i]);
+          this.push('feeds', feeds[i]);
+        }
       }
 
       _handleLogin(event) {

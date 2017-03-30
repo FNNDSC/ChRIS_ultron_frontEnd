@@ -27,7 +27,8 @@
     "paper-input": "PolymerElements/paper-input#2.0-preview",
     "vaadin-grid": "vaadin/vaadin-grid#2.1-polymer-2",
     "iron-collapse": "PolymerElements/iron-collapse#2.0-preview",
-    "paper-spinner": "PolymerElements/paper-spinner#2.0-preview"
+    "paper-spinner": "PolymerElements/paper-spinner#2.0-preview",
+    "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#2.0-preview"
   },
   "resolutions": {
     "polymer": "^2.0.0-rc.1",

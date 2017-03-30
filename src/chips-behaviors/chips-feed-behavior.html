@@ -1,0 +1,23 @@
+<link rel="import" href="chips-plugin-behavior.html">
+
+<script>
+  /* exported FeedBehavior */
+
+  const FeedBehavior = (superclass) => class extends PluginBehavior(superclass) {
+
+      __formatFeed(feed) {
+        // /plugins/instances/<id>/
+        // add plugin_instance property for convenience
+        const pluginInstance = Number(feed.links.plugin_inst.match(/\d+/)['0']);
+        feed.data['plugin_instance'] = pluginInstance;
+        // add extra properties for nice UX
+        const pluginStyle = this.__pluginsStyles().get(feed.data['name']);
+        feed.data['color'] = pluginStyle.color;
+        feed.data['label'] = pluginStyle.label;
+        feed.data['letter'] = pluginStyle.letter;
+        feed.data['icon'] = pluginStyle.icon;
+        return feed;
+      }
+
+  };
+</script>

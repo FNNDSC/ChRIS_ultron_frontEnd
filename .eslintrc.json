@@ -13,7 +13,7 @@
   "rules": {
     "space-in-parens": ["error", "never"],
     "keyword-spacing": "error",
-    "new-cap": ["error", { "capIsNewExceptions": ["Polymer", "UltronAPIMixin", "FileBehavior", "PluginBehavior"] }],
+    "new-cap": ["error", { "capIsNewExceptions": ["Polymer", "UltronAPIMixin", "FileBehavior", "PluginBehavior", "FeedBehavior"] }],
     "no-var": "off",
     "require-jsdoc": "off"
   },
@@ -22,6 +22,7 @@
     "ChipsConfiguration": true,
     "UltronAPIMixin": true,
     "FileBehavior": true,
-    "PluginBehavior": true
+    "PluginBehavior": true,
+    "FeedBehavior": true
   }
 }

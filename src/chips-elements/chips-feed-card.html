@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="chips-feed-card">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        background-color: var(--dark-ligth-color);
+      }
+
+      .container {
+        background-color: #ffffff;
+        height: 256px;
+        width:256px;
+        margin: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+
+    <div class="container">
+        <div>
+        [[feed.id]]
+        </div>
+        <div>
+        [[feed.creation_date]]
+        </div>
+    </div>
+
+  </template>
+
+  <script>
+    class ChipsFeedCard extends Polymer.Element {
+      static get is() {
+        return 'chips-feed-card';
+      }
+
+      static get properties() {
+        return {
+          feed: {
+            type: Object,
+            value: {},
+          },
+        };
+      }
+    }
+
+    window.customElements.define(ChipsFeedCard.is, ChipsFeedCard);
+  </script>
+</dom-module>
