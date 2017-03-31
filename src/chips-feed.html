@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
@@ -9,6 +10,8 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
+<link rel="import" href="chips-behaviors/chips-feed-behavior.html">
+<link rel="import" href="chips-api/chips-api.html">
 <link rel="import" href="my-icons.html">
 
 <dom-module id="chips-feed">
@@ -44,44 +47,61 @@
         background-color: var(--default-primary-color);
         color: #fff;
       }
+
+      .pluginInstace {
+        padding: 10px;
+        margin: 10px;
+        background-color: #d9d9d9;
+      }
     </style>
 
+
+    <chips-api id="API"></chips-api>
     <app-route
       route="{{route}}"
       pattern="/:page"
       data="{{routeData}}"
       tail="{{subroute}}"></app-route>
     
-  <!-- app-header-layout provides a scroller -->
-  <app-header-layout has-scrolling-region>
-    <app-header slot="header" effects="waterfall" condenses reveals>
-      <app-toolbar>
-        <div main-title>[[page]]</div>
-        <paper-icon-button icon="my-icons:close" on-tap="_closeFeed"></paper-icon-button>
-      </app-toolbar>
-    </app-header>
+    <!-- app-header-layout provides a scroller -->
+    <app-header-layout has-scrolling-region>
+        <app-header slot="header" effects="waterfall" condenses reveals>
+        <app-toolbar>
+            <div main-title>[[feed.data.label]]</div>
+            <paper-icon-button icon="my-icons:close" on-tap="_closeFeed"></paper-icon-button>
+        </app-toolbar>
+        </app-header>
 
-    Hello my friend
+        <div>Plugin instances:</div>
 
-  </app-header-layout>
+        <template is="dom-repeat" items="[[pluginInstances]]">
+            <div class="pluginInstace">
+                <div>[[item.data.id]]</div>
+                <div>[[item.data.plugin_name]]</div>
+                <div>[[item.data.status]]</div>
+            </div>
+        </template>
+
+    </app-header-layout>
 
   </template>
 
   <script>
-    class ChipsFeed extends Polymer.Element {
+    class ChipsFeed extends FeedBehavior(Polymer.Element) {
       static get is() {
         return 'chips-feed';
       }
 
       static get properties() {
         return {
-          plugins: {
+          pluginInstances: {
             type: Array,
             value: [],
           },
           page: {
             type: String,
             reflectToAttribute: true,
+            observer: '_pageChanged',
           },
           route: {
             type: Object,
@@ -89,12 +109,17 @@
           },
           routeData: Object,
           subroute: Object,
+          feed: {
+            type: Object,
+            value: {},
+          },
         };
       }
 
       static get observers() {
         return [
           '_routePageChanged(routeData.page)',
+          '_rootIdChanged(feed.data.plugin_instance)',
         ];
       }
 
@@ -105,9 +130,67 @@
           return;
         }
 
-        // If no page was found in the route data, page will be an empty string.
-        // Deault to 'error404' in that case.
-        this.page = page || 'error404';
+        this.page = page;
+      }
+
+      _pageChanged() {
+        const feedId = parseInt(this.page, 10);
+        if (!Number.isInteger(feedId)) {
+          return;
+        }
+
+        const data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        data.params = {};
+        data.params.limit = 9999;
+        data.params.page_size = 9999;
+
+        this.$.API.request('GET', `/${this.page}/`, data)
+          .then(this._handleFeedResponse.bind(this))
+          .catch(this._handleFeedsError.bind(this));
+      }
+
+      _handleFeedResponse(response) {
+        const feed = response.data[0];
+        this.__formatFeed(feed);
+        this.set('feed', feed);
+      }
+
+      _handleFeedsError(error) {
+          console.log(error);
+      }
+
+      _rootIdChanged(rootId) {
+    // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (rootId === undefined) {
+          return;
+        }
+
+        const data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+                  // get plugins
+        data.params = {};
+        data.params.root_id = rootId;
+        const requestPlugins =
+          this.$.API.request('GET', '/plugins/instances/search/', data);
+        requestPlugins
+          .then(this._handlePluginInstancesResponse.bind(this))
+          .catch(this._handlePluginInstancesError.bind(this));
+  }
+
+      _handlePluginInstancesResponse(response) {
+        this.set('pluginInstances', response.data);
+      }
+
+      _handlePluginInstancesError(error) {
+          console.log(error);
       }
 
       _closeFeed() {
