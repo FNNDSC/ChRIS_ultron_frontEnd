@@ -1,0 +1,126 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/demo/sample-content.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="my-icons.html">
+
+<dom-module id="chips-feed">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .content {
+        min-height: calc(100vh - 64px);
+        display: flex;
+        background-color: var(--light-primary-color);
+      }
+
+      .content > * {
+        width:100%;
+      }
+
+      app-header-layout {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 100vh;
+        background-color: #eee;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      app-header {
+        background-color: var(--default-primary-color);
+        color: #fff;
+      }
+    </style>
+
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"></app-route>
+    
+  <!-- app-header-layout provides a scroller -->
+  <app-header-layout has-scrolling-region>
+    <app-header slot="header" effects="waterfall" condenses reveals>
+      <app-toolbar>
+        <div main-title>[[page]]</div>
+        <paper-icon-button icon="my-icons:close" on-tap="_closeFeed"></paper-icon-button>
+      </app-toolbar>
+    </app-header>
+
+    Hello my friend
+
+  </app-header-layout>
+
+  </template>
+
+  <script>
+    class ChipsFeed extends Polymer.Element {
+      static get is() {
+        return 'chips-feed';
+      }
+
+      static get properties() {
+        return {
+          plugins: {
+            type: Array,
+            value: [],
+          },
+          page: {
+            type: String,
+            reflectToAttribute: true,
+          },
+          route: {
+            type: Object,
+            value: {},
+          },
+          routeData: Object,
+          subroute: Object,
+        };
+      }
+
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)',
+        ];
+      }
+
+      _routePageChanged(page) {
+        // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (page === undefined) {
+          return;
+        }
+
+        // If no page was found in the route data, page will be an empty string.
+        // Deault to 'error404' in that case.
+        this.page = page || 'error404';
+      }
+
+      _closeFeed() {
+        // go to home page
+        const closeEvent = new CustomEvent('page', {
+          detail: {
+            page: 'home',
+          },
+        });
+        this.dispatchEvent(closeEvent);
+      }
+    }
+
+    window.customElements.define(ChipsFeed.is, ChipsFeed);
+  </script>
+</dom-module>

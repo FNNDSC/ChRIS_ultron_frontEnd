@@ -49,7 +49,7 @@
       }
 
       .colored {
-        background-color: #455a64;
+        background-color: var(--default-primary-color);
       }
 
       .footer {
@@ -88,9 +88,9 @@
         <div class="big">[[feed.label]]</div>
         <div class="medium">Creation date: [[feed.creation_date]]</div>
       </div>
-      <a>
-        <div class="footer" >
-          More about feed [[feed.id]]
+      <a href="/feed/[[feed.id]]">
+        <div class="footer">
+          Open feed [[feed.id]]
         </div>
       </a>
     </paper-card>
