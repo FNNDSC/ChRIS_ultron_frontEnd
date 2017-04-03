@@ -25,7 +25,7 @@
     <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
-        pattern="/:page"
+        pattern="/:page/:subpage"
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
 
@@ -37,14 +37,14 @@
         >
       <chips-app
         name="app"
-        route="[[subroute]]"
+        route-data="[[routeData]]"
         plugins="[[plugins]]"
         on-feeds="_handleFeeds"
         on-page="_handlePage">
       </chips-app>
       <chips-feed
         name="feed"
-        route="[[subroute]]"
+        route-data="[[routeData]]"
         on-page="_handlePage">
       </chips-feed>
       <chips-home

@@ -5,10 +5,12 @@
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/app-layout/demo/sample-content.html">
-<link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="libs/ami-import.html">
 
 <link rel="import" href="chips-behaviors/chips-feed-behavior.html">
 <link rel="import" href="chips-api/chips-api.html">
@@ -48,20 +50,45 @@
         color: #fff;
       }
 
-      .pluginInstace {
+      .pluginInstance, .dataInstance {
         padding: 10px;
         margin: 10px;
         background-color: #d9d9d9;
+        border: 1px solid #ffffff;
+      }
+
+      .iron-selected {
+        border-color: #212121;
+      }
+
+      .pluginInstance:hover, .dataInstance:hover {
+        border-color: var(--accent-color);
+        cursor: pointer;
+      }
+
+      .container {
+        display:flex;
+        height: 100%;
+      }
+
+      .dataPanel {
+        overflow-y:auto;
+      }
+
+      .viewerPanel {
+        flex:1;
+      }
+
+      .panel {
+        margin:10px;
+        background-color: #ffffff;
+        min-width: 192px;
+        box-sizing: border-box;
       }
     </style>
 
 
     <chips-api id="API"></chips-api>
-    <app-route
-      route="{{route}}"
-      pattern="/:page"
-      data="{{routeData}}"
-      tail="{{subroute}}"></app-route>
     
     <!-- app-header-layout provides a scroller -->
     <app-header-layout has-scrolling-region>
@@ -72,16 +99,35 @@
         </app-toolbar>
         </app-header>
 
-        <div>Plugin instances:</div>
-
-        <template is="dom-repeat" items="[[pluginInstances]]">
-            <div class="pluginInstace">
-                <div>[[item.data.id]]</div>
-                <div>[[item.data.plugin_name]]</div>
-                <div>[[item.data.status]]</div>
-            </div>
-        </template>
-
+        <div class="container">
+          <div class="panel pluginsPanel">
+            <iron-selector multi
+              selected-values="{{pluginInstancesSelected}}"
+              on-iron-select="_pluginInstanceSelected"
+              on-iron-deselect="_pluginInstanceDeselected">
+              <template is="dom-repeat" items="[[pluginInstances]]">
+                <div item="[[item]]" class="pluginInstance">
+                    <div>[[item.data.id]]</div>
+                    <div>[[item.data.plugin_name]]</div>
+                    <div>[[item.data.status]]</div>
+                </div>
+              </template>
+            </iron-selector>
+          </div>
+          <div class="panel dataPanel">
+            <iron-selector
+              selected="{{dataSelected}}"
+              on-iron-select="_dataSelected"
+              on-iron-deselect="_dataDeselected">
+              <template is="dom-repeat" items="[[dataArray]]">
+                <div item="[[item]]" class="dataInstance">
+                  <div>[[item.length]] files</div>
+                </div>
+              </template>
+            </iron-selector>
+          </div>
+          <div class="panel viewerPanel">viewer panel:</div>
+        </div>
     </app-header-layout>
 
   </template>
@@ -103,42 +149,61 @@
             reflectToAttribute: true,
             observer: '_pageChanged',
           },
-          route: {
+          routeData: {
             type: Object,
             value: {},
           },
-          routeData: Object,
-          subroute: Object,
           feed: {
             type: Object,
             value: {},
+          },
+          pluginInstancesSelected: {
+            type: Array,
+            value: [],
+          },
+          dataSelected: {
+            type: Number,
+            value: -1,
+          },
+          files: {
+            type: Array,
+            value: [],
+            observer: '_filesChanged',
+          },
+          dataMap: {
+            type: Object,
+            value: new Map(),
+          },
+          dataArray: {
+            type: Array,
+            value: [],
           },
         };
       }
 
       static get observers() {
         return [
-          '_routePageChanged(routeData.page)',
+          '_pluginInstancesChanged(pluginInstances.*)',
+          '_routePageChanged(routeData.*)',
           '_rootIdChanged(feed.data.plugin_instance)',
         ];
       }
 
-      _routePageChanged(page) {
+      _routePageChanged(routeData) {
         // Polymer 2.0 will call with `undefined` on initialization.
         // Ignore until we are properly called with a string.
-        if (page === undefined) {
+        if (routeData === undefined) {
           return;
         }
 
-        this.page = page;
+        if (routeData.value.page !== 'feed') {
+          return;
+        }
+
+        this.page = routeData.value.subpage;
       }
 
-      _pageChanged() {
-        const feedId = parseInt(this.page, 10);
-        if (!Number.isInteger(feedId)) {
-          return;
-        }
-
+      _pageChanged(page) {
         const data = {};
         data.auth = {
           type: 'token',
@@ -148,7 +213,7 @@
         data.params.limit = 9999;
         data.params.page_size = 9999;
 
-        this.$.API.request('GET', `/${this.page}/`, data)
+        this.$.API.request('GET', `/${page}/`, data)
           .then(this._handleFeedResponse.bind(this))
           .catch(this._handleFeedsError.bind(this));
       }
@@ -164,7 +229,7 @@
       }
 
       _rootIdChanged(rootId) {
-    // Polymer 2.0 will call with `undefined` on initialization.
+        // Polymer 2.0 will call with `undefined` on initialization.
         // Ignore until we are properly called with a string.
         if (rootId === undefined) {
           return;
@@ -183,9 +248,37 @@
         requestPlugins
           .then(this._handlePluginInstancesResponse.bind(this))
           .catch(this._handlePluginInstancesError.bind(this));
-  }
+      }
 
       _handlePluginInstancesResponse(response) {
+        // format plugin instances
+        const pluginInstances = response.data;
+        for (let i = 0; i < pluginInstances.length; i++) {
+          this.__formatPlugin(pluginInstances[i], this.feed);
+          this.push('pluginInstances', pluginInstances[i]);
+
+          if (pluginInstances[i].data.status === 'started') {
+            //
+            var data = {};
+            data.auth = {
+              type: 'token',
+              token: sessionStorage.getItem( 'token' )
+            };
+            this.__waitEndPlugin(this.$.API, data, pluginInstances[i], true)
+            .then((pluginInstance) => {
+              //updata collection
+              for (var i=0; i<this.pluginInstances.length; i++) {
+                if(this.pluginInstances[i].data.id === pluginInstance.data.id) {
+                  this.__formatPlugin(pluginInstance, this.feed);
+                  this.set(['pluginInstances', i], pluginInstance);
+                }
+              }
+            });
+          }
+
+        }
+        // if one is not finished, probe for it
+        // on successe, add files
         this.set('pluginInstances', response.data);
       }
 
@@ -193,7 +286,71 @@
           console.log(error);
       }
 
+      _pluginInstancesChanged(data) {
+        if (data.path.includes('.data.status')) {
+          this._pluginInstanceStatusChanged(data.path, data.value);
+        } else {
+        }
+      }
+
+      _pluginInstanceStatusChanged(path, value) {
+        console.log(value);
+        // fetch files!!
+      }
+
+      _pluginInstanceSelected(selected) {
+        const plugin = selected.detail.item.item;
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        data.params = {};
+        data.params.limit = 9999;
+        data.params.page_size = 9999;
+        this.__getFilesPlugin(this.$.API, data, plugin)
+          .then(this._handleFilesResponse.bind(this))
+          .catch(this._handleFilesError.bind(this));
+      }
+
+      _pluginInstanceDeselected(selected) {
+        const plugin = selected.detail.item.item;
+        const files = [];
+        for (const file of this.files){
+          if (file.data.plugin_inst_id !== plugin.data.id) {
+            files.push(file);
+          }
+        }
+
+        this.set('files', files);
+      }
+
+      _dataSelected(selected) {
+        console.log(selected.detail.item.item);
+      }
+
+      _dataDeselected(deselected) {
+       console.log(deselected);
+      }
+
+      _handleFilesResponse(response){
+        const files = this.files.slice();
+
+        for (const file of response) {
+          this.__formatFile(file, this.feed);
+          files.push(file);
+        }
+
+        this.set('files', files);
+      }
+
+      _handleFilesError(error){
+        console.log(error);
+      }
+
       _closeFeed() {
+        this.set('files', []);
+        this.set('pluginInstancesSelected', []);
         // go to home page
         const closeEvent = new CustomEvent('page', {
           detail: {
@@ -201,6 +358,48 @@
           },
         });
         this.dispatchEvent(closeEvent);
+      }
+
+      _filesChanged(files) {
+        // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (files === undefined) {
+          return;
+        }
+
+        // update data structure
+        this._updateData();
+
+      }
+
+      _updateData() {
+        // group *.dcm files per directory.
+        // 1 directory per series
+        // update map?
+        this.dataMap = new Map();
+
+        for (const file of this.files) {
+          if (file.data.fname.endsWith('.dcm')) {
+            const relativeFname = file.data.relative_fname;
+            const relativeDirectory = relativeFname.slice(0, relativeFname.lastIndexOf('/'));
+            let series = this.dataMap.get(relativeDirectory);
+            if(series === null || series === undefined) {
+              series = [];
+              this.dataMap.set(relativeDirectory, series);
+            }
+            series.push(file);
+          }
+        }
+
+        // Map to array
+        const dataArray = [];
+        function logMapElements(value, key) {
+            dataArray.push(value);
+        }
+        this.dataMap.forEach(logMapElements);
+        this.set('dataArray', dataArray);
+
+        this.dataSelected = -1;
       }
     }
 

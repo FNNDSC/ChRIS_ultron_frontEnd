@@ -29,7 +29,10 @@
     "iron-collapse": "PolymerElements/iron-collapse#2.0-preview",
     "paper-spinner": "PolymerElements/paper-spinner#2.0-preview",
     "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#2.0-preview",
-    "paper-card": "PolymerElements/paper-card#2.0-preview"
+    "paper-card": "PolymerElements/paper-card#2.0-preview",
+    "ami.js": "FNNDSC/ami#^0.0.15",
+    "ami": "FNNDSC/ami#dev",
+    "three.js": "mrdoob/three.js#r84"
   },
   "resolutions": {
     "polymer": "^2.0.0-rc.1",

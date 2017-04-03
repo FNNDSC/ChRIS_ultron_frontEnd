@@ -4,8 +4,6 @@
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/app-layout/demo/sample-content.html">
-<link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
@@ -45,38 +43,32 @@
         color: #fff;
       }
     </style>
-
-    <app-route
-      route="{{route}}"
-      pattern="/:page"
-      data="{{routeData}}"
-      tail="{{subroute}}"></app-route>
     
-  <!-- app-header-layout provides a scroller -->
-  <app-header-layout has-scrolling-region>
-    <app-header slot="header" effects="waterfall" condenses reveals>
-      <app-toolbar>
-        <div main-title>[[page]]</div>
-        <paper-icon-button icon="my-icons:close" on-tap="_closeApp"></paper-icon-button>
-      </app-toolbar>
-    </app-header>
+    <!-- app-header-layout provides a scroller -->
+    <app-header-layout has-scrolling-region>
+      <app-header slot="header" effects="waterfall" condenses reveals>
+        <app-toolbar>
+          <div main-title>[[page]]</div>
+          <paper-icon-button icon="my-icons:close" on-tap="_closeApp"></paper-icon-button>
+        </app-toolbar>
+      </app-header>
 
-    <iron-pages id="pages" class="content"
-      selected="[[page]]"
-      attr-for-selected="name"
-      fallback-selection="error404"
-      role="main"
-      >
-      <chips-pacs-pull
-        name="pacs-pull"
-        plugins="[[plugins]]"
-        on-close="_closeApp"></chips-pacs-pull>
-      <chips-local-viewer
-        name="local-viewer"
-        on-close="_closeApp"></chips-local-viewer>
-      <chips-error404 name="error404"></chips-error404>
-    </iron-pages>
-  </app-header-layout>
+      <iron-pages id="pages" class="content"
+        selected="[[page]]"
+        attr-for-selected="name"
+        fallback-selection="error404"
+        role="main"
+        >
+        <chips-pacs-pull
+          name="pacs-pull"
+          plugins="[[plugins]]"
+          on-close="_closeApp"></chips-pacs-pull>
+        <chips-local-viewer
+          name="local-viewer"
+          on-close="_closeApp"></chips-local-viewer>
+        <chips-error404 name="error404"></chips-error404>
+      </iron-pages>
+    </app-header-layout>
 
   </template>
 
@@ -97,31 +89,37 @@
             reflectToAttribute: true,
             observer: '_pageChanged',
           },
-          route: {
+          routeData: {
             type: Object,
             value: {},
           },
-          routeData: Object,
-          subroute: Object,
+          selected: {
+            type: Boolean,
+            value: false,
+          },
         };
       }
 
       static get observers() {
         return [
-          '_routePageChanged(routeData.page)',
+          '_routePageChanged(routeData.*)',
         ];
       }
 
-      _routePageChanged(page) {
+      _routePageChanged(routeData) {
         // Polymer 2.0 will call with `undefined` on initialization.
         // Ignore until we are properly called with a string.
-        if (page === undefined) {
+        if (routeData === undefined) {
+          return;
+        }
+
+        if (routeData.value.page !== 'app') {
           return;
         }
 
         // If no page was found in the route data, page will be an empty string.
         // Deault to 'error404' in that case.
-        this.page = page || 'error404';
+        this.page = routeData.value.subpage || 'error404';
       }
 
       _pageChanged(page, oldPage) {

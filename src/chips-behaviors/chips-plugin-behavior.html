@@ -108,7 +108,7 @@
       this.__notifyPluginStarted(plugin);
       var waitForEnd = new Promise(
           function(resolve, reject) {
-            var remainingAttemps = 60;
+            var remainingAttemps = 600;
             var timeout = 1000;
             function run() {
             // get plugin status

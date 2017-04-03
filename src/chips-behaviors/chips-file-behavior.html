@@ -4,7 +4,7 @@
 
       __formatFile(file) {
           // add relative file name property
-        var relativeFname =
+        const relativeFname =
           file.data.fname.split('_' + file.data.plugin_inst_id + '/data/')[1];
         file.data.relative_fname = relativeFname;
         return file;

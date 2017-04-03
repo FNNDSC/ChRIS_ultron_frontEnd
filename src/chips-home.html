@@ -310,8 +310,6 @@
       }
 
       _nextFeeds() {
-    console.log(this.feedsStatus);
-
         if (this.feedsStatus === 'fetching' || this.feedsStatus=== '') {
           this.shadowRoot.querySelector('#scrollThreshold').clearTriggers();
           return;
