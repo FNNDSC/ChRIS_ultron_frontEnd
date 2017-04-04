@@ -264,10 +264,11 @@
         const loader = new AMI.default.Loaders.Volume();
         return this._fetch(url)
         .then((rawdata) => {
-            return loader.parse({
+          console.log(url);
+          return loader.parse({
             url: url,
             buffer: rawdata,
-            });
+          });
         })
         .catch(function(error) {
             window.console.log('oops... something went wrong...');
