@@ -1,0 +1,391 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../libs/ami-import.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+
+<link rel="import" href="../chips-api/chips-api.html">
+
+
+<dom-module id="chips-ami-viewer">
+  <template>
+    <style>
+      :host {
+        display: flex;
+      }
+
+      .header {
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+        padding: 8px;
+      }
+
+      .footer {
+        display: flex;
+        align-items: flex-end;
+        padding: 8px;
+      }
+
+      .footer paper-slider {
+          width:100%;
+      }
+
+      paper-slider {
+        --paper-slider-knob-color: var(--accent-color);
+        --paper-slider-active-color: var(--accent-color);
+        --paper-slider-pin-color: var(--accent-color);
+      }
+
+      .viewer {
+        flex:1;
+        background-color: grey;
+        box-sizing: border-box;
+        position: relative;
+      }
+      
+      #container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: red;
+      }
+
+    </style>
+
+    <chips-api id="API"></chips-api>
+
+    <div class="header">
+        <paper-dropdown-menu label="Orientation" selected-item-label="{{orientation}}">
+            <paper-listbox id="orientationListBox" class="dropdown-content" selected="0">
+                <paper-item label="default">default</paper-item>
+                <paper-item label="axial">axial</paper-item>
+                <paper-item label="coronal">coronal</paper-item>
+                <paper-item label="sagittal">sagittal</paper-item>
+            </paper-listbox>
+        </paper-dropdown-menu>
+    </div>
+    <div class="viewer">
+        <div id="container">
+        </div>
+    </div>
+    <div class="footer">
+        <paper-slider id="indexSlider" immediate-value="{{sliceIndex}}" value="[[sliceIndex]]" min="0" max="{{maxIndex}}" pin></paper-slider>
+    </div>
+
+  </template>
+
+  <script>
+    class ChipsAmiViewer extends Polymer.Element {
+      static get is() {
+        return 'chips-ami-viewer';
+      }
+
+      static get properties() {
+        return {
+          data: {
+            type: Array,
+            value: [],
+            observer: '_dataChanged',
+          },
+          container: {
+            type: Object,
+          },
+          renderer: {
+            type: Object,
+          },
+          scene: {
+            type: Object,
+          },
+          camera: {
+            type: Object,
+          },
+          controls: {
+            type: Object,
+          },
+          animationFrameID: {
+            type: Number,
+            value: -1,
+          },
+          stackHelper: {
+            type: Object,
+            value: null,
+          },
+          orientation: {
+            type: String,
+            value: 'default',
+            observer: '_orientationChanged',
+          },
+          sliceIndex: {
+            type: Number,
+            value: 0,
+            observer: '_sliceIndexChanged',
+          },
+          maxIndex: {
+            type: Number,
+            value: 1,
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
+
+        this._onScrollBounded = this._onScroll.bind(this);
+        this._onWindowResizeBounded = this._onWindowResize.bind(this);
+        this._initViewer();
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        window.addEventListener('resize', this._onWindowResizeBounded);
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        window.removeEventListener('resize', this._onWindowResizeBounded);
+      }
+
+      _onWindowResize() {
+        this.renderer.setSize(
+          this.container.offsetWidth,
+          this.container.offsetHeight);
+    
+        if (this.stackHelper === null) {
+          return;
+        }
+
+        this.camera.canvas = {
+            width: this.container.offsetWidth,
+            height: this.container.offsetHeight,
+        };
+        this.camera.fitBox(2);
+
+        // update info to draw borders properly
+        this.stackHelper.slice.canvasWidth = this.container.offsetWidth;
+        this.stackHelper.slice.canvasHeight = this.container.offsetHeight;
+      }
+
+      _onScroll(e) {
+        if (this.stackHelper === null) {
+          return;
+        }
+
+        if (e.delta > 0) {
+            if (this.stackHelper.index > this.stackHelper.orientationMaxIndex - 1) {
+              return false;
+            }
+            this.sliceIndex += 1;
+        } else {
+            if (this.stackHelper.index <= 0) {
+              return false;
+            }
+            this.sliceIndex -= 1;
+        }
+      }
+    
+      free() {
+        // stop rendering loop
+        cancelAnimationFrame(this.animationFrameID);
+        this.animationFrameID = -1;
+
+        // free data
+        this.freeData();
+
+        // disconnect callbacks
+        this.controls.removeEventListener('OnScroll', this._onScrollBounded);
+      }
+
+      freeData() {
+
+      }
+
+      _initViewer() {
+        this.container = this.$.container;
+
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+          });
+        // - 64 for the toolbar
+        this.renderer.setSize(
+            this.container.offsetWidth,
+            this.container.offsetHeight - 64);
+        this.renderer.setClearColor(0x212121, 1);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.container.appendChild(this.renderer.domElement);
+
+        // Setup scene
+        this.scene = new THREE.Scene();
+
+        // Setup camera
+        this.camera = new AMI.default.Cameras.Orthographic(
+          this.container.clientWidth / -2, this.container.clientWidth / 2,
+          this.container.clientHeight / 2, this.container.clientHeight / -2,
+          0.1, 10000);
+
+        // Setup controls
+        this.controls =
+          new AMI.default.Controls.TrackballOrtho(this.camera, this.container);
+        this.controls.staticMoving = true;
+        this.controls.noRotate = true;
+        this.camera.controls = this.controls;
+        this.controls.addEventListener('OnScroll', this._onScrollBounded);
+
+        this._animate();
+      }
+
+      _animate() {
+        this.controls.update();
+        this.renderer.render(this.scene, this.camera);
+        this.animationFrameID =
+          window.requestAnimationFrame(this._animate.bind(this));
+      }
+
+      _fetch(url) {
+        const dataAPI = {};
+        dataAPI.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        dataAPI.params = {};
+        dataAPI.params.limit = 9999;
+        dataAPI.params.page_size = 9999;
+
+        this.$.API.handleAs = 'arraybuffer';
+        return this.$.API.request('GET', url, dataAPI);
+      }
+
+      _loadSequence(url) {
+        const loader = new AMI.default.Loaders.Volume();
+        return this._fetch(url)
+        .then((rawdata) => {
+            return loader.parse({
+            url: url,
+            buffer: rawdata,
+            });
+        })
+        .catch(function(error) {
+            window.console.log('oops... something went wrong...');
+            window.console.log(error);
+        });
+      }
+
+      _load(data) {
+        const loadSequences = [];
+        data.forEach((file) => {
+            loadSequences.push(
+            this._loadSequence(file)
+            );
+        });
+        return Promise.all(loadSequences);
+      }
+
+      _resetViewer() {
+        if (this.stackHelper === null) {
+            return;
+        }
+        // delete meshes and materials
+        // slice
+        this.stackHelper.slice.remove(this.stackHelper.slice._mesh);
+        this.stackHelper.slice._mesh.geometry.dispose();
+        this.stackHelper.slice._mesh.geometry = null;
+        this.stackHelper.slice._mesh.material.dispose();
+        this.stackHelper.slice._mesh.material = null;
+        this.stackHelper.slice._mesh = null;
+        // border
+        this.stackHelper.border.remove(this.stackHelper.border._mesh);
+        this.stackHelper.border._mesh.geometry.dispose();
+        this.stackHelper.border._mesh.geometry = null;
+        this.stackHelper.border._mesh.material.dispose();
+        this.stackHelper.border._mesh.material = null;
+        this.stackHelper.border._mesh = null;
+        // bbox
+        this.stackHelper.bbox.remove(this.stackHelper.bbox._mesh);
+        this.stackHelper.bbox._mesh.geometry.dispose();
+        this.stackHelper.bbox._mesh.geometry = null;
+        this.stackHelper.bbox._mesh.material.dispose();
+        this.stackHelper.bbox._mesh.material = null;
+        this.stackHelper.bbox._mesh = null;
+      }
+
+      _updateCamera() {
+        if (this.stackHelper === null) {
+          return;
+        }
+        const stack = this.stackHelper.stack;
+        // center camera and interactor to center of bouding box
+        // for nicer experience
+        // set camera
+        const worldbb = stack.worldBoundingBox();
+        const lpsDims = new THREE.Vector3(
+          worldbb[1] - worldbb[0],
+          worldbb[3] - worldbb[2],
+          worldbb[5] - worldbb[4]
+        );
+
+        // box: {halfDimensions, center}
+        const box = {
+          center: stack.worldCenter().clone(),
+          halfDimensions:
+            new THREE.Vector3(lpsDims.x + 10, lpsDims.y + 10, lpsDims.z + 10),
+        };
+
+        // init and zoom
+        this.camera.orientation = this.orientation;
+        this.camera.directions = [stack.xCosine, stack.yCosine, stack.zCosine];
+        this.camera.box = box;
+        this.camera.update();
+        this._onWindowResize();
+        this.stackHelper.orientation = this.camera.stackOrientation;
+      }
+
+      _dataChanged(data) {
+        if (data === undefined || data.length === 0) {
+          return;
+        }
+
+        this._resetViewer();
+
+        this._load(data)
+        .then((rawSeries) => {
+          const series = rawSeries[0].mergeSeries(rawSeries);
+          const stack = series[0].stack[0];
+
+          this.stackHelper = new AMI.default.Helpers.Stack(stack);
+          this.stackHelper.bbox.visible = false;
+          this.stackHelper.borderColor = 0xFF4081;
+
+          this.scene.add(this.stackHelper);
+
+          this.$.orientationListBox.selected = 0;
+          this._orientationChanged(this.orientation);
+        });
+      }
+
+      _orientationChanged(orientation) {
+        if (orientation === '') {
+          return;
+        }
+        this._updateCamera();
+
+        if (this.stackHelper !== null) {
+          this.maxIndex = this.stackHelper.orientationMaxIndex;
+          this.sliceIndex = Math.floor(this.maxIndex/2);
+        }
+  }
+
+      _sliceIndexChanged(sliceIndex) {
+        if (this.stackHelper !== null) {
+          this.stackHelper.index = sliceIndex;
+        }
+      }
+    }
+
+    window.customElements.define(ChipsAmiViewer.is, ChipsAmiViewer);
+  </script>
+</dom-module>

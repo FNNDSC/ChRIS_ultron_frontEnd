@@ -10,10 +10,10 @@
 
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
-<link rel="import" href="libs/ami-import.html">
-
-<link rel="import" href="chips-behaviors/chips-feed-behavior.html">
 <link rel="import" href="chips-api/chips-api.html">
+<link rel="import" href="chips-behaviors/chips-feed-behavior.html">
+<link rel="import" href="chips-elements/chips-ami-viewer.html">
+
 <link rel="import" href="my-icons.html">
 
 <dom-module id="chips-feed">
@@ -61,6 +61,10 @@
         border-color: #212121;
       }
 
+      iron-selector {
+        flex: 1;
+      }
+
       .pluginInstance:hover, .dataInstance:hover {
         border-color: var(--accent-color);
         cursor: pointer;
@@ -77,6 +81,7 @@
 
       .viewerPanel {
         flex:1;
+        flex-direction: column;
       }
 
       .panel {
@@ -84,6 +89,7 @@
         background-color: #ffffff;
         min-width: 192px;
         box-sizing: border-box;
+        display: flex;
       }
     </style>
 
@@ -126,7 +132,7 @@
               </template>
             </iron-selector>
           </div>
-          <div class="panel viewerPanel">viewer panel:</div>
+          <chips-ami-viewer id="AmiViewer" class="panel viewerPanel"></chips-ami-viewer>
         </div>
     </app-header-layout>
 
@@ -262,21 +268,20 @@
             var data = {};
             data.auth = {
               type: 'token',
-              token: sessionStorage.getItem( 'token' )
+              token: sessionStorage.getItem('token'),
             };
             this.__waitEndPlugin(this.$.API, data, pluginInstances[i], true)
             .then((pluginInstance) => {
-              //updata collection
+              // updata collection
               for (var i=0; i<this.pluginInstances.length; i++) {
-                if(this.pluginInstances[i].data.id === pluginInstance.data.id) {
+                if (this.pluginInstances[i].data.id === pluginInstance.data.id) {
                   this.__formatPlugin(pluginInstance, this.feed);
                   this.set(['pluginInstances', i], pluginInstance);
                 }
               }
             });
           }
-
-        }
+    }
         // if one is not finished, probe for it
         // on successe, add files
         this.set('pluginInstances', response.data);
@@ -289,7 +294,6 @@
       _pluginInstancesChanged(data) {
         if (data.path.includes('.data.status')) {
           this._pluginInstanceStatusChanged(data.path, data.value);
-        } else {
         }
       }
 
@@ -316,7 +320,7 @@
       _pluginInstanceDeselected(selected) {
         const plugin = selected.detail.item.item;
         const files = [];
-        for (const file of this.files){
+        for (const file of this.files) {
           if (file.data.plugin_inst_id !== plugin.data.id) {
             files.push(file);
           }
@@ -326,14 +330,19 @@
       }
 
       _dataSelected(selected) {
-        console.log(selected.detail.item.item);
+        const rawArray = selected.detail.item.item;
+        const formattedArray = rawArray.map(function(obj) {
+          return `${obj.links.file_resource}`;
+        });
+
+        this.$.AmiViewer.data = formattedArray;
       }
 
       _dataDeselected(deselected) {
-       console.log(deselected);
+       this.$.AmiViewer.data = [];
       }
 
-      _handleFilesResponse(response){
+      _handleFilesResponse(response) {
         const files = this.files.slice();
 
         for (const file of response) {
@@ -344,7 +353,7 @@
         this.set('files', files);
       }
 
-      _handleFilesError(error){
+      _handleFilesError(error) {
         console.log(error);
       }
 
@@ -369,8 +378,7 @@
 
         // update data structure
         this._updateData();
-
-      }
+  }
 
       _updateData() {
         // group *.dcm files per directory.
@@ -381,9 +389,10 @@
         for (const file of this.files) {
           if (file.data.fname.endsWith('.dcm')) {
             const relativeFname = file.data.relative_fname;
-            const relativeDirectory = relativeFname.slice(0, relativeFname.lastIndexOf('/'));
+            const relativeDirectory =
+              relativeFname.slice(0, relativeFname.lastIndexOf('/'));
             let series = this.dataMap.get(relativeDirectory);
-            if(series === null || series === undefined) {
+            if (series === null || series === undefined) {
               series = [];
               this.dataMap.set(relativeDirectory, series);
             }

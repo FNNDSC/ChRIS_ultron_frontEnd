@@ -165,8 +165,8 @@
 
       disconnectedCallback() {
         super.disconnectedCallback();
-        window.addEventListener('online', this._notifyNetworkStatusBounded);
-        window.addEventListener('offline', this._notifyNetworkStatusBounded);
+        window.removeEventListener('online', this._notifyNetworkStatusBounded);
+        window.removeEventListener('offline', this._notifyNetworkStatusBounded);
       }
 
       _fetchPlugins() {

@@ -23,6 +23,8 @@
     "UltronAPIMixin": true,
     "FileBehavior": true,
     "PluginBehavior": true,
-    "FeedBehavior": true
+    "FeedBehavior": true,
+    "THREE": true,
+    "AMI": true
   }
 }

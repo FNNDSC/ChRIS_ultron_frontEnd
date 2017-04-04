@@ -32,7 +32,11 @@
     "paper-card": "PolymerElements/paper-card#2.0-preview",
     "ami.js": "FNNDSC/ami#^0.0.15",
     "ami": "FNNDSC/ami#dev",
-    "three.js": "mrdoob/three.js#r84"
+    "three.js": "mrdoob/three.js#r84",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#2.0-preview",
+    "paper-item": "PolymerElements/paper-item#2.0-preview",
+    "paper-listbox": "PolymerElements/paper-listbox#2.0-preview",
+    "paper-slider": "PolymerElements/paper-slider#2.0-preview"
   },
   "resolutions": {
     "polymer": "^2.0.0-rc.1",
@@ -40,7 +44,8 @@
     "iron-scroll-target-behavior": "2.0-preview",
     "iron-a11y-keys-behavior": "2.0-preview",
     "webcomponentsjs": "^v1.0.0-rc.5",
-    "iron-a11y-announcer": "2.0-preview"
+    "iron-a11y-announcer": "2.0-preview",
+    "iron-menu-behavior": "2.0-preview"
   },
   "devDependencies": {
     "web-component-tester": "6.0.0-prerelease.5"
