@@ -180,16 +180,17 @@
       }
 
       _toggleSimple() {
-        this.$.sectionSimple.toggle();
-        this.$.iconSimple.icon =
-          this.$.sectionSimple.opened ?
+        console.log();
+        this.shadowRoot.querySelector('#sectionSimple').toggle();
+        const icon = this.shadowRoot.querySelector('#iconSimple');
+        icon.icon = icon.opened ?
             'my-icons:expand-less' : 'my-icons:expand-more';
       }
 
       _toggleSettings() {
-        this.$.sectionSettings.toggle();
-        this.$.iconSettings.icon =
-          this.$.sectionSettings.opened ?
+        this.shadowRoot.querySelector('#sectionSettings').toggle();
+        const icon = this.shadowRoot.querySelector('#iconSettings');
+        icon.icon = icon.opened ?
             'my-icons:expand-less' : 'my-icons:expand-more';
       }
 
