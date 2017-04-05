@@ -360,6 +360,10 @@
       _closeFeed() {
         this.set('files', []);
         this.set('pluginInstancesSelected', []);
+        this.dataMap = new Map();
+        this.set('dataArray', []);
+        this.$.AmiViewer.data = [];
+
         // go to home page
         const closeEvent = new CustomEvent('page', {
           detail: {
@@ -378,7 +382,7 @@
 
         // update data structure
         this._updateData();
-  }
+      }
 
       _updateData() {
         // group *.dcm files per directory.

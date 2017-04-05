@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="../chips-api/chips-api.html">
 
@@ -59,6 +60,21 @@
         background-color: red;
       }
 
+      #loader {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #212121;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        flex-direction: column;
+      }
+
       .orientation {
         z-index: 1;
         color: #fff;
@@ -108,7 +124,16 @@
         <div id="bottom" class="bottom orientation"></div>
         <div id="left" class="left orientation"></div>
         <div id="right" class="right orientation"></div>
-        <div id="container">
+        <div id="container"></div>
+        <div hidden$="{{!loading}}">
+        <div id="loader">
+          <div>
+              <paper-spinner active>...</paper-spinner>
+          </div>
+          <div>
+              Loading the data...
+          </div>
+        </div>
         </div>
     </div>
     <div class="footer">
@@ -166,6 +191,10 @@
           maxIndex: {
             type: Number,
             value: 1,
+          },
+          loading: {
+            type: Boolean,
+            value: false,
           },
         };
       }
@@ -349,6 +378,8 @@
         this.stackHelper.bbox._mesh.material.dispose();
         this.stackHelper.bbox._mesh.material = null;
         this.stackHelper.bbox._mesh = null;
+
+        this.stackHelper = null;
       }
 
       _updateCamera() {
@@ -383,11 +414,13 @@
       }
 
       _dataChanged(data) {
-        if (data === undefined || data.length === 0) {
+        this._resetViewer();
+
+        if (data === undefined || data.length <= 0) {
           return;
         }
 
-        this._resetViewer();
+        this.loading = true;
 
         this._load(data)
         .then((rawSeries) => {
@@ -402,6 +435,8 @@
 
           this.$.orientationListBox.selected = 0;
           this._orientationChanged(this.orientation);
+
+          this.loading = false;
         });
       }
 
@@ -414,7 +449,8 @@
         if (this.stackHelper !== null) {
           this.maxIndex = this.stackHelper.orientationMaxIndex;
           this.sliceIndex = Math.floor(this.maxIndex/2);
-          this._updateLabels(this.camera.directionsLabel, this.stackHelper.stack.modality);
+          this._updateLabels(
+            this.camera.directionsLabel, this.stackHelper.stack.modality);
         }
       }
 

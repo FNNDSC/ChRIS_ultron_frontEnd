@@ -197,7 +197,7 @@
         this._handleErrorStatus(error.status);
       }
 
-      _fetchFeeds(from, to, filter = null) {
+      _fetchFeeds(from, to, filter = []) {
         this.feedsStatus = 'fetching';
         const pageSize = to - from;
 
@@ -210,7 +210,7 @@
         data.params = {};
 
         let searchSuffix = '';
-        if (filter !== null) {
+        if (filter.length >= 1) {
           searchSuffix = 'Search';
           for (let i = 0; i<filter.length; i++) {
             data.params[filter[i].filter] = filter[i].value;
@@ -242,13 +242,15 @@
               break;
             }
             case 'last': {
-              const nextFeedId = this.feeds[0].data.id + 1;
-              this._fetchFeeds(0, 1000, [
-                {filter: 'min_id',
-                 value: nextFeedId,
-                },
-              ]);
-              console.log(this.feeds[0].data.id);
+              const filter = [];
+              if (this.feeds.length >= 1) {
+                const nextFeedId = this.feeds[0].data.id + 1;
+                filter.push({
+                  filter: 'min_id',
+                  value: nextFeedId,
+                });
+              }
+              this._fetchFeeds(0, 1000, filter);
               break;
             }
             default:
