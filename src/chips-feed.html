@@ -70,6 +70,15 @@
         cursor: pointer;
       }
 
+      .dataInstance {
+        color: red;
+      }
+
+      .previewContainer {
+        height: 96px;
+        overflow: hidden;
+      }
+
       .container {
         display:flex;
         height: 100%;
@@ -127,7 +136,14 @@
               on-iron-deselect="_dataDeselected">
               <template is="dom-repeat" items="[[dataArray]]">
                 <div item="[[item]]" class="dataInstance">
-                  <div>[[item.length]] files</div>
+                  <div class="previewContainer">
+                    <img
+                      id="test[[item.preview.data.id]]"
+                      on-mouseover='onHovered'
+                      on-mousemove='onMove'
+                      on-mouseout='onUnhovered'>
+                  </div>
+                  <!--<div>[[item.length]] files</div>-->
                 </div>
               </template>
             </iron-selector>
@@ -219,6 +235,7 @@
         data.params.limit = 9999;
         data.params.page_size = 9999;
 
+        this.$.API.handleAs = 'json';
         this.$.API.request('GET', `/${page}/`, data)
           .then(this._handleFeedResponse.bind(this))
           .catch(this._handleFeedsError.bind(this));
@@ -249,6 +266,7 @@
                   // get plugins
         data.params = {};
         data.params.root_id = rootId;
+        this.$.API.handleAs = 'json';
         const requestPlugins =
           this.$.API.request('GET', '/plugins/instances/search/', data);
         requestPlugins
@@ -330,7 +348,7 @@
       }
 
       _dataSelected(selected) {
-        const rawArray = selected.detail.item.item;
+        const rawArray = selected.detail.item.item.data;
         const formattedArray = rawArray.map(function(obj) {
           return `${obj.links.file_resource}`;
         });
@@ -385,6 +403,13 @@
       }
 
       _updateData() {
+
+        const apiData = {};
+        apiData.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        apiData.params = {};
         // group *.dcm files per directory.
         // 1 directory per series
         // update map?
@@ -397,10 +422,44 @@
               relativeFname.slice(0, relativeFname.lastIndexOf('/'));
             let series = this.dataMap.get(relativeDirectory);
             if (series === null || series === undefined) {
-              series = [];
+              series = {
+                data: [],
+                preview: null,
+              };
               this.dataMap.set(relativeDirectory, series);
             }
-            series.push(file);
+            // series.data = []
+            series.data.push(file);
+          }
+
+          if (file.data.fname.endsWith('preview.jpg')) {
+            const relativeFname = file.data.relative_fname;
+            const relativeDirectory =
+              relativeFname.slice(0, relativeFname.lastIndexOf('/'));
+            let series = this.dataMap.get(relativeDirectory);
+            if (series === null || series === undefined) {
+              series = {
+                data: [],
+                preview: null,
+              };
+              this.dataMap.set(relativeDirectory, series);
+            }
+            
+            // add a fileid selector
+            file.data.id = Number( file.href.match(/\d+/)['0'] );
+            series.preview = file;
+            // fetch ressource then update it all...
+            this.$.API.handleAs = 'blob';
+            this.$.API.request('GET', file.links.file_resource, apiData)
+              .then((response) => {
+                const target = this.shadowRoot.querySelector(`#test${file.data.id}`);
+                var urlCreator = window.URL || window.webkitURL;
+                var imageUrl = urlCreator.createObjectURL( response );
+                target.src = imageUrl;
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           }
         }
 
@@ -412,7 +471,36 @@
         this.dataMap.forEach(logMapElements);
         this.set('dataArray', dataArray);
 
+        console.log(this.dataArray);
+
         this.dataSelected = -1;
+      }
+
+      onHovered(e) {
+        console.log('onHovered');
+        console.log(e.currentTarget);
+      }
+
+      onMove(e) {
+        const target = e.currentTarget;
+        const normalizedPosition =
+          ( e.clientX - target.offsetLeft ) / target.clientWidth;
+        const THUMBNAIL_HEIGHT = 96;
+        const TOTAL_HEIGHT = target.offsetHeight;
+        const nbFrames = TOTAL_HEIGHT / THUMBNAIL_HEIGHT;
+        const offset = Math.floor(normalizedPosition * nbFrames) * THUMBNAIL_HEIGHT;
+        target.style.transform =
+          `translateY(-${offset}px)`;
+      }
+
+      onUnhovered(e) {
+        const target = e.currentTarget;
+        const THUMBNAIL_HEIGHT = 96;
+        const TOTAL_HEIGHT = target.offsetHeight;
+        const nbFrames = TOTAL_HEIGHT / THUMBNAIL_HEIGHT;
+        const offset = Math.floor(0.5 * nbFrames) * THUMBNAIL_HEIGHT;
+        target.style.transform =
+          `translateY(-${offset}px)`;
       }
     }
 
