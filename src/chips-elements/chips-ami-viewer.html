@@ -126,14 +126,14 @@
         <div id="right" class="right orientation"></div>
         <div id="container"></div>
         <div hidden$="{{!loading}}">
-        <div id="loader">
-          <div>
-              <paper-spinner active>...</paper-spinner>
+          <div id="loader">
+            <div>
+                <paper-spinner active>...</paper-spinner>
+            </div>
+            <div>
+                Loading the data: [[progress]] / [[data.length]]
+            </div>
           </div>
-          <div>
-              Loading the data: [[progress]] / [[data.length]]
-          </div>
-        </div>
         </div>
     </div>
     <div class="footer">
@@ -199,7 +199,7 @@
           progress: {
             type: Number,
             value: 0,
-          }
+          },
         };
       }
 
@@ -209,6 +209,10 @@
         this._onScrollBounded = this._onScroll.bind(this);
         this._onWindowResizeBounded = this._onWindowResize.bind(this);
         this._initViewer();
+      }
+
+      reset() {
+        this.data = [];
       }
 
       connectedCallback() {

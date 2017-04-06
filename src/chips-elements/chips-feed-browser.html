@@ -1,0 +1,482 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="../chips-api/chips-api.html">
+<link rel="import" href="../chips-behaviors/chips-plugin-behavior.html">
+
+<dom-module id="chips-feed-browser">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        justify-content: center;
+      }
+
+      .panel {
+        margin:10px;
+        min-width: 192px;
+        box-sizing: border-box;
+        display: flex;
+        background-color: #ffffff;
+        width: 256px;
+      }
+
+      .dataPanel {
+        overflow-y:auto;
+      }
+
+      .pluginInstance, .dataInstance {
+        padding: 6px;
+        margin: 6px 0px;
+        box-sizing: border-box;
+      }
+
+      .iron-selected {
+        border-left: 4px solid var(--accent-color);
+        background-color: #f9f9f9;
+      }
+
+      iron-selector {
+        flex: 1;
+      }
+
+      .pluginInstance:hover, .dataInstance:hover {
+        background-color: #e5e5e5;
+        cursor: pointer;
+      }
+
+      .dataInstance {
+        color: #212121;
+        font-size: 12px;
+        display: flex;
+      }
+
+      .previewContainer {
+        height: 96px;
+        overflow: hidden;
+      }
+
+      .about {
+        padding: 2px;
+        flex: 1;
+      }
+
+      #loader {
+        margin-top: 24px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        color: #212121;
+        flex-direction: column;
+      }
+
+      #loaderContainer {
+        width: 100%;
+      }
+
+      .noData {
+        padding: 6px 12px;
+      }
+    </style>
+
+    <chips-api id="API"></chips-api>
+
+    <div class="panel pluginsPanel">
+        <iron-selector
+            selected="{{pluginInstancesSelected}}"
+            on-iron-select="_pluginInstanceSelected"
+            on-iron-deselect="_pluginInstanceDeselected">
+            <template is="dom-repeat" items="[[pluginInstances]]">
+                <div item="[[item]]" class="pluginInstance">
+                    <div>[[item.data.id]]</div>
+                    <div>[[item.data.plugin_name]]</div>
+                    <div>[[item.data.status]]</div>
+                </div>
+            </template>
+        </iron-selector>
+    </div>
+
+    <div class="panel dataPanel">
+      <div id="loaderContainer" hidden$="{{!loading}}">
+        <div id="loader">
+          <div>
+              <paper-spinner active></paper-spinner>
+          </div>
+          <div>
+              Loading the data...
+          </div>
+        </div>
+      </div>
+      <template is="dom-if" if="[[_isDataEmpty(dataArray.length)]]">
+        <div hidden$="{{loading}}" class="noData">No data available for preview...</div>
+      </template>
+      <iron-selector
+          selected="{{dataSelected}}"
+          on-iron-select="_dataSelected"
+          on-iron-deselect="_dataDeselected">
+          <template is="dom-repeat" items="[[dataArray]]">
+            <div item="[[item]]" class="dataInstance">
+                <div class="previewContainer">
+                    <img
+                        id="[[item.preview.data.id]]"
+                        on-mousemove='onMove'
+                        on-mouseout='onUnhovered'>
+                </div>
+                <div class="about">
+                    <div>[[item.details.series.description]]</div>
+                    <div>[[item.details.series.date]]</div>
+                    <div>[[item.details.series.files]]</div>
+                </div>
+            </div>
+          </template>
+      </iron-selector>
+    </div>
+
+  </template>
+
+  <script>
+    class ChipsFeedBrowser extends PluginBehavior(Polymer.Element) {
+      static get is() {
+        return 'chips-feed-browser';
+      }
+
+      static get properties() {
+        return {
+          feed: {
+            type: Object,
+            value: {},
+          },
+          pluginInstancesSelected: {
+            type: Array,
+            value: [],
+          },
+          dataSelected: {
+            type: Number,
+            value: -1,
+          },
+          pluginInstances: {
+            type: Array,
+            value: [],
+          },
+          files: {
+            type: Array,
+            value: [],
+            observer: '_filesChanged',
+          },
+          dataMap: {
+            type: Object,
+            value: new Map(),
+          },
+          dataArray: {
+            type: Array,
+            value: [],
+          },
+          selection: {
+            type: Array,
+            value: [],
+            readOnly: true,
+            notify: true,
+          },
+          loading: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+
+      static get observers() {
+        return [
+          '_pluginInstancesChanged(pluginInstances.*)',
+          '_rootIdChanged(feed.data.plugin_instance)',
+        ];
+      }
+
+      _rootIdChanged(rootId) {
+          console.log(rootId);
+        // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (rootId === undefined) {
+          return;
+        }
+
+        const data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+    
+        // get plugins
+        data.params = {};
+        data.params.root_id = rootId;
+        this.$.API.handleAs = 'json';
+        const requestPlugins =
+          this.$.API.request('GET', '/plugins/instances/search/', data);
+        requestPlugins
+          .then(this._handlePluginInstancesResponse.bind(this))
+          .catch(this._handlePluginInstancesError.bind(this));
+      }
+
+      _handlePluginInstancesResponse(response) {
+        // format plugin instances
+        const pluginInstances = response.data;
+        for (let i = 0; i < pluginInstances.length; i++) {
+          this.__formatPlugin(pluginInstances[i], this.feed);
+          this.push('pluginInstances', pluginInstances[i]);
+
+          if (pluginInstances[i].data.status === 'started') {
+            //
+            var data = {};
+            data.auth = {
+              type: 'token',
+              token: sessionStorage.getItem('token'),
+            };
+            this.$.API.handleAs = 'json';
+            this.__waitEndPlugin(this.$.API, data, pluginInstances[i], true)
+            .then((pluginInstance) => {
+              // updata collection
+              for (var i=0; i<this.pluginInstances.length; i++) {
+                if (this.pluginInstances[i].data.id === pluginInstance.data.id) {
+                  this.__formatPlugin(pluginInstance, this.feed);
+                  this.set(['pluginInstances', i], pluginInstance);
+                }
+              }
+            });
+          }
+        }
+        // if one is not finished, probe for it
+        // on successe, add files
+        this.set('pluginInstances', response.data);
+      }
+
+      _handlePluginInstancesError(error) {
+          console.log(error);
+      }
+
+       _pluginInstancesChanged(data) {
+        if (data.path.includes('.data.status')) {
+          this._pluginInstanceStatusChanged(data.path, data.value);
+        }
+      }
+
+      _pluginInstanceStatusChanged(path, value) {
+        console.log(value);
+        // fetch files!!
+      }
+
+      _pluginInstanceSelected(selected) {
+        const plugin = selected.detail.item.item;
+        var data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        data.params = {};
+        data.params.limit = 9999;
+        data.params.page_size = 9999;
+        this.$.API.handleAs = 'json';
+        this.loading = true;
+        this.__getFilesPlugin(this.$.API, data, plugin)
+          .then(this._handleFilesResponse.bind(this))
+          .catch(this._handleFilesError.bind(this));
+      }
+
+      _pluginInstanceDeselected(selected) {
+        this.set('files', []);
+      }
+
+      _dataSelected(selected) {
+        const rawArray = selected.detail.item.item.data;
+        const formattedArray = rawArray.map(function(obj) {
+          return `${obj.links.file_resource}`;
+        });
+
+        this._setSelection(formattedArray);
+      }
+
+      _dataDeselected(deselected) {
+        this._setSelection([]);
+      }
+
+      _handleFilesResponse(response) {
+        this.loading = false;
+        const files = this.files.slice();
+
+        for (const file of response) {
+          this.__formatFile(file, this.feed);
+          files.push(file);
+        }
+
+        this.set('files', files);
+      }
+
+      _handleFilesError(error) {
+        console.log(error);
+      }
+
+      reset() {
+        this.set('files', []);
+        this.set('feed', {});
+        this.set('pluginInstancesSelected', []);
+        this.set('pluginInstances', []);
+        this.dataMap = new Map();
+        this.set('dataArray', []);
+      }
+
+      _filesChanged(files) {
+        // Polymer 2.0 will call with `undefined` on initialization.
+        // Ignore until we are properly called with a string.
+        if (files === undefined) {
+          return;
+        }
+
+        // update data structure
+        this._updateData();
+      }
+
+      _updateData() {
+    const apiData = {};
+        apiData.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        apiData.params = {};
+        // group *.dcm files per directory.
+        // 1 directory per series
+        // update map?
+        this.dataMap = new Map();
+
+        for (const file of this.files) {
+          if (file.data.fname.endsWith('.dcm')) {
+            const relativeFname = file.data.relative_fname;
+            const relativeDirectory =
+              relativeFname.slice(0, relativeFname.lastIndexOf('/'));
+            let series = this.dataMap.get(relativeDirectory);
+            if (series === null || series === undefined) {
+              series = {
+                data: [],
+                preview: null,
+                details: {
+                  series: {
+                    date: 'no value provided',
+                    description: 'no value provided',
+                    files: 0,
+                  },
+                },
+              };
+              this.dataMap.set(relativeDirectory, series);
+            }
+            series.data.push(file);
+          }
+
+          if (file.data.fname.endsWith('preview.jpg')) {
+            const relativeFname = file.data.relative_fname;
+            const relativeDirectory =
+              relativeFname.slice(0, relativeFname.lastIndexOf('/'));
+            let series = this.dataMap.get(relativeDirectory);
+            if (series === null || series === undefined) {
+              series = {
+                data: [],
+                preview: null,
+                details: {
+                  series: {
+                    date: 'no value provided',
+                    description: 'no value provided',
+                    files: 0,
+                  },
+                },
+              };
+              this.dataMap.set(relativeDirectory, series);
+            }
+    
+            // add a file id selector
+            file.data.id = `id${file.href.match(/\d+/)['0']}`;
+            series.preview = file;
+            // fetch ressource then update it all...
+            this.$.API.handleAs = 'blob';
+            this.$.API.request('GET', file.links.file_resource, apiData)
+              .then((response) => {
+                const target =
+                  this.shadowRoot.querySelector(`#${file.data.id}`);
+                var urlCreator = window.URL || window.webkitURL;
+                var imageUrl = urlCreator.createObjectURL(response);
+                target.src = imageUrl;
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        }
+
+        // Map to array
+        const dataArray = [];
+        function logMapElements(value, key) {
+            // set study series description
+            let seriesDate = 'no value provided';
+            let seriesDescription = 'no value provided';
+            const fullName = value.data[0].data.fname;
+            const splitName = fullName.split('/');
+            if (splitName.length >= 2) {
+              const directory = splitName[splitName.length - 2];
+              const splitSeries = directory.split('-');
+              if (splitSeries.length === 3) {
+                seriesDescription = splitSeries[0];
+                seriesDate = splitSeries[1];
+                if (seriesDate.length === 8) {
+                  seriesDate = `
+                    ${seriesDate.substring(0, 4)}-
+                    ${seriesDate.substring(4, 6)}-
+                    ${seriesDate.substring(6, 8)}`;
+                }
+              }
+            }
+
+            value.details.series.date = seriesDate;
+            value.details.series.description = seriesDescription;
+            // set study date
+            // set files
+            value.details.series.files = value.data.length + ' file';
+            if (value.data.length > 1) {
+              value.details.series.files += 's';
+            }
+            dataArray.push(value);
+        }
+        this.dataMap.forEach(logMapElements);
+        this.set('dataArray', dataArray);
+        this.dataSelected = -1;
+      }
+
+      onMove(e) {
+        const target = e.currentTarget;
+        const normalizedPosition =
+          (e.clientX - target.offsetLeft) / target.clientWidth;
+        const THUMBNAIL_HEIGHT = 96;
+        const TOTAL_HEIGHT = target.offsetHeight;
+        const nbFrames = TOTAL_HEIGHT / THUMBNAIL_HEIGHT;
+        const offset = Math.floor(normalizedPosition * nbFrames) * THUMBNAIL_HEIGHT;
+        target.style.transform =
+          `translateY(-${offset}px)`;
+      }
+
+      onUnhovered(e) {
+        const target = e.currentTarget;
+        const THUMBNAIL_HEIGHT = 96;
+        const TOTAL_HEIGHT = target.offsetHeight;
+        const nbFrames = TOTAL_HEIGHT / THUMBNAIL_HEIGHT;
+        const offset = Math.floor(0.5 * nbFrames) * THUMBNAIL_HEIGHT;
+        target.style.transform =
+          `translateY(-${offset}px)`;
+      }
+
+      _isDataEmpty(data) {
+        return data <= 0;
+      }
+    }
+
+    window.customElements.define(ChipsFeedBrowser.is, ChipsFeedBrowser);
+  </script>
+</dom-module>
