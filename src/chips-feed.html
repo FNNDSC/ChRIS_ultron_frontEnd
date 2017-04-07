@@ -8,7 +8,15 @@
 
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 
 <link rel="import" href="chips-behaviors/chips-feed-behavior.html">
 <link rel="import" href="chips-elements/chips-feed-browser.html">
@@ -45,9 +53,15 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
       }
 
-      app-header {
+      .toolbar.main {
         background-color: var(--default-primary-color);
-        color: #fff;
+        color: var(--text-primary-color);
+      }
+
+      .toolbar.feed {
+        background-color: #ffffff;
+        color: var(--primary-text-color);
+        font-size: 14px;
       }
 
       .container {
@@ -67,18 +81,100 @@
         box-sizing: border-box;
         display: flex;
       }
+
+      paper-button[active] {
+        background-color: var(--default-primary-color);
+        color: var(--text-primary-color);
+      }
+
+      paper-button.action {
+        background-color: var(--accent-color);
+        color: var(--text-primary-color);
+      }
+
+      .spacer {
+        flex:1;
+      }
+
+      paper-dialog {
+        background-color: #ffffff;
+      }
+
+      .header {
+        display:flex;
+      }
+
+      vaadin-combo-box, paper-dropdown-menu {
+        padding: 10px;
+      }
     </style>
 
 
     <chips-api id="API"></chips-api>
+
+    <paper-dialog id="processDataDialog" modal>
+      <div class="header">
+        <h2>Process data</h2>
+        <div class="spacer"></div>
+        <paper-dropdown-menu label="Input">
+          <paper-listbox class="dropdown-content" selected="1">
+            <paper-item>pacs query</paper-item>
+            <paper-item>pacs pull</paper-item>
+            <paper-item>mri_convert</paper-item>
+            <paper-item>mri_convert</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <paper-dropdown-menu label="Process">
+          <paper-listbox class="dropdown-content" selected="1">
+            <paper-item>mri_convert</paper-item>
+            <paper-item>recon_all</paper-item>
+            <paper-item>tractography</paper-item>
+            <paper-item>pacs_push</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+
+      <paper-dialog-scrollable>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus>Start</paper-button>
+      </div>
+    </paper-dialog>
+  
     
     <!-- app-header-layout provides a scroller -->
     <app-header-layout has-scrolling-region>
         <app-header slot="header" effects="waterfall" condenses reveals>
-        <app-toolbar>
-            <div main-title>[[feed.data.label]]</div>
-            <paper-icon-button icon="my-icons:close" on-tap="_closeFeed"></paper-icon-button>
-        </app-toolbar>
+          <app-toolbar class="toolbar main">
+              <div main-title>[[feed.data.label]]</div>
+              <paper-icon-button icon="my-icons:close" on-tap="_closeFeed"></paper-icon-button>
+          </app-toolbar>
+
+          <app-toolbar class="toolbar feed">
+            <paper-button toggles raised active>Data Browser</paper-button>
+            <paper-button toggles raised active>Viewer</paper-button>
+            <paper-button toggles raised >Notes</paper-button>
+            <paper-button toggles raised >Comments</paper-button>
+            <div class="spacer"></div>
+            <paper-button raised class="action" on-tap="_openProcessDataDialog">Process data</paper-button>
+          </app-toolbar>
         </app-header>
 
         <div class="container">
@@ -114,7 +210,64 @@
             type: Array,
             value: [],
           },
-        };
+          pluginsInstancesList: {
+            type: Array,
+            value: [
+            {
+              'name': {
+                'title': 'mr',
+                'first': 'ross',
+                'last': 'craig'
+              },
+              'email': 'ross.craig@example.com',
+              'picture': {
+                'large': 'https://randomuser.me/api/portraits/men/19.jpg',
+                'medium': 'https://randomuser.me/api/portraits/med/men/19.jpg',
+                'thumbnail': 'https://randomuser.me/api/portraits/thumb/men/19.jpg'
+              }
+            }, {
+              'name': {
+                'title': 'mr',
+                'first': 'adam',
+                'last': 'roy'
+              },
+              'email': 'adam.roy@example.com',
+              'picture': {
+                'large': 'https://randomuser.me/api/portraits/men/43.jpg',
+                'medium': 'https://randomuser.me/api/portraits/med/men/43.jpg',
+                'thumbnail': 'https://randomuser.me/api/portraits/thumb/men/43.jpg'
+              }
+            }, {
+              'name': {
+                'title': 'mr',
+                'first': 'deniz',
+                'last': 'çankaya'
+              },
+              'email': 'deniz.çankaya@example.com',
+              'picture': {
+                'large': 'https://randomuser.me/api/portraits/men/98.jpg',
+                'medium': 'https://randomuser.me/api/portraits/med/men/98.jpg',
+                'thumbnail': 'https://randomuser.me/api/portraits/thumb/men/98.jpg'
+              }
+            }, {
+              'name': {
+                'title': 'mr',
+                'first': 'abderrahman',
+                'last': 'westerveld'
+              },
+              'email': 'abderrahman.westerveld@example.com',
+              'picture': {
+                'large': 'https://randomuser.me/api/portraits/men/84.jpg',
+                'medium': 'https://randomuser.me/api/portraits/med/men/84.jpg',
+                'thumbnail': 'https://randomuser.me/api/portraits/thumb/men/84.jpg'
+              }
+            }],
+          },
+          pluginsAvailableList: {
+            type: Array,
+            value: ['v1', 'v2', 'v3'],
+          }
+        }
       }
 
       static get observers() {
@@ -182,6 +335,10 @@
           },
         });
         this.dispatchEvent(closeEvent);
+      }
+
+      _openProcessDataDialog(event) {
+        this.$.processDataDialog.open();
       }
     }
 

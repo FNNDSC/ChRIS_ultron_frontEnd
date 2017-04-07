@@ -285,10 +285,10 @@
         this.renderer = new THREE.WebGLRenderer({
             antialias: true,
           });
-        // - 64 for the toolbar
+        // - 64 x 2 for the toolbar
         this.renderer.setSize(
             this.container.offsetWidth,
-            this.container.offsetHeight - 64);
+            this.container.offsetHeight - 128);
         this.renderer.setClearColor(0x212121, 1);
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.container.appendChild(this.renderer.domElement);
