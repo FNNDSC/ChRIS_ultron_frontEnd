@@ -9,18 +9,13 @@
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
-
-<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 
 <link rel="import" href="chips-behaviors/chips-feed-behavior.html">
 <link rel="import" href="chips-elements/chips-feed-browser.html">
 <link rel="import" href="chips-elements/chips-ami-viewer.html">
+<link rel="import" href="chips-elements/chips-plugin-run.html">
 
 <link rel="import" href="my-icons.html">
 
@@ -72,11 +67,11 @@
       .viewerPanel {
         flex:1;
         flex-direction: column;
+        background-color: #ffffff;
       }
 
       .panel {
         margin:10px;
-        background-color: #ffffff;
         min-width: 192px;
         box-sizing: border-box;
         display: flex;
@@ -96,71 +91,20 @@
         flex:1;
       }
 
-      paper-dialog {
-        background-color: #ffffff;
-      }
-
-      .header {
-        display:flex;
-      }
-
-      vaadin-combo-box, paper-dropdown-menu {
-        padding: 10px;
-      }
+      [hidden] { display: none }
     </style>
 
 
     <chips-api id="API"></chips-api>
 
-    <paper-dialog id="processDataDialog" modal>
-      <div class="header">
-        <h2>Process data</h2>
-        <div class="spacer"></div>
-        <paper-dropdown-menu label="Input">
-          <paper-listbox class="dropdown-content" selected="1">
-            <paper-item>pacs query</paper-item>
-            <paper-item>pacs pull</paper-item>
-            <paper-item>mri_convert</paper-item>
-            <paper-item>mri_convert</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-        <paper-dropdown-menu label="Process">
-          <paper-listbox class="dropdown-content" selected="1">
-            <paper-item>mri_convert</paper-item>
-            <paper-item>recon_all</paper-item>
-            <paper-item>tractography</paper-item>
-            <paper-item>pacs_push</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-      </div>
+    <chips-plugin-run
+      id="PluginRun"
+      plugins-available="[[plugins]]"
+      plugin-instances="[[pluginInstances]]"
+      on-plugin-instance="_handlePluginInstance"></chips-plugin-run>
 
-      <paper-dialog-scrollable>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      </paper-dialog-scrollable>
-      <div class="buttons">
-        <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm autofocus>Start</paper-button>
-      </div>
-    </paper-dialog>
-  
-    
     <!-- app-header-layout provides a scroller -->
-    <app-header-layout has-scrolling-region>
+    <app-header-layout has-scrolling-region on-iron-resize="_resizeHandler">
         <app-header slot="header" effects="waterfall" condenses reveals>
           <app-toolbar class="toolbar main">
               <div main-title>[[feed.data.label]]</div>
@@ -168,18 +112,24 @@
           </app-toolbar>
 
           <app-toolbar class="toolbar feed">
-            <paper-button toggles raised active>Data Browser</paper-button>
-            <paper-button toggles raised active>Viewer</paper-button>
-            <paper-button toggles raised >Notes</paper-button>
-            <paper-button toggles raised >Comments</paper-button>
+            <paper-button toggles raised active="{{dataActive}}">Data Browser</paper-button>
+            <paper-button toggles raised active="{{viewerActive}}">Viewer</paper-button>
+            <paper-button toggles raised disabled>Notes</paper-button>
+            <paper-button toggles raised disabled>Comments</paper-button>
             <div class="spacer"></div>
             <paper-button raised class="action" on-tap="_openProcessDataDialog">Process data</paper-button>
           </app-toolbar>
         </app-header>
 
         <div class="container">
-          <chips-feed-browser id="FeedBrowser" feed="[[feed]]" selection="{{selection}}"></chips-feed-browser>
-          <chips-ami-viewer id="AmiViewer" class="panel viewerPanel" data="[[selection]]"></chips-ami-viewer>
+          <chips-feed-browser
+            id="FeedBrowser"
+            class="panel dataPanel"
+            feed="[[feed]]"
+            selection="{{selection}}"
+            hidden$="[[!dataActive]]"
+            plugin-instances="{{pluginInstances}}"></chips-feed-browser>
+          <chips-ami-viewer id="AmiViewer" class="panel viewerPanel" data="[[selection]]" hidden$="[[!viewerActive]]"></chips-ami-viewer>
         </div>
     </app-header-layout>
 
@@ -193,6 +143,16 @@
 
       static get properties() {
         return {
+          dataActive: {
+            type: Boolean,
+            value: true,
+            observer: '_activePanelChanged',
+          },
+          viewerActive: {
+            type: Boolean,
+            value: true,
+            observer: '_activePanelChanged',
+          },
           page: {
             type: String,
             reflectToAttribute: true,
@@ -206,67 +166,14 @@
             type: Object,
             value: {},
           },
+          plugins: {
+            type: Array,
+            value: [],
+          },
           selection: {
             type: Array,
             value: [],
           },
-          pluginsInstancesList: {
-            type: Array,
-            value: [
-            {
-              'name': {
-                'title': 'mr',
-                'first': 'ross',
-                'last': 'craig'
-              },
-              'email': 'ross.craig@example.com',
-              'picture': {
-                'large': 'https://randomuser.me/api/portraits/men/19.jpg',
-                'medium': 'https://randomuser.me/api/portraits/med/men/19.jpg',
-                'thumbnail': 'https://randomuser.me/api/portraits/thumb/men/19.jpg'
-              }
-            }, {
-              'name': {
-                'title': 'mr',
-                'first': 'adam',
-                'last': 'roy'
-              },
-              'email': 'adam.roy@example.com',
-              'picture': {
-                'large': 'https://randomuser.me/api/portraits/men/43.jpg',
-                'medium': 'https://randomuser.me/api/portraits/med/men/43.jpg',
-                'thumbnail': 'https://randomuser.me/api/portraits/thumb/men/43.jpg'
-              }
-            }, {
-              'name': {
-                'title': 'mr',
-                'first': 'deniz',
-                'last': 'çankaya'
-              },
-              'email': 'deniz.çankaya@example.com',
-              'picture': {
-                'large': 'https://randomuser.me/api/portraits/men/98.jpg',
-                'medium': 'https://randomuser.me/api/portraits/med/men/98.jpg',
-                'thumbnail': 'https://randomuser.me/api/portraits/thumb/men/98.jpg'
-              }
-            }, {
-              'name': {
-                'title': 'mr',
-                'first': 'abderrahman',
-                'last': 'westerveld'
-              },
-              'email': 'abderrahman.westerveld@example.com',
-              'picture': {
-                'large': 'https://randomuser.me/api/portraits/men/84.jpg',
-                'medium': 'https://randomuser.me/api/portraits/med/men/84.jpg',
-                'thumbnail': 'https://randomuser.me/api/portraits/thumb/men/84.jpg'
-              }
-            }],
-          },
-          pluginsAvailableList: {
-            type: Array,
-            value: ['v1', 'v2', 'v3'],
-          }
         }
       }
 
@@ -291,7 +198,7 @@
       }
 
       _pageChanged(page) {
-    if (page === '') {
+        if (page === '') {
           return;
         }
         const data = {};
@@ -307,6 +214,19 @@
         this.$.API.request('GET', `/${page}/`, data)
           .then(this._handleFeedResponse.bind(this))
           .catch(this._handleFeedsError.bind(this));
+      }
+
+      // _resizeHandler(){
+      //   this._activePanelChanged(true);
+      // }
+
+      _activePanelChanged(active) {
+        if (active === undefined) {
+          return;
+        }
+        if (this.viewerActive) {
+          this.$.AmiViewer._onWindowResize();
+        }
       }
 
       _handleFeedResponse(response) {
@@ -338,7 +258,15 @@
       }
 
       _openProcessDataDialog(event) {
-        this.$.processDataDialog.open();
+        this.$.PluginRun.open();
+      }
+
+      _handlePluginInstance(event) {
+        const pluginInstance = event.detail.pluginInstance.data[0];
+        console.log(event.detail);
+        console.log(pluginInstance);
+        this.__formatPlugin(pluginInstance, this.feed);
+        this.$.FeedBrowser.push('pluginInstances', pluginInstance);
       }
     }
 

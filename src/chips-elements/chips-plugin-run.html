@@ -1,0 +1,211 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../chips-behaviors/chips-feed-behavior.html">
+
+<link rel="import" href="../chips-api/chips-api.html">
+
+<dom-module id="chips-plugin-run">
+  <template>
+    <style>
+      .spacer {
+        flex:1;
+      }
+
+      paper-dialog {
+        background-color: #ffffff;
+      }
+
+      .header {
+        display:flex;
+      }
+
+      paper-dropdown-menu {
+        padding: 10px;
+      }
+    </style>
+
+    <chips-api id="API"></chips-api>
+
+    <paper-dialog id="processDataDialog" modal>
+      <div class="header">
+        <h2>Process data</h2>
+        <div class="spacer"></div>
+        <paper-dropdown-menu label="Input">
+          <paper-listbox class="dropdown-content" selected-item="{{pluginSelected}}">
+            <template is="dom-repeat" items="{{pluginInstances}}">
+              <paper-item item="[[item]]">[[item.data.label]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <paper-dropdown-menu label="Process">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="{{pluginsAvailable}}" filter="_isDS">
+              <paper-item item="[[item]]" on-tap="_pluginAvailableSelected">[[item.data.name]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+
+      <paper-dialog-scrollable>
+        <template is="dom-repeat" items="{{parameters.data}}">
+            <div>
+            [[item.data.name]] - [[item.data.type]] - [[item.data.default]]
+            </div>
+          <!--<chips-parameter
+            parameter="{{item}}"
+            optional="{{item.data.optional}}"
+            name="{{item.data.name}}"
+            type="{{item.data.type}}"
+            help="{{item.data.help}}"
+            default="{{item.data.default}}"
+            on-change-value="_changeValue"
+            ></chips-parameter>-->
+        </template>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button on-tap="_close">Cancel</paper-button>
+        <paper-button autofocus on-tap="_run">Start</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    class ChipsPluginRun extends PluginBehavior(Polymer.Element) {
+      static get is() {
+        return 'chips-plugin-run';
+      }
+
+      static get properties() {
+        return {
+          pluginInstances: {
+            type: Array,
+            value: [],
+          },
+          pluginsAvailable: {
+            type: Array,
+            value: [],
+            observer: '_pluginsAvailableChanged',
+          },
+          parameters: {
+            type: Array,
+            value: [],
+          },
+          pluginSelected: {
+            type: Object,
+            value: null,
+          },
+          pluginRunSelected: {
+            type: Object,
+            value: null,
+          },
+        };
+      }
+
+      open() {
+        this.$.processDataDialog.open();
+      }
+
+      _pluginAvailableSelected(event) {
+        const selectedPlugin = event.model.__data.item;
+        this.set('pluginRunSelected', selectedPlugin);
+        const data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        const request =this.$.API.request('GET', selectedPlugin.links.parameters, data);
+        request
+          .then(this._handleParametersResponse.bind(this));
+      }
+
+      _handleParametersResponse(response) {
+        this.set('parameters', response);
+        this._resetParameters();
+      }
+
+      _resetParameters() {
+          for(var i=0; i < this.parameters.data.length; i++) {
+            this.parameters.data[i].data.value = this.parameters.data[i].data.default;
+          }
+        }
+
+      _close() {
+        // reset properties
+        this.pluginSelected = null;
+        this.pluginRunSelected = null;
+        // close dialog
+        this.$.processDataDialog.close();
+
+      }
+
+      _run() {
+        if(this.pluginSelected === null ||
+           this.pluginRunSelected === null) {
+          return;
+        }
+
+        // start plugin
+        const plugin = this.pluginSelected.item;
+        const data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        data.body = {};
+        data.body.template = {};
+        data.body.template.data = [];
+        data.body.template.data.push({
+          name: 'previous_id',
+          value: '',
+        })
+        data.body.data = {
+            previous_id: plugin.data.id
+        }
+        for(let i=0; i<this.parameters.data.length; i++) {
+          const name = this.parameters.data[i].data.name;
+          const value = this.parameters.data[i].data.value;
+          // fill template
+          var parameter = {
+            name: name,
+            value: '',
+          }
+          data.body.template.data.push(parameter);
+          // fill data
+          data.body.data[name] = value;
+        }
+
+        const start = this.__startPlugin(this.$.API, this.pluginRunSelected.links.instances, data);
+        start
+          .then(this._handlePluginResponse.bind(this))
+          .catch(this._handlePluginError.bind(this));
+
+        // close dialog
+        this._close();
+      }
+
+      _handlePluginResponse(response) {
+        // fire reload feeds event
+        const pluginInstanceEvent = new CustomEvent('plugin-instance', {detail: {
+          pluginInstance: response,
+        }});
+        this.dispatchEvent(pluginInstanceEvent);
+      }
+
+      _handlePluginError(error) {
+        console.log(error);
+      }
+
+      _isDS(plugin) {
+        return plugin.data.type === 'ds';
+      }
+    }
+
+    window.customElements.define(ChipsPluginRun.is, ChipsPluginRun);
+  </script>
+</dom-module>

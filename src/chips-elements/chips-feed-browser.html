@@ -24,9 +24,6 @@
         display: flex;
         background-color: #ffffff;
         width: 256px;
-      }
-
-      .dataPanel {
         overflow-y:auto;
       }
 
@@ -162,6 +159,7 @@
           pluginInstances: {
             type: Array,
             value: [],
+            notify: true,
           },
           files: {
             type: Array,
@@ -227,19 +225,32 @@
         for (let i = 0; i < pluginInstances.length; i++) {
           this.__formatPlugin(pluginInstances[i], this.feed);
           this.push('pluginInstances', pluginInstances[i]);
+        }
+      }
 
-          if (pluginInstances[i].data.status === 'started') {
-            //
-            var data = {};
+      _handlePluginInstancesError(error) {
+          console.log(error);
+      }
+
+      _pluginInstancesChanged(data) {
+        if (data.path.includes('.data.status')) {
+          this._pluginInstanceStatusChanged(data.path, data.value);
+        }
+
+        if (data.path === 'pluginInstances.splices') {
+          const index = data.value.indexSplices[0].index;
+          const pluginInstances = data.value.indexSplices[0].object;
+          if (pluginInstances[index].data.status === 'started') {
+            const data = {};
             data.auth = {
               type: 'token',
               token: sessionStorage.getItem('token'),
             };
             this.$.API.handleAs = 'json';
-            this.__waitEndPlugin(this.$.API, data, pluginInstances[i], true)
+            this.__waitEndPlugin(this.$.API, data, pluginInstances[index], true)
             .then((pluginInstance) => {
               // updata collection
-              for (var i=0; i<this.pluginInstances.length; i++) {
+              for (let i=0; i<this.pluginInstances.length; i++) {
                 if (this.pluginInstances[i].data.id === pluginInstance.data.id) {
                   this.__formatPlugin(pluginInstance, this.feed);
                   this.set(['pluginInstances', i], pluginInstance);
@@ -247,19 +258,6 @@
               }
             });
           }
-        }
-        // if one is not finished, probe for it
-        // on successe, add files
-        this.set('pluginInstances', response.data);
-      }
-
-      _handlePluginInstancesError(error) {
-          console.log(error);
-      }
-
-       _pluginInstancesChanged(data) {
-        if (data.path.includes('.data.status')) {
-          this._pluginInstanceStatusChanged(data.path, data.value);
         }
       }
 
