@@ -40,6 +40,7 @@
 
       iron-selector {
         flex: 1;
+        width: 100%;
       }
 
       .pluginInstance:hover, .dataInstance:hover {
@@ -58,9 +59,31 @@
         overflow: hidden;
       }
 
+      img {
+        min-width: 96px;
+        min-height: 96px;
+        background-color: #000;
+      }
+
       .about {
         padding: 2px;
         flex: 1;
+        min-width: 0;
+      }
+
+      .about > div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #description {
+        font-size: 14px;
+        color: var(--primary-text-color);
+      }
+
+      #date, #files {
+        color: var(--secondary-text-color);
       }
 
       #loader {
@@ -122,12 +145,12 @@
                     <img
                         id="[[item.preview.data.id]]"
                         on-mousemove='onMove'
-                        on-mouseout='onUnhovered'>
+                        on-mouseout='centerThumbnail'>
                 </div>
                 <div class="about">
-                    <div>[[item.details.series.description]]</div>
-                    <div>[[item.details.series.date]]</div>
-                    <div>[[item.details.series.files]]</div>
+                    <div id="description">[[item.details.series.description]]</div>
+                    <div id="date">[[item.details.series.date]]</div>
+                    <div id="files">[[item.details.series.files]]</div>
                 </div>
             </div>
           </template>
@@ -337,7 +360,7 @@
       }
 
       _updateData() {
-    const apiData = {};
+        const apiData = {};
         apiData.auth = {
           type: 'token',
           token: sessionStorage.getItem('token'),
@@ -402,7 +425,9 @@
                   this.shadowRoot.querySelector(`#${file.data.id}`);
                 var urlCreator = window.URL || window.webkitURL;
                 var imageUrl = urlCreator.createObjectURL(response);
+                target.onload = this.centerThumbnail.bind(this);
                 target.src = imageUrl;
+
               })
               .catch((error) => {
                 console.log(error);
@@ -452,20 +477,19 @@
         const target = e.currentTarget;
         const normalizedPosition =
           (e.clientX - target.offsetLeft) / target.clientWidth;
+        this.positionThumbnail(normalizedPosition, target);
+      }
+
+      centerThumbnail(e) {
+        const target = e.currentTarget;
+        this.positionThumbnail(0.5, target);
+      }
+
+      positionThumbnail(normalizedPosition, target) {
         const THUMBNAIL_HEIGHT = 96;
         const TOTAL_HEIGHT = target.offsetHeight;
         const nbFrames = TOTAL_HEIGHT / THUMBNAIL_HEIGHT;
         const offset = Math.floor(normalizedPosition * nbFrames) * THUMBNAIL_HEIGHT;
-        target.style.transform =
-          `translateY(-${offset}px)`;
-      }
-
-      onUnhovered(e) {
-        const target = e.currentTarget;
-        const THUMBNAIL_HEIGHT = 96;
-        const TOTAL_HEIGHT = target.offsetHeight;
-        const nbFrames = TOTAL_HEIGHT / THUMBNAIL_HEIGHT;
-        const offset = Math.floor(0.5 * nbFrames) * THUMBNAIL_HEIGHT;
         target.style.transform =
           `translateY(-${offset}px)`;
       }

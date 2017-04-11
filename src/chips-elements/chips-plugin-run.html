@@ -171,13 +171,14 @@
           const name = this.parameters.data[i].data.name;
           const value = this.parameters.data[i].data.value;
           // fill template
-          var parameter = {
+          const parameter = {
             name: name,
             value: '',
           }
           data.body.template.data.push(parameter);
           // fill data
-          data.body.data[name] = value;
+          data.body.data[name] = (value === '') ? 'test' : value;
+
         }
 
         const start = this.__startPlugin(this.$.API, this.pluginRunSelected.links.instances, data);
