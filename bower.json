@@ -37,7 +37,8 @@
     "paper-listbox": "PolymerElements/paper-listbox#2.0-preview",
     "paper-slider": "PolymerElements/paper-slider#2.0-preview",
     "paper-dialog": "PolymerElements/paper-dialog#2.0-preview",
-    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#2.0-preview"
+    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#2.0-preview",
+    "moment-element": "abdonrd/moment-element#^0.4.4"
   },
   "resolutions": {
     "polymer": "^2.0.0-rc.1",

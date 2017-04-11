@@ -2,12 +2,17 @@
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
+<link rel="import" href="../../bower_components/moment-element/moment-element.html">
+
 <link rel="import" href="../chips-api/chips-api.html">
 <link rel="import" href="../chips-behaviors/chips-plugin-behavior.html">
+
+<link rel="import" href="../my-icons.html">
 
 <dom-module id="chips-feed-browser">
   <template>
@@ -48,9 +53,26 @@
         cursor: pointer;
       }
 
+      .pluginInstance {
+        display: flex;
+      }
+
+      .pluginInstance .logo {
+        border-radius: 50%;
+        margin: 4px;
+        color: #FFFFFF;
+        padding: 4px;
+        min-width: 24px;
+        min-height: 24px;
+        max-width: 24px;
+        max-height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       .dataInstance {
         color: #212121;
-        font-size: 12px;
         display: flex;
       }
 
@@ -71,19 +93,24 @@
         min-width: 0;
       }
 
+      .content {
+        flex:1;
+        margin: 0 4px;
+      }
+
       .about > div {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
 
-      #description {
-        font-size: 14px;
+      .description {
         color: var(--primary-text-color);
       }
 
-      #date, #files {
+      .date, #files {
         color: var(--secondary-text-color);
+        font-size: 12px;
       }
 
       #loader {
@@ -102,6 +129,22 @@
       .noData {
         padding: 6px 12px;
       }
+
+      .started {
+        color: #03a9f4;
+      }
+
+      .failure {
+        color: #f44336;
+      }
+
+      .success {
+        color: #8bc34a;
+      }
+
+      .unknown {
+        color: #9c27b0;
+      }
     </style>
 
     <chips-api id="API"></chips-api>
@@ -113,9 +156,14 @@
             on-iron-deselect="_pluginInstanceDeselected">
             <template is="dom-repeat" items="[[pluginInstances]]">
                 <div item="[[item]]" class="pluginInstance">
-                    <div>[[item.data.id]]</div>
-                    <div>[[item.data.plugin_name]]</div>
-                    <div>[[item.data.status]]</div>
+                    <div class="logo" style="[[_styleLogo(item)]]">[[item.data.letter]]</div>
+                    <div class="content">
+                      <div class="description">[[item.data.label]]</div>
+                      <div class="date">
+                        <moment-element datetime="[[item.data.end_date]]" output-format="MMM DD[,] YYYY"></moment-element>
+                      </div>
+                    </div>
+                    <div><iron-icon class$="[[_iconStatus(item.data.status)]]" icon$="my-icons:[[_iconStatus(item.data.status)]]"></iron-icon></div>
                 </div>
             </template>
         </iron-selector>
@@ -148,8 +196,8 @@
                         on-mouseout='centerThumbnail'>
                 </div>
                 <div class="about">
-                    <div id="description">[[item.details.series.description]]</div>
-                    <div id="date">[[item.details.series.date]]</div>
+                    <div class="description">[[item.details.series.description]]</div>
+                    <div class="date">[[item.details.series.date]]</div>
                     <div id="files">[[item.details.series.files]]</div>
                 </div>
             </div>
@@ -496,6 +544,22 @@
 
       _isDataEmpty(data) {
         return data <= 0;
+      }
+
+      _styleLogo(item) {
+        console.log(item.data);
+        return `background-color: ${item.data.color};`
+      }
+
+      _iconStatus(status) {
+        if (status === 'started') {
+          return 'started';
+        } else if (status === 'finishedSuccessfully') {
+          return 'success';
+        } else if (status === 'finishedWithError') {
+          return 'failure';
+        }
+        return `unknown`;
       }
     }
 
