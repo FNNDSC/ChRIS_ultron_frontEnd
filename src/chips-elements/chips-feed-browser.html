@@ -132,7 +132,12 @@
 
       .started {
         color: #03a9f4;
+        /*animation: rotation 2s infinite linear;*/
       }
+      /*@keyframes rotation {
+    from {-webkit-transform: rotate(0deg);}
+    to   {-webkit-transform: rotate(359deg);}
+}*/
 
       .failure {
         color: #f44336;
@@ -151,12 +156,13 @@
 
     <div class="panel pluginsPanel">
         <iron-selector
-            selected="{{pluginInstancesSelected}}"
+            id="PluginInstanceSelectedTest"
+            selected="{{pluginInstanceSelected}}"
             on-iron-select="_pluginInstanceSelected"
             on-iron-deselect="_pluginInstanceDeselected">
             <template is="dom-repeat" items="[[pluginInstances]]">
                 <div item="[[item]]" class="pluginInstance">
-                    <div class="logo" style="[[_styleLogo(item)]]">[[item.data.letter]]</div>
+                    <div class="logo" style$="[[_styleLogo(item)]]">[[item.data.letter]]</div>
                     <div class="content">
                       <div class="description">[[item.data.label]]</div>
                       <div class="date">
@@ -219,9 +225,9 @@
             type: Object,
             value: {},
           },
-          pluginInstancesSelected: {
-            type: Array,
-            value: [],
+          pluginInstanceSelected: {
+            type: Number,
+            value: 0,
           },
           dataSelected: {
             type: Number,
@@ -372,8 +378,17 @@
       }
 
       _handleFilesResponse(response) {
+        //
+        const responseTargetID = response[0].data.plugin_inst_id;
+        const currentTargetID = this.$.PluginInstanceSelectedTest.selectedItem.item.data.id;
+        if(responseTargetID !== currentTargetID) {
+          //
+          console.log(`Discard response for target ${responseTargetID} (current ${currentTargetID})`);
+          return;
+        }
+
         this.loading = false;
-        const files = this.files.slice();
+        const files = [];//this.files.slice();
 
         for (const file of response) {
           this.__formatFile(file, this.feed);
@@ -390,7 +405,7 @@
       reset() {
         this.set('files', []);
         this.set('feed', {});
-        this.set('pluginInstancesSelected', []);
+        this.set('pluginInstanceSelected', 0);
         this.set('pluginInstances', []);
         this.dataMap = new Map();
         this.set('dataArray', []);
