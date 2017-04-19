@@ -216,9 +216,10 @@
           .catch(this._handleFeedsError.bind(this));
       }
 
-      // _resizeHandler(){
-      //   this._activePanelChanged(true);
-      // }
+      _resizeHandler(){
+        console.log('layout resize...');
+        // this._activePanelChanged(true);
+      }
 
       _activePanelChanged(active) {
         if (active === undefined) {

@@ -1,14 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 
 <link rel="import" href="../chips-behaviors/chips-feed-behavior.html">
-
 <link rel="import" href="../chips-api/chips-api.html">
+
+<link rel="import" href="./chips-parameter.html">
 
 <dom-module id="chips-plugin-run">
   <template>
@@ -53,11 +56,8 @@
       </div>
 
       <paper-dialog-scrollable>
-        <template is="dom-repeat" items="{{parameters.data}}">
-            <div>
-            [[item.data.name]] - [[item.data.type]] - [[item.data.default]]
-            </div>
-          <!--<chips-parameter
+        <template is="dom-repeat" items="{{parameters.data}}" on-dom-change="_contentChanged">
+          <chips-parameter
             parameter="{{item}}"
             optional="{{item.data.optional}}"
             name="{{item.data.name}}"
@@ -65,7 +65,7 @@
             help="{{item.data.help}}"
             default="{{item.data.default}}"
             on-change-value="_changeValue"
-            ></chips-parameter>-->
+            ></chips-parameter>
         </template>
       </paper-dialog-scrollable>
       <div class="buttons">
@@ -141,7 +141,6 @@
         this.pluginRunSelected = null;
         // close dialog
         this.$.processDataDialog.close();
-
       }
 
       _run() {
@@ -178,7 +177,6 @@
           data.body.template.data.push(parameter);
           // fill data
           data.body.data[name] = (value === '') ? 'test' : value;
-
         }
 
         const start = this.__startPlugin(this.$.API, this.pluginRunSelected.links.instances, data);
@@ -204,6 +202,13 @@
 
       _isDS(plugin) {
         return plugin.data.type === 'ds';
+      }
+
+      _changeValue(event) {
+      }
+
+      _contentChanged(event) {
+        this.$.processDataDialog.notifyResize();
       }
     }
 

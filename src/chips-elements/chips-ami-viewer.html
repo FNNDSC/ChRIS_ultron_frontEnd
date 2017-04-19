@@ -226,6 +226,8 @@
       }
 
       _onWindowResize() {
+        Polymer.RenderStatus.beforeNextRender( this, () => {
+        console.log('resize viewer...');
         this.renderer.setSize(
           this.container.offsetWidth,
           this.container.offsetHeight);
@@ -243,6 +245,8 @@
         // update info to draw borders properly
         this.stackHelper.slice.canvasWidth = this.container.offsetWidth;
         this.stackHelper.slice.canvasHeight = this.container.offsetHeight;
+
+        });
       }
 
       _onScroll(e) {
