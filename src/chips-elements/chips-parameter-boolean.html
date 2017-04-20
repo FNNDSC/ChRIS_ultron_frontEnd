@@ -1,0 +1,42 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<dom-module id="chips-parameter-boolean">
+  <template>
+    <style>
+      :host {
+        padding: 8px 0;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        margin-top: 22px;
+      }
+    </style>
+
+    <paper-checkbox checked="{{value}}"></paper-checkbox> [[label]]
+
+  </template>
+
+  <script>
+    class ChipsParameterBoolean extends Polymer.Element {
+      static get is() {
+        return 'chips-parameter-boolean';
+      }
+
+      static get properties() {
+        return {
+          value: {
+            type: String,
+            notify: true,
+          },
+          label: {
+            type: String,
+          },
+        };
+      }
+    }
+
+    window.customElements.define(ChipsParameterBoolean.is, ChipsParameterBoolean);
+  </script>
+</dom-module>

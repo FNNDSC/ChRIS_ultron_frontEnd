@@ -1,0 +1,102 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<link rel="import" href="./chips-parameter-boolean.html">
+<link rel="import" href="./chips-parameter-number.html">
+<link rel="import" href="./chips-parameter-string.html">
+
+<link rel="import" href="../my-icons.html">
+
+<dom-module id="chips-parameter">
+  <template>
+    <style>
+      .parameter {
+        display: flex;
+      }
+      chips-parameter-string, chips-parameter-number, chips-parameter-boolean {
+        flex: 1
+      }
+    </style>
+
+    <div class="parameter">
+      <template is="dom-if" if="{{_isString(type)}}">
+        <chips-parameter-string value="{{value}}" label="{{name}}"></chips-parameter-string>
+      </template>
+
+      <template is="dom-if" if="{{_isBoolean(type)}}">
+        <chips-parameter-boolean value="{{value}}" label="{{name}}"></chips-parameter-boolean>
+      </template>
+
+      <template is="dom-if" if="{{_isInteger(type)}}">
+        <chips-parameter-number value="{{value}}" step="1" label="{{name}}"></chips-parameter-number>
+      </template>
+
+      <template is="dom-if" if="{{_isFloat(type)}}">
+        <chips-parameter-number value="{{value}}" step="0.00000001" label="{{name}}"></chips-parameter-number>
+      </template>
+
+      <paper-icon-button id="help" icon="my-icons:help-outline" alt="help"></paper-icon-button>
+      <paper-tooltip for="help" animation-delay="0.2">{{help}}</paper-tooltip>
+    </div>
+
+  </template>
+
+  <script>
+    class ChipsParameter extends Polymer.Element {
+      static get is() {
+        return 'chips-parameter';
+      }
+
+      static get properties() {
+        return {
+          default: {
+            type: String,
+            observer: '_defaultChanged',
+          },
+          help:{
+            type: String,
+          },
+          name: {
+            type: String,
+          },
+          type: {
+            type: String,
+          },
+          value: {
+            type: String,
+            notify: true,
+          },
+        };
+      }
+
+      _isString(type) {
+        return type === 'string';
+      }
+      
+      _isBoolean(type) {
+        return type === 'boolean';
+      }
+
+      _isInteger(type) {
+        return type === 'integer';
+      }
+
+      _isFloat(type) {
+        return type === 'float';
+      }
+
+      _defaultChanged(defaultValue) {
+        this.value = defaultValue;
+      }
+
+      reset() {
+        this.value = this.default;
+      }
+    }
+
+    window.customElements.define(ChipsParameter.is, ChipsParameter);
+  </script>
+</dom-module>

@@ -1,0 +1,33 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<dom-module id="chips-parameter-string">
+  <template>
+
+    <paper-input value="{{value}}" label="[[label]]"></paper-input>
+
+  </template>
+
+  <script>
+    class ChipsParameterString extends Polymer.Element {
+      static get is() {
+        return 'chips-parameter-string';
+      }
+
+      static get properties() {
+        return {
+          value: {
+            type: String,
+            notify: true,
+          },
+          label: {
+            type: String,
+          },
+        };
+      }
+    }
+
+    window.customElements.define(ChipsParameterString.is, ChipsParameterString);
+  </script>
+</dom-module>

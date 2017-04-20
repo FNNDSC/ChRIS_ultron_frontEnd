@@ -64,7 +64,7 @@
             type="{{item.data.type}}"
             help="{{item.data.help}}"
             default="{{item.data.default}}"
-            on-change-value="_changeValue"
+            on-value-changed="_valueChanged"
             ></chips-parameter>
         </template>
       </paper-dialog-scrollable>
@@ -204,8 +204,10 @@
         return plugin.data.type === 'ds';
       }
 
-      _changeValue(event) {
-        console.log(event);
+      _valueChanged(event) {
+        const newValue = event.detail.value;
+        const parameter = event.currentTarget.parameter;
+        parameter.data.value = newValue;;
       }
 
       _contentChanged(event) {
