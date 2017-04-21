@@ -16,6 +16,8 @@
     <style>
       :host {
         display: flex;
+        flex-direction: column;
+        background-color: #ffffff;
       }
 
       .header {
@@ -207,7 +209,6 @@
         super.ready();
 
         this._onScrollBounded = this._onScroll.bind(this);
-        this._onWindowResizeBounded = this._onWindowResize.bind(this);
         this._initViewer();
       }
 
@@ -215,19 +216,8 @@
         this.data = [];
       }
 
-      connectedCallback() {
-        super.connectedCallback();
-        window.addEventListener('resize', this._onWindowResizeBounded);
-      }
-
-      disconnectedCallback() {
-        super.disconnectedCallback();
-        window.removeEventListener('resize', this._onWindowResizeBounded);
-      }
-
       _onWindowResize() {
-        Polymer.RenderStatus.beforeNextRender( this, () => {
-        console.log('resize viewer...');
+        console.log(this.container.offsetWidth);
         this.renderer.setSize(
           this.container.offsetWidth,
           this.container.offsetHeight);
@@ -245,8 +235,6 @@
         // update info to draw borders properly
         this.stackHelper.slice.canvasWidth = this.container.offsetWidth;
         this.stackHelper.slice.canvasHeight = this.container.offsetHeight;
-
-        });
       }
 
       _onScroll(e) {
@@ -285,14 +273,12 @@
 
       _initViewer() {
         this.container = this.$.container;
-
         this.renderer = new THREE.WebGLRenderer({
             antialias: true,
           });
-        // - 64 x 2 for the toolbar
         this.renderer.setSize(
             this.container.offsetWidth,
-            this.container.offsetHeight - 128);
+            this.container.offsetHeight);
         this.renderer.setClearColor(0x212121, 1);
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.container.appendChild(this.renderer.domElement);

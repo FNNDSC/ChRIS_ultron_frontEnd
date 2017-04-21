@@ -1,0 +1,50 @@
+<dom-module id="my-animations">
+  <template>
+    <style>
+
+     /** SPIN ANIMATION **/
+    .animation-spin {
+      -webkit-animation: spin 2s infinite linear; /* Safari 4+ */
+      -moz-animation: spin 2s infinite linear; /* Fx 5+ */
+      -o-animation: spin 2s infinite linear; /* Opera 12+ */
+      animation: spin 2s infinite linear; /* IE 10+, Fx 29+ */
+    }
+
+     @-webkit-keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+      }
+
+      @-moz-keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+      }
+
+      @-o-keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+      }
+    </style>
+  </template>
+</dom-module>

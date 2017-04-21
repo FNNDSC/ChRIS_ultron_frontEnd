@@ -129,12 +129,6 @@
       }
     </style>
 
-    <iron-scroll-threshold id="scrollThreshold"
-      scroll-target="{{_getScrollTarget()}}"
-      lower-threshold="50"
-      on-lower-threshold="_nextFeeds">
-    </iron-scroll-threshold>
-
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
       <app-drawer id="drawer" slot="drawer">
@@ -204,6 +198,11 @@
       </app-header-layout>
     </app-drawer-layout>
 
+    <iron-scroll-threshold
+      id="scrollThreshold"
+      on-lower-threshold="_nextFeeds">
+    </iron-scroll-threshold>
+
   </template>
 
   <script>
@@ -241,6 +240,8 @@
       ready() {
         super.ready();
         this.version = ChipsConfiguration.version;
+        this.$.scrollThreshold.scrollTarget =
+          this.$.layout.$.contentContainer;
       }
 
       _login() {
@@ -276,14 +277,6 @@
         }
       }
 
-      _isFeedsFetching(item) {
-        return item === 'fetching';
-      }
-
-      _isFeedsSuccess(item) {
-        return item === 'success';
-      }
-
       _isFeedsError(item) {
         return item === 'error';
       }
@@ -310,11 +303,18 @@
       }
 
       _nextFeeds() {
-        if (this.feedsStatus === 'fetching' || this.feedsStatus=== '') {
+        // some timings issues here.
+        // callback should only be attached when ready
+        // right now this method always get called once when ready
+        if (this.feedsStatus === 'fetching' ||
+            this.feedsStatus === 'fetchRequested' ||
+            this.feedsStatus=== '' ||
+            this.feedsStatus === undefined) {
           this.shadowRoot.querySelector('#scrollThreshold').clearTriggers();
           return;
         }
         // fire reload feeds event
+        this.feedsStatus == 'fetchRequested';
         const feedsEvent = new CustomEvent('feeds', {detail: {
           feeds: {
             action: 'next',
@@ -322,10 +322,6 @@
         }});
         this.dispatchEvent(feedsEvent);
         this.shadowRoot.querySelector('#scrollThreshold').clearTriggers();
-      }
-
-      _getScrollTarget() {
-        return this.$.layout.$.contentContainer;
       }
 
       _loaderStyle(status) {

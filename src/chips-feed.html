@@ -66,15 +66,12 @@
 
       .viewerPanel {
         flex:1;
-        flex-direction: column;
-        background-color: #ffffff;
       }
 
       .panel {
         margin:10px;
         min-width: 192px;
         box-sizing: border-box;
-        display: flex;
       }
 
       paper-button[active] {
@@ -91,7 +88,9 @@
         flex:1;
       }
 
-      [hidden] { display: none }
+      [hidden] {
+        display: none;
+      }
     </style>
 
 
@@ -124,12 +123,16 @@
         <div class="container">
           <chips-feed-browser
             id="FeedBrowser"
-            class="panel dataPanel"
+            class="panel"
             feed="[[feed]]"
             selection="{{selection}}"
             hidden$="[[!dataActive]]"
             plugin-instances="{{pluginInstances}}"></chips-feed-browser>
-          <chips-ami-viewer id="AmiViewer" class="panel viewerPanel" data="[[selection]]" hidden$="[[!viewerActive]]"></chips-ami-viewer>
+          <chips-ami-viewer
+            id="AmiViewer"
+            class="panel viewerPanel"
+            data="[[selection]]"
+            hidden$="[[!viewerActive]]"></chips-ami-viewer>
         </div>
     </app-header-layout>
 
@@ -217,17 +220,18 @@
       }
 
       _resizeHandler(){
-        console.log('layout resize...');
-        // this._activePanelChanged(true);
+        // horrible hack...
+        setTimeout(() => {
+          this._activePanelChanged(true);
+        }, 250);
       }
 
       _activePanelChanged(active) {
         if (active === undefined) {
           return;
         }
-        if (this.viewerActive) {
-          this.$.AmiViewer._onWindowResize();
-        }
+        
+        this.$.AmiViewer._onWindowResize();
       }
 
       _handleFeedResponse(response) {

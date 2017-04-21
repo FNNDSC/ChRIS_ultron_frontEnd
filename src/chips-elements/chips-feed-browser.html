@@ -13,23 +13,27 @@
 <link rel="import" href="../chips-behaviors/chips-plugin-behavior.html">
 
 <link rel="import" href="../my-icons.html">
+<link rel="import" href="../my-animations.html">
 
 <dom-module id="chips-feed-browser">
   <template>
-    <style>
+    <style include="my-animations">
       :host {
         display: flex;
         justify-content: center;
       }
 
       .panel {
-        margin:10px;
         min-width: 192px;
         box-sizing: border-box;
         display: flex;
         background-color: #ffffff;
         width: 256px;
         overflow-y:auto;
+      }
+
+      .dataPanel {
+        margin-left: 10px;
       }
 
       .pluginInstance, .dataInstance {
@@ -132,12 +136,7 @@
 
       .started {
         color: #03a9f4;
-        /*animation: rotation 2s infinite linear;*/
       }
-      /*@keyframes rotation {
-    from {-webkit-transform: rotate(0deg);}
-    to   {-webkit-transform: rotate(359deg);}
-}*/
 
       .failure {
         color: #f44336;
@@ -154,7 +153,7 @@
 
     <chips-api id="API"></chips-api>
 
-    <div class="panel pluginsPanel">
+    <div class="panel">
         <iron-selector
             id="PluginInstanceSelectedTest"
             selected="{{pluginInstanceSelected}}"
@@ -169,7 +168,7 @@
                         <moment-element datetime="[[item.data.end_date]]" output-format="MMM DD[,] YYYY"></moment-element>
                       </div>
                     </div>
-                    <div><iron-icon class$="[[_iconStatus(item.data.status)]]" icon$="my-icons:[[_iconStatus(item.data.status)]]"></iron-icon></div>
+                    <div><iron-icon class$="[[_classStatus(item.data.status)]]" icon$="my-icons:[[_iconStatus(item.data.status)]]"></iron-icon></div>
                 </div>
             </template>
         </iron-selector>
@@ -378,6 +377,12 @@
       }
 
       _handleFilesResponse(response) {
+        this.loading = false;
+        if(response.length <= 0) {
+          this.set('files', []);
+          return;
+        }
+
         //
         const responseTargetID = response[0].data.plugin_inst_id;
         const currentTargetID = this.$.PluginInstanceSelectedTest.selectedItem.item.data.id;
@@ -387,9 +392,7 @@
           return;
         }
 
-        this.loading = false;
-        const files = [];//this.files.slice();
-
+        const files = [];
         for (const file of response) {
           this.__formatFile(file, this.feed);
           files.push(file);
@@ -569,6 +572,17 @@
       _iconStatus(status) {
         if (status === 'started') {
           return 'started';
+        } else if (status === 'finishedSuccessfully') {
+          return 'success';
+        } else if (status === 'finishedWithError') {
+          return 'failure';
+        }
+        return `unknown`;
+      }
+
+      _classStatus(status) {
+        if (status === 'started') {
+          return 'started animation-spin';
         } else if (status === 'finishedSuccessfully') {
           return 'success';
         } else if (status === 'finishedWithError') {
