@@ -40,7 +40,9 @@
     "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#2.0-preview",
     "moment-element": "abdonrd/moment-element#^0.4.4",
     "paper-tooltip": "PolymerElements/paper-tooltip#2.0-preview",
-    "paper-checkbox": "PolymerElements/paper-checkbox#2.0-preview"
+    "paper-checkbox": "PolymerElements/paper-checkbox#2.0-preview",
+    "marked-element": "PolymerElements/marked-element#2.0-preview",
+    "iron-autogrow-textarea": "PolymerElements/iron-autogrow-textarea#2.0-preview"
   },
   "resolutions": {
     "iron-scroll-target-behavior": "2.0-preview",

@@ -14,6 +14,7 @@
 
 <link rel="import" href="chips-behaviors/chips-feed-behavior.html">
 <link rel="import" href="chips-elements/chips-feed-browser.html">
+<link rel="import" href="chips-elements/chips-feed-notes.html">
 <link rel="import" href="chips-elements/chips-ami-viewer.html">
 <link rel="import" href="chips-elements/chips-plugin-run.html">
 
@@ -64,7 +65,7 @@
         height: 100%;
       }
 
-      .viewerPanel {
+      .viewerPanel, .notesPanel {
         flex:1;
       }
 
@@ -113,7 +114,7 @@
           <app-toolbar class="toolbar feed">
             <paper-button toggles raised active="{{dataActive}}">Data Browser</paper-button>
             <paper-button toggles raised active="{{viewerActive}}">Viewer</paper-button>
-            <paper-button toggles raised disabled>Notes</paper-button>
+            <paper-button toggles raised active="{{notesActive}}">Notes</paper-button>
             <paper-button toggles raised disabled>Comments</paper-button>
             <div class="spacer"></div>
             <paper-button raised class="action" on-tap="_openProcessDataDialog">Process data</paper-button>
@@ -133,6 +134,11 @@
             class="panel viewerPanel"
             data="[[selection]]"
             hidden$="[[!viewerActive]]"></chips-ami-viewer>
+          <chips-feed-notes
+            id="notes"
+            class="panel notesPanel"
+            feed="[[feed]]"
+            hidden$="[[!notesActive]]"></chips-feed-notes>
         </div>
     </app-header-layout>
 
@@ -152,6 +158,11 @@
             observer: '_activePanelChanged',
           },
           viewerActive: {
+            type: Boolean,
+            value: true,
+            observer: '_activePanelChanged',
+          },
+          notesActive: {
             type: Boolean,
             value: true,
             observer: '_activePanelChanged',
@@ -235,7 +246,6 @@
       }
 
       _handleFeedResponse(response) {
-        console.log('new feed');
         const feed = response.data[0];
         this.__formatFeed(feed);
         this.set('feed', feed);
@@ -268,8 +278,6 @@
 
       _handlePluginInstance(event) {
         const pluginInstance = event.detail.pluginInstance.data[0];
-        console.log(event.detail);
-        console.log(pluginInstance);
         this.__formatPlugin(pluginInstance, this.feed);
         this.$.FeedBrowser.push('pluginInstances', pluginInstance);
       }

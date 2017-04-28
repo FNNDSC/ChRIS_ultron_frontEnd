@@ -40,14 +40,14 @@
         <h2>Process data</h2>
         <div class="spacer"></div>
         <paper-dropdown-menu label="Input">
-          <paper-listbox class="dropdown-content" selected-item="{{pluginSelected}}">
+          <paper-listbox slot="dropdown-content" selected-item="{{pluginSelected}}">
             <template is="dom-repeat" items="{{pluginInstances}}">
               <paper-item item="[[item]]">[[item.data.label]]</paper-item>
             </template>
           </paper-listbox>
         </paper-dropdown-menu>
         <paper-dropdown-menu label="Process">
-          <paper-listbox class="dropdown-content">
+          <paper-listbox slot="dropdown-content">
             <template is="dom-repeat" items="{{pluginsAvailable}}" filter="_isDS">
               <paper-item item="[[item]]" on-tap="_pluginAvailableSelected">[[item.data.name]]</paper-item>
             </template>

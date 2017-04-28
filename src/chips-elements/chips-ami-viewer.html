@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-
 <link rel="import" href="../libs/ami-import.html">
 
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
@@ -25,6 +24,7 @@
         align-items: flex-end;
         flex-direction: column;
         padding: 8px;
+        border-bottom: 1px solid var(--divider-color);
       }
 
       .footer {
@@ -113,7 +113,7 @@
 
     <div class="header">
         <paper-dropdown-menu label="Orientation" selected-item-label="{{orientation}}">
-            <paper-listbox id="orientationListBox" class="dropdown-content" selected="0">
+            <paper-listbox id="orientationListBox" slot="dropdown-content" selected="0">
                 <paper-item label="default">default</paper-item>
                 <paper-item label="axial">axial</paper-item>
                 <paper-item label="coronal">coronal</paper-item>
