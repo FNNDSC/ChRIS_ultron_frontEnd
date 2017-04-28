@@ -1,0 +1,265 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/shadycss/apply-shim.html">
+
+<link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../../bower_components/marked-element/marked-element.html">
+
+<link rel="import" href="../chips-api/chips-api.html">
+<link rel="import" href="../chips-behaviors/chips-feed-behavior.html">
+
+<link rel="import" href="../my-icons.html">
+
+<dom-module id="chips-feed-notes">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        box-sizing: border-box;
+        flex-direction: column;
+        justify-content: center;
+        background-color: #ffffff;
+        position: relative;
+      }
+
+      paper-input {
+        width: 100%;
+      }
+
+      .header {
+        display: flex;
+        height: 63px;
+        justify-content: center;
+        flex-direction: column;
+        padding: 8px;
+        border-bottom: 1px solid var(--divider-color);
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex:1;
+        background-color: #fff;
+      }
+
+      [hidden] {
+        display: none;
+      }
+
+      .marked-element-container, iron-autogrow-textarea {
+        flex: 1;
+        width: 100%;
+        border: none;
+        box-sizing: border-box;
+      }
+
+      iron-autogrow-textarea {
+        background-color: #d9d9d9;
+        --iron-autogrow-textarea: {
+          box-sizing: border-box;
+        }
+      }
+
+      .marked-element-container {
+        position: relative;
+        overflow-y: auto;
+      }
+
+      marked-element {
+        position: absolute;
+        top:0;
+        bottom:0;
+        left:0;
+        right: 0;
+        padding: 8px;
+      }
+
+      [slot="markdown-html"] pre code {
+        display: flex;
+        padding: 10px;
+        color: #d9d9d9;
+        background-color: var(--paper-grey-800);
+      }
+
+      [slot="markdown-html"] code {
+        padding: 10px;
+        color: var(--primary-color);
+      }
+
+      [slot="markdown-html"] blockquote p {
+        background-color: var(--light-primary-color);
+        padding: 8px;
+      }
+
+      [slot="markdown-html"] table {
+        border-collapse: collapse;
+      }
+
+      [slot="markdown-html"] table, [slot="markdown-html"] th, [slot="markdown-html"] td {
+        border: 1px solid #212121;
+      }
+
+      .fab-container {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        z-index: 1;
+      }
+
+      paper-fab {
+        margin: 4px;
+      }
+    </style>
+
+    <chips-api id="API"></chips-api>
+
+    <div class="header">
+      <template is="dom-if" if="[[!editing]]">
+        [[note.data.title]]
+      </template>
+
+      <template is="dom-if" if="[[editing]]">
+        <paper-input char-counter maxlength="30" label="Title" value="{{note.data.title}}"></paper-input>
+      </template>
+
+
+      <div class="fab-container">
+        <template is="dom-if" if="[[!editing]]">
+          <paper-fab mini icon="my-icons:create" on-tap="_handleEdit"></paper-fab>
+        </template>
+
+        <template is="dom-if" if="[[editing]]" >
+          <paper-fab mini icon="my-icons:save" on-tap="_handleSave"></paper-fab>
+          <paper-fab mini icon="my-icons:close" on-tap="_handleCancel"></paper-fab>
+        </template>
+      </div>
+    </div>
+
+    <div class="content">
+      <iron-autogrow-textarea hidden$="[[!editing]]" value="{{note.data.content}}"></iron-autogrow-textarea>
+      <div class="marked-element-container">
+        <marked-element markdown="[[note.data.content]]">
+          <div slot="markdown-html"></div>
+        </marked-element>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class ChipsFeedNotes extends FeedBehavior(Polymer.Element) {
+      static get is() {
+        return 'chips-feed-notes';
+      }
+
+      static get properties() {
+        return {
+          feed: {
+            type: Object,
+            value: {},
+            observer: '_feedChanged',
+          },
+          editing: {
+            type: Boolean,
+            value: false,
+          },
+          previousTitle: {
+            type: String,
+            value: '',
+          },
+          previousContent: {
+            type: String,
+            value: '',
+          },
+          note: {
+            type: Object,
+            value: '',
+          }
+        };
+      }
+
+      _feedChanged(feed) {
+        if (feed === undefined || feed.links === undefined) {
+          return;
+        }
+
+        const data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        data.params = {};
+        data.params.limit = 9999;
+        data.params.page_size = 9999;
+
+        this.$.API.handleAs = 'json';
+        this.$.API.request('GET', feed.links.note, data)
+          .then(this._handleNoteResponse.bind(this))
+          .catch(this._handleNoteError.bind(this));
+      }
+
+      _handleNoteResponse(response) {
+        console.log('note');
+        console.log(response);
+        const note = response.data[0];
+        note.template = response.template;
+        // if(note.data.title === '') {
+        //   note.data.title = 'Note title'
+        // }
+        // if(note.data.content === '') {
+        //   note.data.content = 'Note **content**.'
+        // }
+
+        this.set('note', note);
+      }
+
+      _handleNoteError(error) {
+      }
+
+      _handleEdit() {
+        this.editing = true;
+        this.previousTitle = this.note.data.title;
+        this.previousContent = this.note.data.content;
+      }
+
+      _handleSave() {
+        this.editing = false;
+        // go ajax
+        const data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+
+        data.body = {};
+        data.body.template = this.note.template;
+        data.body.data = this.note.data;
+
+        this.$.API.handleAs = 'json';
+        this.$.API.request('PUT', this.note.href, data)
+          .then(this._handleNoteSaveResponse.bind(this))
+          .catch(this._handleNoteSaveError.bind(this));
+      }
+
+      _handleNoteSaveResponse(response) {
+      }
+
+      _handleNoteSaveError(error) {
+      }
+
+      _handleCancel() {
+        this.editing = false;
+        this.set('note.data.title', this.previousTitle);
+        this.set('note.data.content', this.previousContent);
+      }
+    }
+
+    window.customElements.define(ChipsFeedNotes.is, ChipsFeedNotes);
+  </script>
+</dom-module>
