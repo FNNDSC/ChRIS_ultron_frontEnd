@@ -2,6 +2,7 @@
   "entrypoint": "index.html",
   "shell": "src/chips-ultron.html",
   "fragments": [
+    "src/chips-feed.html",
     "src/chips-home.html",
     "src/chips-login.html",
     "src/chips-app.html",
@@ -16,6 +17,7 @@
   "extraDependencies": [
     "CNAME",
     "manifest.json",
+    "bower_components/web-animations-js/web-animations-next-lite.min.js",
     "bower_components/webcomponentsjs/*.js"
   ],
   "lint": {
