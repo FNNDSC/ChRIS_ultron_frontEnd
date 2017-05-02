@@ -119,7 +119,8 @@
           type: 'token',
           token: sessionStorage.getItem('token'),
         };
-        const request =this.$.API.request('GET', selectedPlugin.links.parameters, data);
+        const request =
+          this.$.API.request('GET', selectedPlugin.links.parameters, data);
         request
           .then(this._handleParametersResponse.bind(this));
       }
@@ -130,8 +131,9 @@
       }
 
       _resetParameters() {
-          for(var i=0; i < this.parameters.data.length; i++) {
-            this.parameters.data[i].data.value = this.parameters.data[i].data.default;
+          for (var i=0; i < this.parameters.data.length; i++) {
+            this.parameters.data[i].data.value =
+              this.parameters.data[i].data.default;
           }
         }
 
@@ -144,7 +146,7 @@
       }
 
       _run() {
-        if(this.pluginSelected === null ||
+        if (this.pluginSelected === null ||
            this.pluginRunSelected === null) {
           return;
         }
@@ -162,24 +164,25 @@
         data.body.template.data.push({
           name: 'previous_id',
           value: '',
-        })
+        });
         data.body.data = {
-            previous_id: plugin.data.id
-        }
-        for(let i=0; i<this.parameters.data.length; i++) {
+            previous_id: plugin.data.id,
+        };
+        for (let i=0; i<this.parameters.data.length; i++) {
           const name = this.parameters.data[i].data.name;
           const value = this.parameters.data[i].data.value;
           // fill template
           const parameter = {
             name: name,
             value: '',
-          }
+          };
           data.body.template.data.push(parameter);
           // fill data
           data.body.data[name] = (value === '') ? 'test' : value;
         }
 
-        const start = this.__startPlugin(this.$.API, this.pluginRunSelected.links.instances, data);
+        const start =
+          this.__startPlugin(this.$.API, this.pluginRunSelected.links.instances, data);
         start
           .then(this._handlePluginResponse.bind(this))
           .catch(this._handlePluginError.bind(this));
@@ -207,8 +210,8 @@
       _valueChanged(event) {
         const newValue = event.detail.value;
         const parameter = event.currentTarget.parameter;
-        parameter.data.value = newValue;;
-      }
+        parameter.data.value = newValue;
+  }
 
       _contentChanged(event) {
         this.$.processDataDialog.notifyResize();

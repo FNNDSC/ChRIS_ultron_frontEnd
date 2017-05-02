@@ -155,7 +155,7 @@
 
     <div class="panel">
         <iron-selector
-            id="PluginInstanceSelectedTest"
+            id="PluginInstanceSelected"
             selected="{{pluginInstanceSelected}}"
             on-iron-select="_pluginInstanceSelected"
             on-iron-deselect="_pluginInstanceDeselected">
@@ -378,17 +378,20 @@
 
       _handleFilesResponse(response) {
         this.loading = false;
-        if(response.length <= 0) {
+        if (response.length <= 0) {
           this.set('files', []);
           return;
         }
 
         //
         const responseTargetID = response[0].data.plugin_inst_id;
-        const currentTargetID = this.$.PluginInstanceSelectedTest.selectedItem.item.data.id;
-        if(responseTargetID !== currentTargetID) {
+        const currentTargetID =
+          this.$.PluginInstanceSelected.selectedItem.item.data.id;
+        if (responseTargetID !== currentTargetID) {
           //
-          console.log(`Discard response for target ${responseTargetID} (current ${currentTargetID})`);
+          console.log(
+            `Discard response for target ${responseTargetID}
+            (current ${currentTargetID})`);
           return;
         }
 
@@ -493,8 +496,7 @@
                 var imageUrl = urlCreator.createObjectURL(response);
                 target.onload = this.centerThumbnail.bind(this);
                 target.src = imageUrl;
-
-              })
+          })
               .catch((error) => {
                 console.log(error);
               });
@@ -566,7 +568,7 @@
 
       _styleLogo(item) {
         console.log(item.data);
-        return `background-color: ${item.data.color};`
+        return `background-color: ${item.data.color};`;
       }
 
       _iconStatus(status) {
