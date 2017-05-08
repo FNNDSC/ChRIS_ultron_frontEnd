@@ -1,0 +1,131 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../../bower_components/moment-element/moment-element.html">
+
+<link rel="import" href="../my-icons.html">
+<link rel="import" href="../my-animations.html">
+
+<dom-module id="chips-thread-item">
+  <template>
+    <style>
+
+      .container {
+        flex-direction: row;
+        display: flex;
+      }
+
+      .content {
+        flex:1;
+        margin: 0 4px;
+      }
+
+      .logo {
+        border-radius: 50%;
+        margin: 4px;
+        color: #FFFFFF;
+        padding: 4px;
+        min-width: 24px;
+        min-height: 24px;
+        max-width: 24px;
+        max-height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .description {
+        color: var(--primary-text-color);
+      }
+
+      .date {
+        color: var(--secondary-text-color);
+        font-size: 12px;
+      }
+
+      .started {
+        color: #03a9f4;
+      }
+
+      .failure {
+        color: #f44336;
+      }
+
+      .success {
+        color: #8bc34a;
+      }
+
+      .unknown {
+        color: #9c27b0;
+      }
+    </style>
+
+    <div class="container" threadItem="[[threadItem]]" class="pluginInstance">
+        <div class="logo" style$="[[_styleLogo(threadItem)]]">[[threadItem.data.letter]]</div>
+        <div class="content">
+            <div class="description">[[threadItem.data.label]]</div>
+            <div class="date">
+            <moment-element
+              datetime="[[threadItem.data.end_date]]"
+              output-format="MMM DD[,] YYYY"></moment-element>
+            </div>
+        </div>
+        <div>
+            <iron-icon
+              class$="[[_classStatus(threadItem.data.status)]]"
+              icon$="my-icons:[[_iconStatus(threadItem.data.status)]]"></iron-icon>
+        </div>
+    </div>
+
+    </template>
+
+  <script>
+    class ChipsThreadItem extends Polymer.Element {
+      static get is() {
+        return 'chips-thread-item';
+      }
+
+      static get properties() {
+        return {
+          threadItem: {
+            type: Object,
+            value: {},
+          },
+        };
+      }
+
+      _styleLogo(item) {
+        if(item.data){
+          return `background-color: ${item.data.color};`;
+        }
+
+        return '';
+      }
+
+      _iconStatus(status) {
+        if (status === 'started') {
+          return 'started';
+        } else if (status === 'finishedSuccessfully') {
+          return 'success';
+        } else if (status === 'finishedWithError') {
+          return 'failure';
+        }
+        return `unknown`;
+      }
+
+      _classStatus(status) {
+        if (status === 'started') {
+          return 'started animation-spin';
+        } else if (status === 'finishedSuccessfully') {
+          return 'success';
+        } else if (status === 'finishedWithError') {
+          return 'failure';
+        }
+        return `unknown`;
+      }
+    }
+
+    window.customElements.define(ChipsThreadItem.is, ChipsThreadItem);
+  </script>
+</dom-module>
