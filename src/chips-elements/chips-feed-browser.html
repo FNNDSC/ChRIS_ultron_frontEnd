@@ -2,18 +2,14 @@
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
-<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
-<link rel="import" href="../../bower_components/moment-element/moment-element.html">
-
 <link rel="import" href="../chips-api/chips-api.html">
 <link rel="import" href="../chips-behaviors/chips-plugin-behavior.html">
 
-<link rel="import" href="../my-icons.html">
-<link rel="import" href="../my-animations.html">
+<link rel="import" href="./chips-thread-list.html">
 
 <dom-module id="chips-feed-browser">
   <template>
@@ -57,24 +53,6 @@
         cursor: pointer;
       }
 
-      .pluginInstance {
-        display: flex;
-      }
-
-      .pluginInstance .logo {
-        border-radius: 50%;
-        margin: 4px;
-        color: #FFFFFF;
-        padding: 4px;
-        min-width: 24px;
-        min-height: 24px;
-        max-width: 24px;
-        max-height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
       .dataInstance {
         color: #212121;
         display: flex;
@@ -95,11 +73,6 @@
         padding: 2px;
         flex: 1;
         min-width: 0;
-      }
-
-      .content {
-        flex:1;
-        margin: 0 4px;
       }
 
       .about > div {
@@ -133,45 +106,12 @@
       .noData {
         padding: 6px 12px;
       }
-
-      .started {
-        color: #03a9f4;
-      }
-
-      .failure {
-        color: #f44336;
-      }
-
-      .success {
-        color: #8bc34a;
-      }
-
-      .unknown {
-        color: #9c27b0;
-      }
     </style>
 
     <chips-api id="API"></chips-api>
 
     <div class="panel">
-        <iron-selector
-            id="PluginInstanceSelected"
-            selected="{{pluginInstanceSelected}}"
-            on-iron-select="_pluginInstanceSelected"
-            on-iron-deselect="_pluginInstanceDeselected">
-            <template is="dom-repeat" items="[[pluginInstances]]">
-                <div item="[[item]]" class="pluginInstance">
-                    <div class="logo" style$="[[_styleLogo(item)]]">[[item.data.letter]]</div>
-                    <div class="content">
-                      <div class="description">[[item.data.label]]</div>
-                      <div class="date">
-                        <moment-element datetime="[[item.data.end_date]]" output-format="MMM DD[,] YYYY"></moment-element>
-                      </div>
-                    </div>
-                    <div><iron-icon class$="[[_classStatus(item.data.status)]]" icon$="my-icons:[[_iconStatus(item.data.status)]]"></iron-icon></div>
-                </div>
-            </template>
-        </iron-selector>
+      <chips-thread-list thread="[[thread]]" expanded></chips-thread-list>
     </div>
 
     <div class="panel dataPanel">
@@ -260,6 +200,10 @@
             type: Boolean,
             value: false,
           },
+          thread: {
+            type: Object,
+            value: {},
+          }
         };
       }
 
@@ -302,6 +246,42 @@
           this.__formatPlugin(pluginInstances[i], this.feed);
           this.push('pluginInstances', pluginInstances[i]);
         }
+
+        // order by previous id
+        function compare(a, b){
+          if( !a.data.previous_id){
+            return -1;
+          } else if(!b.data.previous_id){
+            return 1;
+          }
+
+          return a.data.previous_id > b.data.previous_id;
+        }
+
+        this.pluginInstances.sort(compare);
+
+        const tree = [];
+        tree.push(this.pluginInstances[0]);
+        tree[0].expanded = true;
+        tree[0].children = [];
+
+        const refs = {
+          [tree[0].data.id]: tree[0]
+        };
+
+        for (let i=1;  i<this.pluginInstances.length; i++) {
+          const pluginInstance = this.pluginInstances[i];
+          pluginInstance.children = [];
+          pluginInstance.expanded = false;
+          const previousID = pluginInstance.data.previous_id;
+          refs[previousID].children.push(pluginInstance);
+
+          // keep reference.
+          refs[pluginInstance.data.id] = pluginInstance;
+        }
+
+        this.set('thread', tree[0]);
+        console.log(this.thread);
       }
 
       _handlePluginInstancesError(error) {
@@ -343,6 +323,7 @@
       }
 
       _pluginInstanceSelected(selected) {
+        return;
         const plugin = selected.detail.item.item;
         const data = {};
         data.auth = {
@@ -354,6 +335,8 @@
         data.params.page_size = 9999;
         this.$.API.handleAs = 'json';
         this.loading = true;
+        console.log(this.pluginInstanceSelected);
+        console.log(selected);
         this.__getFilesPlugin(this.$.API, data, plugin)
           .then(this._handleFilesResponse.bind(this))
           .catch(this._handleFilesError.bind(this));
@@ -564,33 +547,6 @@
 
       _isDataEmpty(data) {
         return data <= 0;
-      }
-
-      _styleLogo(item) {
-        console.log(item.data);
-        return `background-color: ${item.data.color};`;
-      }
-
-      _iconStatus(status) {
-        if (status === 'started') {
-          return 'started';
-        } else if (status === 'finishedSuccessfully') {
-          return 'success';
-        } else if (status === 'finishedWithError') {
-          return 'failure';
-        }
-        return `unknown`;
-      }
-
-      _classStatus(status) {
-        if (status === 'started') {
-          return 'started animation-spin';
-        } else if (status === 'finishedSuccessfully') {
-          return 'success';
-        } else if (status === 'finishedWithError') {
-          return 'failure';
-        }
-        return `unknown`;
       }
     }
 
