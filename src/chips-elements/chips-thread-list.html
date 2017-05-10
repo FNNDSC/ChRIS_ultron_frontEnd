@@ -1,13 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
 <link rel="import" href="./chips-thread-item.html">
 <link rel="import" href="./chips-thread-list.html">
 
+<link rel="import" href="../my-icons.html">
+<link rel="import" href="../my-animations.html">
+
 <dom-module id="chips-thread-list">
   <template>
-    <style>
+    <style include="my-animations">
       :host {
         display: flex;
         width:100%;
@@ -16,15 +20,31 @@
         padding-left: 12px;
         padding-top: 6px;
       }
+
+      chips-thread-item {
+        flex: 1;
+      }
+
+      .item-container {
+        display: flex;
+      }
+
+      [hidden] {
+        display: none;
+      }
     </style>
 
-    <div on-tap="_handleExpanded">
-      <chips-thread-item thread-item="[[thread]]"></chips-thread-item>
+    <div class="item-container">
+      <iron-icon on-tap="_handleExpand"
+        class$="[[_classStatus(thread.expanded)]]"
+        icon="my-icons:arrow-drop-down"></iron-icon>
+      <chips-thread-item thread="[[thread]]" on-tap="_handleSelect"></chips-thread-item>
     </div>
-    <template is="dom-if" if="[[expanded]]">
-      <template is="dom-repeat" items="[[thread.children]]">
-        <chips-thread-list thread="[[item]]" expanded="[[item.expanded]]"></chips-thread-list>
-      </template>
+    <template is="dom-repeat" items="[[thread.children]]">
+      <chips-thread-list
+        hidden$="[[!thread.expanded]]"
+        thread="[[item]]">
+      </chips-thread-list>
     </template>
 
   </template>
@@ -41,19 +61,41 @@
             type: Object,
             value: {},
           },
-          expanded: {
-            type: Boolean,
-          }
         };
       }
 
-      _handleExpanded() {
-        this.expanded = !this.expanded;
-        if (!this.expanded) {
-          for(let i = 0; i < this.thread.children.length; i++){
-            this.set(`thread.children.${i}.expanded`, false);
+      static get observers() {
+        return [
+          '_threadChanged(thread, thread.expanded)'
+        ]
+      }
+
+      _handleSelect() {
+        console.log('selected');
+        console.log(this.thread);
+      }
+
+      _handleExpand() {
+        this.set('thread.expanded', !this.thread.expanded);
+      }
+
+      _threadChanged(thread) {
+        if (thread === undefined || !thread.data) {
+          return;
+        }
+
+        for( var i=0; i < this.thread.children.length; i++){
+          // this.set(['thread',i, 'children'], this.thread.children[i]);
+          if(this.thread.expanded === false && this.thread.children.length > 0){
+            for(let j = 0; j < this.thread.children.length; j++){
+              this.set(['thread','children', j, 'expanded'], false);
+            }
           }
         }
+      }
+
+      _classStatus(expanded) {
+        return expanded ? 'animation-rotate-90-clock' : 'animation-rotate-90';
       }
     }
 

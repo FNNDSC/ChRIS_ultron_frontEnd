@@ -9,7 +9,7 @@
 
 <dom-module id="chips-thread-item">
   <template>
-    <style>
+    <style include="my-animations">
 
       .container {
         flex-direction: row;
@@ -61,20 +61,20 @@
       }
     </style>
 
-    <div class="container" threadItem="[[threadItem]]" class="pluginInstance">
-        <div class="logo" style$="[[_styleLogo(threadItem)]]">[[threadItem.data.letter]]</div>
+    <div class="container" class="pluginInstance">
+        <div class="logo" style$="[[_styleLogo(thread)]]">[[thread.data.letter]]</div>
         <div class="content">
-            <div class="description">[[threadItem.data.label]]</div>
+            <div class="description">[[thread.data.label]]</div>
             <div class="date">
             <moment-element
-              datetime="[[threadItem.data.end_date]]"
+              datetime="[[thread.data.end_date]]"
               output-format="MMM DD[,] YYYY"></moment-element>
             </div>
         </div>
         <div>
             <iron-icon
-              class$="[[_classStatus(threadItem.data.status)]]"
-              icon$="my-icons:[[_iconStatus(threadItem.data.status)]]"></iron-icon>
+              class$="[[_classStatus(thread.data.status)]]"
+              icon$="my-icons:[[_iconStatus(thread.data.status)]]"></iron-icon>
         </div>
     </div>
 
@@ -88,7 +88,7 @@
 
       static get properties() {
         return {
-          threadItem: {
+          thread: {
             type: Object,
             value: {},
           },

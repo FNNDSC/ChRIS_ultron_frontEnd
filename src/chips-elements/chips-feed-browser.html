@@ -13,7 +13,7 @@
 
 <dom-module id="chips-feed-browser">
   <template>
-    <style include="my-animations">
+    <style>
       :host {
         display: flex;
         justify-content: center;
@@ -111,7 +111,7 @@
     <chips-api id="API"></chips-api>
 
     <div class="panel">
-      <chips-thread-list thread="[[thread]]" expanded></chips-thread-list>
+      <chips-thread-list thread="[[thread]]"></chips-thread-list>
     </div>
 
     <div class="panel dataPanel">
@@ -263,6 +263,7 @@
         const tree = [];
         tree.push(this.pluginInstances[0]);
         tree[0].expanded = true;
+        tree[0].selected = true;
         tree[0].children = [];
 
         const refs = {
@@ -273,6 +274,7 @@
           const pluginInstance = this.pluginInstances[i];
           pluginInstance.children = [];
           pluginInstance.expanded = false;
+          pluginInstance.selected = false;
           const previousID = pluginInstance.data.previous_id;
           refs[previousID].children.push(pluginInstance);
 
