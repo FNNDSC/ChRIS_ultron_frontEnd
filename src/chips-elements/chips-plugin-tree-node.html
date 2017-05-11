@@ -7,10 +7,9 @@
 <link rel="import" href="../my-icons.html">
 <link rel="import" href="../my-animations.html">
 
-<dom-module id="chips-thread-item">
+<dom-module id="chips-plugin-tree-node">
   <template>
     <style include="my-animations">
-
       .container {
         flex-direction: row;
         display: flex;
@@ -62,37 +61,67 @@
     </style>
 
     <div class="container" class="pluginInstance">
-        <div class="logo" style$="[[_styleLogo(thread)]]">[[thread.data.letter]]</div>
+        <iron-icon
+          on-tap="_handleExpand"
+          class$="[[_classStatusY(node.expanded, node.selected)]]"
+          icon="my-icons:arrow-drop-down">
+        </iron-icon>
+        <div class="logo" style$="[[_styleLogo(node)]]">[[node.data.letter]]</div>
         <div class="content">
-            <div class="description">[[thread.data.label]]</div>
+            <div class="description">[[node.data.label]]</div>
             <div class="date">
             <moment-element
-              datetime="[[thread.data.end_date]]"
+              datetime="[[node.data.end_date]]"
               output-format="MMM DD[,] YYYY"></moment-element>
             </div>
         </div>
         <div>
             <iron-icon
-              class$="[[_classStatus(thread.data.status)]]"
-              icon$="my-icons:[[_iconStatus(thread.data.status)]]"></iron-icon>
+              class$="[[_classStatus(node.data.status)]]"
+              icon$="my-icons:[[_iconStatus(node.data.status)]]"></iron-icon>
         </div>
     </div>
 
     </template>
 
   <script>
-    class ChipsThreadItem extends Polymer.Element {
+    class ChipsPluginTreeNode extends Polymer.Element {
       static get is() {
-        return 'chips-thread-item';
+        return 'chips-plugin-tree-node';
       }
 
       static get properties() {
         return {
-          thread: {
+          node: {
             type: Object,
             value: {},
+            notify: true,
           },
         };
+      }
+
+      /**
+       * Handle node expansion.
+       * Updating the "expanded" attribute will trigger the
+       * "_nodeChanged" observer.
+       * We do not fire anything because it only impacts
+       * children elemnents that we can access via "node.children"
+       */
+      _handleExpand() {
+        this.set('node.expanded', !this.node.expanded);
+      }
+
+      /**
+       * Set style depending on the node state.
+       * @param {Boolean} expanded
+       * @param {Boolean} selected
+       */
+      _classStatusY(expanded, selected) {
+        let className = '';
+        className += expanded ? 'animation-rotate-90-clock' : 'animation-rotate-90';
+        className += ' ';
+        className += selected ? 'selected' : '';
+        return className;
       }
 
       _styleLogo(item) {
@@ -126,6 +155,6 @@
       }
     }
 
-    window.customElements.define(ChipsThreadItem.is, ChipsThreadItem);
+    window.customElements.define(ChipsPluginTreeNode.is, ChipsPluginTreeNode);
   </script>
 </dom-module>

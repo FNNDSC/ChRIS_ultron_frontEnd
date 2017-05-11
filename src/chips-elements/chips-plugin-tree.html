@@ -1,0 +1,142 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="./chips-plugin-tree-node.html">
+<link rel="import" href="./chips-plugin-tree.html">
+
+<dom-module id="chips-plugin-tree">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        width:100%;
+        box-sizing: border-box;
+        flex-direction: column;
+        padding-top: 6px;
+      }
+
+      chips-plugin-tree-node {
+        flex: 1;
+      }
+
+      .item-container {
+        display: flex;
+      }
+
+      [hidden] {
+        display: none;
+      }
+    </style>
+
+    <div class="item-container" style$="[[_itemStyle(depth, offset)]]">
+      <chips-plugin-tree-node node="{{node}}" on-tap="_handleSelect"></chips-plugin-tree-node>
+    </div>
+    <template is="dom-repeat" items="[[node.children]]">
+      <chips-plugin-tree
+        hidden$="[[!node.expanded]]"
+        node="[[item]]"
+        depth="[[_increment(depth)]]">
+      </chips-plugin-tree>
+    </template>
+
+  </template>
+
+  <script>
+    class ChipsPluginTree extends Polymer.Element {
+      static get is() {
+        return 'chips-plugin-tree';
+      }
+
+      static get properties() {
+        return {
+          node: {
+            type: Object,
+            value: {},
+          },
+          depth: {
+            type: Number,
+            value: 0,
+          },
+          offset: {
+            type: Number,
+            value: 6,
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_nodeChanged(node, node.expanded)'
+        ]
+      }
+
+      /**
+       * Handle node selection.
+       * Fires "node-selected" event
+       * We fire an event so parent element
+       * containg the tree can properly update "selected" attribute
+       * of all nodes.
+       * @param {*} event
+       */
+      _handleSelect(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        // fire thread selected event
+        const nodeSelectedEvent = new CustomEvent(
+          'node-selected',
+          {
+            detail: {
+              node: this.node,
+            },
+            bubbles: true,
+            composed: true,
+          }
+        );
+        this.dispatchEvent(nodeSelectedEvent);
+      }
+
+      /**
+       * When a node changed, we may want to update its children
+       * We do not do that
+       */
+      _nodeChanged(node) {
+        if (node === undefined || !node.data) {
+          return;
+        }
+
+        for( var i=0; i < this.node.children.length; i++){
+          // if a node is not expanded, we make sure all children are also
+          // "not" expanded (i.e. "closed")
+          if(this.node.expanded === false && this.node.children.length > 0){
+            for(let j = 0; j < this.node.children.length; j++){
+              this.set(['node','children', j, 'expanded'], false);
+            }
+          }
+        }
+      }
+
+      /**
+       * Set style explicitly if styling can not be achieved
+       * through the class
+       * @param {Number} depth
+       * @param {Number} offset
+       */
+      _itemStyle(depth, offset) {
+        return `padding-left: ${depth*offset}px`;
+      }
+
+      /**
+       * Increment value by 1
+       * @param {Number} balue
+       */
+      _increment(value) {
+        return value + 1;
+      }
+    }
+
+    window.customElements.define(ChipsPluginTree.is, ChipsPluginTree);
+  </script>
+</dom-module>
