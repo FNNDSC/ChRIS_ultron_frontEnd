@@ -1,7 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
-<link rel="import" href="../chips-behaviors/chips-plugin-behavior.html">
+<!-- ChIPS Behaviors-->
+<link rel="import" href="../chips-behaviors/chips-feed-behavior.html">
 
+<!-- ChIPS Elements-->
+<link rel="import" href="../chips-api/chips-api.html">
+<link rel="import" href="chips-plugin-browser.html">
 <link rel="import" href="chips-plugin-tree.html">
 
 <dom-module id="chips-feed-browser">
@@ -25,14 +29,13 @@
     <chips-api id="API"></chips-api>
 
     <div class="panel">
-      <!--<chips-plugin-tree
-        plugin-tree="[[pluginTree]]"></chips-plugin-tree>-->
-        <chips-plugin-tree node="[[pluginTree]]"></chips-plugin-tree>
+      <chips-plugin-tree id="PluginTree" node="[[pluginTree]]" on-node-selected="_handleNodeSelected">
+      </chips-plugin-tree>
     </div>
 
     <div class="panel">
-      <!--<chips-file-browser
-        pluginSelected="[[pluginSelected]]"></chips-file-browser>-->
+      <chips-plugin-browser plugin="[[pluginSelected]]">
+      </chips-plugin-browser>
     </div>
   </template>
 
@@ -59,7 +62,7 @@
           pluginSelected: {
             type: Object,
             value: {},
-          }
+          },
         };
       }
 
@@ -117,6 +120,7 @@
         node.children = children;
         node.expanded = expanded;
         node.selected = selected;
+        node.path = [];
 
         return node;
       }
@@ -152,7 +156,12 @@
           const previousID = pluginInstance.data.previous_id;
 
           // map current plugin to its parent
-          treeMap.get(previousID).children.push(pluginInstance);
+          const previousNode = treeMap.get(previousID);
+          const childrenIndex = previousNode.children.length;
+          pluginInstance.path = [...previousNode.path];
+          pluginInstance.path.push('children');
+          pluginInstance.path.push(childrenIndex);
+          previousNode.children.push(pluginInstance);
 
           // reference current plugin so accessible
           // if following instance needs to be mapped to it
@@ -161,6 +170,7 @@
 
         this.set('pluginTree', treeRoot);
         this.set('pluginTreeMap', treeMap);
+        this.set('pluginSelected', treeRoot);
       }
 
       _handlePluginInstancesResponse(response) {
@@ -173,6 +183,16 @@
 
       _handlePluginInstancesError(error) {
         console.log(error);
+      }
+
+      _handleNodeSelected(event){
+        // reset
+        this.set(['pluginTree', ...this.pluginSelected.path, 'selected'], false);
+
+        // Update selected node
+        const selectedNode = event.detail.node;
+        this.set('pluginSelected', selectedNode);
+        this.set(['pluginTree', ...selectedNode.path, 'selected'], true);
       }
 
     }

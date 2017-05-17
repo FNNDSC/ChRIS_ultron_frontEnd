@@ -1,0 +1,74 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<!-- ChIPS Behaviors-->
+<link rel="import" href="../chips-behaviors/chips-feed-behavior.html">
+
+<!-- ChIPS Elements-->
+<link rel="import" href="../chips-api/chips-api.html">
+<link rel="import" href="./chips-plugin-browser.html">
+
+<dom-module id="chips-plugin-browser">
+  <template>
+    <style>
+    </style>
+
+    <link rel="import" href="../chips-api/chips-api.html">
+
+    <chips-api id="API"></chips-api>
+
+    Plugin browser fetching: [[fetching]]
+
+  </template>
+
+  <script>
+    class ChipsPluginBrowser extends FeedBehavior(Polymer.Element) {
+      static get is() {
+        return 'chips-plugin-browser';
+      }
+
+      static get properties() {
+        return {
+          plugin: {
+            type: Object,
+            value: {},
+            observer: '_pluginChanged',
+          },
+          fetching: {
+            type: Boolean,
+            value: false,
+          }
+        };
+      }
+
+      _pluginChanged(plugin, oldPlugin){
+        if (plugin === undefined || !plugin.data) {
+          return;
+        }
+
+        const data = {};
+        data.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        data.params = {};
+        data.params.limit = 9999;
+        data.params.page_size = 9999;
+        this.$.API.handleAs = 'json';
+        this.fetching = true;
+        this.__getFilesPlugin(this.$.API, data, plugin)
+          .then(this._handleFilesResponse.bind(this))
+          .catch(this._handleFilesError.bind(this));
+      }
+
+      _handleFilesResponse(response) {
+        this.fetching = false;
+      }
+
+      _handleFilesError(error) {
+        this.fetching = false;
+      }
+    }
+
+    window.customElements.define(ChipsPluginBrowser.is, ChipsPluginBrowser);
+  </script>
+</dom-module>

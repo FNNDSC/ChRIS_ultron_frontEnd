@@ -100,6 +100,12 @@
         };
       }
 
+      static get observers() {
+        return [
+          '_nodeChanged(node, node.expanded, node.selected, node.*)',
+        ]
+      }
+
       /**
        * Handle node expansion.
        * Updating the "expanded" attribute will trigger the
@@ -107,7 +113,10 @@
        * We do not fire anything because it only impacts
        * children elemnents that we can access via "node.children"
        */
-      _handleExpand() {
+      _handleExpand(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
         this.set('node.expanded', !this.node.expanded);
       }
 
@@ -152,6 +161,10 @@
           return 'failure';
         }
         return `unknown`;
+      }
+
+      _nodeChanged(){
+        // console.log('node changed');
       }
     }
 

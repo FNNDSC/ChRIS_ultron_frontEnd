@@ -25,12 +25,20 @@
         display: flex;
       }
 
+      .item-container:hover {
+        cursor: pointer;
+      }
+
+      .selected {
+        background-color: var(--light-primary-color);
+      }
+
       [hidden] {
         display: none;
       }
     </style>
 
-    <div class="item-container" style$="[[_itemStyle(depth, offset)]]">
+    <div class="item-container" class$="[[_itemClass(node.selected)]]" style$="[[_itemStyle(depth, offset)]]">
       <chips-plugin-tree-node node="{{node}}" on-tap="_handleSelect"></chips-plugin-tree-node>
     </div>
     <template is="dom-repeat" items="[[node.children]]">
@@ -68,7 +76,8 @@
 
       static get observers() {
         return [
-          '_nodeChanged(node, node.expanded)'
+          '_nodeChanged(node, node.expanded, node.selected)',
+          '_fullRefresh(node.*)',
         ]
       }
 
@@ -103,17 +112,21 @@
        * We do not do that
        */
       _nodeChanged(node) {
+        // console.log(node);
         if (node === undefined || !node.data) {
           return;
         }
 
-        for( var i=0; i < this.node.children.length; i++){
-          // if a node is not expanded, we make sure all children are also
-          // "not" expanded (i.e. "closed")
-          if(this.node.expanded === false && this.node.children.length > 0){
-            for(let j = 0; j < this.node.children.length; j++){
-              this.set(['node','children', j, 'expanded'], false);
-            }
+        // console.log('nodeChanged');
+        // if a node is not expanded, we make sure all children are also
+        // "not" expanded (i.e. "closed")
+        if(this.node.expanded === false && this.node.children.length > 0){
+          for(let j = 0; j < this.node.children.length; j++){
+            this.set(['node','children', j, 'expanded'], false);
+          }
+        } else {
+          for(let j = 0; j < this.node.children.length; j++){
+            this.set(['node','children', j], this.node.children[j]);
           }
         }
       }
@@ -129,11 +142,34 @@
       }
 
       /**
+       * Set class
+       * through the class
+       * @param {Boolean} selected
+       */
+      _itemClass(selected) {
+        return selected? 'selected' : '';
+      }
+
+      /**
        * Increment value by 1
        * @param {Number} balue
        */
       _increment(value) {
         return value + 1;
+      }
+
+      refresh() {
+        // console.log('go refresh');
+        // for(let j = 0; j < this.node.children.length; j++){
+        //   this.set(['node','children', j], this.node.children[j]);
+        // }
+      }
+
+      _fullRefresh(){
+        // console.log('recursive refresh');
+        // for(let j = 0; j < this.node.children.length; j++){
+        //   this.set(['node','children', j], this.node.children[j]);
+        // }
       }
     }
 
