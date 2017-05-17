@@ -1,5 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
+<!-- Polymer Elements -->
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
 <!-- ChIPS Behaviors-->
 <link rel="import" href="../chips-behaviors/chips-feed-behavior.html">
 
@@ -17,6 +20,16 @@
     <chips-api id="API"></chips-api>
 
     Plugin browser fetching: [[fetching]]
+    <iron-pages
+        selected="[[pluginName]]"
+        attr-for-selected="name"
+        fallback-selection="default"
+        role="main"
+        >
+      <chips-pacsquery-browser name="pacsquery"></chips-pacsquery-browser>
+      <chips-pacsretrieve-browser name="pacsretrieve"></chips-pacsretrieve-browser>
+      <chips-default-browser name="default"></chips-default-browser>
+    </iron-pages>
 
   </template>
 
@@ -33,6 +46,11 @@
             value: {},
             observer: '_pluginChanged',
           },
+          pluginName: {
+            type: String,
+            value: '',
+            observer: '_pluginNameChanged',
+          },
           fetching: {
             type: Boolean,
             value: false,
@@ -45,6 +63,36 @@
           return;
         }
 
+        // update plugin name
+        this.pluginName = plugin.data.plugin_name;
+
+        // fetch files
+        this._fetchFiles(plugin);
+      }
+
+      _pluginNameChanged(name) {
+        if (name === undefined || name === '') {
+          return;
+        }
+
+        // fetch plugin browser
+        this._fetchPluginBrowser(name);
+      }
+
+      _fetchPluginBrowser(name) {
+        const resolvedPageUrl = this.resolveUrl('../chips-plugin-browsers/chips-' + name + '-browser.html');
+        Polymer.importHref(
+            resolvedPageUrl,
+            null,
+            this._defaultBrowser.bind(this),
+            true);
+      }
+
+      _defaultBrowser() {
+        this.pluginName = 'default';
+      }
+
+      _fetchFiles(plugin) {
         const data = {};
         data.auth = {
           type: 'token',

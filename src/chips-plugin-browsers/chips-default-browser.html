@@ -1,0 +1,21 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="chips-default-browser">
+  <template>
+
+    <div>
+     Hello default
+    </div>
+
+    </template>
+
+  <script>
+    class ChipsDefaultBrowser extends Polymer.Element {
+      static get is() {
+        return 'chips-default-browser';
+      }
+    }
+
+    window.customElements.define(ChipsDefaultBrowser.is, ChipsDefaultBrowser);
+  </script>
+</dom-module>
