@@ -20,8 +20,21 @@
           files: {
             type: Array,
             value: [],
+            observer: '_filesChanged',
           },
+          data: {
+            type: Array,
+            value: [],
+          }
         };
+      }
+
+      _filesChanged(files) {
+        if(files === undefined){
+          return;
+        }
+
+        // format 
       }
     }
 

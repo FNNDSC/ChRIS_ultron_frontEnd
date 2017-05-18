@@ -1,0 +1,82 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="chips-series-preview">
+  <template>
+
+    <style>
+      .previewContainer {
+        height: 128px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      img {
+        min-width: 96px;
+        min-height: 96px;
+        background-color: #000;
+      }
+
+      .about {
+          position: absolute;
+          bottom: 0;
+          left:0;
+
+          right: 0;
+        padding: 2px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .about > div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .description {
+        color: var(--primary-text-color);
+        font-size: 12px;
+      }
+
+      .date, #files {
+        color: var(--secondary-text-color);
+        font-size: 12px;
+      }
+    </style>
+    <div item="[[series]]" class="dataInstance">
+      <div class="previewContainer">
+        <img
+            src="[[series.preview.imageURL]]"
+            on-mousemove='onMove'
+            on-mouseout='centerThumbnail'>
+
+        <div class="about">
+            <div class="description">[[series.details.series.description]]</div>
+            <div class="date">[[series.details.series.date]]</div>
+            <div id="files">[[series.details.series.files]]</div>
+        </div>
+
+      </div>
+    </div>
+
+    </template>
+
+  <script>
+    class ChipsSeriesPreview extends Polymer.Element {
+      static get is() {
+        return 'chips-series-preview';
+      }
+
+      static get properties() {
+        return {
+          series: {
+            type: Object,
+            value: {},
+          },
+        };
+      }
+    }
+
+    window.customElements.define(ChipsSeriesPreview.is, ChipsSeriesPreview);
+  </script>
+</dom-module>

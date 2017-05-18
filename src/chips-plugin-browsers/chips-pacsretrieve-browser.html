@@ -2,6 +2,7 @@
 
 <!-- ChIPS Elements-->
 <link rel="import" href="../chips-api/chips-api.html">
+<link rel="import" href="../chips-elements/chips-series-preview.html">
 
 <dom-module id="chips-pacsretrieve-browser">
   <template>
@@ -26,6 +27,7 @@
         height: 128px;
         color: darkblue;
         overflow-x: auto;
+        display: flex;
       }
     </style>
 
@@ -35,6 +37,9 @@
       <div class="viewer">
       </div>
       <div class="seriesBrowser">
+        <template is="dom-repeat" items="[[data]]">
+          <chips-series-preview series="[[item]]"></chips-series-preview>
+        </template>
       </div>
     </div>
 
@@ -54,13 +59,17 @@
             observer: '_filesChanged',
           },
           data: {
-            type: Object,
-            value: {},
+            type: Array,
+            value: [],
           },
           dataMap: {
             type: Object,
             value: new Map(),
-          }
+          },
+          dataSelected: {
+            type: Object,
+            value: {},
+          },
         };
       }
 
