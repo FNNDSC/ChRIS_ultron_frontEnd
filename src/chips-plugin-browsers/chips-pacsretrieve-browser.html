@@ -2,6 +2,7 @@
 
 <!-- ChIPS Elements-->
 <link rel="import" href="../chips-api/chips-api.html">
+<link rel="import" href="../chips-elements/chips-ami-viewer.html">
 <link rel="import" href="../chips-elements/chips-series-preview.html">
 
 <dom-module id="chips-pacsretrieve-browser">
@@ -29,16 +30,25 @@
         overflow-x: auto;
         display: flex;
       }
+
+      chips-series-preview {
+        border: 2px solid #212121;
+      }
+
+      chips-series-preview[selected] {
+        border: 2px solid #cf0;
+      }
     </style>
 
     <chips-api id="API"></chips-api>
 
     <div class="container">
-      <div class="viewer">
-      </div>
+      <chips-ami-viewer
+        class="viewer"
+        data="[[urlsSelected]]"></chips-ami-viewer>
       <div class="seriesBrowser">
         <template is="dom-repeat" items="[[data]]">
-          <chips-series-preview series="[[item]]"></chips-series-preview>
+          <chips-series-preview series="[[item]]" selected$="[[item.selected]]" on-tap="_handleSeriesSelected"></chips-series-preview>
         </template>
       </div>
     </div>
@@ -69,7 +79,12 @@
           dataSelected: {
             type: Object,
             value: {},
+            observer: '_dataSelectedChanged',
           },
+          urlsSelected: {
+            type: Array,
+            value: [],
+          }
         };
       }
 
@@ -162,7 +177,6 @@
       }
 
       _updateDataArray() {
-        console.log('update data array...');
         // Map to array
         const dataArray = [];
 
@@ -196,6 +210,10 @@
             if (value.data.length > 1) {
               value.details.series.files += 's';
             }
+            //
+            value.selected = false;
+            value.path = [];
+            value.path.push(dataArray.length);
             dataArray.push(value);
         }
         
@@ -203,8 +221,30 @@
 
         // update data
         this.set('data', dataArray);
+      }
 
-        console.log(this.data);
+      _handleSeriesSelected(event) {
+        // unselect previous if any
+        if (this.dataSelected.selected !== undefined) {
+          this.set(['data', ...this.dataSelected.path, 'selected'], false);
+        }
+
+        // select current
+        const targetSeries = event.model.__data.item;
+        this.set('dataSelected', targetSeries);
+        this.set(['data', ...targetSeries.path, 'selected'], true);
+      }
+
+      _dataSelectedChanged(dataSelected) {
+        if (dataSelected === undefined || !dataSelected.data) {
+          return;
+        }
+
+        const urlsSelected = dataSelected.data.map(function(obj) {
+          return `${obj.links.file_resource}`;
+        });
+
+        this.set('urlsSelected', urlsSelected);
       }
     }
 
