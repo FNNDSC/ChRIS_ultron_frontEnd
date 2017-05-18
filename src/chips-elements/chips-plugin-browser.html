@@ -13,22 +13,24 @@
 <dom-module id="chips-plugin-browser">
   <template>
     <style>
+      :host {
+        position: relative;
+        flex: 1;
+        display: flex;
+      }
     </style>
-
-    <link rel="import" href="../chips-api/chips-api.html">
 
     <chips-api id="API"></chips-api>
 
-    Plugin browser fetching: [[fetching]]
     <iron-pages
         selected="[[pluginName]]"
         attr-for-selected="name"
         fallback-selection="default"
         role="main"
         >
-      <chips-pacsquery-browser name="pacsquery"></chips-pacsquery-browser>
-      <chips-pacsretrieve-browser name="pacsretrieve"></chips-pacsretrieve-browser>
-      <chips-default-browser name="default"></chips-default-browser>
+      <chips-pacsquery-browser name="pacsquery" files="[[files]]"></chips-pacsquery-browser>
+      <chips-pacsretrieve-browser name="pacsretrieve" files="[[files]]"></chips-pacsretrieve-browser>
+      <chips-default-browser name="default" files="[[files]]"></chips-default-browser>
     </iron-pages>
 
   </template>
@@ -51,9 +53,9 @@
             value: '',
             observer: '_pluginNameChanged',
           },
-          fetching: {
-            type: Boolean,
-            value: false,
+          files: {
+            type: Array,
+            value: [],
           }
         };
       }
@@ -102,18 +104,39 @@
         data.params.limit = 9999;
         data.params.page_size = 9999;
         this.$.API.handleAs = 'json';
-        this.fetching = true;
         this.__getFilesPlugin(this.$.API, data, plugin)
           .then(this._handleFilesResponse.bind(this))
           .catch(this._handleFilesError.bind(this));
       }
 
       _handleFilesResponse(response) {
-        this.fetching = false;
+        if (response.length <= 0) {
+          this.set('files', []);
+          return;
+        }
+
+        //
+        const responseTargetID = response[0].data.plugin_inst_id;
+        const currentTargetID =
+          this.plugin.data.id;
+        if (responseTargetID !== currentTargetID) {
+          //
+          console.log(
+            `Discard response for plugin ${responseTargetID}
+            (current plugin: ${currentTargetID})`);
+          return;
+        }
+
+        const files = [];
+        for (const file of response) {
+          this.__formatFile(file, this.feed);
+          files.push(file);
+        }
+
+        this.set('files', files);
       }
 
       _handleFilesError(error) {
-        this.fetching = false;
       }
     }
 

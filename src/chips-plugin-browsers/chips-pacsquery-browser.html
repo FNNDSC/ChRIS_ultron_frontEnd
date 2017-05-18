@@ -4,7 +4,7 @@
   <template>
 
     <div>
-     Hello pacs query
+     Hello pacs query: [[files.length]] files.
     </div>
 
     </template>
@@ -13,6 +13,15 @@
     class ChipsPacsQueryBrowser extends Polymer.Element {
       static get is() {
         return 'chips-pacsquery-browser';
+      }
+
+      static get properties() {
+        return {
+          files: {
+            type: Array,
+            value: [],
+          },
+        };
       }
     }
 

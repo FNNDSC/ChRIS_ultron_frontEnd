@@ -4,7 +4,7 @@
   <template>
 
     <div>
-     Hello default
+     Hello default: [[files.length]] files.
     </div>
 
     </template>
@@ -13,6 +13,15 @@
     class ChipsDefaultBrowser extends Polymer.Element {
       static get is() {
         return 'chips-default-browser';
+      }
+
+      static get properties() {
+        return {
+          files: {
+            type: Array,
+            value: [],
+          },
+        };
       }
     }
 

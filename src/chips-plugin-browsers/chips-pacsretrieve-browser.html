@@ -1,14 +1,42 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
+<!-- ChIPS Elements-->
+<link rel="import" href="../chips-api/chips-api.html">
+
 <dom-module id="chips-pacsretrieve-browser">
   <template>
+    <style>
+      .container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: blue;
+        display: flex;
+        flex-direction: column;
+      }
 
-    <div>
-     Hello pacs retrieve
+      .viewer {
+        flex: 1;
+        background-color: lightblue;
+      }
+
+      .seriesBrowser {
+        height: 128px;
+        color: darkblue;
+        overflow-x: auto;
+      }
+    </style>
+
+    <chips-api id="API"></chips-api>
+
+    <div class="container">
+      <div class="viewer">
+      </div>
+      <div class="seriesBrowser">
+      </div>
     </div>
-
-    // just files and do whatever we want from that:
-    // nice tree on the left, ami viewer on the right.
 
     </template>
 
@@ -16,6 +44,158 @@
     class ChipsPacsRetrieveBrowser extends Polymer.Element {
       static get is() {
         return 'chips-pacsretrieve-browser';
+      }
+
+      static get properties() {
+        return {
+          files: {
+            type: Array,
+            value: [],
+            observer: '_filesChanged',
+          },
+          data: {
+            type: Object,
+            value: {},
+          },
+          dataMap: {
+            type: Object,
+            value: new Map(),
+          }
+        };
+      }
+
+      _seriesStructure() {
+        return {
+          data: [],
+          preview: null,
+          details: {
+            series: {
+              date: 'no value provided',
+              description: 'no value provided',
+              files: 0,
+            },
+          },
+        }
+      }
+
+      _filesChanged(files) {
+        // clear the map
+        this.dataMap.clear();
+
+        for (const file of files) {
+          // handle DCM files
+          if (file.data.fname.endsWith('.dcm')) {
+            this._handleDCM(file);
+          } else if (file.data.fname.endsWith('preview.jpg')) {
+            this._handleJPG(file);
+          }
+        }
+
+        // convert data map to array for polymer dom-repeat to kick in
+        this._updateDataArray();
+      }
+
+      _handleDCM(file) {
+        const series = this._getSeriesFromFile(file);
+        series.data.push(file);
+      }
+
+      _handleJPG(file) {
+        const series = this._getSeriesFromFile(file);
+        // create unique ID and attach file to preview
+        file.data.id = `id${file.href.match(/\d+/)['0']}`;
+        series.preview = file;
+        this._fetchPreview(series);
+      }
+
+      _getSeriesFromFile(file) {
+        // get series directory
+        const relativeFname = file.data.relative_fname;
+        const relativeDirectory =
+          relativeFname.slice(0, relativeFname.lastIndexOf('/'));
+        
+        // find series in the map
+        let series = this.dataMap.get(relativeDirectory);
+        if (series === null || series === undefined) {
+          // add new series  in the map if not present
+          series = this._seriesStructure();
+          this.dataMap.set(relativeDirectory, series);
+        }
+
+        return series;
+      }
+
+
+      _fetchPreview(series) {
+        //
+        const apiData = {};
+        apiData.auth = {
+          type: 'token',
+          token: sessionStorage.getItem('token'),
+        };
+        apiData.params = {};
+
+        // fetch ressource then update it all...
+        this.$.API.handleAs = 'blob';
+        this.$.API.request('GET', series.preview.links.file_resource, apiData)
+        .then((response) => {
+          // const target =
+          //   this.shadowRoot.querySelector(`#${series.data.id}`);
+          var urlCreator = window.URL || window.webkitURL;
+          var imageURL = urlCreator.createObjectURL(response);
+          series.preview.imageURL = imageURL;
+          // target.onload = this.centerThumbnail.bind(this);
+          // target.src = imageUrl;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      }
+
+      _updateDataArray() {
+        console.log('update data array...');
+        // Map to array
+        const dataArray = [];
+
+        // update map data
+        function logMapElements(value, key) {
+            // set study series description
+            let seriesDate = 'no value provided';
+            let seriesDescription = 'no value provided';
+            const fullName = value.data[0].data.fname;
+            const splitName = fullName.split('/');
+            if (splitName.length >= 2) {
+              const directory = splitName[splitName.length - 2];
+              const splitSeries = directory.split('-');
+              if (splitSeries.length === 3) {
+                seriesDescription = splitSeries[0];
+                seriesDate = splitSeries[1];
+                if (seriesDate.length === 8) {
+                  seriesDate = `
+                    ${seriesDate.substring(0, 4)}-
+                    ${seriesDate.substring(4, 6)}-
+                    ${seriesDate.substring(6, 8)}`;
+                }
+              }
+            }
+
+            value.details.series.date = seriesDate;
+            value.details.series.description = seriesDescription;
+            // set study date
+            // set files
+            value.details.series.files = value.data.length + ' file';
+            if (value.data.length > 1) {
+              value.details.series.files += 's';
+            }
+            dataArray.push(value);
+        }
+        
+        this.dataMap.forEach(logMapElements);
+
+        // update data
+        this.set('data', dataArray);
+
+        console.log(this.data);
       }
     }
 
