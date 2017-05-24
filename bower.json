@@ -42,7 +42,8 @@
     "paper-tooltip": "PolymerElements/paper-tooltip#2.0-preview",
     "paper-checkbox": "PolymerElements/paper-checkbox#2.0-preview",
     "marked-element": "PolymerElements/marked-element#2.0-preview",
-    "iron-autogrow-textarea": "PolymerElements/iron-autogrow-textarea#2.0-preview"
+    "iron-autogrow-textarea": "PolymerElements/iron-autogrow-textarea#2.0-preview",
+    "chips-api": "FNNDSC/chips-api"
   },
   "resolutions": {
     "iron-scroll-target-behavior": "2.0-preview",
@@ -51,7 +52,8 @@
     "iron-menu-behavior": "2.0-preview",
     "iron-resizable-behavior": "2.0-preview",
     "webcomponentsjs": "^v1.0.0-rc.5",
-    "polymer": "^2.0.0-rc.7"
+    "polymer": "^2.0.0-rc.7",
+    "iron-ajax": "2.0.0"
   },
   "devDependencies": {
     "web-component-tester": "6.0.0-prerelease.5"
