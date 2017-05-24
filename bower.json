@@ -25,7 +25,7 @@
     "paper-progress": "PolymerElements/paper-progress#2.0-preview",
     "paper-fab": "PolymerElements/paper-fab#2.0-preview",
     "paper-input": "PolymerElements/paper-input#2.0-preview",
-    "vaadin-grid": "vaadin/vaadin-grid#2.1-polymer-2",
+    "vaadin-grid": "vaadin/vaadin-grid#v3.0.0-alpha1",
     "iron-collapse": "PolymerElements/iron-collapse#2.0-preview",
     "paper-spinner": "PolymerElements/paper-spinner#2.0-preview",
     "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#2.0-preview",
